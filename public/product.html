@@ -104,9 +104,8 @@
             if (!productSlug) { alert('Produk tidak ditemukan!'); window.location.href = '/'; return; }
 
             try {
-                // PERBAIKAN URL: Hapus '/item/' yang menyebabkan error 404
-                // Standar route biasanya: /api/products/nama-slug
-                const res = await fetch(`${API_URL}/products/${productSlug}`);
+                // PERBAIKAN: Mengembalikan '/item/' sesuai backend Anda!
+                const res = await fetch(`${API_URL}/products/item/${productSlug}`);
                 
                 if (!res.ok) {
                     throw new Error(`Gagal memuat: ${res.statusText} (${res.status})`);
@@ -139,8 +138,6 @@
             } catch (error) { 
                 console.error("DETAIL PAGE ERROR:", error);
                 alert('Maaf, detail produk gagal dimuat.\nError: ' + error.message); 
-                // Opsional: Redirect balik jika error fatal
-                // window.location.href = '/'; 
             }
         });
 
@@ -166,7 +163,6 @@
             imageList.forEach((imgSrc, index) => {
                 const slide = document.createElement('div');
                 slide.className = 'product-slide';
-                // Tambahkan onerror agar jika link gambar mati, tidak jelek
                 slide.innerHTML = `<img src="${imgSrc}" alt="Slide ${index+1}" onerror="this.src='https://via.placeholder.com/400?text=Error'">`;
                 track.appendChild(slide);
             });
@@ -174,7 +170,6 @@
             track.addEventListener('scroll', () => {
                 const width = track.offsetWidth;
                 const index = Math.round(track.scrollLeft / width) + 1;
-                // Pastikan index valid
                 const safeIndex = Math.min(Math.max(index, 1), imageList.length);
                 counter.innerText = `${safeIndex} / ${imageList.length}`;
             });
@@ -187,7 +182,6 @@
                 const res = await fetch(`${API_URL}/products?category=${catId}`);
                 const products = await res.json();
                 
-                // Pastikan products adalah array sebelum filter
                 if (!Array.isArray(products)) throw new Error("Format data salah");
 
                 const related = products.filter(p => p._id !== currentId).slice(0, 4); 
@@ -207,7 +201,6 @@
                         priceHtml = `<div style="font-size:0.7rem; color:#94a3b8; text-decoration:line-through;">Rp ${hargaCoret}</div><div style="color:#4ADE80; font-weight:700; font-size:0.9rem;">Rp ${harga}</div>`;
                     }
 
-                    // Gambar terkait juga harus aman
                     const relImg = (prod.images && prod.images.length > 0) ? prod.images[0] : 'https://via.placeholder.com/150';
 
                     const card = document.createElement('div');
@@ -233,7 +226,6 @@
         document.getElementById('btnAddToCart').addEventListener('click', () => {
             if (!currentProduct) return;
             let cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
-            // Ambil gambar pertama dengan aman
             const imgCart = (currentProduct.images && currentProduct.images.length > 0) ? currentProduct.images[0] : 'https://via.placeholder.com/150';
             
             cart.push({ id: currentProduct._id, name: currentProduct.name, price: currentProduct.price, image: imgCart });
