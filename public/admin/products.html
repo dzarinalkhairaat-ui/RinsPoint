@@ -138,17 +138,15 @@
         let allCategories = [];
         let isEditMode = false;
 
-        // --- LOGIKA BARU UNTUK GAMBAR ---
+        // --- LOGIKA GAMBAR ---
         let selectedFiles = [null, null, null, null, null]; // Array untuk menyimpan file baru
         let currentBoxIndex = 0; // Menandai kotak mana yang sedang diklik
 
-        // 1. Saat kotak diklik, buka file explorer
         function triggerFileSelect(index) {
             currentBoxIndex = index;
             document.getElementById('hiddenFileInput').click();
         }
 
-        // 2. Saat file dipilih dari explorer
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
@@ -166,18 +164,52 @@
                 }
                 reader.readAsDataURL(file);
             }
-            // Reset input agar bisa pilih file yang sama jika perlu
             event.target.value = '';
         }
 
-        // --- AKHIR LOGIKA GAMBAR ---
+        // --- FUNGSI BARU: KOMPRES GAMBAR OTOMATIS (AGAR LOLOS VERCEL) ---
+        const compressImage = async (file, quality = 0.7, maxWidth = 1000) => {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        // Kecilkan dimensi jika terlalu besar
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Ubah jadi File JPEG kecil
+                        canvas.toBlob((blob) => {
+                            const newFile = new File([blob], file.name, {
+                                type: 'image/jpeg',
+                                lastModified: Date.now(),
+                            });
+                            resolve(newFile);
+                        }, 'image/jpeg', quality); 
+                    };
+                    img.onerror = () => resolve(file); // Jika error, kembalikan file asli
+                };
+            });
+        };
 
         document.addEventListener('DOMContentLoaded', () => {
             loadCategoriesData();
             loadProducts();
         });
 
-        // Load Daftar Produk
         async function loadProducts() {
             const list = document.getElementById('productList');
             try {
@@ -187,7 +219,6 @@
                 
                 products.forEach(prod => {
                     const harga = new Intl.NumberFormat('id-ID').format(prod.price);
-                    // Gunakan gambar pertama atau placeholder jika tidak ada
                     const imgUrl = (prod.images && prod.images.length > 0) ? prod.images[0] : 'https://via.placeholder.com/100';
                     
                     const item = document.createElement('div');
@@ -209,31 +240,27 @@
             } catch (e) {}
         }
 
-        // Fungsi Masuk Mode Edit
         function editProduct(prod) {
             isEditMode = true;
-            resetForm(true); // Reset tapi biarkan mode edit aktif
+            resetForm(true);
 
             document.getElementById('formTitle').innerText = 'Edit Produk';
             document.getElementById('btnSave').innerText = 'UPDATE PRODUK';
             document.getElementById('btnCancel').style.display = 'block';
             document.getElementById('editId').value = prod._id;
 
-            // Isi Form Teks
             document.getElementById('name').value = prod.name;
             document.getElementById('price').value = prod.price;
             document.getElementById('originalPrice').value = prod.originalPrice || '';
             document.getElementById('affiliateLink').value = prod.affiliateLink;
             document.getElementById('description').value = prod.description;
 
-            // Set Kategori & Subkategori
             document.getElementById('categorySelect').value = prod.category?._id || prod.category;
             loadSubCategories(prod.subcategory);
 
-            // --- ISI PREVIEW GAMBAR DARI DATABASE ---
             if (prod.images && prod.images.length > 0) {
                 prod.images.forEach((url, index) => {
-                    if (index < 5) { // Maksimal 5 kotak
+                    if (index < 5) {
                         const img = document.getElementById(`preview${index}`);
                         const placeholder = document.getElementById(`placeholder${index}`);
                         img.src = url;
@@ -242,11 +269,9 @@
                     }
                 });
             }
-            // Scroll ke atas
             window.scrollTo(0,0);
         }
 
-        // Fungsi Reset Form (Kembali ke Mode Tambah)
         function resetForm(keepEditMode = false) {
             if (!keepEditMode) {
                 isEditMode = false;
@@ -257,7 +282,6 @@
             }
             document.getElementById('productForm').reset();
             
-            // Reset Preview Gambar & Array File
             selectedFiles = [null, null, null, null, null];
             for (let i = 0; i < 5; i++) {
                 document.getElementById(`preview${i}`).src = '';
@@ -266,30 +290,50 @@
             }
         }
 
-        // Submit Form (Create / Update)
+        // --- SUBMIT FORM (DENGAN KOMPRESI) ---
         document.getElementById('productForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSave');
-            btn.innerText = 'Mengupload...'; btn.disabled = true;
+            const originalText = btn.innerText;
+            btn.innerText = 'Mengompres Gambar...'; // Status baru
+            btn.disabled = true;
 
-            // Ambil data form dasar (teks)
             const formData = new FormData(e.target);
 
-            // --- MASUKKAN FILE GAMBAR DARI ARRAY SECARA MANUAL ---
+            // Cek apakah ada file baru
             let hasNewFiles = false;
-            selectedFiles.forEach(file => {
-                if (file) {
-                    formData.append('images', file); // Nama field harus 'images' sesuai backend
-                    hasNewFiles = true;
-                }
-            });
+            for (const file of selectedFiles) {
+                if (file) hasNewFiles = true;
+            }
 
-            // Validasi: Wajib ada minimal 1 gambar saat Tambah Baru
             if (!isEditMode && !hasNewFiles) {
                 alert('Wajib memasukkan minimal 1 gambar produk (Foto Utama).');
-                btn.innerText = 'SIMPAN PRODUK'; btn.disabled = false;
+                btn.innerText = originalText; btn.disabled = false;
                 return;
             }
+
+            // --- PROSES KOMPRESI SEBELUM UPLOAD ---
+            // Kita loop manual array selectedFiles
+            for (const file of selectedFiles) {
+                if (file) {
+                    // Jika file > 1MB, kita kompres dulu
+                    if (file.size > 1024 * 1024) { 
+                        try {
+                            // Proses kompresi (tunggu sampai selesai)
+                            const compressedFile = await compressImage(file);
+                            formData.append('images', compressedFile);
+                        } catch (err) {
+                            // Jika kompres gagal, pakai file asli (resiko error Vercel)
+                            formData.append('images', file);
+                        }
+                    } else {
+                        // Jika file kecil, langsung kirim
+                        formData.append('images', file);
+                    }
+                }
+            }
+
+            btn.innerText = 'Mengupload ke Server...';
 
             const id = document.getElementById('editId').value;
             const url = isEditMode ? `${API_URL}/products/${id}` : `${API_URL}/products`;
@@ -299,25 +343,25 @@
                 const res = await fetch(url, {
                     method: method,
                     headers: { 'Authorization': `Bearer ${token}` },
-                    body: formData // Kirim FormData (otomatis handle file & teks)
+                    body: formData
                 });
 
                 if (res.ok) {
                     alert(isEditMode ? 'Produk berhasil diupdate!' : 'Produk berhasil ditambah!');
-                    resetForm(); // Kembali ke mode tambah & bersih-bersih
-                    loadProducts(); // Reload daftar
+                    resetForm();
+                    loadProducts();
                 } else {
                     const data = await res.json();
                     alert('Gagal: ' + data.message);
                 }
-            } catch (error) { alert('Error server.'); } 
-            finally { 
+            } catch (error) { 
+                alert('Error server: ' + error.message); 
+            } finally { 
                 btn.innerText = isEditMode ? 'UPDATE PRODUK' : 'SIMPAN PRODUK'; 
                 btn.disabled = false; 
             }
         });
 
-        // --- Fungsi Helper Kategori & Hapus (Tetap Sama) ---
         async function loadCategoriesData() {
             try {
                 const res = await fetch(`${API_URL}/categories`);
