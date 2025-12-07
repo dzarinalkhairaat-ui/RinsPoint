@@ -1,0 +1,84 @@
+@use '../abstracts/variables' as *;
+
+.payment-page {
+    padding: 1.5rem;
+    padding-bottom: 6rem;
+    min-height: 100vh;
+    background: $bg-primary;
+
+    // Status Banner
+    .status-banner {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        
+        .timer {
+            font-size: 2rem; font-weight: 700; color: $cta-primary;
+            margin-bottom: 5px; font-family: monospace;
+        }
+        p { color: $text-secondary; font-size: 0.85rem; }
+    }
+
+    // Kartu Invoice
+    .invoice-card {
+        background: $bg-secondary;
+        border-radius: 20px;
+        padding: 1.5rem;
+        border: 1px solid rgba($text-secondary, 0.1);
+        position: relative;
+        overflow: hidden;
+
+        // Garis atas berwarna
+        &::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+            background: linear-gradient(90deg, $cta-primary, #22C55E);
+        }
+
+        .amount-box {
+            text-align: center; margin-bottom: 1.5rem; border-bottom: 1px dashed rgba($text-secondary, 0.3); padding-bottom: 1.5rem;
+            span { display: block; color: $text-secondary; font-size: 0.8rem; margin-bottom: 5px; }
+            h2 { color: white; font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; }
+            .copy-icon { font-size: 1rem; color: $cta-primary; cursor: pointer; }
+        }
+
+        .detail-row {
+            display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem;
+            .label { color: $text-secondary; }
+            .value { color: white; font-weight: 600; text-align: right; }
+        }
+    }
+
+    // List Metode Bayar
+    .payment-methods {
+        margin-top: 1.5rem;
+        h3 { font-size: 1rem; color: white; margin-bottom: 10px; }
+        
+        .bank-item {
+            background: $bg-secondary;
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 10px; border: 1px solid rgba($text-secondary, 0.1);
+            
+            .bank-info {
+                display: flex; align-items: center; gap: 1rem;
+                img { width: 50px; height: auto; border-radius: 4px; background: white; padding: 2px; }
+                div {
+                    strong { display: block; color: white; font-size: 0.9rem; }
+                    span { color: $text-secondary; font-size: 0.8rem; }
+                }
+            }
+            .btn-copy { color: $cta-primary; cursor: pointer; font-size: 1.2rem; }
+        }
+    }
+
+    // Tombol Konfirmasi
+    .btn-confirm-wa {
+        display: block; width: 100%; padding: 14px;
+        background: #25D366; color: white; text-align: center;
+        border-radius: 12px; font-weight: 700; margin-top: 2rem;
+        text-decoration: none; font-size: 1rem;
+        box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        
+        &:active { transform: scale(0.98); }
+    }
+}

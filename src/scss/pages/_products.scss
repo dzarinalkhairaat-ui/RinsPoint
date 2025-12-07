@@ -1,0 +1,90 @@
+@use '../abstracts/variables' as *;
+
+// --- STYLE KHUSUS HALAMAN "SEMUA PRODUK" (USER) ---
+
+// Wrapper utama di public/products.html
+.products-page-content {
+    padding-bottom: 6rem; // Ruang untuk nav bawah
+    min-height: 100vh;
+    background: $bg-primary;
+
+    // Container untuk Filter dan Grid
+    .products-container-wrapper {
+        padding: 1rem 1.5rem;
+
+        // GRID UTAMA 2 KOLOM
+        // Pastikan ID #allProductsContainer di HTML memiliki class ini atau style ini diterapkan padanya
+        #allProductsContainer, .products-grid-2-col {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); // WAJIB: 2 Kolom Rata
+            gap: 1rem; // Jarak antar kartu
+            align-items: start;
+            width: 100%;
+            
+            // --- GAYA KARTU PRODUK USER ---
+            .product-card {
+                background: $bg-secondary;
+                border-radius: 16px;
+                overflow: hidden;
+                border: 1px solid rgba($text-secondary, 0.1);
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                height: 100%; // Agar tinggi kartu seragam dalam satu baris
+                
+                // Badge Diskon (Pojok Kanan Atas)
+                .badges {
+                    position: absolute; top: 10px; right: 10px;
+                    background: $danger; color: white; font-size: 0.65rem;
+                    font-weight: 700; padding: 4px 8px; border-radius: 6px;
+                    z-index: 2; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                }
+
+                // WRAPPER GAMBAR (KUNCI PERBAIKAN)
+                .img-wrapper {
+                    width: 100%;
+                    // MEMAKSA GAMBAR JADI PERSEGI. Ini mencegah gambar raksasa.
+                    aspect-ratio: 1 / 1; 
+                    background: #000;
+                    position: relative;
+                    
+                    img {
+                        width: 100%; height: 100%; 
+                        object-fit: cover; // Gambar mengisi penuh area persegi
+                        display: block;
+                    }
+                }
+
+                // Detail Info
+                .details {
+                    padding: 1rem;
+                    display: flex; flex-direction: column; flex: 1;
+
+                    h4 {
+                        color: $text-primary; font-size: 0.9rem; margin-bottom: 0.5rem;
+                        line-height: 1.3;
+                        // Batasi 2 baris
+                        display: -webkit-box; -webkit-line-clamp: 2;
+                        -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;
+                        height: 2.6em; 
+                    }
+
+                    .price-container {
+                        margin-bottom: 1rem;
+                        .original-price { font-size: 0.8rem; color: $text-secondary; text-decoration: line-through; }
+                        .current-price { color: $cta-primary; font-weight: 700; font-size: 1.1rem; }
+                    }
+
+                    .btn-buy {
+                        margin-top: auto; width: 100%; background: $cta-primary;
+                        color: #064E3B; text-align: center; padding: 10px 0;
+                        border-radius: 10px; font-weight: 700; font-size: 0.85rem;
+                    }
+                }
+            }
+
+            // State Kosong/Loading
+            p, .empty-state { grid-column: 1 / -1; text-align: center; padding: 2rem; color: $text-secondary; }
+        }
+    }
+}

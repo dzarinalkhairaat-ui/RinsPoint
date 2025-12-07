@@ -1,0 +1,67 @@
+@use '../abstracts/variables' as *;
+
+.ppob-menu-section {
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem; // Padding agar sejajar dengan Banner
+
+    // Judul Bagian (Opsional)
+    h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: $text-primary;
+        margin-bottom: 1rem;
+    }
+
+    // Grid Ikon PPOB (4 Kolom Rapi)
+    .ppob-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); // 4 Kolom
+        gap: 1.5rem 0.5rem; // Jarak Vertikal 1.5rem, Horizontal 0.5rem
+        
+        .ppob-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+
+            // Kotak Ikon (Lingkaran/Squircle)
+            .icon-circle {
+                width: 50px;
+                height: 50px;
+                // Gradient Hijau Khas RinsPoint
+                background: linear-gradient(135deg, rgba(74, 222, 128, 0.15) 0%, rgba(74, 222, 128, 0.3) 100%);
+                border: 1px solid rgba(74, 222, 128, 0.3);
+                border-radius: 18px; // Sudut tumpul modern
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 0.5rem;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                
+                i {
+                    font-size: 1.4rem;
+                    color: $cta-primary; // Ikon Hijau Neon
+                }
+            }
+
+            // Teks Label
+            span {
+                font-size: 0.7rem;
+                color: $text-secondary;
+                text-align: center;
+                font-weight: 500;
+                line-height: 1.2;
+            }
+
+            // Efek Tekan
+            &:active {
+                transform: scale(0.95);
+                .icon-circle {
+                    background: $cta-primary;
+                    i { color: #064E3B; } // Ikon jadi gelap saat ditekan
+                }
+            }
+        }
+    }
+}

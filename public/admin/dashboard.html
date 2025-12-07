@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard - RinsPoint Admin</title>
+    
+    <link rel="stylesheet" href="../css/style.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0F172A">
+    <link rel="apple-touch-icon" href="/assets/images/icon.png">
+    
+    <script src="/js/pwa-register.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="../js/auth.js"></script>
+    <script>checkAuth();</script>
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0F172A">
+    <link rel="apple-touch-icon" href="/assets/images/icon.png">
+    
+    <script src="/js/pwa-register.js"></script>
+</head>
+<body>
+
+    <div class="mobile-container">
+        <header class="dashboard-header">
+            <h2>Rins Admin</h2>
+            <div style="cursor: pointer;" onclick="openPinModal()">
+                <i class="fa-solid fa-wallet" style="font-size: 1.2rem; color: #4ADE80;"></i>
+                <span style="font-size: 0.8rem; color: #4ADE80; margin-left:5px;">Saldo</span>
+            </div>
+        </header>
+
+        <main class="dashboard-content" style="padding-bottom: 6rem;">
+            
+            <div class="welcome-text">
+                Selamat Datang, <br>
+                <span>Kelola tokomu dari sini.</span>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>0</h3>
+                    <p>Klik Produk</p>
+                </div>
+                <div class="stat-card">
+                    <h3>0</h3>
+                    <p>Transaksi PPOB</p>
+                </div>
+            </div>
+
+            <div class="welcome-text" style="margin-top: 1rem;">Menu Manajemen</div>
+
+            <div class="menu-grid">
+                <a href="products.html" class="menu-item">
+                    <i class="fa-solid fa-box-open"></i>
+                    <span>Kelola Produk Affiliate</span>
+                </a>
+                <a href="categories.html" class="menu-item">
+                    <i class="fa-solid fa-tags"></i>
+                    <span>Kelola Kategori</span>
+                </a>
+                <a href="transactions.html" class="menu-item">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                    <span>Riwayat PPOB</span>
+                </a>
+                <a href="settings.html" class="menu-item">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Pengaturan Website</span>
+                </a>
+            </div>
+        </main>
+
+        <nav class="bottom-nav">
+            <a href="/">
+                <i class="fa-solid fa-store"></i>
+                <span>Toko</span>
+            </a>
+
+            <a href="#" class="active">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="#" onclick="openReAuthModal()">
+                <i class="fa-solid fa-key"></i>
+                <span>API Setting</span>
+            </a>
+
+            <a href="#" onclick="logout()">
+                <i class="fa-solid fa-power-off"></i>
+                <span>LogOut</span>
+            </a>
+        </nav>
+
+    </div>
+
+    <script>
+        // Tampilkan email admin
+        const adminEmail = localStorage.getItem('adminName');
+        if(adminEmail) {
+            document.getElementById('adminNameDisplay').innerText = adminEmail.split('@')[0];
+        }
+    </script>
+
+    <div class="pin-modal-overlay" id="pinModal">
+        <div class="pin-box">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h3>Keamanan</h3>
+            <p>Masukkan PIN untuk melihat saldo.</p>
+            
+            <input type="password" id="pinInput" maxlength="6" placeholder="******" inputmode="numeric">
+            
+            <button class="btn-submit" onclick="submitPin()">BUKA DOMPET</button>
+            <div style="margin-top: 15px; color: #EF4444; font-size: 0.8rem; cursor: pointer;" onclick="closePinModal()">Batal</div>
+        </div>
+    </div>
+
+    <script>
+        // Logika Modal PIN
+        const pinModal = document.getElementById('pinModal');
+        const pinInput = document.getElementById('pinInput');
+
+        function openPinModal() {
+            pinModal.classList.add('show');
+            pinInput.value = '';
+            pinInput.focus();
+        }
+
+        function closePinModal() {
+            pinModal.classList.remove('show');
+        }
+
+        async function submitPin() {
+            const pin = pinInput.value;
+            if (pin.length < 4) return alert('PIN terlalu pendek!');
+
+            try {
+                // Cek PIN ke Backend
+                const res = await fetch('/api/auth/verify-pin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    },
+                    body: JSON.stringify({ pin })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    // Jika Benar -> Redirect ke Halaman Saldo
+                    window.location.href = 'saldo.html';
+                } else {
+                    alert('PIN Salah! Coba lagi.');
+                    pinInput.value = '';
+                }
+            } catch (error) {
+                alert('Error server.');
+            }
+        }
+    </script>
+
+    <div class="pin-modal-overlay" id="reAuthModal">
+        <div class="pin-box">
+            <i class="fa-solid fa-lock" style="color: #F59E0B;"></i>
+            <h3>Keamanan Tinggi</h3>
+            <p>Masukkan Email & Password Admin untuk akses Konfigurasi API.</p>
+            
+            <input type="email" id="reAuthEmail" placeholder="Email Admin" style="font-size:1rem; letter-spacing:0; text-align:left;">
+            <input type="password" id="reAuthPass" placeholder="Password" style="font-size:1rem; letter-spacing:0; text-align:left;">
+            
+            <button class="btn-submit" onclick="submitReAuth()">VERIFIKASI</button>
+            <div style="margin-top: 15px; color: #94a3b8; font-size: 0.8rem; cursor: pointer;" onclick="closeReAuthModal()">Batal</div>
+        </div>
+    </div>
+
+    <script>
+        // Logika Modal Re-Auth
+        const reAuthModal = document.getElementById('reAuthModal');
+
+        function openReAuthModal() {
+            reAuthModal.classList.add('show');
+            document.getElementById('reAuthEmail').value = '';
+            document.getElementById('reAuthPass').value = '';
+        }
+
+        function closeReAuthModal() {
+            reAuthModal.classList.remove('show');
+        }
+
+        async function submitReAuth() {
+            const email = document.getElementById('reAuthEmail').value;
+            const password = document.getElementById('reAuthPass').value;
+
+            if (!email || !password) return alert('Mohon isi semua data!');
+
+            try {
+                // Gunakan endpoint Login yang sudah ada untuk verifikasi
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    // JIKA BENAR -> Redirect ke Halaman API
+                    // Kita simpan token "super_access" sebentar di session
+                    sessionStorage.setItem('apiAccessGranted', 'true');
+                    window.location.href = 'api-settings.html';
+                } else {
+                    alert('Email atau Password Salah!');
+                }
+            } catch (error) {
+                alert('Terjadi kesalahan server.');
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Produk - RinsPoint</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="../js/auth.js"></script>
+    <script>checkAuth();</script>
+    <style>
+        /* STYLE TAMBAHAN KHUSUS HALAMAN INI */
+        .btn-edit { width: 35px; height: 35px; border-radius: 10px; background: rgba(245, 158, 11, 0.1); color: #F59E0B; border: none; cursor: pointer; display:flex; align-items:center; justify-content:center; margin-right:5px;}
+        .btn-edit:hover { background: #F59E0B; color: white; }
+
+        /* Grid untuk 5 Kotak Upload Gambar */
+        .image-upload-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 5 kolom */
+            gap: 10px;
+            margin-top: 5px;
+        }
+        /* Tampilan Kotak Preview */
+        .upload-box {
+            aspect-ratio: 1/1; /* Kotak persegi */
+            background: #1E293B; border: 2px dashed #334155; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; overflow: hidden; position: relative;
+            transition: all 0.3s ease;
+        }
+        .upload-box:hover { border-color: #4ADE80; }
+        /* Gambar di dalam kotak */
+        .upload-box img {
+            width: 100%; height: 100%; object-fit: cover;
+            display: none; /* Sembunyi default */
+            position: absolute; top:0; left:0;
+        }
+        /* Teks placeholder */
+        .upload-box .placeholder { color: #64748b; font-size: 0.8rem; text-align:center; padding:5px;}
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <main class="admin-products-page">
+            <div class="page-header">
+                <a href="dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+                <h2>Produk Affiliate</h2>
+            </div>
+
+            <div class="add-product-form" id="formContainer">
+                <h3 id="formTitle">+ Tambah Produk Baru</h3>
+                
+                <form id="productForm" enctype="multipart/form-data">
+                    <input type="hidden" id="editId"> <div class="form-group">
+                        <label>Nama Produk</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Kategori</label>
+                        <select id="categorySelect" name="category" required onchange="loadSubCategories()">
+                            <option value="">Pilih Kategori</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Subkategori</label>
+                        <select id="subCategorySelect" name="subcategory">
+                            <option value="">- Pilih Kategori Dulu -</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Harga (Rp)</label>
+                        <input type="number" id="price" name="price" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Harga Coret (Opsional)</label>
+                        <input type="number" id="originalPrice" name="originalPrice">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Foto Produk (Min 1 - Max 5)</label>
+                        <small style="color:#94a3b8; display:block; margin-bottom:5px;">Klik kotak untuk pilih/ganti foto.</small>
+                        
+                        <input type="file" id="hiddenFileInput" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+
+                        <div class="image-upload-grid">
+                            <div class="upload-box" onclick="triggerFileSelect(0)">
+                                <img id="preview0" alt="Preview 1">
+                                <span class="placeholder" id="placeholder0"><i class="fa-solid fa-camera"></i><br>1</span>
+                            </div>
+                            <div class="upload-box" onclick="triggerFileSelect(1)">
+                                <img id="preview1" alt="Preview 2">
+                                <span class="placeholder" id="placeholder1"><i class="fa-solid fa-plus"></i><br>2</span>
+                            </div>
+                            <div class="upload-box" onclick="triggerFileSelect(2)">
+                                <img id="preview2" alt="Preview 3">
+                                <span class="placeholder" id="placeholder2"><i class="fa-solid fa-plus"></i><br>3</span>
+                            </div>
+                            <div class="upload-box" onclick="triggerFileSelect(3)">
+                                <img id="preview3" alt="Preview 4">
+                                <span class="placeholder" id="placeholder3"><i class="fa-solid fa-plus"></i><br>4</span>
+                            </div>
+                            <div class="upload-box" onclick="triggerFileSelect(4)">
+                                <img id="preview4" alt="Preview 5">
+                                <span class="placeholder" id="placeholder4"><i class="fa-solid fa-plus"></i><br>5</span>
+                            </div>
+                        </div>
+                        <small style="color:#F59E0B; margin-top:5px; display:block;">*Saat Edit: Upload gambar baru akan menggantikan SEMUA gambar lama.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Link Affiliate</label>
+                        <input type="url" id="affiliateLink" name="affiliateLink" required placeholder="https://shope.ee/...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Deskripsi</label>
+                        <textarea id="description" name="description" required rows="4"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="btnSave">SIMPAN PRODUK</button>
+                    <button type="button" class="btn-submit" id="btnCancel" style="background:#334155; color:#94a3b8; margin-top:10px; display:none;" onclick="resetForm()">BATAL EDIT</button>
+                </form>
+            </div>
+
+            <h3 style="color:#F8FAFC; margin-bottom:1rem; border-left:4px solid #4ADE80; padding-left:10px;">Daftar Produk Aktif</h3>
+            <div id="productList" class="admin-product-list">
+                <p style="text-align: center;">Memuat...</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = '/api';
+        const token = localStorage.getItem('adminToken');
+        let allCategories = [];
+        let isEditMode = false;
+
+        // --- LOGIKA BARU UNTUK GAMBAR ---
+        let selectedFiles = [null, null, null, null, null]; // Array untuk menyimpan file baru
+        let currentBoxIndex = 0; // Menandai kotak mana yang sedang diklik
+
+        // 1. Saat kotak diklik, buka file explorer
+        function triggerFileSelect(index) {
+            currentBoxIndex = index;
+            document.getElementById('hiddenFileInput').click();
+        }
+
+        // 2. Saat file dipilih dari explorer
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Simpan file ke array
+                selectedFiles[currentBoxIndex] = file;
+                
+                // Tampilkan preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById(`preview${currentBoxIndex}`);
+                    const placeholder = document.getElementById(`placeholder${currentBoxIndex}`);
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    placeholder.style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+            // Reset input agar bisa pilih file yang sama jika perlu
+            event.target.value = '';
+        }
+
+        // --- AKHIR LOGIKA GAMBAR ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCategoriesData();
+            loadProducts();
+        });
+
+        // Load Daftar Produk
+        async function loadProducts() {
+            const list = document.getElementById('productList');
+            try {
+                const res = await fetch(`${API_URL}/products`);
+                const products = await res.json();
+                list.innerHTML = '';
+                
+                products.forEach(prod => {
+                    const harga = new Intl.NumberFormat('id-ID').format(prod.price);
+                    // Gunakan gambar pertama atau placeholder jika tidak ada
+                    const imgUrl = (prod.images && prod.images.length > 0) ? prod.images[0] : 'https://via.placeholder.com/100';
+                    
+                    const item = document.createElement('div');
+                    item.className = 'admin-product-card';
+                    item.innerHTML = `
+                        <img src="${imgUrl}" alt="${prod.name}">
+                        <div class="info">
+                            <h4>${prod.name}</h4>
+                            <div class="price">Rp ${harga}</div>
+                            <div style="font-size:0.7rem; color:#94a3b8;">${prod.category?.name || '-'}</div>
+                        </div>
+                        <div style="display:flex;">
+                            <button class="btn-edit" onclick='editProduct(${JSON.stringify(prod)})'><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-delete" onclick="deleteProduct('${prod._id}')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    `;
+                    list.appendChild(item);
+                });
+            } catch (e) {}
+        }
+
+        // Fungsi Masuk Mode Edit
+        function editProduct(prod) {
+            isEditMode = true;
+            resetForm(true); // Reset tapi biarkan mode edit aktif
+
+            document.getElementById('formTitle').innerText = 'Edit Produk';
+            document.getElementById('btnSave').innerText = 'UPDATE PRODUK';
+            document.getElementById('btnCancel').style.display = 'block';
+            document.getElementById('editId').value = prod._id;
+
+            // Isi Form Teks
+            document.getElementById('name').value = prod.name;
+            document.getElementById('price').value = prod.price;
+            document.getElementById('originalPrice').value = prod.originalPrice || '';
+            document.getElementById('affiliateLink').value = prod.affiliateLink;
+            document.getElementById('description').value = prod.description;
+
+            // Set Kategori & Subkategori
+            document.getElementById('categorySelect').value = prod.category?._id || prod.category;
+            loadSubCategories(prod.subcategory);
+
+            // --- ISI PREVIEW GAMBAR DARI DATABASE ---
+            if (prod.images && prod.images.length > 0) {
+                prod.images.forEach((url, index) => {
+                    if (index < 5) { // Maksimal 5 kotak
+                        const img = document.getElementById(`preview${index}`);
+                        const placeholder = document.getElementById(`placeholder${index}`);
+                        img.src = url;
+                        img.style.display = 'block';
+                        placeholder.style.display = 'none';
+                    }
+                });
+            }
+            // Scroll ke atas
+            window.scrollTo(0,0);
+        }
+
+        // Fungsi Reset Form (Kembali ke Mode Tambah)
+        function resetForm(keepEditMode = false) {
+            if (!keepEditMode) {
+                isEditMode = false;
+                document.getElementById('formTitle').innerText = '+ Tambah Produk Baru';
+                document.getElementById('btnSave').innerText = 'SIMPAN PRODUK';
+                document.getElementById('btnCancel').style.display = 'none';
+                document.getElementById('editId').value = '';
+            }
+            document.getElementById('productForm').reset();
+            
+            // Reset Preview Gambar & Array File
+            selectedFiles = [null, null, null, null, null];
+            for (let i = 0; i < 5; i++) {
+                document.getElementById(`preview${i}`).src = '';
+                document.getElementById(`preview${i}`).style.display = 'none';
+                document.getElementById(`placeholder${i}`).style.display = 'block';
+            }
+        }
+
+        // Submit Form (Create / Update)
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSave');
+            btn.innerText = 'Mengupload...'; btn.disabled = true;
+
+            // Ambil data form dasar (teks)
+            const formData = new FormData(e.target);
+
+            // --- MASUKKAN FILE GAMBAR DARI ARRAY SECARA MANUAL ---
+            let hasNewFiles = false;
+            selectedFiles.forEach(file => {
+                if (file) {
+                    formData.append('images', file); // Nama field harus 'images' sesuai backend
+                    hasNewFiles = true;
+                }
+            });
+
+            // Validasi: Wajib ada minimal 1 gambar saat Tambah Baru
+            if (!isEditMode && !hasNewFiles) {
+                alert('Wajib memasukkan minimal 1 gambar produk (Foto Utama).');
+                btn.innerText = 'SIMPAN PRODUK'; btn.disabled = false;
+                return;
+            }
+
+            const id = document.getElementById('editId').value;
+            const url = isEditMode ? `${API_URL}/products/${id}` : `${API_URL}/products`;
+            const method = isEditMode ? 'PUT' : 'POST';
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData // Kirim FormData (otomatis handle file & teks)
+                });
+
+                if (res.ok) {
+                    alert(isEditMode ? 'Produk berhasil diupdate!' : 'Produk berhasil ditambah!');
+                    resetForm(); // Kembali ke mode tambah & bersih-bersih
+                    loadProducts(); // Reload daftar
+                } else {
+                    const data = await res.json();
+                    alert('Gagal: ' + data.message);
+                }
+            } catch (error) { alert('Error server.'); } 
+            finally { 
+                btn.innerText = isEditMode ? 'UPDATE PRODUK' : 'SIMPAN PRODUK'; 
+                btn.disabled = false; 
+            }
+        });
+
+        // --- Fungsi Helper Kategori & Hapus (Tetap Sama) ---
+        async function loadCategoriesData() {
+            try {
+                const res = await fetch(`${API_URL}/categories`);
+                allCategories = await res.json();
+                const select = document.getElementById('categorySelect');
+                select.innerHTML = '<option value="">Pilih Kategori</option>';
+                allCategories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat._id;
+                    option.textContent = cat.name;
+                    select.appendChild(option);
+                });
+            } catch (e) {}
+        }
+
+        function loadSubCategories(selectedSubId = null) {
+            const catId = document.getElementById('categorySelect').value;
+            const subSelect = document.getElementById('subCategorySelect');
+            subSelect.innerHTML = '<option value="">- Tidak ada subkategori -</option>';
+            subSelect.disabled = true;
+            if(!catId) return;
+            const selectedCat = allCategories.find(c => c._id === catId);
+            if (selectedCat?.subcategories?.length > 0) {
+                subSelect.disabled = false;
+                subSelect.innerHTML = '<option value="">Pilih Subkategori</option>';
+                selectedCat.subcategories.forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub._id; option.textContent = sub.name;
+                    if(selectedSubId && (sub._id === selectedSubId || sub.name === selectedSubId)) option.selected = true;
+                    subSelect.appendChild(option);
+                });
+            }
+        }
+
+        async function deleteProduct(id) {
+            if(!confirm('Yakin hapus produk ini?')) return;
+            await fetch(`${API_URL}/products/${id}`, { method: 'DELETE', headers: {'Authorization': `Bearer ${token}`} });
+            loadProducts();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login Admin - RinsPoint</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0F172A">
+    <link rel="apple-touch-icon" href="/assets/images/icon.png">
+    
+    <script src="/js/pwa-register.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="mobile-container">
+        <div class="login-page">
+            <div class="logo-area">
+                <h1>RinsPoint</h1>
+                <p>Admin Dashboard Access</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email Admin</label>
+                    <input type="email" id="email" placeholder="admin@rinspoint.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-login" id="btnSubmit">MASUK SEKARANG</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Efek Loading
+            const originalText = btnSubmit.innerText;
+            btnSubmit.innerText = 'MEMPROSES...';
+            btnSubmit.disabled = true;
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // Tembak API Login Backend
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+    // Simpan Token
+    localStorage.setItem('adminToken', data.token);
+    localStorage.setItem('adminName', data.email);
+    
+    // Redirect langsung ke Dashboard
+    window.location.href = '/admin/dashboard.html';
+} 
+                else {
+                    alert('Gagal: ' + data.message);
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert('Terjadi kesalahan koneksi server.');
+            } finally {
+                btnSubmit.innerText = originalText;
+                btnSubmit.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

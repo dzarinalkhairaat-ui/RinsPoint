@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Keranjang - RinsPoint</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0F172A">
+    <link rel="apple-touch-icon" href="/assets/images/icon.png">
+    
+    <script src="/js/pwa-register.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="mobile-container">
+        <header class="main-header">
+            <a href="/" style="color: #fff; margin-right: 1rem;"><i class="fa-solid fa-arrow-left"></i></a>
+            <div class="logo-text">Keranjang Belanja</div>
+        </header>
+
+        <main class="home-page" style="padding-top: 1rem;">
+            <div class="cart-page" id="cartContainer">
+                </div>
+        </main>
+
+        <div class="cart-bottom-bar" id="cartBottomBar" style="display: none;">
+            <div class="total-info">
+                <span>Total Estimasi:</span>
+                <strong id="cartTotal">Rp 0</strong>
+            </div>
+            <button class="btn-checkout" onclick="checkoutWA()">
+                Checkout WA <i class="fa-brands fa-whatsapp"></i>
+            </button>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+            <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
+            <a href="/cart.html" class="active"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span></a>
+            <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+        </nav>
+    </div>
+
+    <script>
+        // Ambil data keranjang dari LocalStorage
+        let cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCart();
+        });
+
+        function renderCart() {
+            const container = document.getElementById('cartContainer');
+            const bottomBar = document.getElementById('cartBottomBar');
+            const totalEl = document.getElementById('cartTotal');
+
+            container.innerHTML = '';
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fa-solid fa-cart-arrow-down"></i>
+                        <h3>Keranjang Kosong</h3>
+                        <p>Yuk cari produk favoritmu!</p>
+                        <a href="/" style="color:#4ADE80; font-weight:600; margin-top:1rem; display:inline-block;">Belanja Sekarang</a>
+                    </div>
+                `;
+                bottomBar.style.display = 'none';
+                return;
+            }
+
+            bottomBar.style.display = 'flex';
+            let totalPrice = 0;
+
+            cart.forEach((item, index) => {
+                totalPrice += item.price;
+                
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `
+                    <div class="item-img">
+                        <img src="${item.image}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/80'">
+                    </div>
+                    <div class="item-info">
+                        <h4>${item.name}</h4>
+                        <div class="price">Rp ${new Intl.NumberFormat('id-ID').format(item.price)}</div>
+                    </div>
+                    <div class="btn-remove" onclick="removeItem(${index})">
+                        <i class="fa-solid fa-trash"></i>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            totalEl.innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalPrice);
+        }
+
+        function removeItem(index) {
+            if(confirm('Hapus produk ini?')) {
+                cart.splice(index, 1);
+                localStorage.setItem('rinsCart', JSON.stringify(cart));
+                renderCart();
+            }
+        }
+
+        function checkoutWA() {
+            if(cart.length === 0) return;
+
+            // Nomor Admin
+            const adminWA = "6281234567890"; 
+            
+            // Susun Pesan
+            let message = "Halo Admin RinsPoint, saya mau pesan:%0A%0A";
+            let total = 0;
+
+            cart.forEach((item, i) => {
+                message += `${i+1}. ${item.name} - Rp ${new Intl.NumberFormat('id-ID').format(item.price)}%0A`;
+                total += item.price;
+            });
+
+            message += `%0A*Total: Rp ${new Intl.NumberFormat('id-ID').format(total)}*`;
+            message += "%0A%0AMohon info ketersediaan stok & ongkir. Terima kasih.";
+
+            // Buka WA
+            window.open(`https://wa.me/${adminWA}?text=${message}`, '_blank');
+        }
+    </script>
+
+    <script src="js/loading.js"></script>
+
+    <script src="js/index.js"></script>
+</body>
+</html>

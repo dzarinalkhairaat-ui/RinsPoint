@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Setting - Admin</title>
+    <link rel="stylesheet" href="../css/style.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0F172A">
+    <link rel="apple-touch-icon" href="/assets/images/icon.png">
+    
+    <script src="/js/pwa-register.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="../js/auth.js"></script>
+    <script>
+        checkAuth();
+        // Cek Double Auth
+        if (!sessionStorage.getItem('apiAccessGranted')) {
+            alert('Akses Ditolak! Harap login ulang.');
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</head>
+<body>
+
+    <div class="mobile-container">
+        <header class="main-header">
+            <a href="dashboard.html" class="btn-back" style="color:white; margin-right:1rem;"><i class="fa-solid fa-arrow-left"></i></a>
+            <div class="logo-text">Konfigurasi API</div>
+        </header>
+
+        <main class="settings-page" style="padding-top:1rem;">
+            
+            <div class="setting-card" style="border-color: #4ADE80;">
+                <div style="text-align:center; margin-bottom:1rem;">
+                    <img src="https://digiflazz.com/images/logo-digiflazz.png" alt="Digiflazz" style="height:40px; background:white; padding:5px; border-radius:5px;">
+                </div>
+                
+                <h3 style="text-align:center;">Koneksi Digiflazz</h3>
+                <p style="font-size:0.8rem; color:#94a3b8; text-align:center; margin-bottom:1.5rem;">
+                    Masukkan kredensial dari Member Area Digiflazz.
+                </p>
+
+                <div class="form-group">
+                    <label>Username Digiflazz</label>
+                    <input type="text" id="dfUser" placeholder="Username...">
+                </div>
+                
+                <div class="form-group">
+                    <label>API Key (Production/Dev)</label>
+                    <div style="position:relative;">
+                        <input type="password" id="dfKey" placeholder="dev-xxxx-xxxx...">
+                        <i class="fa-solid fa-eye" style="position:absolute; right:10px; top:12px; color:#94a3b8; cursor:pointer;" onclick="toggleKey()"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Mode Koneksi</label>
+                    <select id="dfMode">
+                        <option value="development">Development (Testing)</option>
+                        <option value="production">Production (Live)</option>
+                    </select>
+                </div>
+
+                <button class="btn-submit" onclick="saveApiSettings()" style="width:100%; background:#4ADE80; color:#064E3B; padding:12px; border-radius:10px; border:none; font-weight:700; margin-top:1rem; cursor:pointer;">
+                    SIMPAN KONEKSI
+                </button>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        function toggleKey() {
+            const input = document.getElementById('dfKey');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        async function saveApiSettings() {
+            // Untuk saat ini, karena backend belum siap database-nya,
+            // Kita hanya tampilkan simulasi sukses.
+            // Nanti kita sambungkan ke endpoint /api/settings/digiflazz
+            
+            alert('Konfigurasi API Berhasil Disimpan! (Simulasi)');
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

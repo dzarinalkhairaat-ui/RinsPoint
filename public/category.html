@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kategori - RinsPoint</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0F172A">
+    <link rel="apple-touch-icon" href="/assets/images/icon.png">
+    
+    <script src="/js/pwa-register.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="mobile-container">
+        <header class="main-header">
+            <a href="/" style="color: #fff; margin-right: 1rem;"><i class="fa-solid fa-arrow-left"></i></a>
+            <div class="logo-text" id="categoryTitle">Kategori</div>
+            
+            <div class="header-actions">
+                <div class="btn-filter" id="filterBtn"><i class="fa-solid fa-arrow-down-short-wide"></i></div>
+                <div class="filter-dropdown" id="filterMenu">
+                    <div class="filter-option active" onclick="applySort('newest', this)">Terbaru</div>
+                    <div class="filter-option" onclick="applySort('lowest', this)">Termurah</div>
+                    <div class="filter-option" onclick="applySort('highest', this)">Termahal</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="category-page-content">
+            <div class="subcategory-scroll" id="subCategoryContainer">
+                <div class="pill-btn active">Semua</div>
+            </div>
+
+            <div class="products-grid" id="categoryContainer">
+                <p style="color: #64748b; padding: 1rem;">Memuat kategori...</p>
+            </div>
+        </main>
+
+        <footer class="main-footer">
+            <div class="footer-logo">RinsPoint</div>
+            <div class="social-links">
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+            </div>
+            <div class="footer-menu">
+                <a href="about.html">Tentang Kami</a>
+                <a href="how-to.html">Cara Belanja</a>
+            </div>
+            <div class="copyright">&copy; 2025 RinsPoint. All rights reserved.</div>
+        </footer>
+
+        <nav class="bottom-nav">
+            <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+            <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
+            <a href="cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span></a>
+            <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+        </nav>
+    </div>
+
+    <script src="js/whatsapp.js"></script>
+    <script>
+        const API_URL = '/api';
+        let currentCatId = null;
+        let currentSubId = null; // Menyimpan subkategori yang aktif
+        let currentSort = 'newest';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            currentCatId = urlParams.get('id');
+            const catName = urlParams.get('name');
+
+            if(!currentCatId) { window.location.href = '/'; return; }
+
+            if(catName) {
+                const cleanName = decodeURIComponent(catName);
+                document.getElementById('categoryTitle').innerText = cleanName;
+                document.title = `${cleanName} - RinsPoint`;
+            }
+
+            // 1. AMBIL DETAIL KATEGORI (UNTUK DAPAT SUBKATEGORI)
+            await fetchCategoryDetails();
+
+            setupFilterUI();
+            loadProducts();
+        });
+
+        // FUNGSI BARU: Ambil data subkategori asli dari backend
+        async function fetchCategoryDetails() {
+            try {
+                // Kita ambil semua kategori dulu (karena endpoint detail per id belum dibuat di public)
+                // Idealnya buat endpoint khusus, tapi ambil semua juga ringan karena data sedikit.
+                const res = await fetch(`${API_URL}/categories`);
+                const categories = await res.json();
+                
+                // Cari kategori yang sedang dibuka
+                const activeCat = categories.find(c => c._id === currentCatId);
+                
+                if(activeCat) {
+                    renderSubCategories(activeCat.subcategories);
+                }
+            } catch (e) { console.error('Gagal load subkategori'); }
+        }
+
+        function renderSubCategories(subs) {
+            const container = document.getElementById('subCategoryContainer');
+            
+            // Tombol Semua
+            let html = `<div class="pill-btn active" onclick="filterSub(null, this)">Semua</div>`;
+            
+            if (subs && subs.length > 0) {
+                subs.forEach(sub => {
+                    // Gunakan ID Subkategori untuk filter
+                    html += `<div class="pill-btn" onclick="filterSub('${sub._id}', this)">${sub.name}</div>`;
+                });
+            } else {
+                // Jika tidak ada subkategori, sembunyikan bar ini atau biarkan kosong
+                container.style.display = 'none';
+            }
+
+            container.innerHTML = html;
+        }
+
+        function filterSub(subId, element) {
+            currentSubId = subId; // Set filter aktif
+            
+            document.querySelectorAll('.pill-btn').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            
+            const container = document.getElementById('categoryContainer');
+            container.innerHTML = '<p style="padding:1rem; color:#64748b;">Memfilter produk...</p>';
+            
+            loadProducts();
+        }
+
+        async function loadProducts() {
+            const container = document.getElementById('categoryContainer');
+            try {
+                // Susun URL dengan Subkategori jika ada
+                let url = `${API_URL}/products?category=${currentCatId}&sort=${currentSort}`;
+                if (currentSubId) {
+                    url += `&subcategory=${currentSubId}`;
+                }
+
+                const res = await fetch(url);
+                const products = await res.json();
+
+                container.innerHTML = '';
+
+                if (products.length === 0) {
+                    renderEmptyState(container);
+                    return;
+                }
+
+                products.forEach(prod => renderCard(prod, container));
+            } catch (error) {
+                container.innerHTML = '<p style="color:red;">Gagal memuat data.</p>';
+            }
+        }
+
+        // Helper Render Card (Sama seperti Home)
+        function renderCard(prod, container) {
+            let badgeHtml = '';
+            let priceHtml = `<div class="price">Rp ${new Intl.NumberFormat('id-ID').format(prod.price)}</div>`;
+
+            if (prod.originalPrice && prod.originalPrice > prod.price) {
+                const diskon = Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100);
+                const hargaCoret = new Intl.NumberFormat('id-ID').format(prod.originalPrice);
+                badgeHtml = `<div class="badges">Hemat ${diskon}%</div>`;
+                priceHtml = `<div class="original-price">Rp ${hargaCoret}</div><div class="price">Rp ${new Intl.NumberFormat('id-ID').format(prod.price)}</div>`;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.onclick = () => window.location.href = `product.html?slug=${prod.slug}`;
+            card.style.cursor = 'pointer';
+
+            card.innerHTML = `
+                ${badgeHtml}
+                <div class="img-wrapper"><img src="${prod.images[0]}" alt="${prod.name}" onerror="this.src='https://via.placeholder.com/150'"></div>
+                <div class="details">
+                    <h4>${prod.name}</h4>
+                    ${priceHtml}
+                    <div class="btn-buy" style="margin-top: auto; text-align:center;">LIHAT DETAIL</div>
+                </div>
+            `;
+            container.appendChild(card);
+        }
+
+        function renderEmptyState(container) {
+            container.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;">
+                    <i class="fa-solid fa-box-open" style="font-size: 4rem; color: #334155; margin-bottom: 1rem;"></i>
+                    <h3 style="color: #94a3b8; font-size: 1.1rem; font-weight: 600;">Belum ada produk</h3>
+                    <p style="color: #64748b; font-size: 0.9rem;">Coba filter atau kategori lain.</p>
+                </div>
+            `;
+        }
+
+        function setupFilterUI() {
+            const btn = document.getElementById('filterBtn');
+            const menu = document.getElementById('filterMenu');
+            btn.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.toggle('show'); btn.classList.toggle('active'); });
+            document.addEventListener('click', (e) => {
+                if (!btn.contains(e.target) && !menu.contains(e.target)) { menu.classList.remove('show'); btn.classList.remove('active'); }
+            });
+        }
+
+        function applySort(sortType, element) {
+            currentSort = sortType;
+            document.querySelectorAll('.filter-option').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('filterMenu').classList.remove('show');
+            document.getElementById('filterBtn').classList.remove('active');
+            loadProducts();
+        }
+    </script>
+
+        <script src="js/loading.js"></script>
+
+    <script src="js/index.js"></script>
+    <script src="js/whatsapp.js"></script>
+</body>
+</html>

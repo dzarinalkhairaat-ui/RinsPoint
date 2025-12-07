@@ -1,0 +1,102 @@
+@use 'abstracts/variables' as *;
+@use 'base/base';
+@use 'pages/dashboard';
+@use 'pages/products';
+@use 'components/navbar';
+@use 'pages/home';
+@use 'pages/detail';
+@use 'pages/search';
+@use 'components/footer';
+@use 'components/filter';
+@use 'pages/category';
+@use 'components/whatsapp';
+@use 'components/ppob';
+@use 'pages/cart';
+@use 'components/loading';
+@use 'pages/settings';
+@use 'pages/categories';       // Halaman User
+@use 'pages/admin-products';
+@use 'pages/info';
+@use 'pages/payment';
+
+// Styling Khusus Halaman Login
+.login-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem;
+    height: 100vh;
+    background: radial-gradient(circle at top right, $bg-secondary 0%, $bg-primary 60%);
+
+    .logo-area {
+        text-align: center;
+        margin-bottom: 3rem;
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, $cta-primary, $cta-hover);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+        p {
+            color: $text-secondary;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: $text-secondary;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            background: $bg-secondary;
+            border: 1px solid lighten($bg-primary, 10%);
+            border-radius: 12px;
+            color: $text-primary;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+
+            &:focus {
+                border-color: $cta-primary;
+                box-shadow: 0 0 15px rgba($cta-primary, 0.2);
+            }
+        }
+    }
+
+    .btn-login {
+        width: 100%;
+        padding: 16px;
+        margin-top: 1rem;
+        background: $cta-primary;
+        color: darken($status-success, 20%);
+        font-weight: 700;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+
+        &:active {
+            transform: scale(0.96);
+        }
+        
+        &:disabled {
+            background: grayscale($cta-primary);
+            cursor: not-allowed;
+        }
+    }
+}

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Kategori - Admin</title>
+    <link rel="stylesheet" href="../css/style.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0F172A">
+    <link rel="apple-touch-icon" href="/assets/images/icon.png">
+    
+    <script src="/js/pwa-register.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="../js/auth.js"></script>
+    <script>checkAuth();</script>
+</head>
+<body>
+
+    <div class="mobile-container">
+        <header class="main-header">
+            <a href="dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <div class="logo-text">Kelola Kategori</div>
+        </header>
+
+        <main class="categories-management-page" style="padding-top:1rem;">
+            
+            <div class="add-category-card">
+                <h3><i class="fa-solid fa-plus-circle"></i> Tambah Kategori</h3>
+                <div class="form-row">
+                    <input type="text" id="catName" placeholder="Nama Kategori (ex: Buku)">
+                </div>
+                <div class="form-row">
+                    <input type="text" id="catIcon" placeholder="Kode Icon (ex: fa-book)">
+                </div>
+                <button class="btn-add" onclick="addCategory()">SIMPAN BARU</button>
+            </div>
+
+            <div id="adminCatList" class="category-list-admin">
+                <p style="color:#94a3b8; text-align:center;">Memuat data...</p>
+            </div>
+
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-box">
+            <h3>Edit Kategori</h3>
+            <input type="hidden" id="editId">
+            <input type="text" id="editName" placeholder="Nama Kategori">
+            <input type="text" id="editIcon" placeholder="Kode Icon">
+            <button class="btn-update" onclick="submitEdit()">UPDATE</button>
+            <div class="btn-cancel" onclick="closeEditModal()">Batal</div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api';
+        const token = localStorage.getItem('adminToken');
+
+        document.addEventListener('DOMContentLoaded', loadCategories);
+
+        async function loadCategories() {
+            const container = document.getElementById('adminCatList');
+            try {
+                const res = await fetch(`${API_URL}/categories`);
+                const data = await res.json();
+
+                container.innerHTML = '';
+                
+                data.forEach(cat => {
+                    const icon = cat.icon || 'fa-box';
+                    const subs = cat.subcategories || [];
+                    
+                    // Render Tags Subkategori
+                    let subHtml = subs.map(sub => `
+                        <div class="sub-tag">
+                            ${sub.name}
+                            <i class="fa-solid fa-xmark" onclick="deleteSub('${cat._id}', '${sub._id}')"></i>
+                        </div>
+                    `).join('');
+
+                    const div = document.createElement('div');
+                    div.className = 'cat-card-admin';
+                    div.innerHTML = `
+                        <div class="cat-header">
+                            <i class="fa-solid ${icon} icon"></i>
+                            <div class="cat-info">
+                                <h4>${cat.name}</h4>
+                                <small>${subs.length} Subkategori</small>
+                            </div>
+                            <div class="actions">
+                                <button class="btn-edit" onclick="openEditModal('${cat._id}', '${cat.name}', '${icon}')">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button class="btn-delete" onclick="deleteCategory('${cat._id}')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="sub-section">
+                            <div class="add-sub-form">
+                                <input type="text" id="subInput-${cat._id}" placeholder="Tambah subkategori...">
+                                <button onclick="addSub('${cat._id}')">+</button>
+                            </div>
+                            <div class="sub-tags">
+                                ${subHtml.length ? subHtml : '<span style="font-size:0.75rem; color:#64748b;">Belum ada subkategori</span>'}
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (error) { container.innerHTML = 'Gagal memuat.'; }
+        }
+
+        // --- CRUD KATEGORI UTAMA ---
+        async function addCategory() {
+            const name = document.getElementById('catName').value;
+            const icon = document.getElementById('catIcon').value || 'fa-box';
+            if(!name) return alert('Isi nama!');
+
+            await apiRequest(`${API_URL}/categories`, 'POST', { name, icon });
+            document.getElementById('catName').value = '';
+            loadCategories();
+        }
+
+        async function deleteCategory(id) {
+            if(!confirm('Hapus kategori ini? Produk terkait mungkin akan error.')) return;
+            await apiRequest(`${API_URL}/categories/${id}`, 'DELETE');
+            loadCategories();
+        }
+
+        // --- CRUD SUBKATEGORI ---
+        async function addSub(catId) {
+            const input = document.getElementById(`subInput-${catId}`);
+            const name = input.value;
+            if(!name) return;
+
+            await apiRequest(`${API_URL}/categories/${catId}/sub`, 'POST', { name });
+            loadCategories();
+        }
+
+        async function deleteSub(catId, subId) {
+            if(!confirm('Hapus subkategori ini?')) return;
+            await apiRequest(`${API_URL}/categories/${catId}/sub/${subId}`, 'DELETE');
+            loadCategories();
+        }
+
+        // --- EDIT MODAL ---
+        const editModal = document.getElementById('editModal');
+        
+        function openEditModal(id, name, icon) {
+            document.getElementById('editId').value = id;
+            document.getElementById('editName').value = name;
+            document.getElementById('editIcon').value = icon;
+            editModal.classList.add('show');
+        }
+
+        function closeEditModal() { editModal.classList.remove('show'); }
+
+        async function submitEdit() {
+            const id = document.getElementById('editId').value;
+            const name = document.getElementById('editName').value;
+            const icon = document.getElementById('editIcon').value;
+
+            await apiRequest(`${API_URL}/categories/${id}`, 'PUT', { name, icon });
+            closeEditModal();
+            loadCategories();
+        }
+
+        // Helper Fetch
+        async function apiRequest(url, method, body) {
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: body ? JSON.stringify(body) : null
+                });
+                if(!res.ok) throw new Error('Gagal');
+            } catch(e) { alert('Terjadi kesalahan server.'); }
+        }
+    </script>
+</body>
+</html>

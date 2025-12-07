@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RinsPoint - Toko Serba Ada</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0F172A">
+    <link rel="apple-touch-icon" href="/assets/images/icon.png">
+    
+    <script src="/js/pwa-register.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0F172A">
+    <link rel="apple-touch-icon" href="/assets/images/icon.png">
+    
+    <script src="/js/pwa-register.js"></script>
+</head>
+<body>
+
+    <div class="mobile-container">
+        
+        <header class="main-header">
+            <div class="logo-text">RinsPoint</div>
+            <div class="search-bar">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" placeholder="Cari produk...">
+            </div>
+        </header>
+
+        <main class="home-page">
+            
+            <div class="hero-section">
+                <div class="slider-container">
+                    
+                    <div class="slider-track" id="sliderTrack">
+                        
+                        <div class="hero-banner slide">
+                            <div class="banner-text">
+                                <h2>Belanja Hemat,<br>Pasti Untung!</h2>
+                                <p>Diskon spesial hari ini</p>
+                            </div>
+                            <div class="banner-decoration"></div>
+                        </div>
+
+                        <div class="hero-banner slide" style="background: linear-gradient(135deg, #0D9488 0%, #115E59 100%) !important;">
+                            <div class="banner-text">
+                                <h2>Produk Baru<br>Telah Tiba!</h2>
+                                <p>Cek koleksi terbaru kami</p>
+                            </div>
+                            <i class="fa-solid fa-box-open" style="position: absolute; right: -20px; bottom: -20px; font-size: 8rem; color: rgba(255,255,255,0.1);"></i>
+                        </div>
+
+                        <div class="hero-banner slide" style="background: linear-gradient(135deg, #2563EB 0%, #1E3A8A 100%) !important;">
+                            <div class="banner-text">
+                                <h2>Gratis Ongkir<br>Se-Indonesia</h2>
+                                <p>Min. belanja Rp 50rb</p>
+                            </div>
+                            <i class="fa-solid fa-truck-fast" style="position: absolute; right: -20px; bottom: -20px; font-size: 8rem; color: rgba(255,255,255,0.1);"></i>
+                        </div>
+
+                    </div>
+
+                    <div class="slider-dots" id="sliderDots">
+                        <span class="dot active" onclick="goToSlide(0)"></span>
+                        <span class="dot" onclick="goToSlide(1)"></span>
+                        <span class="dot" onclick="goToSlide(2)"></span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="categories-section">
+                <div class="category-scroll-wrapper" id="categoryContainer">
+                    <p style="padding: 1rem; color: #94a3b8;">Loading...</p>
+                </div>
+            </div>
+
+            <div class="latest-products-section">
+                <div class="section-header">
+                    <h3>Terbaru</h3>
+                    <a href="products.html" class="see-all">Lihat Semua</a>
+                </div>
+
+                <div class="products-grid" id="productsContainer">
+                    <p style="color: #64748b; padding: 1rem;">Memuat produk...</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="main-footer">
+            <div class="footer-logo">RinsPoint</div>
+            <div class="social-links">
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+            </div>
+            <div class="footer-menu">
+                <a href="about.html">Tentang Kami</a>
+                <a href="how-to.html">Cara Belanja</a>
+            </div>
+            <div class="copyright">&copy; 2025 RinsPoint. All rights reserved.</div>
+        </footer>
+
+        <nav class="bottom-nav">
+            <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+            <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
+            <a href="cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span></a>
+            <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+        </nav>
+
+    </div>
+
+    <script src="js/loading.js"></script>
+
+    <script src="js/index.js"></script>
+    <script src="js/whatsapp.js"></script>
+</body>
+</html>

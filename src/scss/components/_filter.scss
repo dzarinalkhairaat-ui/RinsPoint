@@ -1,0 +1,78 @@
+@use '../abstracts/variables' as *;
+
+.header-actions {
+    margin-left: auto;
+    position: relative;
+
+    .btn-filter {
+        color: $text-primary;
+        font-size: 1rem; // Ikon sedikit diperkecil biar proporsional
+        width: 36px;     // Ukuran tombol diperkecil sedikit (dari 40px)
+        height: 36px;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 50%;
+        background: rgba($bg-secondary, 0.5);
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 1px solid rgba($text-secondary, 0.1); // Tambah border tipis
+
+        &:hover, &.active {
+            background: $cta-primary;
+            color: $bg-primary;
+            border-color: $cta-primary;
+        }
+    }
+
+    // Menu Dropdown
+    .filter-dropdown {
+        position: absolute;
+        top: 130%; right: 0; // Turun sedikit lagi biar gak nempel tombol
+        width: 140px; // Lebar diperkecil (dari 160px) biar ringkas
+        background: $bg-secondary;
+        border: 1px solid rgba($text-secondary, 0.2);
+        border-radius: 12px;
+        padding: 6px; // Padding container diperkecil
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        display: none;
+        z-index: 100;
+        
+        &.show {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .filter-option {
+            display: block;
+            // PADDING DIPERKECIL: Atas/Bawah 8px, Kiri/Kanan 12px
+            padding: 8px 12px; 
+            color: $text-secondary;
+            font-size: 0.85rem; // Font sedikit diperkecil
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            
+            // JARAK ANTAR PILIHAN: Biar gak berdempetan
+            margin-bottom: 4px; 
+
+            &:last-child {
+                margin-bottom: 0; // Hapus jarak di item terakhir
+            }
+
+            &:hover {
+                background: rgba($cta-primary, 0.1);
+                color: $cta-primary;
+            }
+
+            &.active {
+                background: $cta-primary;
+                color: $bg-primary; // Teks jadi gelap
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

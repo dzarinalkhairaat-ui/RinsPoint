@@ -1,0 +1,145 @@
+@use '../abstracts/variables' as *;
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: rgba($bg-secondary, 0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid lighten($bg-primary, 5%);
+
+    h2 {
+        font-size: 1.2rem;
+        color: $text-primary;
+    }
+
+    .btn-logout {
+        color: $danger;
+        font-size: 0.9rem;
+        cursor: pointer;
+        font-weight: 600;
+    }
+}
+
+.dashboard-content {
+    padding: 1.5rem;
+
+    .welcome-text {
+        margin-bottom: 1.5rem;
+        color: $text-secondary;
+        font-size: 0.9rem;
+
+        span {
+            color: $cta-primary;
+            font-weight: 700;
+        }
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; // 2 Kolom
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: $bg-secondary;
+        padding: 1.2rem;
+        border-radius: 16px;
+        border: 1px solid lighten($bg-primary, 8%);
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+
+        // Efek Glow Ringan
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: $cta-primary;
+            opacity: 0.5;
+        }
+
+        h3 {
+            font-size: 2rem;
+            color: $text-primary;
+            margin-bottom: 0.2rem;
+        }
+
+        p {
+            font-size: 0.8rem;
+            color: $text-secondary;
+        }
+
+        &:active {
+            transform: scale(0.98);
+        }
+    }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: linear-gradient(to right, $bg-secondary, transparent);
+            border-radius: 12px;
+            color: $text-primary;
+            border: 1px solid lighten($bg-primary, 5%);
+            
+            i { // Icon
+                font-size: 1.2rem;
+                margin-right: 1rem;
+                color: $cta-primary;
+                width: 30px;
+                text-align: center;
+            }
+            
+            &:hover {
+                border-color: $cta-primary;
+            }
+        }
+    }
+}
+
+// Modal PIN Saldo
+.pin-modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); z-index: 2000;
+    display: none; align-items: center; justify-content: center;
+    backdrop-filter: blur(5px);
+
+    &.show { display: flex; animation: fadeIn 0.3s; }
+
+    .pin-box {
+        background: #1E293B; width: 85%; max-width: 320px;
+        padding: 2rem; border-radius: 20px; text-align: center;
+        border: 1px solid rgba(74, 222, 128, 0.2);
+        
+        i { font-size: 3rem; color: #4ADE80; margin-bottom: 1rem; }
+        h3 { color: white; margin-bottom: 0.5rem; }
+        p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+        input {
+            width: 100%; padding: 12px; text-align: center;
+            font-size: 1.5rem; letter-spacing: 5px; font-weight: 700;
+            background: #0F172A; border: 1px solid #334155;
+            border-radius: 10px; color: white; outline: none;
+            margin-bottom: 1.5rem;
+            &:focus { border-color: #4ADE80; }
+        }
+
+        .btn-submit {
+            width: 100%; padding: 12px; background: #4ADE80;
+            color: #064E3B; border: none; border-radius: 10px;
+            font-weight: 700; cursor: pointer;
+        }
+    }
+}

@@ -1,0 +1,86 @@
+@use '../abstracts/variables' as *;
+
+.settings-page {
+    padding: 1.5rem;
+    padding-bottom: 6rem;
+
+    .page-header {
+        display: flex; align-items: center; margin-bottom: 2rem;
+        .btn-back { font-size: 1.2rem; color: $text-primary; margin-right: 1rem; }
+        h2 { font-size: 1.4rem; color: $text-primary; }
+    }
+
+    // Navigasi Tab
+    .settings-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid rgba($text-secondary, 0.2);
+        padding-bottom: 1rem;
+        overflow-x: auto;
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: $text-secondary;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            white-space: nowrap;
+            transition: 0.2s;
+
+            &.active, &:hover {
+                background: rgba($cta-primary, 0.1);
+                color: $cta-primary;
+            }
+        }
+    }
+
+    // Konten Tab
+    .tab-content {
+        display: none;
+        &.active { display: block; animation: fadeIn 0.3s; }
+    }
+
+    // Form Style
+    .setting-card {
+        background: $bg-secondary;
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid rgba($text-secondary, 0.1);
+        margin-bottom: 1.5rem;
+
+        h3 { color: $text-primary; font-size: 1.1rem; margin-bottom: 1rem; }
+
+        .form-group {
+            margin-bottom: 1rem;
+            label { display: block; color: $text-secondary; font-size: 0.85rem; margin-bottom: 0.5rem; }
+            input {
+                width: 100%; padding: 12px; background: $bg-primary;
+                border: 1px solid lighten($bg-primary, 10%);
+                border-radius: 10px; color: white; outline: none;
+                &:focus { border-color: $cta-primary; }
+            }
+        }
+
+        .btn-save {
+            background: $cta-primary; color: #064E3B; width: 100%; padding: 12px;
+            border: none; border-radius: 10px; font-weight: 700; cursor: pointer;
+            margin-top: 1rem;
+        }
+    }
+
+    // List Kontak
+    .contact-item {
+        display: flex; align-items: center; justify-content: space-between;
+        background: $bg-primary; padding: 10px; border-radius: 10px;
+        margin-bottom: 10px; border: 1px solid rgba($text-secondary, 0.1);
+        
+        div { font-size: 0.9rem; color: $text-primary; }
+        .btn-del { color: $danger; cursor: pointer; padding: 5px; }
+    }
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }

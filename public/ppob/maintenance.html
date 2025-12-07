@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dalam Perbaikan - RinsPoint</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .maintenance-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 70vh; /* Tengah Layar */
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .gear-icon {
+            font-size: 5rem;
+            color: #334155; /* Warna dasar gelap */
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        /* Ikon Gerigi Utama */
+        .gear-icon i {
+            /* Gradient Text untuk Ikon */
+            background: -webkit-linear-gradient(#4ADE80, #166534);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            
+            /* Animasi Putar */
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        h2 {
+            color: #F8FAFC;
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-back {
+            padding: 12px 30px;
+            background: transparent;
+            border: 1px solid #4ADE80;
+            color: #4ADE80;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn-back:hover {
+            background: #4ADE80;
+            color: #064E3B;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+        
+        <header class="main-header">
+            <a href="/ppob.html" style="color: #fff; margin-right: 1rem;"><i class="fa-solid fa-arrow-left"></i></a>
+            <div class="logo-text">Info Layanan</div>
+        </header>
+
+        <main class="home-page" style="padding-top: 0;">
+            
+            <div class="maintenance-container">
+                <div class="gear-icon">
+                    <i class="fa-solid fa-gear"></i>
+                </div>
+                
+                <h2>Fitur Sedang Dalam Update</h2>
+                <p>
+                    Mohon maaf, layanan ini sedang kami tingkatkan untuk pengalaman yang lebih baik. Silakan cek kembali nanti.
+                </p>
+
+                <a href="/ppob.html" class="btn-back">Kembali ke Menu</a>
+            </div>
+
+        </main>
+
+        <footer class="main-footer mini">
+            <div class="footer-logo">RinsPoint</div>
+            <div class="copyright">&copy; 2025 RinsPoint. All rights reserved.</div>
+        </footer>
+
+    </div>
+
+</body>
+</html>
