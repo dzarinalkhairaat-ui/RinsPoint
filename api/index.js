@@ -16,11 +16,13 @@ const ppobRoutes = require('./routes/ppobRoutes');
 // Inisialisasi aplikasi Express
 const app = express();
 
-// Middleware
-app.use(express.json());
+// --- UPDATE PENTING: PERBESAR BATAS UPLOAD ---
+// Menambahkan limit '50mb' agar bisa upload foto resolusi tinggi dari HP
+app.use(express.json({ limit: '150mb' }));
+app.use(express.urlencoded({ limit: '150mb', extended: true }));
+
 app.use(cors());
 
-// --- UPDATE PENTING UNTUK DEPLOY VERCEL ---
 // Menyajikan file statis (Frontend) menggunakan path absolut
 // Ini memastikan Vercel bisa menemukan folder 'public' Anda
 app.use(express.static(path.join(__dirname, '../public')));
