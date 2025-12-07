@@ -2163,7 +2163,7 @@ a {
   cursor: not-allowed;
 }
 
-/* --- PAKSA TAMPILAN KARTU RAPI (GLOBAL OVERRIDE) --- */
+/* --- GLOBAL: PAKSA TAMPILAN KARTU RAPI & KOTAK --- */
 .product-grid,
 .products-grid,
 #allProductsContainer,
@@ -2183,6 +2183,7 @@ a {
   overflow: hidden;
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
 }
 .product-card .img-wrapper {
   width: 100% !important;
@@ -2206,12 +2207,15 @@ a {
 .product-card .details h4 {
   font-size: 0.85rem;
   margin-bottom: 5px;
+  color: #F8FAFC;
+  font-weight: 600;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   min-height: 2.6em;
+  line-height: 1.3;
 }
 .product-card .details .price-container, .product-card .details .price {
   margin-bottom: 10px;
@@ -2227,20 +2231,20 @@ a {
   color: #064E3B;
   font-weight: 700;
   border: none;
+  font-size: 0.75rem;
 }
 
-/* --- FITUR BADGE KERANJANG & ANIMASI --- */
-/* 1. Posisi Badge Merah di Navigasi Bawah */
+/* --- GLOBAL: BADGE KERANJANG DI NAVIGASI --- */
 .bottom-nav a {
-  position: relative; /* Agar badge bisa nempel di ikon */
-  overflow: visible !important; /* Agar badge tidak terpotong */
+  position: relative !important;
+  overflow: visible !important;
 }
 
-.cart-badge {
+.cart-badge-fixed {
   position: absolute;
-  top: 5px;
-  right: 20px; /* Sesuaikan posisi agar pas di bahu ikon */
-  background-color: #EF4444; /* Warna Merah */
+  top: 2px;
+  right: 20px;
+  background-color: #EF4444;
   color: white;
   font-size: 0.65rem;
   font-weight: 700;
@@ -2250,32 +2254,17 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #0F172A; /* Border agar terpisah dari background gelap */
-  /* Animasi muncul */
+  border: 2px solid #0F172A;
+  z-index: 99;
   transform: scale(0);
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.cart-badge.show {
-  transform: scale(1); /* Muncul membal */
+.cart-badge-fixed.show {
+  transform: scale(1);
 }
 
-.cart-badge.bump {
-  animation: bumpEffect 0.3s ease-out; /* Efek kaget saat nambah */
-}
-
-@keyframes bumpEffect {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.5);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-/* 2. Animasi Tombol saat Diklik (Efek Tekan) */
+/* Animasi Tombol Klik */
 .btn-clicked {
   transform: scale(0.95);
   transition: transform 0.1s;

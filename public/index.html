@@ -15,32 +15,25 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#0F172A">
-    <link rel="apple-touch-icon" href="/assets/images/icon.png">
-    
-    <script src="/js/pwa-register.js"></script>
 </head>
 <body>
 
     <div class="mobile-container">
         
         <header class="main-header">
-            <div class="logo-text">RinsPoint</div>
-            <div class="search-bar">
-                <i class="fa-solid fa-search"></i>
-                <input type="text" placeholder="Cari produk...">
-            </div>
-        </header>
+    <div class="logo-text">RinsPoint</div>
+    <div class="search-bar">
+        <i class="fa-solid fa-search" id="homeSearchIcon" style="cursor: pointer;"></i>
+        
+        <input type="text" id="homeSearchInput" placeholder="Cari produk...">
+    </div>
+</header>
 
         <main class="home-page">
             
             <div class="hero-section">
                 <div class="slider-container">
-                    
                     <div class="slider-track" id="sliderTrack">
-                        
                         <div class="hero-banner slide">
                             <div class="banner-text">
                                 <h2>Belanja Hemat,<br>Pasti Untung!</h2>
@@ -48,7 +41,6 @@
                             </div>
                             <div class="banner-decoration"></div>
                         </div>
-
                         <div class="hero-banner slide" style="background: linear-gradient(135deg, #0D9488 0%, #115E59 100%) !important;">
                             <div class="banner-text">
                                 <h2>Produk Baru<br>Telah Tiba!</h2>
@@ -56,7 +48,6 @@
                             </div>
                             <i class="fa-solid fa-box-open" style="position: absolute; right: -20px; bottom: -20px; font-size: 8rem; color: rgba(255,255,255,0.1);"></i>
                         </div>
-
                         <div class="hero-banner slide" style="background: linear-gradient(135deg, #2563EB 0%, #1E3A8A 100%) !important;">
                             <div class="banner-text">
                                 <h2>Gratis Ongkir<br>Se-Indonesia</h2>
@@ -64,15 +55,12 @@
                             </div>
                             <i class="fa-solid fa-truck-fast" style="position: absolute; right: -20px; bottom: -20px; font-size: 8rem; color: rgba(255,255,255,0.1);"></i>
                         </div>
-
                     </div>
-
                     <div class="slider-dots" id="sliderDots">
                         <span class="dot active" onclick="goToSlide(0)"></span>
                         <span class="dot" onclick="goToSlide(1)"></span>
                         <span class="dot" onclick="goToSlide(2)"></span>
                     </div>
-
                 </div>
             </div>
 
@@ -87,7 +75,6 @@
                     <h3>Terbaru</h3>
                     <a href="products.html" class="see-all">Lihat Semua</a>
                 </div>
-
                 <div class="products-grid" id="productsContainer">
                     <p style="color: #64748b; padding: 1rem;">Memuat produk...</p>
                 </div>
@@ -111,15 +98,77 @@
         <nav class="bottom-nav">
             <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
             <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
-            <a href="cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span></a>
+            
+            <a href="cart.html">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span>Troli</span>
+                <span class="cart-badge-fixed" id="cartBadge">0</span>
+            </a>
+
             <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
         </nav>
 
     </div>
 
     <script src="js/loading.js"></script>
-
     <script src="js/index.js"></script>
     <script src="js/whatsapp.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
+            const count = cart.length;
+            const badge = document.getElementById('cartBadge');
+            
+            if (badge) {
+                badge.innerText = count;
+                if (count > 0) {
+                    badge.classList.add('show');
+                } else {
+                    badge.classList.remove('show');
+                }
+            }
+        });
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- LOGIKA PENCARIAN DI HOME ---
+        const homeInput = document.getElementById('homeSearchInput');
+        const homeIcon = document.getElementById('homeSearchIcon');
+
+        // Fungsi untuk pindah ke halaman search bawa kata kunci
+        const goToSearchPage = () => {
+            const keyword = homeInput.value.trim();
+            if (keyword) {
+                // Redirect sambil membawa "oleh-oleh" keyword di URL
+                window.location.href = `search.html?keyword=${encodeURIComponent(keyword)}`;
+            } else {
+                // Jika kosong, fokuskan saja
+                homeInput.focus();
+            }
+        };
+
+        // 1. Jika tekan ENTER
+        if (homeInput) {
+            homeInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') goToSearchPage();
+            });
+        }
+
+        // 2. Jika klik IKON KACA PEMBESAR
+        if (homeIcon) {
+            homeIcon.addEventListener('click', goToSearchPage);
+        }
+
+        // --- UPDATE BADGE TROLLY (Kode lama tetap biarkan) ---
+        const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
+        const badge = document.getElementById('cartBadge');
+        if (badge && cart.length > 0) {
+            badge.innerText = cart.length;
+            badge.classList.add('show');
+        }
+    });
+</script>
 </body>
 </html>

@@ -3,125 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hasil Pencarian - RinsPoint</title>
+    <title>Pencarian - RinsPoint</title>
     <link rel="stylesheet" href="css/style.css">
-
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#0F172A">
-    <link rel="apple-touch-icon" href="/assets/images/icon.png">
-    
-    <script src="/js/pwa-register.js"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #0F172A; color: white; }
+        .search-header {
+            padding: 1rem; background: #1E293B; display: flex; align-items: center; gap: 12px;
+            position: sticky; top: 0; z-index: 50; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .search-input-wrapper { flex: 1; position: relative; }
+        .search-input-wrapper input {
+            width: 100%; background: #0F172A; border: 1px solid #334155; padding: 12px 12px 12px 45px;
+            border-radius: 12px; color: white; outline: none; font-size: 0.9rem;
+        }
+        .search-input-wrapper input:focus { border-color: #4ADE80; }
+        .search-input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        #searchResults { padding: 1rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    </style>
 </head>
 <body>
 
     <div class="mobile-container">
-        <div class="search-page">
+        <header class="search-header">
+            <a href="/" style="color: white; font-size: 1.2rem; padding: 5px;">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <div class="search-input-wrapper">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Cari nama produk..." autocomplete="off">
+            </div>
+        </header>
+
+        <main>
+            <div id="searchResults">
+                <div style="grid-column: 1/-1; text-align: center; margin-top: 3rem; color: #64748b;">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <p>Ketik nama produk untuk mencari</p>
+                </div>
+            </div>
+        </main>
+
+        <nav class="bottom-nav">
+            <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+            <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
             
-            <div class="search-header-nav">
-                <a href="/" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-                <div class="search-input-wrapper">
-                    <input type="text" id="searchInputPage" placeholder="Cari lagi...">
-                </div>
-            </div>
+            <a href="cart.html">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span>Troli</span>
+                <span class="cart-badge-fixed" id="cartBadge">0</span>
+            </a>
 
-            <div class="search-info" id="searchInfo">
-                Mencari produk...
-            </div>
-
-            <div class="products-grid" id="searchResults">
-                </div>
-
-        </div>
+            <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+        </nav>
     </div>
-
-    <footer class="main-footer">
-            <div class="footer-logo">RinsPoint</div>
-            <div class="social-links">
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="#"><i class="fa-brands fa-tiktok"></i></a>
-            </div>
-            <div class="footer-menu">
-                <a href="about.html">Tentang Kami</a>
-                <a href="how-to.html">Cara Belanja</a>
-            </div>
-            <div class="copyright">&copy; 2025 RinsPoint. All rights reserved.</div>
-        </footer>
 
     <script>
         const API_URL = '/api';
+        const input = document.getElementById('searchInput');
+        const container = document.getElementById('searchResults');
+        let timeout = null;
 
+        // --- UPDATE PENTING: CEK APAKAH ADA TITIPAN KEYWORD DARI HOME ---
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Ambil keyword dari URL (?keyword=baju)
             const urlParams = new URLSearchParams(window.location.search);
-            const keyword = urlParams.get('keyword');
+            const keywordFromHome = urlParams.get('keyword');
 
-            if (keyword) {
-                // Tampilkan di input box juga
-                document.getElementById('searchInputPage').value = keyword;
-                performSearch(keyword);
+            if (keywordFromHome) {
+                // 1. Isi kolom input dengan keyword dari home
+                input.value = keywordFromHome;
+                // 2. Langsung jalankan pencarian
+                performSearch(keywordFromHome);
             } else {
-                document.getElementById('searchInfo').innerText = 'Masukkan kata kunci pencarian.';
+                // Jika tidak ada keyword, fokuskan kursor agar siap ketik
+                input.focus();
             }
+        });
 
-            // 2. Logic cari ulang di halaman ini
-            const inputPage = document.getElementById('searchInputPage');
-            inputPage.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && inputPage.value.trim()) {
-                    // Reload halaman dengan keyword baru
-                    window.location.href = `search.html?keyword=${encodeURIComponent(inputPage.value.trim())}`;
-                }
-            });
+        // Event Ketik Manual (Jika user ingin cari lagi di halaman ini)
+        input.addEventListener('input', (e) => {
+            const keyword = e.target.value.trim();
+            clearTimeout(timeout);
+            if (keyword.length === 0) {
+                container.innerHTML = `...kode kosong...`; // (Disingkat biar rapi)
+                return;
+            }
+            timeout = setTimeout(() => performSearch(keyword), 500);
+        });
+        
+        // Agar bisa tekan Enter juga di halaman ini
+        input.addEventListener('keypress', (e) => {
+             if (e.key === 'Enter') {
+                 e.preventDefault();
+                 clearTimeout(timeout);
+                 performSearch(input.value.trim());
+             }
         });
 
         async function performSearch(keyword) {
-            const container = document.getElementById('searchResults');
-            const info = document.getElementById('searchInfo');
+            if(!keyword) return;
             
-            container.innerHTML = ''; // Loading visual bisa ditaruh sini
-
+            container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #4ADE80; margin-top: 2rem;">Mencari...</p>';
+            
             try {
-                // Tembak API Search Backend
-                const res = await fetch(`${API_URL}/products/search?keyword=${keyword}`);
+                const res = await fetch(`${API_URL}/products/search?keyword=${encodeURIComponent(keyword)}`);
                 const products = await res.json();
+                
+                container.innerHTML = '';
 
-                if (products.length === 0) {
-                    info.innerHTML = `Tidak ditemukan produk untuk <strong>"${keyword}"</strong>`;
-                    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem;"><i class="fa-solid fa-box-open" style="font-size: 3rem; color: #334155;"></i><p style="margin-top: 1rem; color: #94a3b8;">Coba kata kunci lain</p></div>';
+                if (!Array.isArray(products) || products.length === 0) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; margin-top: 3rem; color: #64748b;">
+                            <i class="fa-solid fa-box-open" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>Produk "${keyword}" tidak ditemukan.</p>
+                        </div>`;
                     return;
                 }
 
-                info.innerHTML = `Menampilkan ${products.length} hasil untuk <strong>"${keyword}"</strong>`;
-
-                // Render Produk
                 products.forEach(prod => {
                     const harga = new Intl.NumberFormat('id-ID').format(prod.price);
+                    const img = (prod.images && prod.images.length > 0) ? prod.images[0] : 'https://via.placeholder.com/150';
+                    
                     const card = document.createElement('div');
-                    card.className = 'product-card';
-                    card.onclick = () => { window.location.href = `product.html?slug=${prod.slug}`; };
-                    card.style.cursor = 'pointer';
-
+                    card.className = 'product-card'; 
+                    card.onclick = () => window.location.href = `product.html?slug=${prod.slug}`;
+                    
                     card.innerHTML = `
-                        <div class="img-wrapper">
-                            <img src="${prod.images[0]}" alt="${prod.name}" onerror="this.src='https://via.placeholder.com/150'">
-                        </div>
+                        <div class="img-wrapper"><img src="${img}" alt="${prod.name}"></div>
                         <div class="details">
                             <h4>${prod.name}</h4>
-                            <div class="price">Rp ${harga}</div>
-                            <div class="btn-buy" style="margin-top: auto; text-align: center;">LIHAT DETAIL</div>
+                            <div class="price-container">
+                                <div class="current-price" style="color:#4ADE80; font-weight:700;">Rp ${harga}</div>
+                            </div>
+                            <button class="btn-buy">LIHAT DETAIL</button>
                         </div>
                     `;
                     container.appendChild(card);
                 });
 
             } catch (error) {
-                console.error(error);
-                info.innerText = 'Terjadi kesalahan saat mencari.';
+                container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #EF4444;">Gagal memuat data.</p>';
             }
         }
     </script>
+
+    <script>
+    // 1. Fungsi Update Badge
+    function updateCartBadge() {
+        const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
+        const badge = document.getElementById('cartBadge');
+        if (badge) {
+            badge.innerText = cart.length;
+            if (cart.length > 0) {
+                badge.classList.add('show');
+            } else {
+                badge.classList.remove('show');
+            }
+        }
+    }
+
+    // 2. Jalankan saat load
+    document.addEventListener('DOMContentLoaded', updateCartBadge);
+
+    // 3. PENTING: Panggil updateCartBadge() setiap kali Anda menghapus item!
+    // (Pastikan di logika hapus barang/btn-remove Anda memanggil fungsi ini)
+</script>
+
 </body>
 </html>

@@ -2,6 +2,45 @@ const API_URL = '/api';
 let currentSort = 'newest'; 
 let currentKeyword = ''; 
 
+// --- FUNGSI GLOBAL BADGE (WAJIB ADA & DI LUAR DOMContentLoaded) ---
+window.updateCartBadge = function() {
+    const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
+    const count = cart.length;
+    // Cari badge di header/nav (bisa id="cartBadge" atau class="cart-badge-fixed")
+    const badges = document.querySelectorAll('#cartBadge, .cart-badge-fixed');
+    
+    badges.forEach(badge => {
+        badge.innerText = count;
+        if (count > 0) {
+            badge.classList.add('show');
+            // Efek Membal
+            badge.classList.remove('bump');
+            void badge.offsetWidth; 
+            badge.classList.add('bump');
+        } else {
+            badge.classList.remove('show');
+        }
+    });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Panggil badge saat load
+    updateCartBadge();
+
+    // Cek apakah kita di halaman list produk?
+    if (document.getElementById('allProductsContainer')) {
+        loadProducts();
+        setupFilterUI();
+        setupInlineSearch();
+    }
+});
+
+// ... (Sisa fungsi setupInlineSearch, setupFilterUI, dll biarkan tetap sama) ...
+// (Agar tidak kepanjangan, saya tidak tulis ulang bagian bawahnya karena sudah benar)
+// Pastikan fungsi window.applySort dan async loadProducts tetap ada di bawah sini.
+// ...
+// ...
+
 document.addEventListener('DOMContentLoaded', () => {
     loadProducts();
     setupFilterUI();
