@@ -23,16 +23,22 @@ const getPriceList = async (req, res) => {
 
 // @desc    Cek Saldo (Admin Only) - VERSI FIX SIGNATURE & ERROR HANDLING
 // @route   GET /api/ppob/balance
+// ... (bagian import di atas tetap sama)
+
+// @desc    Cek Saldo (Admin Only) - VERSI AMAN (.ENV)
+// @route   GET /api/ppob/balance
 const checkBalance = async (req, res) => {
     try {
+        // KEMBALIKAN KE PROCESS.ENV (JANGAN HARDCODE LAGI)
         const username = process.env.DIGIFLAZZ_USERNAME;
         const key = process.env.DIGIFLAZZ_KEY; 
 
         if (!username || !key) {
+            console.error("❌ Gagal baca .env: Username/Key kosong");
             return res.json({ balance: 0, error: true, message: 'Kredensial Server Kosong' });
         }
 
-        // Signature Wajib: md5(username + key + "depo")
+        // Signature Wajib
         const sign = crypto.createHash('md5')
             .update(username + key + "depo")
             .digest('hex');
@@ -49,14 +55,15 @@ const checkBalance = async (req, res) => {
 
         const result = await response.json();
 
-        // Cek RC (Response Code). '00' artinya Sukses.
-        if (result.data && result.data.rc === '00') {
+        // Cek Hasil
+        if (result.data) {
+            // Sukses (Walaupun deposit 0, itu data valid)
             res.json({ 
                 balance: result.data.deposit,
                 message: 'Sukses' 
             });
         } else {
-            console.error("Digiflazz Error:", result);
+            // Error dari Digiflazz (Misal IP berubah lagi)
             res.json({ 
                 balance: 0, 
                 error: true, 
@@ -69,6 +76,8 @@ const checkBalance = async (req, res) => {
         res.status(500).json({ balance: 0, message: 'Server Error' });
     }
 };
+
+// ... (sisanya tetap sama)
 
 // @desc    Buat Transaksi Baru
 // @route   POST /api/ppob/transaction
