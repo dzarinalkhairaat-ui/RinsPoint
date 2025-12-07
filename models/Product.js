@@ -1,66 +1,55 @@
 const mongoose = require('mongoose');
 
-const productSchema = new mongoose.Schema({
+const productSchema = mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User',
+    },
     name: {
         type: String,
-        required: [true, 'Nama produk wajib diisi'],
-        trim: true
+        required: true,
     },
+    // --- TAMBAHKAN INI ---
     slug: {
         type: String,
-        unique: true
+        required: true,
+        unique: true, // Pastikan tidak ada slug kembar
     },
-    description: {
-        type: String,
-        required: [true, 'Deskripsi wajib diisi']
-    },
-    price: {
-        type: Number,
-        required: [true, 'Harga wajib diisi']
-    },
-    originalPrice: {
-        type: Number, // Untuk menampilkan harga coret (diskon)
-    },
-    images: [{
-        type: String // Array URL gambar
-    }],
+    // ---------------------
+    images: [String], // Array URL Gambar
     category: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: true
     },
-    // TAMBAHAN BARU:
     subcategory: {
-        type: String, // Kita simpan ID atau Nama Subkategori di sini
-        default: null
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'SubCategory'
+    },
+    description: {
+        type: String,
+        required: true,
+    },
+    price: {
+        type: Number,
+        required: true,
+        default: 0,
+    },
+    originalPrice: {
+        type: Number,
+        default: 0,
     },
     affiliateLink: {
         type: String,
-        required: [true, 'Link affiliate wajib diisi'],
-        // Validasi dasar link (akan diperkuat di controller)
-        match: [/^(http|https):\/\//, 'Link harus dimulai dengan http atau https']
+        required: true
     },
     platform: {
         type: String,
-        enum: ['shopee', 'tokopedia', 'tiktok', 'lazada', 'other'],
-        default: 'other'
-    },
-    isPopular: {
-        type: Boolean,
-        default: false
-    },
-    clicks: {
-        type: Number,
-        default: 0
+        required: false
     }
-}, { timestamps: true });
-
-// Auto slug
-productSchema.pre('save', function(next) {
-    if(this.isModified('name')){
-        this.slug = this.name.toLowerCase().split(' ').join('-') + '-' + Date.now();
-    }
-    next();
+}, {
+    timestamps: true,
 });
 
 module.exports = mongoose.model('Product', productSchema);
