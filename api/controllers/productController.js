@@ -1,5 +1,17 @@
 const Product = require('../../models/Product');
 
+// --- TAMBAHKAN FUNGSI INI DI ATAS ---
+const createSlug = (text) => {
+    return text.toString().toLowerCase()
+        .replace(/\(/g, '') // Hapus tanda kurung buka
+        .replace(/\)/g, '') // Hapus tanda kurung tutup
+        .replace(/[^\w\s-]/g, '') // Hapus simbol aneh lain
+        .replace(/\s+/g, '-') // Ganti spasi dengan strip
+        .replace(/-+/g, '-') // Ganti strip beruntun jadi satu
+        .replace(/^-+/, '') // Hapus strip di awal
+        .replace(/-+$/, ''); // Hapus strip di akhir
+};
+
 // @desc    Ambil semua produk (Filter: Category, Subcategory, Sort)
 // @route   GET /api/products
 // @access  Public
@@ -78,18 +90,19 @@ const createProduct = async (req, res) => {
         }
 
         // 4. SIMPAN PRODUK KE DATABASE
-        const product = new Product({
-            name,
-            description,
-            price,
-            originalPrice,
-            category,
-            subcategory: subcategory || null,
-            affiliateLink,
-            images: imageUrls, // Simpan Array URL Gambar
-            platform,
-            user: req.user._id
-        });
+    const product = new Product({
+    name,
+    slug: createSlug(name), // <--- TAMBAHKAN BARIS INI (Paksa slug bersih)
+    description,
+    price,
+    originalPrice,
+    category,
+    subcategory: subcategory || null,
+    affiliateLink,
+    images: imageUrls,
+    platform,
+    user: req.user._id
+});
 
         const createdProduct = await product.save();
         res.status(201).json(createdProduct);
@@ -171,6 +184,7 @@ const updateProduct = async (req, res) => {
 
         // 2. Update Field
         product.name = name || product.name;
+        if (name) product.slug = createSlug(name);
         product.description = description || product.description;
         product.price = price || product.price;
         product.originalPrice = originalPrice || product.originalPrice;
