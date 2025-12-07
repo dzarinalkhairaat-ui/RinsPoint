@@ -5,54 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Detail Produk - RinsPoint</title>
     <link rel="stylesheet" href="css/style.css">
-
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
     <link rel="apple-touch-icon" href="/assets/images/icon.png">
-    
     <script src="/js/pwa-register.js"></script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        .product-slider-container {
-            position: relative; width: 100%; height: 380px; background: #000; overflow: hidden;
-        }
-        .product-slider-track {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory; 
-            scrollbar-width: none; 
-            -webkit-overflow-scrolling: touch; 
-        }
-        .product-slide {
-            flex-shrink: 0;
-            width: 100%;
-            height: 100%;
-            scroll-snap-align: center; 
-            scroll-snap-stop: always; 
-            position: relative;
-        }
+        .product-slider-container { position: relative; width: 100%; height: 380px; background: #000; overflow: hidden; }
+        .product-slider-track { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+        .product-slide { flex-shrink: 0; width: 100%; height: 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative; }
         .product-slide img { width: 100%; height: 100%; object-fit: cover; }
-        .slide-counter {
-            position: absolute; bottom: 30px; right: 20px; background: rgba(0,0,0,0.6);
-            color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; backdrop-filter: blur(4px);
-        }
-        .action-bar {
-            display: flex; gap: 10px; padding: 1rem;
-            background: #1E293B; position: fixed; bottom: 0; width: 100%; max-width: 480px;
-            border-top: 1px solid rgba(255,255,255,0.1); z-index: 100;
-        }
+        .slide-counter { position: absolute; bottom: 30px; right: 20px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; backdrop-filter: blur(4px); }
+        .action-bar { display: flex; gap: 10px; padding: 1rem; background: #1E293B; position: fixed; bottom: 0; width: 100%; max-width: 480px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 100; }
         .btn-cart { flex: 1; background: transparent; border: 1px solid #4ADE80; color: #4ADE80; padding: 12px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; font-size: 0.9rem; }
         .btn-buy-now { flex: 1; background: #4ADE80; color: #064E3B; border: none; padding: 12px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; cursor: pointer; font-size: 0.9rem; }
     </style>
 </head>
 <body>
-
     <div class="mobile-container">
-        
         <div class="product-slider-container">
             <a href="javascript:history.back()" style="position: absolute; top: 20px; left: 20px; z-index: 10; width: 40px; height: 40px; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
                 <i class="fa-solid fa-arrow-left"></i>
@@ -66,19 +37,14 @@
         <div style="padding: 1.5rem; padding-bottom: 6rem; background: #0F172A; border-radius: 20px 20px 0 0; margin-top: -20px; position: relative; z-index: 5;">
             <div id="detailCategory" style="color: #4ADE80; font-size: 0.8rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">...</div>
             <h1 id="detailName" style="color: white; font-size: 1.3rem; margin-bottom: 0.5rem; line-height: 1.4;">Memuat...</h1>
-            
             <div style="margin-bottom: 1.5rem; display: flex; align-items: baseline; gap: 10px;">
                 <span id="detailOriginalPrice" style="color: #94a3b8; text-decoration: line-through; font-size: 0.9rem;"></span>
                 <span id="detailPrice" style="color: #4ADE80; font-size: 1.5rem; font-weight: 700;">Rp 0</span>
             </div>
-
             <div style="width: 100%; height: 1px; background: #334155; margin-bottom: 1.5rem;"></div>
-
             <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Deskripsi Produk</h3>
             <p id="detailDesc" style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.6; white-space: pre-line;">...</p>
-
             <div style="width: 100%; height: 1px; background: #334155; margin: 2rem 0 1rem 0;"></div>
-
             <div class="related-products-section" style="margin-bottom: 2rem;">
                 <h3 style="color: white; font-size: 1rem; margin-bottom: 1rem;">Produk Terkait</h3>
                 <div id="relatedProductsContainer" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; align-items: stretch;">
@@ -91,69 +57,77 @@
             <button class="btn-cart" id="btnAddToCart"><i class="fa-solid fa-cart-plus"></i> + Troli</button>
             <a id="btnBuyLink" href="#" target="_blank" class="btn-buy-now">Beli Sekarang <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
         </div>
-
     </div>
 
     <script>
         const API_URL = '/api';
         const urlParams = new URLSearchParams(window.location.search);
-        const productSlug = urlParams.get('slug');
+        // Ambil slug dari URL
+        const rawSlug = urlParams.get('slug');
         let currentProduct = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
-            if (!productSlug) { alert('Produk tidak ditemukan!'); window.location.href = '/'; return; }
+            if (!rawSlug) { alert('Produk tidak ditemukan!'); window.location.href = '/'; return; }
 
             try {
-                // PERBAIKAN: Mengembalikan '/item/' sesuai backend Anda!
-                const res = await fetch(`${API_URL}/products/item/${productSlug}`);
+                // FITUR SMART FETCH: Mencoba beberapa kemungkinan URL agar anti-404
+                // EncodeURIComponent penting jika slug mengandung spasi atau simbol
+                const safeSlug = encodeURIComponent(rawSlug);
+                let res;
+
+                // Percobaan 1: Pakai /item/ (Sesuai kode backend Anda)
+                res = await fetch(`${API_URL}/products/item/${safeSlug}`);
                 
+                // Percobaan 2: Jika gagal, coba langsung (Backup)
                 if (!res.ok) {
-                    throw new Error(`Gagal memuat: ${res.statusText} (${res.status})`);
+                    console.warn("Percobaan 1 gagal, mencoba URL alternatif...");
+                    res = await fetch(`${API_URL}/products/${safeSlug}`);
+                }
+
+                if (!res.ok) {
+                    throw new Error(`Produk tidak ditemukan di database (404). Slug: ${rawSlug}`);
                 }
 
                 currentProduct = await res.json();
-
-                // Render Slider dengan Aman (Anti Crash)
-                renderSlider(currentProduct.images);
-
-                document.title = `${currentProduct.name} - RinsPoint`;
-                document.getElementById('detailCategory').innerText = currentProduct.category?.name || 'Umum';
-                document.getElementById('detailName').innerText = currentProduct.name;
-                
-                const fmtPrice = new Intl.NumberFormat('id-ID').format(currentProduct.price);
-                document.getElementById('detailPrice').innerText = `Rp ${fmtPrice}`;
-                
-                if (currentProduct.originalPrice > currentProduct.price) {
-                    const fmtOrg = new Intl.NumberFormat('id-ID').format(currentProduct.originalPrice);
-                    document.getElementById('detailOriginalPrice').innerText = `Rp ${fmtOrg}`;
-                }
-
-                document.getElementById('detailDesc').innerText = currentProduct.description || 'Tidak ada deskripsi.';
-                const btnBuy = document.getElementById('btnBuyLink');
-                btnBuy.href = currentProduct.affiliateLink || '#'; 
-
-                // Load Related Products
-                loadRelatedProducts(currentProduct.category?._id, currentProduct._id);
+                renderDetail(currentProduct);
 
             } catch (error) { 
                 console.error("DETAIL PAGE ERROR:", error);
-                alert('Maaf, detail produk gagal dimuat.\nError: ' + error.message); 
+                alert(`Maaf, gagal memuat produk.\n\nDetail Error: ${error.message}`); 
+                // Opsional: window.location.href = '/'; 
             }
         });
+
+        function renderDetail(prod) {
+            renderSlider(prod.images);
+            document.title = `${prod.name} - RinsPoint`;
+            document.getElementById('detailCategory').innerText = prod.category?.name || 'Umum';
+            document.getElementById('detailName').innerText = prod.name;
+            
+            const fmtPrice = new Intl.NumberFormat('id-ID').format(prod.price);
+            document.getElementById('detailPrice').innerText = `Rp ${fmtPrice}`;
+            
+            if (prod.originalPrice > prod.price) {
+                const fmtOrg = new Intl.NumberFormat('id-ID').format(prod.originalPrice);
+                document.getElementById('detailOriginalPrice').innerText = `Rp ${fmtOrg}`;
+            }
+
+            document.getElementById('detailDesc').innerText = prod.description || 'Tidak ada deskripsi.';
+            document.getElementById('btnBuyLink').href = prod.affiliateLink || '#'; 
+            loadRelatedProducts(prod.category?._id, prod._id);
+        }
 
         function renderSlider(images) {
             const track = document.getElementById('sliderTrack');
             const counter = document.getElementById('slideCounter');
-            
-            // LOGIKA AMAN: Pastikan images adalah Array
             let imageList = [];
+            
+            // Logika Aman: Cek apakah images valid
             if (Array.isArray(images) && images.length > 0) {
                 imageList = images;
             } else if (typeof images === 'string' && images.length > 5) {
-                // Jika database salah simpan sebagai string, jadikan array
                 imageList = [images];
             } else {
-                // Fallback jika tidak ada gambar
                 imageList = ['https://via.placeholder.com/400x400?text=No+Image'];
             }
             
@@ -181,56 +155,39 @@
             try {
                 const res = await fetch(`${API_URL}/products?category=${catId}`);
                 const products = await res.json();
-                
-                if (!Array.isArray(products)) throw new Error("Format data salah");
+                if (!Array.isArray(products)) return;
 
                 const related = products.filter(p => p._id !== currentId).slice(0, 4); 
                 container.innerHTML = '';
                 
-                if (related.length === 0) { container.innerHTML = '<p style="color:#64748b; font-size:0.8rem;">Tidak ada produk lain di kategori ini.</p>'; return; }
+                if (related.length === 0) { container.innerHTML = '<p style="color:#64748b; font-size:0.8rem;">Tidak ada produk lain.</p>'; return; }
                 
                 related.forEach(prod => {
                     const harga = new Intl.NumberFormat('id-ID').format(prod.price);
-                    let badgeHtml = '';
-                    let priceHtml = `<div style="color:#4ADE80; font-weight:700; font-size:0.9rem;">Rp ${harga}</div>`;
-
-                    if (prod.originalPrice > prod.price) {
-                        const diskon = Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100);
-                        const hargaCoret = new Intl.NumberFormat('id-ID').format(prod.originalPrice);
-                        badgeHtml = `<div style="position:absolute; top:8px; right:8px; background:#EF4444; color:white; font-size:0.6rem; padding:2px 6px; border-radius:4px; font-weight:700; z-index:2;">Hemat ${diskon}%</div>`;
-                        priceHtml = `<div style="font-size:0.7rem; color:#94a3b8; text-decoration:line-through;">Rp ${hargaCoret}</div><div style="color:#4ADE80; font-weight:700; font-size:0.9rem;">Rp ${harga}</div>`;
-                    }
-
-                    const relImg = (prod.images && prod.images.length > 0) ? prod.images[0] : 'https://via.placeholder.com/150';
-
+                    const img = (prod.images && prod.images.length > 0) ? prod.images[0] : 'https://via.placeholder.com/150';
                     const card = document.createElement('div');
                     card.style.cssText = `background: #1E293B; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; cursor: pointer; display: flex; flex-direction: column; height: 100%;`;
                     card.onclick = () => window.location.href = `product.html?slug=${prod.slug}`;
-
                     card.innerHTML = `
-                        ${badgeHtml}
                         <div style="width:100%; aspect-ratio:1/1; background:#000;">
-                            <img src="${relImg}" style="width:100%; height:100%; object-fit:cover; display:block;" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="${img}" style="width:100%; height:100%; object-fit:cover;">
                         </div>
-                        <div style="padding:10px; display:flex; flex-direction:column; flex:1;">
-                            <h4 style="color:#F8FAFC; font-size:0.85rem; margin-bottom:auto; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.6em; line-height:1.3;">${prod.name}</h4>
-                            <div style="margin-top:5px; margin-bottom:8px;">${priceHtml}</div>
-                            <div style="width:100%; text-align:center; background:#4ADE80; color:#064E3B; padding:8px 0; border-radius:8px; font-size:0.75rem; font-weight:700;">LIHAT DETAIL</div>
+                        <div style="padding:10px;">
+                            <h4 style="color:#F8FAFC; font-size:0.85rem; margin-bottom:5px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">${prod.name}</h4>
+                            <div style="color:#4ADE80; font-weight:700;">Rp ${harga}</div>
                         </div>
                     `;
                     container.appendChild(card);
                 });
-            } catch (e) { container.innerHTML = '<p style="color:#64748b; font-size:0.8rem;">Gagal memuat rekomendasi.</p>'; }
+            } catch (e) { container.innerHTML = ''; }
         }
 
         document.getElementById('btnAddToCart').addEventListener('click', () => {
             if (!currentProduct) return;
             let cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
             const imgCart = (currentProduct.images && currentProduct.images.length > 0) ? currentProduct.images[0] : 'https://via.placeholder.com/150';
-            
             cart.push({ id: currentProduct._id, name: currentProduct.name, price: currentProduct.price, image: imgCart });
             localStorage.setItem('rinsCart', JSON.stringify(cart));
-            
             const btn = document.getElementById('btnAddToCart');
             btn.innerHTML = '<i class="fa-solid fa-check"></i> Masuk Troli';
             btn.style.background = '#4ADE80'; btn.style.color = '#064E3B';
