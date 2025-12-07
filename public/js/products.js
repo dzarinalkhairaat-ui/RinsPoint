@@ -141,3 +141,51 @@ async function loadProducts() {
         container.innerHTML = '<p style="color:red; grid-column: 1/-1; text-align: center;">Gagal memuat data.</p>';
     }
 }
+
+/* --- LOGIKA BADGE KERANJANG & ANIMASI --- */
+
+// 1. Fungsi Update Angka Badge (Dipanggil saat load & saat tambah barang)
+function updateCartBadge() {
+    const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
+    const count = cart.length;
+    const badge = document.getElementById('cartBadge');
+    
+    if (badge) {
+        badge.innerText = count;
+        
+        if (count > 0) {
+            badge.classList.add('show'); // Munculkan jika ada isi
+        } else {
+            badge.classList.remove('show'); // Sembunyikan jika kosong
+        }
+
+        // Efek "Bump" (Membal) saat angka berubah
+        badge.classList.remove('bump');
+        void badge.offsetWidth; // Trigger reflow (reset animasi)
+        badge.classList.add('bump');
+    }
+}
+
+// 2. Jalankan saat halaman dibuka pertama kali
+document.addEventListener('DOMContentLoaded', () => {
+    updateCartBadge();
+    
+    // Tambahan: Override fungsi tombol "Troli" yang lama agar ada animasinya
+    // Cek apakah ada tombol Add To Cart di halaman ini (Halaman Detail)
+    const btnAdd = document.getElementById('btnAddToCart');
+    if (btnAdd) {
+        // Hapus listener lama (trick: clone node) agar tidak dobel, atau kita timpa logicnya
+        // Tapi cara paling aman adalah menambahkan efek visual saja di sini
+        btnAdd.addEventListener('click', function() {
+            // Efek Tombol Mengecil (Klik)
+            this.classList.add('btn-clicked');
+            setTimeout(() => this.classList.remove('btn-clicked'), 150);
+
+            // Update Badge (Ada delay sedikit biar sinkron dengan simpan data)
+            setTimeout(updateCartBadge, 100); 
+        });
+    }
+});
+
+// PENTING: Karena Anda punya logika "Add to Cart" yang tersebar, 
+// pastikan setiap kali Anda menyimpan ke localStorage, Anda memanggil updateCartBadge()

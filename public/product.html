@@ -18,7 +18,7 @@
         .product-slide img { width: 100%; height: 100%; object-fit: cover; }
         .slide-counter { position: absolute; bottom: 30px; right: 20px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; backdrop-filter: blur(4px); }
         .action-bar { display: flex; gap: 10px; padding: 1rem; background: #1E293B; position: fixed; bottom: 0; width: 100%; max-width: 480px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 100; }
-        .btn-cart { flex: 1; background: transparent; border: 1px solid #4ADE80; color: #4ADE80; padding: 12px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; font-size: 0.9rem; }
+        .btn-cart { flex: 1; background: transparent; border: 1px solid #4ADE80; color: #4ADE80; padding: 12px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; font-size: 0.9rem; transition: transform 0.1s ease; }
         .btn-buy-now { flex: 1; background: #4ADE80; color: #064E3B; border: none; padding: 12px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; cursor: pointer; font-size: 0.9rem; }
     </style>
 </head>
@@ -62,7 +62,6 @@
     <script>
         const API_URL = '/api';
         const urlParams = new URLSearchParams(window.location.search);
-        // Ambil slug dari URL
         const rawSlug = urlParams.get('slug');
         let currentProduct = null;
 
@@ -70,15 +69,11 @@
             if (!rawSlug) { alert('Produk tidak ditemukan!'); window.location.href = '/'; return; }
 
             try {
-                // FITUR SMART FETCH: Mencoba beberapa kemungkinan URL agar anti-404
-                // EncodeURIComponent penting jika slug mengandung spasi atau simbol
                 const safeSlug = encodeURIComponent(rawSlug);
                 let res;
 
-                // Percobaan 1: Pakai /item/ (Sesuai kode backend Anda)
                 res = await fetch(`${API_URL}/products/item/${safeSlug}`);
                 
-                // Percobaan 2: Jika gagal, coba langsung (Backup)
                 if (!res.ok) {
                     console.warn("Percobaan 1 gagal, mencoba URL alternatif...");
                     res = await fetch(`${API_URL}/products/${safeSlug}`);
@@ -94,7 +89,6 @@
             } catch (error) { 
                 console.error("DETAIL PAGE ERROR:", error);
                 alert(`Maaf, gagal memuat produk.\n\nDetail Error: ${error.message}`); 
-                // Opsional: window.location.href = '/'; 
             }
         });
 
@@ -122,7 +116,6 @@
             const counter = document.getElementById('slideCounter');
             let imageList = [];
             
-            // Logika Aman: Cek apakah images valid
             if (Array.isArray(images) && images.length > 0) {
                 imageList = images;
             } else if (typeof images === 'string' && images.length > 5) {
@@ -182,19 +175,41 @@
             } catch (e) { container.innerHTML = ''; }
         }
 
+        // --- UPDATE PENTING: ANIMASI & BADGE UPDATE ---
         document.getElementById('btnAddToCart').addEventListener('click', () => {
             if (!currentProduct) return;
+            
+            // 1. Animasi Tekan (Scale)
+            const btn = document.getElementById('btnAddToCart');
+            btn.style.transform = "scale(0.95)";
+            setTimeout(() => btn.style.transform = "scale(1)", 150);
+
+            // 2. Simpan ke LocalStorage
             let cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
             const imgCart = (currentProduct.images && currentProduct.images.length > 0) ? currentProduct.images[0] : 'https://via.placeholder.com/150';
             cart.push({ id: currentProduct._id, name: currentProduct.name, price: currentProduct.price, image: imgCart });
             localStorage.setItem('rinsCart', JSON.stringify(cart));
-            const btn = document.getElementById('btnAddToCart');
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> Masuk Troli';
-            btn.style.background = '#4ADE80'; btn.style.color = '#064E3B';
-            setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-cart-plus"></i> + Troli'; btn.style.background = 'transparent'; btn.style.color = '#4ADE80'; }, 1500);
+            
+            // 3. Update Visual Tombol (Feedback)
+            const originalContent = '<i class="fa-solid fa-cart-plus"></i> + Troli';
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Masuk!';
+            btn.style.background = '#4ADE80'; 
+            btn.style.color = '#064E3B';
+            
+            // 4. Update Badge (Jika fungsi tersedia dari products.js)
+            if (typeof updateCartBadge === "function") {
+                updateCartBadge();
+            }
+
+            // 5. Kembalikan Tombol seperti semula
+            setTimeout(() => { 
+                btn.innerHTML = originalContent; 
+                btn.style.background = 'transparent'; 
+                btn.style.color = '#4ADE80'; 
+            }, 1500);
         });
     </script>
+    <script src="js/products.js"></script>
     <script src="js/loading.js"></script>
-    <script src="js/index.js"></script>
 </body>
 </html>
