@@ -1,65 +1,48 @@
-const axios = require('axios');
-// MUNDUR 2 LANGKAH untuk mencari folder models di root
-const Otp = require('../../models/Otp'); 
+const Otp = require('../../models/Otp');
 
-// 1. KIRIM OTP
 exports.sendOtp = async (req, res) => {
     try {
         const { phone, name } = req.body;
 
         if (!phone) return res.status(400).json({ msg: 'Nomor WA wajib diisi' });
 
-        // Generate Kode 6 Angka
-        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        // --- MODE DEVELOPER ---
+        // Tidak kirim WA/SMS beneran, tapi simpan kode '123456' di database.
+        const staticCode = '123456'; 
 
-        // Format Pesan
-        const message = `Halo Kak *${name || 'Pelanggan'}*,\n\nKode OTP RinsPoint: *${otpCode}*\n\nRahasiakan kode ini.\nBerlaku 5 menit.`;
-
-        // Simpan ke Database
         await Otp.findOneAndUpdate(
             { phone: phone },
-            { code: otpCode, createdAt: Date.now() },
+            { code: staticCode, createdAt: Date.now() },
             { upsert: true, new: true }
         );
 
-        // Kirim via Fonnte
-        await axios.post('https://api.fonnte.com/send', {
-            target: phone,
-            message: message,
-        }, {
-            headers: {
-                Authorization: process.env.FONNTE_TOKEN
-            }
-        });
-
-        res.json({ success: true, msg: 'OTP Terkirim!' });
+        // Beri kode 'success' agar frontend pindah ke halaman input OTP
+        res.json({ success: true, msg: 'OTP Terkirim (Mode Dev)' });
 
     } catch (error) {
-        console.error("OTP Error:", error.message);
-        res.status(500).json({ success: false, msg: 'Gagal kirim WA' });
+        console.error("OTP Error:", error);
+        res.status(500).json({ success: false, msg: 'Error Server' });
     }
 };
 
-// 2. VERIFIKASI OTP
 exports.verifyOtp = async (req, res) => {
     try {
         const { phone, code } = req.body;
         
+        // Cari data di database
         const data = await Otp.findOne({ phone: phone });
 
-        if (!data) {
-            return res.status(400).json({ success: false, msg: 'OTP Kadaluarsa/Salah' });
-        }
+        if (!data) return res.status(400).json({ success: false, msg: 'Nomor salah / OTP Expired' });
 
+        // Cek Kode
         if (data.code === code) {
-            await Otp.deleteOne({ _id: data._id }); // Hapus setelah dipakai
-            res.json({ success: true, msg: 'Login Sukses' });
+            await Otp.deleteOne({ _id: data._id });
+            res.json({ success: true, msg: 'Login Berhasil' });
         } else {
-            res.status(400).json({ success: false, msg: 'Kode OTP Salah' });
+            res.status(400).json({ success: false, msg: 'Kode Salah' });
         }
 
     } catch (error) {
-        console.error(error);
         res.status(500).json({ success: false, msg: 'Server Error' });
     }
 };
