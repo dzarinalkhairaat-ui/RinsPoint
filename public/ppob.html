@@ -6,7 +6,6 @@
     <title>Layanan PPOB - RinsPoint</title>
     
     <link rel="stylesheet" href="css/style.css">
-
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
     <link rel="apple-touch-icon" href="/assets/images/icon.png">
@@ -15,6 +14,40 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* CSS KHUSUS HALAMAN PPOB BARU */
+        .ppob-section-title {
+            font-size: 0.95rem; color: #fff; margin: 1.5rem 0 1rem 0;
+            padding-left: 10px; border-left: 4px solid #4ADE80; font-weight: 600;
+        }
+
+        .ppob-grid-compact {
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); /* 4 Kolom biar muat banyak */
+            gap: 15px 5px; 
+            padding: 0 5px;
+        }
+
+        .ppob-item-compact {
+            display: flex; flex-direction: column; align-items: center; 
+            text-decoration: none; color: white; text-align: center;
+        }
+
+        .icon-box {
+            width: 50px; height: 50px; background: #1E293B; 
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; color: #4ADE80; border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.2s; margin-bottom: 8px;
+        }
+        
+        .ppob-item-compact:active .icon-box { background: #4ADE80; color: #064E3B; transform: scale(0.95); }
+
+        .item-label {
+            font-size: 0.7rem; color: #cbd5e1; line-height: 1.2; 
+            max-width: 70px; word-wrap: break-word;
+        }
+    </style>
 </head>
 <body>
 
@@ -25,55 +58,163 @@
             <div class="logo-text">Top Up & Tagihan</div>
         </header>
 
-        <main class="home-page" style="padding-top: 0;">
+        <main class="home-page" style="padding-top: 0; padding-bottom: 5rem;">
             
-            <div class="ppob-menu-section" style="padding-top: 1rem;">
-                <h3>Layanan Prabayar</h3>
-                <div class="ppob-grid">
-                    <a href="/ppob/pulsa.html" class="ppob-item">
-                        <div class="icon-circle"><i class="fa-solid fa-mobile-screen-button"></i></div>
-                        <span>Pulsa</span>
-                    </a>
-                    
-                    <a href="/ppob/data.html" class="ppob-item">
-                        <div class="icon-circle"><i class="fa-solid fa-wifi"></i></div>
-                        <span>Paket Data</span>
-                    </a>
-                    
-                    <a href="/ppob/pln.html" class="ppob-item">
-                        <div class="icon-circle"><i class="fa-solid fa-bolt"></i></div>
-                        <span>Token PLN</span>
-                    </a>
-                    
-                    <a href="/ppob/ewallet.html" class="ppob-item">
-                        <div class="icon-circle"><i class="fa-solid fa-wallet"></i></div>
-                        <span>E-Wallet</span>
-                    </a>
-                </div>
+            <div class="ppob-section-title">Isi / Top Up</div>
+            <div class="ppob-grid-compact">
+                <a href="/ppob/pulsa.html" class="ppob-item-compact">
+                    <div class="icon-box"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                    <span class="item-label">Pulsa</span>
+                </a>
+                <a href="/ppob/data.html" class="ppob-item-compact">
+                    <div class="icon-box"><i class="fa-solid fa-wifi"></i></div>
+                    <span class="item-label">Data</span>
+                </a>
+                <a href="/ppob/sms.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-comment-sms"></i></div>
+    <span class="item-label">SMS</span>
+</a>
+                <a href="/ppob/nelpon.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-phone-volume"></i></div>
+    <span class="item-label">Nelpon</span>
+</a>
 
-                <h3 style="margin-top: 2rem;">Layanan Pascabayar</h3>
-                <div class="ppob-grid">
-                    <a href="/ppob/maintenance.html" class="ppob-item">
-                        <div class="icon-circle"><i class="fa-solid fa-gamepad"></i></div>
-                        <span>Voucher Game</span>
-                    </a>
-                    
-                    <a href="/ppob/maintenance.html" class="ppob-item">
-                        <div class="icon-circle"><i class="fa-solid fa-faucet-drip"></i></div>
-                        <span>Air PDAM</span>
-                    </a>
-                    
-                    <a href="/ppob/maintenance.html" class="ppob-item">
-                        <div class="icon-circle"><i class="fa-solid fa-heart-pulse"></i></div>
-                        <span>BPJS</span>
-                    </a>
-                    
-                    <a href="/ppob/maintenance.html" class="ppob-item">
-                        <div class="icon-circle"><i class="fa-solid fa-ellipsis-h"></i></div>
-                        <span>Lainnya</span>
-                    </a>
-                </div>
+                <a href="/ppob/pln.html" class="ppob-item-compact">
+                    <div class="icon-box"><i class="fa-solid fa-bolt"></i></div>
+                    <span class="item-label">Token PLN</span>
+                </a>
+                <a href="/ppob/masaaktif.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-hourglass-half"></i></div>
+    <span class="item-label">Masa Aktif</span>
+</a>
+                <a href="/ppob/pulsatransfer.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+    <span class="item-label">Pulsa Trf</span>
+</a>
+                <a href="/ppob/unlock.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-unlock"></i></div>
+    <span class="item-label">Unlock Vch</span>
+</a>
+
+                <a href="/ppob/ewallet.html" class="ppob-item-compact">
+                    <div class="icon-box"><i class="fa-brands fa-envira"></i></div>
+                    <span class="item-label">OVO/Grab</span>
+                </a>
+                <a href="/ppob/ewallet.html" class="ppob-item-compact">
+                    <div class="icon-box"><i class="fa-solid fa-wallet"></i></div>
+                    <span class="item-label">Gopay</span>
+                </a>
+                <a href="/ppob/ewallet.html" class="ppob-item-compact">
+                    <div class="icon-box"><i class="fa-solid fa-link"></i></div>
+                    <span class="item-label">LinkAja</span>
+                </a>
+                <a href="/ppob/ewallet.html" class="ppob-item-compact">
+                    <div class="icon-box"><i class="fa-solid fa-money-bill-wave"></i></div>
+                    <span class="item-label">DANA</span>
+                </a>
+
+                <a href="/ppob/ewallet.html" class="ppob-item-compact">
+                    <div class="icon-box"><i class="fa-solid fa-bag-shopping"></i></div>
+                    <span class="item-label">ShopeePay</span>
+                </a>
+                <a href="/ppob/gojekdriver.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-helmet-safety"></i></div>
+    <span class="item-label">Gojek Drv</span>
+</a>
+                <a href="/ppob/grabdriver.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-car"></i></div>
+    <span class="item-label">Grab Drv</span>
+</a>
+                <a href="/ppob/maximdriver.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-taxi"></i></div>
+    <span class="item-label">Maxim Drv</span>
+</a>
+
+                <a href="/ppob/wifiid.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-rss"></i></div>
+    <span class="item-label">WiFi ID</span>
+</a>
+                <a href="/ppob/googleplay.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-brands fa-google-play"></i></div>
+    <span class="item-label">G-Play</span>
+</a>
             </div>
+
+            <div class="ppob-section-title">Tagihan (Pascabayar)</div>
+            <div class="ppob-grid-compact">
+                <a href="/ppob/plnpasca.html" class="ppob-item-compact">
+        <div class="icon-box"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+        <span class="item-label">PLN Pasca</span>
+    </a>
+                <a href="/ppob/telkom.html" class="ppob-item-compact">
+        <div class="icon-box"><i class="fa-solid fa-phone-alt"></i></div>
+        <span class="item-label">Telkom</span>
+    </a>
+                <a href="/ppob/halo.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-sim-card"></i></div>
+    <span class="item-label">HALO</span>
+</a>
+                <a href="/ppob/bpjs.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-heart-pulse"></i></div>
+    <span class="item-label">BPJS</span>
+</a>
+
+                <a href="/ppob/pdam.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-faucet-drip"></i></div>
+    <span class="item-label">PDAM</span>
+</a>
+                <a href="/ppob/asuransi.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-umbrella"></i></div>
+    <span class="item-label">Asuransi</span>
+</a>
+                <a href="/ppob/internet.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-globe"></i></div>
+    <span class="item-label">Internet</span>
+</a>
+                <a href="/ppob/creditcard.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-regular fa-credit-card"></i></div>
+    <span class="item-label">Kartu Kredit</span>
+</a>
+
+                <a href="/ppob/multifinance.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-money-bill-transfer"></i></div>
+    <span class="item-label">Multifinance</span>
+</a>
+                <a href="/ppob/pulsapasca.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-file-invoice"></i></div>
+    <span class="item-label">Pulsa Pasca</span>
+</a>
+                <a href="/ppob/tvkabel.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-tv"></i></div>
+    <span class="item-label">TV Kabel</span>
+</a>
+                <a href="/ppob/gas.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-fire-flame-simple"></i></div>
+    <span class="item-label">Gas PGN</span>
+</a>
+            </div>
+
+            <div class="ppob-section-title">Voucher Game</div>
+<div class="ppob-grid-compact">
+    <a href="/ppob/freefire.html" class="ppob-item-compact">
+        <div class="icon-box"><i class="fa-solid fa-crosshairs"></i></div>
+        <span class="item-label">Free Fire</span>
+    </a>
+    
+    <a href="/ppob/garena.html" class="ppob-item-compact">
+        <div class="icon-box"><i class="fa-solid fa-gamepad"></i></div>
+        <span class="item-label">Garena</span>
+    </a>
+
+    <a href="/ppob/mobilelegend.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-dragon"></i></div>
+    <span class="item-label">M-Legend</span>
+</a>
+<a href="/ppob/pubg.html" class="ppob-item-compact">
+    <div class="icon-box"><i class="fa-solid fa-parachute-box"></i></div>
+    <span class="item-label">PUBG</span>
+</a>
+</div>
 
         </main>
 
@@ -95,7 +236,6 @@
     <script src="js/loading.js"></script>
 
     <script>
-    // Script Menampilkan Badge Angka
     document.addEventListener('DOMContentLoaded', () => {
         const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
         const badge = document.getElementById('cartBadge');
