@@ -1,41 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
-    <script>
-    // CEK SESI LOGIN (VERSI POPUP ALERT)
-    function checkLoginSession() {
-        const user = JSON.parse(localStorage.getItem('rinsUser'));
-        
-        // 1. Cek apakah user ada?
-        if (!user || !user.isLoggedIn) {
-            window.location.replace('/login-pelanggan.html');
-            return;
-        }
-
-        // 2. Cek Waktu (2 Menit = 120.000 ms)
-        const currentTime = Date.now();
-        const lastActive = user.lastActive || 0;
-        const timeDiff = currentTime - lastActive;
-        const maxIdleTime = 2 * 60 * 1000; // 2 Menit
-
-        if (timeDiff > maxIdleTime) {
-            // Tampilkan Popup Alert
-            alert("Maaf, sesi Anda telah habis karena tidak aktif selama 2 menit. Silakan login kembali.");
-            
-            // Hapus data & Tendang ke Login
-            localStorage.removeItem('rinsUser');
-            window.location.replace('/login-pelanggan.html');
-        } else {
-            // Perbarui waktu aktif (agar tidak logout kalau user aktif)
-            user.lastActive = currentTime;
-            localStorage.setItem('rinsUser', JSON.stringify(user));
-        }
-    }
-    // Jalankan Pengecekan
-    checkLoginSession();
-</script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Paket Data - RinsPoint</title>
@@ -56,7 +21,7 @@
         .data-item { 
             background: #1E293B; border: 1px solid rgba(255,255,255,0.1); 
             border-radius: 12px; padding: 1rem; cursor: pointer; transition: 0.2s; 
-            display: flex; flex-direction: column; /* Vertikal: Nama atas, harga bawah */
+            display: flex; flex-direction: column; 
             justify-content: center; align-items: flex-start;
         }
         .data-item:hover { border-color: #4ADE80; background: rgba(74, 222, 128, 0.1); }
@@ -66,6 +31,8 @@
         .pkg-price { font-size: 1rem; color: #4ADE80; font-weight: 700; }
         
         .loading-text { text-align: center; color: #94a3b8; margin-top: 2rem; grid-column: 1/-1; }
+        
+        /* MODAL */
         .confirm-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .confirm-box { background: #1E293B; width: 90%; max-width: 350px; border-radius: 16px; padding: 1.5rem; border: 1px solid #334155; text-align: center; }
         .confirm-details { background: #0F172A; padding: 1rem; border-radius: 10px; margin: 1rem 0; text-align: left; font-size: 0.9rem; color: #cbd5e1; }
@@ -182,7 +149,6 @@
                     
                     const div = document.createElement('div');
                     div.className = 'data-item';
-                    // TAMPILAN BARU: Nama Atas, Harga Bawah Hijau
                     div.innerHTML = `
                         <div class="pkg-name">${item.product_name}</div>
                         <div class="pkg-price">Rp ${new Intl.NumberFormat('id-ID').format(hargaJual)}</div>
@@ -240,85 +206,5 @@
     </script>
     <script src="../js/loading.js"></script>
     <script src="../js/whatsapp.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // ===========================================
-            // 1. CEK SESI LOGIN (FITUR AUTO LOGOUT 2 MENIT)
-            // ===========================================
-            function checkLoginSession() {
-                const user = JSON.parse(localStorage.getItem('rinsUser'));
-                
-                // A. Cek apakah user sudah login?
-                if (!user || !user.isLoggedIn) {
-                    window.location.href = '/login-pelanggan.html';
-                    return;
-                }
-
-                // B. Cek Waktu (2 Menit = 120.000 ms)
-                const currentTime = Date.now();
-                const lastActive = user.lastActive || 0;
-                const timeDiff = currentTime - lastActive;
-                const maxIdleTime = 2 * 60 * 1000; // 2 Menit
-
-                if (timeDiff > maxIdleTime) {
-                    // WAKTU HABIS: Hapus sesi & Tendang ke login
-                    alert("Sesi berakhir (2 Menit Inaktif). Silakan login kembali.");
-                    localStorage.removeItem('rinsUser');
-                    window.location.href = '/login-pelanggan.html';
-                } else {
-                    // MASIH AKTIF: Perbarui waktu (Reset timer)
-                    user.lastActive = currentTime;
-                    localStorage.setItem('rinsUser', JSON.stringify(user));
-                }
-            }
-            // Jalankan pengecekan saat halaman dibuka
-            checkLoginSession();
-
-
-            // ===========================================
-            // 2. LOGIKA PENCARIAN (SEARCH)
-            // ===========================================
-            const homeInput = document.getElementById('homeSearchInput');
-            const homeIcon = document.getElementById('homeSearchIcon');
-
-            const goToSearchPage = () => {
-                const keyword = homeInput.value.trim();
-                if (keyword) {
-                    window.location.href = `search.html?keyword=${encodeURIComponent(keyword)}`;
-                } else {
-                    homeInput.focus();
-                }
-            };
-
-            if (homeInput) {
-                homeInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') goToSearchPage();
-                });
-            }
-
-            if (homeIcon) {
-                homeIcon.addEventListener('click', goToSearchPage);
-            }
-
-
-            // ===========================================
-            // 3. LOGIKA BADGE TROLI (ANGKA MERAH)
-            // ===========================================
-            const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
-            const badge = document.getElementById('cartBadge');
-            
-            if (badge) {
-                badge.innerText = cart.length;
-                if (cart.length > 0) {
-                    badge.classList.add('show');
-                } else {
-                    badge.classList.remove('show');
-                }
-            }
-        });
-    </script>
-
 </body>
 </html>

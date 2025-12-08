@@ -1,42 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
-    <script>
-    // CEK SESI LOGIN (AUTO LOGOUT 2 MENIT)
-    function checkLoginSession() {
-        const user = JSON.parse(localStorage.getItem('rinsUser'));
-        
-        // 1. Cek apakah user ada?
-        if (!user || !user.isLoggedIn) {
-            window.location.href = '/login-pelanggan.html';
-            return;
-        }
-
-        // 2. Cek apakah sesi sudah kadaluarsa? (2 Menit = 120.000 ms)
-        const currentTime = Date.now();
-        const lastActive = user.lastActive || 0;
-        const timeDiff = currentTime - lastActive;
-        const maxIdleTime = 2 * 60 * 1000; // 2 Menit dalam milidetik
-
-        if (timeDiff > maxIdleTime) {
-            // JIKA LEBIH DARI 2 MENIT: Hapus Sesi & Tendang
-            alert("Sesi Anda telah berakhir. Silakan login kembali."); // Opsional, boleh dihapus
-            localStorage.removeItem('rinsUser');
-            window.location.href = '/login-pelanggan.html';
-        } else {
-            // JIKA MASIH AMAN: Perbarui waktu aktif (Reset timer)
-            // Jadi kalau dia terus mainan aplikasi, tidak akan di-logout.
-            // Logout hanya terjadi kalau dia DIAM/KELUAR selama 2 menit.
-            user.lastActive = currentTime;
-            localStorage.setItem('rinsUser', JSON.stringify(user));
-        }
-    }
-
-    // Jalankan pengecekan
-    checkLoginSession();
-</script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Keranjang - RinsPoint</title>
@@ -47,6 +11,48 @@
     <script src="/js/pwa-register.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS KHUSUS POPUP ADMIN --- */
+        .admin-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); z-index: 9999;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .admin-modal.show { display: flex; animation: fadeIn 0.3s ease; }
+        
+        .admin-box {
+            background: #1E293B; width: 90%; max-width: 350px;
+            border-radius: 16px; padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center; position: relative;
+        }
+        
+        .admin-box h3 { color: white; margin-bottom: 0.5rem; font-size: 1.1rem; }
+        .admin-box p { color: #94a3b8; font-size: 0.85rem; margin-bottom: 1.5rem; }
+        
+        .admin-list { display: flex; flex-direction: column; gap: 10px; }
+        
+        .admin-btn {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #0F172A; color: white; padding: 12px 15px;
+            border-radius: 10px; text-decoration: none; border: 1px solid #334155;
+            transition: 0.2s; cursor: pointer;
+        }
+        .admin-btn:hover { border-color: #4ADE80; background: rgba(74, 222, 128, 0.1); }
+        .admin-btn i { color: #25D366; font-size: 1.2rem; }
+        .admin-info { text-align: left; }
+        .admin-name { display: block; font-weight: 600; font-size: 0.9rem; }
+        .admin-status { font-size: 0.75rem; color: #4ADE80; }
+
+        .close-modal {
+            position: absolute; top: 15px; right: 15px; color: #94a3b8;
+            cursor: pointer; font-size: 1.2rem;
+        }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
 </head>
 <body>
 
@@ -65,7 +71,7 @@
                 <span>Total Estimasi:</span>
                 <strong id="cartTotal">Rp 0</strong>
             </div>
-            <button class="btn-checkout" onclick="checkoutWA()">
+            <button class="btn-checkout" id="btnCheckout" onclick="checkoutWA()">
                 Checkout WA <i class="fa-brands fa-whatsapp"></i>
             </button>
         </div>
@@ -78,12 +84,25 @@
                 <span>Troli</span>
                 <span class="cart-badge-fixed" id="cartBadge">0</span>
             </a>
-            <a href="profile.html"><i class="fa-solid fa-user"></i><span>Profil</span></a>
+            <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
         </nav>
     </div>
 
+    <div class="admin-modal" id="adminModal">
+        <div class="admin-box">
+            <i class="fa-solid fa-xmark close-modal" onclick="closeAdminModal()"></i>
+            <h3>Pilih Admin</h3>
+            <p>Silakan hubungi salah satu admin kami:</p>
+            
+            <div class="admin-list" id="adminListContainer">
+                <p>Memuat kontak...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/whatsapp.js"></script>
+
     <script>
-        // FUNGSI UPDATE BADGE (LOKAL)
         function updateCartBadgeLocal() {
             const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
             const badge = document.getElementById('cartBadge');
@@ -98,7 +117,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             renderCart();
-            updateCartBadgeLocal(); // Panggil saat load
+            updateCartBadgeLocal(); 
         });
 
         function renderCart() {
@@ -118,7 +137,7 @@
                     </div>
                 `;
                 bottomBar.style.display = 'none';
-                updateCartBadgeLocal(); // Update badge jadi 0
+                updateCartBadgeLocal(); 
                 return;
             }
 
@@ -145,109 +164,114 @@
             });
 
             totalEl.innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalPrice);
-            updateCartBadgeLocal(); // Update badge sesuai jumlah
+            updateCartBadgeLocal(); 
         }
 
         function removeItem(index) {
             if(confirm('Hapus produk ini?')) {
                 cart.splice(index, 1);
                 localStorage.setItem('rinsCart', JSON.stringify(cart));
-                renderCart(); // Ini otomatis akan manggil updateCartBadgeLocal()
+                renderCart(); 
             }
         }
 
-        function checkoutWA() {
+        // --- UPDATE: CHECKOUT DENGAN PILIHAN ADMIN ---
+        async function checkoutWA() {
             if(cart.length === 0) return;
-            const adminWA = "6281234567890"; 
-            let message = "Halo Admin RinsPoint, saya mau pesan:%0A%0A";
-            let total = 0;
-            cart.forEach((item, i) => {
-                message += `${i+1}. ${item.name} - Rp ${new Intl.NumberFormat('id-ID').format(item.price)}%0A`;
-                total += item.price;
-            });
-            message += `%0A*Total: Rp ${new Intl.NumberFormat('id-ID').format(total)}*`;
-            message += "%0A%0AMohon info ketersediaan stok & ongkir. Terima kasih.";
-            window.open(`https://wa.me/${adminWA}?text=${message}`, '_blank');
-        }
-    </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-           // CEK SESI LOGIN (VERSI POPUP ALERT)
-    function checkLoginSession() {
-        const user = JSON.parse(localStorage.getItem('rinsUser'));
-        
-        // 1. Cek apakah user ada?
-        if (!user || !user.isLoggedIn) {
-            window.location.replace('/login-pelanggan.html');
-            return;
-        }
+            const btn = document.getElementById('btnCheckout');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+            btn.disabled = true;
 
-        // 2. Cek Waktu (2 Menit = 120.000 ms)
-        const currentTime = Date.now();
-        const lastActive = user.lastActive || 0;
-        const timeDiff = currentTime - lastActive;
-        const maxIdleTime = 2 * 60 * 1000; // 2 Menit
-
-        if (timeDiff > maxIdleTime) {
-            // Tampilkan Popup Alert
-            alert("Maaf, sesi Anda telah habis karena tidak aktif selama 2 menit. Silakan login kembali.");
-            
-            // Hapus data & Tendang ke Login
-            localStorage.removeItem('rinsUser');
-            window.location.replace('/login-pelanggan.html');
-        } else {
-            // Perbarui waktu aktif (agar tidak logout kalau user aktif)
-            user.lastActive = currentTime;
-            localStorage.setItem('rinsUser', JSON.stringify(user));
-        }
-    }
-    // Jalankan Pengecekan
-    checkLoginSession();
-
-
-            // ===========================================
-            // 2. LOGIKA PENCARIAN (SEARCH)
-            // ===========================================
-            const homeInput = document.getElementById('homeSearchInput');
-            const homeIcon = document.getElementById('homeSearchIcon');
-
-            const goToSearchPage = () => {
-                const keyword = homeInput.value.trim();
-                if (keyword) {
-                    window.location.href = `search.html?keyword=${encodeURIComponent(keyword)}`;
-                } else {
-                    homeInput.focus();
-                }
-            };
-
-            if (homeInput) {
-                homeInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') goToSearchPage();
+            try {
+                // 1. Susun Pesan
+                let message = "Halo Admin RinsPoint, saya mau pesan:%0A%0A";
+                let total = 0;
+                cart.forEach((item, i) => {
+                    message += `${i+1}. ${item.name} - Rp ${new Intl.NumberFormat('id-ID').format(item.price)}%0A`;
+                    total += item.price;
                 });
-            }
+                message += `%0A*Total: Rp ${new Intl.NumberFormat('id-ID').format(total)}*`;
+                message += "%0A%0AMohon info ketersediaan stok & ongkir. Terima kasih.";
 
-            if (homeIcon) {
-                homeIcon.addEventListener('click', goToSearchPage);
-            }
-
-
-            // ===========================================
-            // 3. LOGIKA BADGE TROLI (ANGKA MERAH)
-            // ===========================================
-            const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
-            const badge = document.getElementById('cartBadge');
-            
-            if (badge) {
-                badge.innerText = cart.length;
-                if (cart.length > 0) {
-                    badge.classList.add('show');
-                } else {
-                    badge.classList.remove('show');
+                // 2. Ambil Daftar Admin dari Database
+                const res = await fetch('/api/settings');
+                const data = await res.json();
+                
+                // Cek apakah ada kontak tambahan
+                let activeContacts = [];
+                
+                // Masukkan kontak dari array adminContacts jika ada
+                if (data.adminContacts && data.adminContacts.length > 0) {
+                    activeContacts = data.adminContacts.filter(c => c.isActive);
                 }
+
+                // Jika array kosong, gunakan adminPhone utama sebagai fallback
+                if (activeContacts.length === 0 && data.adminPhone) {
+                    activeContacts.push({ name: 'Admin Utama', phone: data.adminPhone });
+                }
+
+                // 3. Logika Tampilan
+                if (activeContacts.length > 1) {
+                    // JIKA ADMIN LEBIH DARI 1: Tampilkan Popup
+                    showAdminPopup(activeContacts, message);
+                } else if (activeContacts.length === 1) {
+                    // JIKA CUMA 1: Langsung buka WA
+                    const phone = formatPhone(activeContacts[0].phone);
+                    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+                } else {
+                    // Fallback Terakhir (Hardcoded)
+                    window.open(`https://wa.me/6281234567890?text=${message}`, '_blank');
+                }
+
+            } catch (error) {
+                console.error("Gagal load admin:", error);
+                // Fallback jika error
+                window.open(`https://wa.me/6281234567890?text=Halo Admin...`, '_blank');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
-        });
+        }
+
+        // Fungsi Tampilkan Modal
+        function showAdminPopup(contacts, msg) {
+            const list = document.getElementById('adminListContainer');
+            list.innerHTML = ''; // Bersihkan
+
+            contacts.forEach(c => {
+                const phone = formatPhone(c.phone);
+                const link = `https://wa.me/${phone}?text=${msg}`;
+                
+                const btn = document.createElement('a');
+                btn.className = 'admin-btn';
+                btn.href = link;
+                btn.target = '_blank';
+                btn.onclick = closeAdminModal; // Tutup modal saat diklik
+                
+                btn.innerHTML = `
+                    <div class="admin-info">
+                        <span class="admin-name">${c.name}</span>
+                        <span class="admin-status">Online</span>
+                    </div>
+                    <i class="fa-brands fa-whatsapp"></i>
+                `;
+                list.appendChild(btn);
+            });
+
+            document.getElementById('adminModal').classList.add('show');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.remove('show');
+        }
+
+        function formatPhone(phone) {
+            phone = phone.toString().replace(/\D/g, '');
+            if (phone.startsWith('0')) return '62' + phone.slice(1);
+            return phone;
+        }
     </script>
 
     <script src="js/loading.js"></script>

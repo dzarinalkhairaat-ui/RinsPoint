@@ -6,9 +6,11 @@ const getSettings = async (req, res) => {
     try {
         let setting = await Setting.findOne();
         
+        // Jika belum ada setting, buat default
         if (!setting) {
-            return res.json({
+            setting = await Setting.create({
                 siteName: 'RinsPoint',
+                adminPhone: '6281234567890', // Default Nomor
                 adminContacts: [],
                 banners: []
             });
@@ -27,16 +29,21 @@ const updateSettings = async (req, res) => {
         let setting = await Setting.findOne();
         if (!setting) setting = new Setting();
 
-        const { siteName, adminContacts, banners, ppobMargin } = req.body;
+        // Ambil data dari body, termasuk adminPhone baru
+        const { siteName, adminContacts, banners, ppobMargin, adminPhone } = req.body;
 
         if (siteName) setting.siteName = siteName;
         if (adminContacts) setting.adminContacts = adminContacts;
         if (banners) setting.banners = banners;
         if (ppobMargin) setting.ppobMargin = ppobMargin;
+        
+        // --- UPDATE NOMOR WA ---
+        if (adminPhone) setting.adminPhone = adminPhone;
 
         const updatedSetting = await setting.save();
         res.json(updatedSetting);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Gagal menyimpan pengaturan.' });
     }
 };
@@ -50,12 +57,14 @@ const updateDigiflazz = async (req, res) => {
         let setting = await Setting.findOne();
         if (!setting) setting = new Setting();
 
-        // Update data (pastikan skema model mendukung ini, jika belum, sementara skip bagian ini di model)
-        // setting.digiflazz = { username, apiKey, mode }; 
-        // await setting.save();
+        // Update data Digiflazz
+        if (username) setting.digiflazz.username = username;
+        if (apiKey) setting.digiflazz.apiKey = apiKey;
+        if (mode) setting.digiflazz.mode = mode;
+        
+        await setting.save();
 
-        // Karena kita belum update Model untuk Digiflazz, kita respon sukses saja dulu
-        res.json({ message: 'Konfigurasi Digiflazz berhasil disimpan (Simulasi).' });
+        res.json({ message: 'Konfigurasi Digiflazz berhasil disimpan.' });
     } catch (error) {
         res.status(500).json({ message: 'Gagal update konfigurasi.' });
     }
@@ -73,14 +82,17 @@ const updateBanners = async (req, res) => {
         let setting = await Setting.findOne();
         if (!setting) return res.status(404).json({ message: 'Setting not found' });
 
+        // Pastikan array banners ada isinya (minimal 3 slot kosong jika belum ada)
+        while (setting.banners.length < 3) {
+            setting.banners.push({});
+        }
+
         // 2. Helper function untuk update data banner
         const updateBannerData = (index, title, sub, link, bg) => {
-            setting.banners[index].title = title || setting.banners[index].title;
-            setting.banners[index].subtitle = sub || setting.banners[index].subtitle;
-            setting.banners[index].link = link || setting.banners[index].link;
-            setting.banners[index].background = bg || setting.banners[index].background;
-            // Kita tidak lagi menggunakan field 'icon' (SVG)
-            setting.banners[index].icon = ''; 
+            if (title) setting.banners[index].title = title;
+            if (sub) setting.banners[index].subtitle = sub;
+            if (link) setting.banners[index].link = link;
+            if (bg) setting.banners[index].background = bg;
         };
 
         // 3. Update Data Teks Banner 1, 2, 3
@@ -89,11 +101,10 @@ const updateBanners = async (req, res) => {
         updateBannerData(2, banner3_title, banner3_subtitle, banner3_link, banner3_bg);
 
         // 4. UPDATE GAMBAR (JIKA ADA UPLOAD BARU)
-        // req.files berisi array file yang diupload. Kita cek berdasarkan fieldname-nya.
         if (req.files && req.files.length > 0) {
             req.files.forEach(file => {
                 if (file.fieldname === 'banner1_image') {
-                    setting.banners[0].imageUrl = file.path; // Simpan URL Cloudinary
+                    setting.banners[0].imageUrl = file.path; 
                 } else if (file.fieldname === 'banner2_image') {
                     setting.banners[1].imageUrl = file.path;
                 } else if (file.fieldname === 'banner3_image') {
@@ -111,11 +122,9 @@ const updateBanners = async (req, res) => {
     }
 };
 
-
-// JANGAN LUPA TAMBAHKAN 'updateBanners' KE EXPORT DI PALING BAWAH FILE
 module.exports = { 
     getSettings, 
     updateSettings, 
     updateDigiflazz,
-    updateBanners // <--- INI PENTING
+    updateBanners
 };

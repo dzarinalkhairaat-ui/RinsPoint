@@ -12,7 +12,6 @@ const productRoutes = require('./routes/productRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const settingRoutes = require('./routes/settingRoutes');
 const ppobRoutes = require('./routes/ppobRoutes');
-const otpRoutes = require('./routes/otpRoutes');
 
 // Inisialisasi aplikasi Express
 const app = express();
@@ -37,7 +36,6 @@ app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/ppob', ppobRoutes);
-app.use('/api/otp', otpRoutes);
 
 // Route Fallback (Opsional: Memastikan index.html terpanggil jika route root diakses)
 app.get('/', (req, res) => {

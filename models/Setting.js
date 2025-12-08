@@ -2,11 +2,17 @@ const mongoose = require('mongoose');
 
 const settingSchema = new mongoose.Schema({
     siteName: { type: String, default: 'RinsPoint' },
+    
+    // --- UPDATE: NOMOR WA UTAMA (Untuk Floating & Notif) ---
+    adminPhone: { type: String, default: '6281234567890' }, 
+
+    // Kontak tambahan (Opsional, fitur lama Anda)
     adminContacts: [{
         name: String,
         phone: String,
         isActive: { type: Boolean, default: true }
     }],
+    
     ppobMargin: { type: Number, default: 500 },
     
     // Kredensial Digiflazz
@@ -16,12 +22,15 @@ const settingSchema = new mongoose.Schema({
         mode: { type: String, default: 'development' }
     },
 
-    // UPDATE: Array Banners (Judul, Subjudul, Warna, Kode SVG)
+    // Array Banners
     banners: [{
-        title: String,      // Contoh: "Belanja Hemat"
-        subtitle: String,   // Contoh: "Diskon hari ini"
-        gradient: String,   // CSS Gradient
-        svgIcon: String     // Kode <svg>...</svg>
+        title: String,      
+        subtitle: String,   
+        gradient: String,   
+        svgIcon: String,
+        link: String,       
+        background: String, 
+        imageUrl: String    
     }]
 });
 

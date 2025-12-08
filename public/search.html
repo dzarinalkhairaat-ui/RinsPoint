@@ -1,41 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
-    <script>
-    // CEK SESI LOGIN (VERSI POPUP ALERT)
-    function checkLoginSession() {
-        const user = JSON.parse(localStorage.getItem('rinsUser'));
-        
-        // 1. Cek apakah user ada?
-        if (!user || !user.isLoggedIn) {
-            window.location.replace('/login-pelanggan.html');
-            return;
-        }
-
-        // 2. Cek Waktu (2 Menit = 120.000 ms)
-        const currentTime = Date.now();
-        const lastActive = user.lastActive || 0;
-        const timeDiff = currentTime - lastActive;
-        const maxIdleTime = 2 * 60 * 1000; // 2 Menit
-
-        if (timeDiff > maxIdleTime) {
-            // Tampilkan Popup Alert
-            alert("Maaf, sesi Anda telah habis karena tidak aktif selama 2 menit. Silakan login kembali.");
-            
-            // Hapus data & Tendang ke Login
-            localStorage.removeItem('rinsUser');
-            window.location.replace('/login-pelanggan.html');
-        } else {
-            // Perbarui waktu aktif (agar tidak logout kalau user aktif)
-            user.lastActive = currentTime;
-            localStorage.setItem('rinsUser', JSON.stringify(user));
-        }
-    }
-    // Jalankan Pengecekan
-    checkLoginSession();
-    </script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pencarian - RinsPoint</title>
@@ -81,7 +46,7 @@
         </main>
 
         <nav class="bottom-nav">
-            <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+            <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
             <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
             
             <a href="cart.html">
@@ -100,34 +65,28 @@
         const container = document.getElementById('searchResults');
         let timeout = null;
 
-        // --- UPDATE PENTING: CEK APAKAH ADA TITIPAN KEYWORD DARI HOME ---
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const keywordFromHome = urlParams.get('keyword');
 
             if (keywordFromHome) {
-                // 1. Isi kolom input dengan keyword dari home
                 input.value = keywordFromHome;
-                // 2. Langsung jalankan pencarian
                 performSearch(keywordFromHome);
             } else {
-                // Jika tidak ada keyword, fokuskan kursor agar siap ketik
                 input.focus();
             }
         });
 
-        // Event Ketik Manual (Jika user ingin cari lagi di halaman ini)
         input.addEventListener('input', (e) => {
             const keyword = e.target.value.trim();
             clearTimeout(timeout);
             if (keyword.length === 0) {
-                container.innerHTML = `...kode kosong...`; // (Disingkat biar rapi)
+                container.innerHTML = ``;
                 return;
             }
             timeout = setTimeout(() => performSearch(keyword), 500);
         });
         
-        // Agar bisa tekan Enter juga di halaman ini
         input.addEventListener('keypress', (e) => {
              if (e.key === 'Enter') {
                  e.preventDefault();
@@ -184,7 +143,6 @@
     </script>
 
     <script>
-    // 1. Fungsi Update Badge
     function updateCartBadge() {
         const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
         const badge = document.getElementById('cartBadge');
@@ -197,92 +155,7 @@
             }
         }
     }
-
-    // 2. Jalankan saat load
     document.addEventListener('DOMContentLoaded', updateCartBadge);
-
-    // 3. PENTING: Panggil updateCartBadge() setiap kali Anda menghapus item!
-    // (Pastikan di logika hapus barang/btn-remove Anda memanggil fungsi ini)
-</script>
-
-<script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // ===========================================
-            // 1. CEK SESI LOGIN (FITUR AUTO LOGOUT 2 MENIT)
-            // ===========================================
-            function checkLoginSession() {
-                const user = JSON.parse(localStorage.getItem('rinsUser'));
-                
-                // A. Cek apakah user sudah login?
-                if (!user || !user.isLoggedIn) {
-                    window.location.href = '/login-pelanggan.html';
-                    return;
-                }
-
-                // B. Cek Waktu (2 Menit = 120.000 ms)
-                const currentTime = Date.now();
-                const lastActive = user.lastActive || 0;
-                const timeDiff = currentTime - lastActive;
-                const maxIdleTime = 2 * 60 * 1000; // 2 Menit
-
-                if (timeDiff > maxIdleTime) {
-                    // WAKTU HABIS: Hapus sesi & Tendang ke login
-                    alert("Sesi berakhir (2 Menit Inaktif). Silakan login kembali.");
-                    localStorage.removeItem('rinsUser');
-                    window.location.href = '/login-pelanggan.html';
-                } else {
-                    // MASIH AKTIF: Perbarui waktu (Reset timer)
-                    user.lastActive = currentTime;
-                    localStorage.setItem('rinsUser', JSON.stringify(user));
-                }
-            }
-            // Jalankan pengecekan saat halaman dibuka
-            checkLoginSession();
-
-
-            // ===========================================
-            // 2. LOGIKA PENCARIAN (SEARCH)
-            // ===========================================
-            const homeInput = document.getElementById('homeSearchInput');
-            const homeIcon = document.getElementById('homeSearchIcon');
-
-            const goToSearchPage = () => {
-                const keyword = homeInput.value.trim();
-                if (keyword) {
-                    window.location.href = `search.html?keyword=${encodeURIComponent(keyword)}`;
-                } else {
-                    homeInput.focus();
-                }
-            };
-
-            if (homeInput) {
-                homeInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') goToSearchPage();
-                });
-            }
-
-            if (homeIcon) {
-                homeIcon.addEventListener('click', goToSearchPage);
-            }
-
-
-            // ===========================================
-            // 3. LOGIKA BADGE TROLI (ANGKA MERAH)
-            // ===========================================
-            const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
-            const badge = document.getElementById('cartBadge');
-            
-            if (badge) {
-                badge.innerText = cart.length;
-                if (cart.length > 0) {
-                    badge.classList.add('show');
-                } else {
-                    badge.classList.remove('show');
-                }
-            }
-        });
     </script>
-
 </body>
 </html>

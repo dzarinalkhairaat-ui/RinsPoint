@@ -1,41 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
-    <script>
-    // CEK SESI LOGIN (VERSI POPUP ALERT)
-    function checkLoginSession() {
-        const user = JSON.parse(localStorage.getItem('rinsUser'));
-        
-        // 1. Cek apakah user ada?
-        if (!user || !user.isLoggedIn) {
-            window.location.replace('/login-pelanggan.html');
-            return;
-        }
-
-        // 2. Cek Waktu (2 Menit = 120.000 ms)
-        const currentTime = Date.now();
-        const lastActive = user.lastActive || 0;
-        const timeDiff = currentTime - lastActive;
-        const maxIdleTime = 2 * 60 * 1000; // 2 Menit
-
-        if (timeDiff > maxIdleTime) {
-            // Tampilkan Popup Alert
-            alert("Maaf, sesi Anda telah habis karena tidak aktif selama 2 menit. Silakan login kembali.");
-            
-            // Hapus data & Tendang ke Login
-            localStorage.removeItem('rinsUser');
-            window.location.replace('/login-pelanggan.html');
-        } else {
-            // Perbarui waktu aktif (agar tidak logout kalau user aktif)
-            user.lastActive = currentTime;
-            localStorage.setItem('rinsUser', JSON.stringify(user));
-        }
-    }
-    // Jalankan Pengecekan
-    checkLoginSession();
-    </script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Login Admin - RinsPoint</title>
@@ -100,13 +65,13 @@
                 const data = await res.json();
 
                 if (res.ok) {
-    // Simpan Token
-    localStorage.setItem('adminToken', data.token);
-    localStorage.setItem('adminName', data.email);
-    
-    // Redirect langsung ke Dashboard
-    window.location.href = '/admin/dashboard.html';
-} 
+                    // Simpan Token
+                    localStorage.setItem('adminToken', data.token);
+                    localStorage.setItem('adminName', data.email);
+                    
+                    // Redirect langsung ke Dashboard
+                    window.location.href = '/admin/dashboard.html';
+                } 
                 else {
                     alert('Gagal: ' + data.message);
                 }

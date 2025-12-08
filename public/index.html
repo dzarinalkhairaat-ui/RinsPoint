@@ -104,7 +104,7 @@
                 <span class="cart-badge-fixed" id="cartBadge">0</span>
             </a>
 
-            <a href="profile.html"><i class="fa-solid fa-user"></i><span>Profil</span></a>
+            <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
         </nav>
 
     </div>
@@ -116,41 +116,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // ===========================================
-            // 1. CEK SESI LOGIN (VERSI POPUP ALERT)
-            // ===========================================
-            function checkLoginSession() {
-                const user = JSON.parse(localStorage.getItem('rinsUser'));
-                
-                // A. Cek apakah user sudah login?
-                if (!user || !user.isLoggedIn) {
-                    window.location.replace('/login-pelanggan.html');
-                    return;
-                }
-
-                // B. Cek Waktu (2 Menit = 120.000 ms)
-                const currentTime = Date.now();
-                const lastActive = user.lastActive || 0;
-                const timeDiff = currentTime - lastActive;
-                const maxIdleTime = 2 * 60 * 1000; // 2 Menit
-
-                if (timeDiff > maxIdleTime) {
-                    // --- POPUP ALERT DULU ---
-                    alert("Maaf, sesi Anda telah habis karena tidak aktif selama 2 menit. Silakan login kembali.");
-                    
-                    // --- BARU HAPUS & TENDANG ---
-                    localStorage.removeItem('rinsUser');
-                    window.location.replace('/login-pelanggan.html');
-                } else {
-                    // MASIH AKTIF: Perbarui waktu (Reset timer)
-                    user.lastActive = currentTime;
-                    localStorage.setItem('rinsUser', JSON.stringify(user));
-                }
-            }
-            // Jalankan pengecekan
-            checkLoginSession();
-
-
             // ===========================================
             // 2. LOGIKA PENCARIAN
             // ===========================================
@@ -175,7 +140,6 @@
             if (homeIcon) {
                 homeIcon.addEventListener('click', goToSearchPage);
             }
-
 
             // ===========================================
             // 3. LOGIKA BADGE TROLI
