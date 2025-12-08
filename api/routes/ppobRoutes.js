@@ -1,30 +1,35 @@
 const express = require('express');
 const router = express.Router();
-const { 
-    getPriceList, 
-    checkBalance, 
-    createTransaction, 
-    getTransactions, 
-    updateTransactionStatus,
-    getTransactionDetail,
-    deleteTransaction,
-    handleWebhook // <--- Import ini
-} = require('../controllers/ppobController');
-const { protect } = require('../middleware/authMiddleware');
+const ppobController = require('../controllers/ppobController');
+// const { protect } = require('../middleware/authMiddleware'); 
+// (Optional: Jika ingin protect route tertentu, uncomment baris di atas)
 
-// Route Public (Untuk Frontend)
-router.post('/pricelist', getPriceList);
-router.post('/transaction', createTransaction);
-router.get('/transaction/:trxId', getTransactionDetail);
+// ==============================
+//  ROUTE PUBLIC (Untuk Frontend)
+// ==============================
 
-// ROUTE WEBHOOK (WAJIB PUBLIC & POST)
-// Ini url yang nanti didaftarkan di Digiflazz: https://domain-anda.com/api/ppob/callback
-router.post('/callback', handleWebhook); 
+// 1. Ambil Daftar Harga (Pricelist) dari PortalPulsa
+// Method POST karena kita mungkin kirim filter kategori
+router.post('/pricelist', ppobController.getPriceList);
 
-// Route Admin (Perlu Login)
-router.get('/balance', protect, checkBalance);
-router.get('/history', protect, getTransactions);
-router.put('/transaction/:id', protect, updateTransactionStatus);
-router.delete('/transaction/:id', protect, deleteTransaction);
+// 2. Buat Transaksi Baru
+router.post('/transaction', ppobController.createTransaction);
+
+// 3. Cek Status Detail Transaksi (Dipakai di halaman Payment)
+router.get('/transaction/:trxId', ppobController.getTransactionDetail);
+
+// ==============================
+//  ROUTE CALLBACK / WEBHOOK
+// ==============================
+
+// Ini URL yang wajib didaftarkan di Dashboard PortalPulsa
+// DomainRender/api/ppob/callback
+router.post('/callback', ppobController.handleWebhook); 
+
+// ==============================
+//  ROUTE ADMIN (Optional/Nanti)
+// ==============================
+// router.get('/balance', protect, ppobController.checkBalance);
+// router.get('/history', protect, ppobController.getTransactions);
 
 module.exports = router;

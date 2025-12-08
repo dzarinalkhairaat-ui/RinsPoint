@@ -1,17 +1,17 @@
 {
   "name": "rinspoint",
-  "version": "1.0.0",
-  "description": "Mobile-first Ecommerce & PPOB Application",
-  "main": "api/index.js",
+  "version": "2.0.0",
+  "description": "RinsPoint Backend - PortalPulsa Edition",
+  "main": "index.js",
   "scripts": {
-    "start": "node api/index.js",
-    "dev": "nodemon api/index.js",
-    "sass:watch": "sass --watch src/scss/main.scss:public/css/style.css --style compressed"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "ecommerce",
     "ppob",
-    "affiliate",
+    "portalpulsa",
     "mobile-first"
   ],
   "author": "RinsPoint Developer",
@@ -21,17 +21,17 @@
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.6.1",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.0",
     "morgan": "^1.10.0",
-    "multer": "^2.0.2",
+    "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1",
-    "sass": "^1.69.5"
+    "nodemon": "^3.0.1"
   }
 }
