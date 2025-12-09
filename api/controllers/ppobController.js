@@ -1,83 +1,176 @@
 const axios = require('axios');
-const crypto = require('crypto');
+const { HttpsProxyAgent } = require('https-proxy-agent');
 const Transaction = require('../../models/Transaction');
-const Setting = require('../../models/Setting');
 
-// --- KONFIGURASI PORTALPULSA ---
+// --- KONFIGURASI ---
 const PORTAL_USERID = process.env.PORTAL_USERID;
 const PORTAL_KEY = process.env.PORTAL_KEY;
 const PORTAL_SECRET = process.env.PORTAL_SECRET;
+const PROXY_URL = process.env.FIXIE_URL; 
 const BASE_URL = 'https://portalpulsa.com/api/connect/';
 
-// Helper: Header Auth
-const getHeaders = () => ({
-    'portal-userid': PORTAL_USERID,
-    'portal-key': PORTAL_KEY,
-    'portal-secret': PORTAL_SECRET,
-    'Content-Type': 'application/x-www-form-urlencoded'
-});
+// Setup Agent Proxy
+const proxyAgent = PROXY_URL ? new HttpsProxyAgent(PROXY_URL) : null;
+
+// Helper: Config Axios (Timeout 60 Detik)
+const getAxiosConfig = () => {
+    const config = { 
+        headers: {
+            'portal-userid': PORTAL_USERID,
+            'portal-key': PORTAL_KEY,
+            'portal-secret': PORTAL_SECRET,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        timeout: 60000 
+    };
+    
+    if (proxyAgent) {
+        config.httpsAgent = proxyAgent;
+        config.proxy = false; 
+    }
+    return config;
+};
 
 // @desc    Ambil Daftar Harga (Pricelist)
 const getPriceList = async (req, res) => {
     try {
-        console.log("🚀 Mengirim Request ke PortalPulsa...");
-        console.log("🔑 Kredensial:", {
-            uid: PORTAL_USERID ? "ADA" : "KOSONG",
-            key: PORTAL_KEY ? "ADA" : "KOSONG",
-            secret: PORTAL_SECRET ? "ADA" : "KOSONG"
-        });
+        const params = new URLSearchParams();
+        params.append('inquiry', 'HARGA'); 
+        params.append('code', '');     
 
-        const response = await axios.post(BASE_URL, new URLSearchParams({
-            inquiry: 'I', 
-            code: ''      
-        }), { headers: getHeaders() });
-
+        const response = await axios.post(BASE_URL, params, getAxiosConfig());
         const data = response.data;
-        
-        // --- LOG HASIL DARI PORTALPULSA ---
-        console.log("📦 Respon PortalPulsa:", JSON.stringify(data).substring(0, 200) + "..."); 
 
         if (data.result === 'failed') {
-            console.error("❌ Gagal dari PortalPulsa:", data.message);
-            return res.status(500).json({ message: "PortalPulsa Error: " + data.message });
+            return res.status(500).json({ message: "PortalPulsa: " + data.message });
         }
 
-        if (!data.message || !Array.isArray(data.message)) {
-            console.error("❌ Format Data Aneh:", data);
-            return res.status(500).json({ message: "Format data dari pusat tidak sesuai." });
-        }
-
-        // Format ulang data
+        // Format data
         const formattedData = data.message.map(item => ({
             buyer_sku_code: item.code,
             product_name: item.description,
-            category: item.operator, // Pastikan ini sesuai
+            
+            // --- KOREKSI PENTING DI SINI ---
+            // PortalPulsa menyimpan kategori di field 'operator'
+            category: item.operator, 
             brand: item.operator,
             type: item.type,
-            price: item.price + 500, // Margin sementara 500 perak
+            
+            // Fix Harga (Pastikan jadi Number)
+            price: Number(item.price) + 500, 
+            
             buyer_product_status: item.status === 'normal',
             seller_product_status: item.status === 'normal',
             desc: item.description
         }));
 
-        console.log(`✅ Berhasil load ${formattedData.length} produk.`);
         res.json({ data: formattedData });
 
     } catch (error) {
-        // Cek Error Jaringan
-        if (error.response) {
-            console.error("❌ Axios Error:", error.response.status, error.response.data);
+        console.error("Error PPOB:", error.message);
+        if (error.code === 'ECONNABORTED') {
+            res.status(500).json({ message: "Koneksi Timeout (Coba lagi nanti)" });
+        } else if (error.response) {
             res.status(500).json({ message: `Server Error: ${error.response.status}` });
         } else {
-            console.error("❌ Network Error:", error.message);
             res.status(500).json({ message: error.message });
         }
     }
 };
 
-// ... (Sisanya createTransaction, dll biarkan dulu, kita fokus Pricelist) ...
-const createTransaction = async (req, res) => { /* Code Lama */ };
-const getTransactionDetail = async (req, res) => { /* Code Lama */ };
-const handleWebhook = async (req, res) => { /* Code Lama */ };
+// @desc    Buat Transaksi Baru
+const createTransaction = async (req, res) => {
+    const { productCode, productName, customerPhone, price } = req.body;
+
+    try {
+        const trxId = 'TRX-' + Date.now();
+
+        const transaction = await Transaction.create({
+            trxId: trxId,
+            customerPhone: customerPhone,
+            productCode: productCode,
+            amount: price,
+            status: 'pending',
+            providerResponse: { productName }
+        });
+
+        // Request Transaksi
+        const params = new URLSearchParams();
+        params.append('inquiry', 'I'); 
+        params.append('code', productCode);
+        params.append('phone', customerPhone);
+        params.append('trxid_api', trxId);
+        params.append('no', 1);
+
+        const response = await axios.post(BASE_URL, params, getAxiosConfig());
+        const result = response.data;
+
+        if (result.result === 'success') {
+            transaction.providerResponse = result;
+            transaction.note = result.message;
+            if (result.sn && result.sn !== '') {
+                transaction.status = 'success';
+                transaction.sn = result.sn;
+            }
+            await transaction.save();
+        } else {
+            transaction.status = 'failed';
+            transaction.note = result.message;
+            await transaction.save();
+        }
+
+        res.status(201).json(transaction);
+
+    } catch (error) {
+        console.error("Trx Error:", error.message);
+        res.status(500).json({ message: 'Transaksi Gagal' });
+    }
+};
+
+// @desc    Detail Transaksi
+const getTransactionDetail = async (req, res) => {
+    try {
+        const transaction = await Transaction.findOne({ trxId: req.params.trxId });
+        if (transaction) {
+            res.json({
+                trxId: transaction.trxId,
+                status: transaction.status,
+                amount: transaction.amount,
+                sn: transaction.sn,
+                customerPhone: transaction.customerPhone,
+                digiflazzResponse: { 
+                    productName: transaction.providerResponse?.productName || transaction.productCode 
+                }
+            });
+        } else {
+            res.status(404).json({ message: 'Transaksi tidak ditemukan' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
+// @desc    Webhook Handler
+const handleWebhook = async (req, res) => {
+    try {
+        const { trxid_api, status, sn, note } = req.body;
+        console.log(`Webhook: ${trxid_api} | Status: ${status}`);
+
+        const transaction = await Transaction.findOne({ trxId: trxid_api });
+
+        if (transaction) {
+            if (status == 1) transaction.status = 'success';
+            else if (status == 2 || status == 3) transaction.status = 'failed';
+            
+            if (sn) transaction.sn = sn;
+            if (note) transaction.note = note;
+
+            await transaction.save();
+        }
+        res.status(200).json({ result: 'success' });
+    } catch (error) {
+        res.status(500).json({ result: 'failed' });
+    }
+};
 
 module.exports = { getPriceList, createTransaction, getTransactionDetail, handleWebhook };

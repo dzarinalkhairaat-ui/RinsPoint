@@ -17,6 +17,7 @@
         .phone-input:focus { border-color: #4ADE80; }
         .provider-logo { height: 30px; margin-top: 10px; display: none; }
         
+        /* Grid 1 Kolom biar teks panjang muat */
         .data-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; padding: 1rem; }
         .data-item { 
             background: #1E293B; border: 1px solid rgba(255,255,255,0.1); 
@@ -119,18 +120,34 @@
         });
 
         async function fetchPricelist(provider) {
+            if(window.showLoading) window.showLoading();
             listContainer.innerHTML = '<p class="loading-text">Memuat paket...</p>';
             try {
                 const res = await fetch(`${API_URL}/ppob/pricelist`, { method: 'POST' });
                 const json = await res.json();
-                if (!json.data) return;
+                if (!json.data || json.data.length === 0) {
+                    listContainer.innerHTML = '<p class="loading-text">Gagal mengambil data.</p>';
+                    return;
+                }
 
-                // FILTER KHUSUS SMS
-                const filtered = json.data.filter(item => 
-                    item.category === 'SMS' && 
-                    item.brand.toUpperCase() === provider.toUpperCase() &&
-                    item.buyer_product_status && item.seller_product_status
-                );
+                // --- FILTER CERDAS PORTALPULSA (SMS) ---
+                const filtered = json.data.filter(item => {
+                    const brand = item.brand.toLowerCase();
+                    const name = item.product_name.toLowerCase();
+                    const cat = item.category.toLowerCase();
+                    const prov = provider.toLowerCase();
+
+                    // 1. Cari kata kunci SMS
+                    const isSms = name.includes('sms') || cat.includes('sms');
+                    
+                    // 2. Brand Harus Cocok
+                    const isBrandMatch = brand.includes(prov) || name.includes(prov);
+
+                    // 3. Status Normal
+                    const isNormal = item.buyer_product_status && item.seller_product_status;
+
+                    return isSms && isBrandMatch && isNormal;
+                });
 
                 filtered.sort((a, b) => a.price - b.price);
                 listContainer.innerHTML = '';
@@ -155,7 +172,8 @@
                     listContainer.appendChild(div);
                 });
 
-            } catch (error) { listContainer.innerHTML = '<p class="loading-text">Error koneksi.</p>'; }
+            } catch (error) { listContainer.innerHTML = '<p class="loading-text">Error koneksi.</p>'; } 
+            finally { if(window.hideLoading) window.hideLoading(); }
         }
 
         // Helper functions
@@ -201,5 +219,7 @@
             finally { btn.innerText = 'LANJUT KE PEMBAYARAN'; btn.disabled = false; }
         });
     </script>
+    <script src="../js/loading.js"></script>
+    <script src="../js/whatsapp.js"></script>
 </body>
 </html>

@@ -64,10 +64,12 @@
         <div class="confirm-box">
             <h3 style="color:white; margin-bottom:0.5rem;">Konfirmasi</h3>
             <div class="confirm-details">
-                <div><span>Produk:</span> <strong id="modalProduct" style="color:#4ADE80;">-</strong></div>
-                <div><span>Nomor:</span> <strong id="modalPhone">-</strong></div>
-                <div style="border-top:1px solid #334155; margin-top:5px; padding-top:5px;">
-                    <span>Bayar:</span> <strong id="modalPrice" style="color:white; font-size:1.1rem;">-</strong>
+                <div style="flex-direction: column; gap: 5px;">
+                    <span style="color:#94a3b8;">Produk:</span> <strong id="modalProduct" style="color:#4ADE80;">-</strong>
+                </div>
+                <div style="margin-top: 8px;"><span>Nomor:</span> <strong id="modalPhone">-</strong></div>
+                <div style="border-top:1px solid #334155; margin-top:10px; padding-top:10px;">
+                    <span>Harga:</span> <strong id="modalPrice" style="color:white; font-size:1.1rem;">-</strong>
                 </div>
             </div>
             <button class="btn-confirm" id="btnProcess">LANJUT KE PEMBAYARAN</button>
@@ -123,23 +125,36 @@
             try {
                 const res = await fetch(`${API_URL}/ppob/pricelist`, { method: 'POST' });
                 const json = await res.json();
+                
                 if (!json.data || json.data.length === 0) {
                     listContainer.innerHTML = '<p class="loading-text">Gagal mengambil data.</p>';
                     return;
                 }
 
-                const filtered = json.data.filter(item => 
-                    item.category === 'Pulsa' && 
-                    item.brand.toUpperCase() === provider.toUpperCase() &&
-                    item.buyer_product_status === true &&
-                    item.seller_product_status === true
-                );
+                // --- FILTER LOGIC BARU (LEBIH PINTAR) ---
+                const filtered = json.data.filter(item => {
+                    const cat = item.category.toLowerCase();
+                    const brand = item.brand.toLowerCase();
+                    const name = item.product_name.toLowerCase();
+                    const prov = provider.toLowerCase();
+
+                    // 1. Pastikan Kategori Pulsa (PortalPulsa pakai 'Pulsa Reguler', 'Pulsa', dll)
+                    const isPulsa = cat.includes('pulsa');
+                    
+                    // 2. Cek Brand (Telkomsel/Tsel, Indosat/Isat, dll)
+                    const isBrandMatch = brand.includes(prov) || name.includes(prov);
+
+                    // 3. Status Produk Normal
+                    const isNormal = item.buyer_product_status && item.seller_product_status;
+
+                    return isPulsa && isBrandMatch && isNormal;
+                });
 
                 filtered.sort((a, b) => a.price - b.price);
                 listContainer.innerHTML = '';
                 
                 if (filtered.length === 0) {
-                    listContainer.innerHTML = '<p class="loading-text">Produk gangguan.</p>';
+                    listContainer.innerHTML = `<p class="loading-text">Tidak ada paket untuk ${provider}.</p>`;
                     return;
                 }
 
@@ -158,7 +173,7 @@
                     listContainer.appendChild(div);
                 });
 
-            } catch (error) { listContainer.innerHTML = '<p class="loading-text">Error koneksi.</p>'; } 
+            } catch (error) { listContainer.innerHTML = '<p class="loading-text">Error koneksi server.</p>'; } 
             finally { if(window.hideLoading) window.hideLoading(); }
         }
 

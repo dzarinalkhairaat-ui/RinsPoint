@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
-    <link rel="apple-touch-icon" href="/assets/images/icon.png">
     <script src="/js/pwa-register.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -125,12 +124,30 @@
                 const json = await res.json();
                 if (!json.data) return;
 
-                // FILTER KHUSUS NELPON (Paket Telpon)
-                const filtered = json.data.filter(item => 
-                    item.category === 'Paket Telpon' && 
-                    item.brand.toUpperCase() === provider.toUpperCase() &&
-                    item.buyer_product_status && item.seller_product_status
-                );
+                // --- FILTER FINAL: SUDAH PASTI BENAR ---
+                const filtered = json.data.filter(item => {
+                    const brand = item.brand.toLowerCase();
+                    const name = item.product_name.toLowerCase();
+                    const cat = item.category.toLowerCase();
+                    const prov = provider.toLowerCase();
+
+                    // 1. Cek Brand
+                    const isBrandMatch = brand.includes(prov) || name.includes(prov);
+
+                    // 2. Cek Kategori / Nama (TELEPON - pakai 'E')
+                    const isNelpon = 
+                        cat.includes('telepon') || // <--- INI KUNCINYA
+                        cat.includes('voice') ||
+                        name.includes('nelpon') || 
+                        name.includes('telepon') ||
+                        name.includes('bicara') ||
+                        name.includes('voice');
+
+                    // 3. Status Normal
+                    const isNormal = item.buyer_product_status && item.seller_product_status;
+
+                    return isBrandMatch && isNelpon && isNormal;
+                });
 
                 filtered.sort((a, b) => a.price - b.price);
                 listContainer.innerHTML = '';

@@ -1,21 +1,18 @@
 {
   "name": "rinspoint",
-  "version": "2.0.0",
-  "description": "RinsPoint Backend - PortalPulsa Edition",
-  "main": "index.js",
+  "version": "1.0.0",
+  "description": "RinsPoint Vercel Edition",
+  "main": "api/index.js",  
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js", 
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "ecommerce",
-    "ppob",
-    "portalpulsa",
-    "mobile-first"
-  ],
-  "author": "RinsPoint Developer",
+  
+  "keywords": [],
+  "author": "",
   "license": "ISC",
+  
   "dependencies": {
     "axios": "^1.6.0",
     "bcryptjs": "^2.4.3",
@@ -25,6 +22,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "helmet": "^7.1.0",
+    "https-proxy-agent": "^7.0.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.0",
     "morgan": "^1.10.0",

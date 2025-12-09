@@ -16,24 +16,26 @@
         .pln-input { width: 100%; padding: 14px; font-size: 1.2rem; font-weight: 700; color: #fff; background: #0F172A; border: 1px solid #334155; border-radius: 12px; outline: none; letter-spacing: 1px; }
         .pln-input:focus { border-color: #4ADE80; }
         
-        .data-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; padding: 1rem; }
-        .data-item { 
+        .pln-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1rem; }
+        .pln-item { 
             background: #1E293B; border: 1px solid rgba(255,255,255,0.1); 
             border-radius: 12px; padding: 1rem; cursor: pointer; transition: 0.2s; 
-            display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+            text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-        .data-item:hover { border-color: #4ADE80; background: rgba(74, 222, 128, 0.1); }
+        .pln-item:hover { border-color: #4ADE80; background: rgba(74, 222, 128, 0.1); }
         
-        /* TAMPILAN BARU */
-        .pkg-name { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 5px; }
-        .pkg-price { font-size: 1rem; color: #4ADE80; font-weight: 700; }
+        .nominal { font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 5px; }
+        .price { font-size: 1rem; color: #4ADE80; font-weight: 700; }
         
         .loading-text { text-align: center; color: #94a3b8; margin-top: 2rem; grid-column: 1/-1; }
+        
+        /* MODAL */
         .confirm-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .confirm-box { background: #1E293B; width: 90%; max-width: 350px; border-radius: 16px; padding: 1.5rem; border: 1px solid #334155; text-align: center; }
         .confirm-details { background: #0F172A; padding: 1rem; border-radius: 10px; margin: 1rem 0; text-align: left; font-size: 0.9rem; color: #cbd5e1; }
+        .confirm-details div { margin-bottom: 5px; display: flex; justify-content: space-between; }
         .btn-confirm { background: #4ADE80; color: #064E3B; width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; }
-        .btn-cancel { background: transparent; color: #94a3b8; margin-top: 10px; border: none; cursor: pointer; }
+        .btn-cancel { background: transparent; color: #94a3b8; margin-top: 10px; border: none; cursor: pointer; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -45,10 +47,11 @@
 
         <main class="home-page" style="padding-top: 0;">
             <div class="input-group">
-                <label style="color:#94a3b8; font-size:0.8rem; margin-bottom:5px; display:block;">ID Pelanggan / No. Meter</label>
-                <input type="number" id="plnNumber" class="pln-input" placeholder="Contoh: 140xxxxxxx">
+                <label style="color:#94a3b8; font-size:0.8rem; margin-bottom:5px; display:block;">Nomor Meter / ID Pel</label>
+                <input type="number" id="meterNumber" class="pln-input" placeholder="Masukkan ID Pelanggan" maxlength="12">
             </div>
-            <div id="productList" class="data-grid">
+
+            <div id="productList" class="pln-grid">
                 <p class="loading-text">Masukkan ID Pelanggan.</p>
             </div>
         </main>
@@ -58,10 +61,12 @@
         <div class="confirm-box">
             <h3 style="color:white; margin-bottom:0.5rem;">Konfirmasi</h3>
             <div class="confirm-details">
-                <div style="margin-bottom:5px;"><span>Nominal:</span> <strong id="modalProduct" style="color:#4ADE80;">-</strong></div>
-                <div><span>ID Pel:</span> <strong id="modalPhone" style="color:white;">-</strong></div>
-                <div style="border-top:1px solid #334155; margin-top:10px; padding-top:10px; display:flex; justify-content:space-between;">
-                    <span>Bayar:</span> <strong id="modalPrice" style="color:white; font-size:1.1rem;">-</strong>
+                <div style="flex-direction: column; gap: 5px;">
+                    <span style="color:#94a3b8;">Produk:</span> <strong id="modalProduct" style="color:#4ADE80;">-</strong>
+                </div>
+                <div style="margin-top: 8px;"><span>ID Pel:</span> <strong id="modalPhone">-</strong></div>
+                <div style="border-top:1px solid #334155; margin-top:10px; padding-top:10px;">
+                    <span>Harga:</span> <strong id="modalPrice" style="color:white; font-size:1.1rem;">-</strong>
                 </div>
             </div>
             <button class="btn-confirm" id="btnProcess">LANJUT KE PEMBAYARAN</button>
@@ -71,11 +76,11 @@
 
     <script>
         const API_URL = '/api';
-        const inputPln = document.getElementById('plnNumber');
+        const inputMeter = document.getElementById('meterNumber');
         const listContainer = document.getElementById('productList');
         const modal = document.getElementById('confirmModal');
         let selectedProduct = null;
-        let globalMargin = 1000; 
+        let globalMargin = 500; 
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
@@ -85,30 +90,39 @@
             } catch (e) {}
         });
 
-        inputPln.addEventListener('input', (e) => {
-            if (e.target.value.length >= 7) fetchPricelist();
+        inputMeter.addEventListener('input', (e) => {
+            if (e.target.value.length >= 11) fetchPricelist();
         });
 
         async function fetchPricelist() {
             if(window.showLoading) window.showLoading();
-            listContainer.innerHTML = '';
-            
             try {
                 const res = await fetch(`${API_URL}/ppob/pricelist`, { method: 'POST' });
                 const json = await res.json();
                 
-                if (!json.data) return;
+                if (!json.data || json.data.length === 0) {
+                    listContainer.innerHTML = '<p class="loading-text">Gagal mengambil data.</p>';
+                    return;
+                }
 
-                const filtered = json.data.filter(item => 
-                    item.category === 'PLN' && 
-                    item.buyer_product_status === true &&
-                    item.seller_product_status === true
-                );
+                // --- FILTER CERDAS PORTALPULSA (PLN) ---
+                const filtered = json.data.filter(item => {
+                    const name = item.product_name.toUpperCase();
+                    const brand = item.brand.toUpperCase();
+
+                    // Cari yang Brand-nya PLN dan mengandung kata TOKEN atau PLN PREPAID
+                    const isPln = brand.includes('PLN') || name.includes('TOKEN') || name.includes('PLN');
+                    // Exclude Tagihan Pasca (Postpaid)
+                    const isNotPost = !name.includes('TAGIHAN') && !name.includes('POSTPAID') && !name.includes('PASCA');
+
+                    return isPln && isNotPost && item.buyer_product_status && item.seller_product_status;
+                });
 
                 filtered.sort((a, b) => a.price - b.price);
+                listContainer.innerHTML = '';
                 
                 if (filtered.length === 0) {
-                    listContainer.innerHTML = '<p class="loading-text">Gangguan.</p>';
+                    listContainer.innerHTML = '<p class="loading-text">Token PLN gangguan.</p>';
                     return;
                 }
 
@@ -118,23 +132,23 @@
                     const hargaJual = modal + margin; 
                     
                     const div = document.createElement('div');
-                    div.className = 'data-item';
+                    div.className = 'pln-item';
                     div.innerHTML = `
-                        <div class="pkg-name">${item.product_name}</div>
-                        <div class="pkg-price">Rp ${new Intl.NumberFormat('id-ID').format(hargaJual)}</div>
+                        <div class="nominal">${item.product_name}</div>
+                        <div class="price">Rp ${new Intl.NumberFormat('id-ID').format(hargaJual)}</div>
                     `;
                     div.onclick = () => showConfirm(item, hargaJual);
                     listContainer.appendChild(div);
                 });
 
-            } catch (error) { listContainer.innerHTML = '<p class="loading-text">Error.</p>'; } 
+            } catch (error) { listContainer.innerHTML = '<p class="loading-text">Error koneksi.</p>'; } 
             finally { if(window.hideLoading) window.hideLoading(); }
         }
 
         function showConfirm(item, price) {
             selectedProduct = { ...item, finalPrice: price };
             document.getElementById('modalProduct').innerText = item.product_name;
-            document.getElementById('modalPhone').innerText = inputPln.value;
+            document.getElementById('modalPhone').innerText = inputMeter.value;
             document.getElementById('modalPrice').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(price);
             modal.style.display = 'flex';
         }
@@ -143,7 +157,7 @@
         document.getElementById('btnProcess').addEventListener('click', async () => {
             if(!selectedProduct) return;
             const btn = document.getElementById('btnProcess'); btn.innerText = 'Memproses...'; btn.disabled = true;
-            const payload = { productCode: selectedProduct.buyer_sku_code, productName: selectedProduct.product_name, customerPhone: inputPln.value, price: selectedProduct.finalPrice };
+            const payload = { productCode: selectedProduct.buyer_sku_code, productName: selectedProduct.product_name, customerPhone: inputMeter.value, price: selectedProduct.finalPrice };
             try {
                 const res = await fetch(`${API_URL}/ppob/transaction`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const trx = await res.json();

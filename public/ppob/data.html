@@ -17,16 +17,15 @@
         .phone-input:focus { border-color: #4ADE80; }
         .provider-logo { height: 30px; margin-top: 10px; display: none; }
         
+        /* Grid 1 Kolom untuk Data biar deskripsinya muat */
         .data-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; padding: 1rem; }
         .data-item { 
             background: #1E293B; border: 1px solid rgba(255,255,255,0.1); 
             border-radius: 12px; padding: 1rem; cursor: pointer; transition: 0.2s; 
-            display: flex; flex-direction: column; 
-            justify-content: center; align-items: flex-start;
+            display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
         }
         .data-item:hover { border-color: #4ADE80; background: rgba(74, 222, 128, 0.1); }
         
-        /* TAMPILAN BARU */
         .pkg-name { font-size: 0.95rem; font-weight: 600; color: #fff; margin-bottom: 5px; line-height: 1.4; }
         .pkg-price { font-size: 1rem; color: #4ADE80; font-weight: 700; }
         
@@ -54,6 +53,7 @@
                 <input type="tel" id="phoneNumber" class="phone-input" placeholder="08xx-xxxx-xxxx" maxlength="13">
                 <img id="providerLogo" src="" alt="Provider" class="provider-logo">
             </div>
+
             <div id="productList" class="data-grid">
                 <p class="loading-text">Masukkan nomor HP.</p>
             </div>
@@ -84,7 +84,7 @@
         const providerLogo = document.getElementById('providerLogo');
         const modal = document.getElementById('confirmModal');
         let selectedProduct = null;
-        let globalMargin = 1000;
+        let globalMargin = 500; 
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
@@ -127,25 +127,38 @@
                 const json = await res.json();
                 if (!json.data) return;
 
-                const filtered = json.data.filter(item => 
-                    item.category === 'Data' && 
-                    item.brand.toUpperCase() === provider.toUpperCase() &&
-                    item.buyer_product_status === true &&
-                    item.seller_product_status === true
-                );
+                // --- FILTER CERDAS PORTALPULSA (KHUSUS DATA) ---
+                const filtered = json.data.filter(item => {
+                    const brand = item.brand.toLowerCase();
+                    const name = item.product_name.toLowerCase();
+                    const prov = provider.toLowerCase();
+
+                    // 1. Cek Brand
+                    const isBrandMatch = brand.includes(prov) || name.includes(prov);
+
+                    // 2. Cek Apakah Ini Paket Data?
+                    // Harus mengandung kata kunci Data/Quota/GB/Internet, DAN BUKAN Pulsa Transfer
+                    const keywords = ['data', 'quota', 'gb', 'internet', 'combo', 'flash', 'freedom', 'unlimited'];
+                    const isData = keywords.some(k => name.includes(k));
+                    
+                    // Exclude yang ada kata "Transfer Pulsa" atau "Masa Aktif" (kecuali paket data masa aktif)
+                    const isNotPulsa = !name.includes('transfer pulsa') && !name.includes('masa aktif');
+
+                    return isBrandMatch && isData && isNotPulsa && item.buyer_product_status && item.seller_product_status;
+                });
 
                 filtered.sort((a, b) => a.price - b.price);
                 listContainer.innerHTML = '';
                 
                 if (filtered.length === 0) {
-                    listContainer.innerHTML = '<p class="loading-text">Paket tidak tersedia.</p>';
+                    listContainer.innerHTML = '<p class="loading-text">Paket Data tidak tersedia.</p>';
                     return;
                 }
 
                 filtered.forEach(item => {
                     const modal = parseInt(item.price);
                     const margin = parseInt(globalMargin);
-                    const hargaJual = modal + margin;
+                    const hargaJual = modal + margin; 
                     
                     const div = document.createElement('div');
                     div.className = 'data-item';
@@ -157,7 +170,7 @@
                     listContainer.appendChild(div);
                 });
 
-            } catch (error) { listContainer.innerHTML = '<p class="loading-text">Error.</p>'; } 
+            } catch (error) { listContainer.innerHTML = '<p class="loading-text">Error koneksi.</p>'; } 
             finally { if(window.hideLoading) window.hideLoading(); }
         }
 
