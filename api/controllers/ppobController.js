@@ -21,7 +21,7 @@ const getAxiosConfig = () => {
             'portal-secret': PORTAL_SECRET,
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-        timeout: 60000 
+        timeout: 9000 // <--- PENTING: Ubah jadi 9000 (9 Detik) agar aman di Vercel Free
     };
     
     if (proxyAgent) {
