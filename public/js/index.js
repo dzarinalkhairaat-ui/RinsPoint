@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // =========================================
-// 1. BANNER SLIDER (FIXED ASPECT RATIO 2:1)
+// 1. BANNER SLIDER (MODE FLEKSIBEL - ANTI POTONG)
 // =========================================
 let currentSlide = 0;
 let totalSlides = 1; 
@@ -45,26 +45,27 @@ function renderBanners(banners) {
         const div = document.createElement('div');
         div.className = 'hero-banner slide';
         
-        // --- PERBAIKAN UTAMA DI SINI ---
-        // Kita kunci wadahnya agar selalu rasio 2:1 (Sesuai gambar 1000x500 Anda)
+        // --- LOGIKA FLEKSIBEL (ANTI-CROP) ---
+        // Kita biarkan wadah mengikuti tinggi gambar secara alami
         div.style.width = '100%';
+        div.style.height = 'auto'; // Kuncinya di sini (Auto Height)
         div.style.padding = '0'; 
         div.style.background = 'transparent';
         div.style.borderRadius = '16px';
         div.style.overflow = 'hidden';
         
-        // CSS Ajaib: Aspect Ratio 2/1
-        // Ini memaksa browser membuat kotak yang pas 100% dengan gambar Anda
-        div.style.aspectRatio = '2 / 1'; 
+        // Hapus aspect-ratio paksa agar tidak penyok
+        div.style.aspectRatio = 'auto'; 
 
         if (banner.imageUrl) {
             div.innerHTML = `
                 <img src="${banner.imageUrl}" alt="Banner ${index + 1}" 
-                     style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                     style="width: 100%; height: auto; display: block; object-fit: contain;">
             `;
-            // object-fit: cover di sini aman karena wadahnya sudah kita set rasionya sama dengan gambar.
+            // object-fit: contain = Pastikan seluruh gambar masuk 100%
         } else {
-            // Fallback Gradient
+            // Fallback Gradient (Hanya muncul jika gambar rusak)
+            div.style.height = '180px'; 
             div.style.background = 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)';
             div.style.display = 'flex';
             div.style.alignItems = 'center';
@@ -121,7 +122,7 @@ function updateSlider() {
 }
 
 // =========================================
-// 2. KATEGORI (LAINNYA TETAP SAMA)
+// 2. KATEGORI (TETAP SAMA)
 // =========================================
 async function fetchCategories() {
     try {
