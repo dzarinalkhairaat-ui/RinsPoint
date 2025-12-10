@@ -52,17 +52,22 @@ function renderBanners(banners) {
         div.style.padding = '0'; 
         div.style.background = 'transparent';
         div.style.overflow = 'hidden';
+        
+        // PENTING: Set tinggi container jadi auto agar mengikuti tinggi gambar
+        div.style.height = 'auto'; 
 
-        // LOGIKA BARU: Tampilkan Gambar
+        // LOGIKA BARU: Tampilkan Gambar UTUH
         // Kita gunakan 'imageUrl' yang tersimpan di database
         if (banner.imageUrl) {
             div.innerHTML = `
                 <img src="${banner.imageUrl}" alt="Banner ${index + 1}" 
-                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block;">
+                     style="width: 100%; height: auto; border-radius: 16px; display: block;">
             `;
+            // Catatan: height: auto menjamin gambar tidak terpotong (cropping)
         } else {
             // Fallback: Jika gambar rusak/hilang, tampilkan gradient sederhana
             div.style.padding = '1.5rem';
+            div.style.height = '180px'; // Tinggi fix hanya untuk gradient fallback
             div.style.background = 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)';
             div.innerHTML = `
                 <div class="banner-text">
