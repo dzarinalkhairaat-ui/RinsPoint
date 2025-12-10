@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // =========================================
-// 1. BANNER SLIDER (MODE FLEKSIBEL - ANTI POTONG)
+// 1. BANNER SLIDER (VERSI STANDAR STABIL)
 // =========================================
 let currentSlide = 0;
 let totalSlides = 1; 
@@ -24,7 +24,6 @@ async function loadBanners() {
         if (settings.banners && settings.banners.length > 0) {
             renderBanners(settings.banners);
         } else {
-            console.log("Belum ada banner yang diupload.");
             initSlider(); 
         }
     } catch (error) {
@@ -45,31 +44,30 @@ function renderBanners(banners) {
         const div = document.createElement('div');
         div.className = 'hero-banner slide';
         
-        // --- LOGIKA FLEKSIBEL (ANTI-CROP) ---
-        // Kita biarkan wadah mengikuti tinggi gambar secara alami
-        div.style.width = '100%';
-        div.style.height = 'auto'; // Kuncinya di sini (Auto Height)
+        // --- KEMBALI KE PENGATURAN AWAL YANG RAPI ---
         div.style.padding = '0'; 
         div.style.background = 'transparent';
-        div.style.borderRadius = '16px';
         div.style.overflow = 'hidden';
+        div.style.position = 'relative';
         
-        // Hapus aspect-ratio paksa agar tidak penyok
-        div.style.aspectRatio = 'auto'; 
+        // Kita kunci tingginya agar slider stabil (tidak naik turun)
+        // Tinggi 180px - 200px adalah standar banner mobile yang enak dilihat
+        div.style.height = '190px'; 
+        div.style.width = '100%';
 
         if (banner.imageUrl) {
             div.innerHTML = `
                 <img src="${banner.imageUrl}" alt="Banner ${index + 1}" 
-                     style="width: 100%; height: auto; display: block; object-fit: contain;">
+                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block;">
             `;
-            // object-fit: contain = Pastikan seluruh gambar masuk 100%
+            // object-fit: cover = Gambar mengisi penuh kotak dengan rapi (Standard Aplikasi)
         } else {
-            // Fallback Gradient (Hanya muncul jika gambar rusak)
-            div.style.height = '180px'; 
+            // Fallback (Gradient)
             div.style.background = 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)';
             div.style.display = 'flex';
             div.style.alignItems = 'center';
             div.style.justifyContent = 'center';
+            div.style.padding = '1.5rem'; // Kembalikan padding untuk teks
             div.innerHTML = `
                 <div class="banner-text" style="text-align:center;">
                     <h2 style="font-size: 1.2rem; margin:0;">RinsPoint</h2>
@@ -122,14 +120,13 @@ function updateSlider() {
 }
 
 // =========================================
-// 2. KATEGORI (TETAP SAMA)
+// 2. KATEGORI (TIDAK BERUBAH)
 // =========================================
 async function fetchCategories() {
     try {
         const res = await fetch(`${API_URL}/categories`);
         const categories = await res.json();
         const container = document.getElementById('categoryContainer');
-        
         container.innerHTML = ''; 
         if (categories.length === 0) {
             container.innerHTML = '<p style="font-size:0.8rem; color:#64748b; padding:10px;">Kategori kosong</p>';
