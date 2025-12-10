@@ -4,8 +4,8 @@
   "description": "RinsPoint Vercel Edition",
   "main": "api/index.js",  
   "scripts": {
-    "start": "node api/index.js",
-    "dev": "nodemon api/index.js", 
+    "start": "node backend/index.js",
+    "dev": "nodemon backend/index.js", 
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   
