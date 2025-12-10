@@ -1,10 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Suntikkan HTML Loading (Jika belum ada)
+    // 1. Suntikkan HTML Loading (HANYA SPINNER)
+    // Kita hapus teks <p>Memuat...</p> agar bersih
     if (!document.getElementById("globalLoader")) {
         const loader = document.createElement("div");
         loader.id = "globalLoader";
         loader.className = "loading-overlay";
-        loader.innerHTML = `<div class="spinner"></div><p>Memuat...</p>`;
+        // HANYA SPINNER SAJA
+        loader.innerHTML = `<div class="spinner"></div>`;
         document.body.appendChild(loader);
     }
 
@@ -14,8 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. INTERCEPT FETCH (Agar loading muncul saat request API)
     const originalFetch = window.fetch;
     window.fetch = async function(...args) {
-        // Jangan munculkan loading jika request dilakukan di background (opsional)
-        // Tapi untuk aman, kita biarkan dulu
         showLoading();
         try {
             const response = await originalFetch(...args);
@@ -44,12 +44,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// --- PERBAIKAN UTAMA: HANDLER TOMBOL KEMBALI (BACK BUTTON) ---
+// --- HANDLER TOMBOL KEMBALI (BACK BUTTON) ---
 
-// Event 'pageshow' dipanggil saat halaman ditampilkan, termasuk dari Cache (Back Button)
+// Event 'pageshow' dipanggil saat halaman ditampilkan (termasuk dari Cache)
 window.addEventListener('pageshow', (event) => {
-    // Jika halaman diambil dari cache (event.persisted), ATAU sekadar navigasi history
-    // Paksa hilangkan loading
     setTimeout(hideLoading, 50); 
 });
 
