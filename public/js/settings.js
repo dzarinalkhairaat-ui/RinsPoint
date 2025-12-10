@@ -2,13 +2,21 @@ const API_URL = '/api';
 const token = localStorage.getItem('adminToken');
 let currentSettings = {};
 
+// Cek Login
+if (!token) {
+    window.location.href = '/login.html';
+}
+
 document.addEventListener('DOMContentLoaded', loadSettings);
 
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
-    event.target.classList.add('active');
+    
+    // Cari tombol yang diklik dan aktifkan class-nya
+    const btn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+    if (btn) btn.classList.add('active');
 }
 
 async function loadSettings() {
@@ -17,82 +25,127 @@ async function loadSettings() {
         currentSettings = await res.json();
 
         // 1. Isi Form Umum
-        document.getElementById('siteName').value = currentSettings.siteName || '';
-        document.getElementById('ppobMargin').value = currentSettings.ppobMargin || 500;
+        if(document.getElementById('siteName')) document.getElementById('siteName').value = currentSettings.siteName || '';
+        if(document.getElementById('ppobMargin')) document.getElementById('ppobMargin').value = currentSettings.ppobMargin || 500;
 
         // 2. Render Kontak
         renderContacts();
 
-        // 3. Render Form Banner
-        renderBannerForms();
+        // 3. Load Preview Banner (Jika sudah ada gambar sebelumnya)
+        loadBannerPreviews();
 
     } catch (error) {
         console.error(error);
     }
 }
 
-// --- LOGIC BANNER BARU ---
-function renderBannerForms() {
-    const container = document.getElementById('bannerFormContainer');
-    container.innerHTML = '';
+// =========================================
+// 1. LOGIKA BANNER GAMBAR (BARU)
+// =========================================
 
-    // Pastikan ada 3 slot banner (kosong atau isi)
+// Fungsi untuk menampilkan preview gambar saat user memilih file
+function previewBanner(input, previewId) {
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewBox = document.getElementById(previewId);
+            const img = previewBox.querySelector('img');
+            const placeholder = previewBox.querySelector('.placeholder');
+            
+            img.src = e.target.result;
+            img.style.display = 'block';
+            if(placeholder) placeholder.style.display = 'none';
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+// Load gambar yang sudah tersimpan di database saat halaman dibuka
+function loadBannerPreviews() {
     const banners = currentSettings.banners || [];
-    // Default data jika kosong
-    const defaults = [
-        { title: 'Promo Spesial', sub: 'Diskon Hari Ini', grad: 'linear-gradient(135deg, #4ADE80 0%, #166534 100%)', svg: '' },
-        { title: 'Produk Baru', sub: 'Cek Sekarang', grad: 'linear-gradient(135deg, #0D9488 0%, #115E59 100%)', svg: '' },
-        { title: 'Gratis Ongkir', sub: 'Min. Belanja 50rb', grad: 'linear-gradient(135deg, #2563EB 0%, #1E3A8A 100%)', svg: '' }
-    ];
+    
+    // Banner 1
+    if (banners[0] && banners[0].imageUrl) {
+        setPreview('preview1', banners[0].imageUrl);
+    }
+    // Banner 2
+    if (banners[1] && banners[1].imageUrl) {
+        setPreview('preview2', banners[1].imageUrl);
+    }
+    // Banner 3
+    if (banners[2] && banners[2].imageUrl) {
+        setPreview('preview3', banners[2].imageUrl);
+    }
+}
 
-    for (let i = 0; i < 3; i++) {
-        const data = banners[i] || defaults[i];
+function setPreview(elementId, url) {
+    const box = document.getElementById(elementId);
+    if (box) {
+        const img = box.querySelector('img');
+        const placeholder = box.querySelector('.placeholder');
+        img.src = url;
+        img.style.display = 'block';
+        if(placeholder) placeholder.style.display = 'none';
+    }
+}
+
+// Handle Submit Form Banner
+const bannerForm = document.getElementById('bannerForm');
+if (bannerForm) {
+    bannerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        const html = `
-            <div style="background:#0F172A; padding:1rem; border-radius:12px; margin-bottom:1rem; border:1px solid #334155;">
-                <h4 style="color:#4ADE80; margin-bottom:10px;">Banner ${i+1}</h4>
-                
-                <div class="form-group">
-                    <label>Judul Utama</label>
-                    <input type="text" id="bTitle${i}" value="${data.title || ''}" placeholder="Judul besar">
-                </div>
-                <div class="form-group">
-                    <label>Sub Judul</label>
-                    <input type="text" id="bSub${i}" value="${data.subtitle || ''}" placeholder="Teks kecil di bawah">
-                </div>
-                <div class="form-group">
-                    <label>Warna Background (CSS Gradient)</label>
-                    <input type="text" id="bGrad${i}" value="${data.gradient || ''}" placeholder="linear-gradient(...)">
-                </div>
-                <div class="form-group">
-                    <label>Kode SVG Ikon (Copy Paste kode &lt;svg&gt;...&lt;/svg&gt;)</label>
-                    <textarea id="bSvg${i}" rows="3" style="width:100%; background:#1E293B; color:#fff; border:1px solid #334155; border-radius:8px; padding:10px;">${data.svgIcon || ''}</textarea>
-                </div>
-            </div>
-        `;
-        container.innerHTML += html;
-    }
+        const btnSave = document.getElementById('btnSaveBanner');
+        const originalText = btnSave.innerText;
+        btnSave.innerText = 'Mengupload... (Mohon Tunggu)';
+        btnSave.disabled = true;
+
+        try {
+            const formData = new FormData(bannerForm);
+            
+            // Kirim ke endpoint khusus upload banner
+            // Kita gunakan endpoint PUT /api/settings/banners (Perlu dibuat di backend jika belum ada, tapi coba pakai endpoint umum dulu)
+            
+            // KARENA KITA BUTUH UPLOAD FILE, KITA TIDAK BISA PAKAI JSON BIASA
+            // Kita harus kirim FormData.
+            
+            const res = await fetch(`${API_URL}/settings/banners`, { // Pastikan rute ini ada
+                method: 'POST', // Biasanya upload pakai POST
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                    // Jangan set Content-Type, biarkan browser set otomatis untuk FormData
+                },
+                body: formData
+            });
+
+            const result = await res.json();
+
+            if (res.ok) {
+                alert('Banner Berhasil Diupload & Disimpan!');
+                loadSettings(); // Reload agar data sinkron
+            } else {
+                throw new Error(result.message || 'Gagal upload');
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert('Gagal Upload: ' + error.message);
+        } finally {
+            btnSave.innerText = originalText;
+            btnSave.disabled = false;
+        }
+    });
 }
 
-async function saveBanners() {
-    const newBanners = [];
-    for (let i = 0; i < 3; i++) {
-        newBanners.push({
-            title: document.getElementById(`bTitle${i}`).value,
-            subtitle: document.getElementById(`bSub${i}`).value,
-            gradient: document.getElementById(`bGrad${i}`).value,
-            svgIcon: document.getElementById(`bSvg${i}`).value
-        });
-    }
 
-    await updateAPI({ banners: newBanners });
-    alert('Banner berhasil diperbarui!');
-    loadSettings();
-}
-
-// --- LOGIC UMUM LAINNYA (SAMA SEPERTI SEBELUMNYA) ---
+// =========================================
+// 2. LOGIKA UMUM & KONTAK (TIDAK BERUBAH)
+// =========================================
 function renderContacts() {
     const list = document.getElementById('contactsList');
+    if (!list) return;
+
     list.innerHTML = '';
     if (!currentSettings.adminContacts || currentSettings.adminContacts.length === 0) {
         list.innerHTML = '<p style="color:#94a3b8;">Belum ada kontak admin.</p>';
@@ -109,6 +162,8 @@ function renderContacts() {
 async function saveGeneral() {
     const siteName = document.getElementById('siteName').value;
     const ppobMargin = document.getElementById('ppobMargin').value;
+    
+    // Update API pakai JSON biasa
     await updateAPI({ siteName, ppobMargin });
     alert('Pengaturan umum disimpan!');
 }
@@ -117,9 +172,12 @@ async function addContact() {
     const name = document.getElementById('adminName').value;
     const phone = document.getElementById('adminPhone').value;
     if (!name || !phone) return alert('Isi nama dan nomor!');
+    
     if (!currentSettings.adminContacts) currentSettings.adminContacts = [];
     currentSettings.adminContacts.push({ name, phone, isActive: true });
+    
     await updateAPI({ adminContacts: currentSettings.adminContacts });
+    
     document.getElementById('adminName').value = '';
     document.getElementById('adminPhone').value = '';
     renderContacts();
@@ -141,7 +199,10 @@ async function updateAPI(data) {
             body: JSON.stringify(data)
         });
         if(!res.ok) throw new Error('Gagal update');
-    } catch (error) { alert('Terjadi kesalahan saat menyimpan.'); }
+    } catch (error) { 
+        alert('Terjadi kesalahan saat menyimpan.'); 
+        console.error(error);
+    }
 }
 
 async function updateAdminAccount() {
@@ -149,10 +210,8 @@ async function updateAdminAccount() {
     const password = document.getElementById('newPassword').value;
     const confirm = document.getElementById('confirmPassword').value;
 
-    // Validasi
     if (!email && !password) return alert('Isi Email atau Password baru!');
     if (password && password !== confirm) return alert('Password konfirmasi tidak cocok!');
-
     if(!confirm('Yakin ingin mengubah data login? Anda harus login ulang setelah ini.')) return;
 
     try {
@@ -169,7 +228,6 @@ async function updateAdminAccount() {
 
         if (res.ok) {
             alert('Akun berhasil diupdate! Silakan login ulang.');
-            // Logout otomatis
             localStorage.removeItem('adminToken');
             window.location.href = '/login.html';
         } else {

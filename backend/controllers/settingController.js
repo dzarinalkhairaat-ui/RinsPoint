@@ -29,15 +29,13 @@ const updateSettings = async (req, res) => {
         let setting = await Setting.findOne();
         if (!setting) setting = new Setting();
 
-        // Ambil data dari body, termasuk adminPhone baru
+        // Ambil data dari body
         const { siteName, adminContacts, banners, ppobMargin, adminPhone } = req.body;
 
         if (siteName) setting.siteName = siteName;
         if (adminContacts) setting.adminContacts = adminContacts;
         if (banners) setting.banners = banners;
         if (ppobMargin) setting.ppobMargin = ppobMargin;
-        
-        // --- UPDATE NOMOR WA ---
         if (adminPhone) setting.adminPhone = adminPhone;
 
         const updatedSetting = await setting.save();
@@ -70,39 +68,23 @@ const updateDigiflazz = async (req, res) => {
     }
 };
 
+// @desc    Upload Gambar Banner (Admin Only)
+// @route   POST /api/settings/banners
 const updateBanners = async (req, res) => {
     try {
-        // 1. Ambil data teks dari body
-        const { 
-            banner1_title, banner1_subtitle, banner1_link, banner1_bg,
-            banner2_title, banner2_subtitle, banner2_link, banner2_bg,
-            banner3_title, banner3_subtitle, banner3_link, banner3_bg
-        } = req.body;
-
         let setting = await Setting.findOne();
-        if (!setting) return res.status(404).json({ message: 'Setting not found' });
+        if (!setting) setting = new Setting(); // Buat baru jika belum ada
 
-        // Pastikan array banners ada isinya (minimal 3 slot kosong jika belum ada)
+        // Pastikan array banners ada isinya (minimal 3 slot kosong)
         while (setting.banners.length < 3) {
             setting.banners.push({});
         }
 
-        // 2. Helper function untuk update data banner
-        const updateBannerData = (index, title, sub, link, bg) => {
-            if (title) setting.banners[index].title = title;
-            if (sub) setting.banners[index].subtitle = sub;
-            if (link) setting.banners[index].link = link;
-            if (bg) setting.banners[index].background = bg;
-        };
-
-        // 3. Update Data Teks Banner 1, 2, 3
-        updateBannerData(0, banner1_title, banner1_subtitle, banner1_link, banner1_bg);
-        updateBannerData(1, banner2_title, banner2_subtitle, banner2_link, banner2_bg);
-        updateBannerData(2, banner3_title, banner3_subtitle, banner3_link, banner3_bg);
-
-        // 4. UPDATE GAMBAR (JIKA ADA UPLOAD BARU)
+        // Cek apakah ada file yang diupload?
         if (req.files && req.files.length > 0) {
             req.files.forEach(file => {
+                // Cloudinary Middleware sudah mengupload file dan menaruh URL di file.path
+                
                 if (file.fieldname === 'banner1_image') {
                     setting.banners[0].imageUrl = file.path; 
                 } else if (file.fieldname === 'banner2_image') {
@@ -111,10 +93,12 @@ const updateBanners = async (req, res) => {
                     setting.banners[2].imageUrl = file.path;
                 }
             });
+            
+            await setting.save();
+            res.json(setting); // Kirim balik data setting terbaru
+        } else {
+            res.status(400).json({ message: 'Tidak ada gambar yang dipilih.' });
         }
-
-        await setting.save();
-        res.json(setting);
 
     } catch (error) {
         console.error(error);
