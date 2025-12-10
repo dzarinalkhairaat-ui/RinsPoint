@@ -14,9 +14,24 @@
     border-bottom: 1px solid rgba($text-secondary, 0.1);
 
     .logo-text {
+        font-family: 'Poppins', sans-serif; /* Pastikan font modern */
         font-weight: 700;
-        font-size: 1.1rem;
-        color: $cta-primary;
+        font-size: 1.4rem; /* Ukuran diperbesar biar gagah */
+        color: #ffffff;    /* Warna dasar Putih (untuk kata 'Point') */
+        display: flex;
+        align-items: center;
+        letter-spacing: 0.5px;
+
+        // Class khusus untuk kata "Rins" (Hijau Neon)
+        .brand-green {
+            color: #4ade80; /* Kode warna Hijau Neon persis referensi */
+            margin-right: 2px; /* Jarak tipis antar kata */
+            
+            // OPSI: Efek Glossy/Kaca sedikit (Biar makin premium)
+            background: linear-gradient(to right, #4ade80, #22c55e); 
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     }
 
     .search-bar {

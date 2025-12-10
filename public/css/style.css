@@ -2271,3 +2271,33 @@ a {
 }
 
 /*# sourceMappingURL=style.css.map */
+
+/* --- PAKSA GANTI WARNA LOGO (SOLID CLEAN) --- */
+
+/* 1. Bagian "Point" (Putih Bersih) */
+.main-header .logo-text {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    color: #ffffff !important; /* Putih Solid */
+    display: flex !important;
+    align-items: center !important;
+    letter-spacing: 0.5px !important;
+    
+    /* Hapus efek gradasi/clip agar warna solid keluar */
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+}
+
+/* 2. Bagian "Rins" (Hijau Neon) */
+.main-header .logo-text .brand-green {
+    color: #4ade80 !important; /* Hijau Solid */
+    margin-right: 2px !important;
+    
+    /* Hapus efek gradasi/clip */
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+    
+    /* Sedikit efek cahaya lembut (Glow) biar tetap modern */
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.4); 
+}

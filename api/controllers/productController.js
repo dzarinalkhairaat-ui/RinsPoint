@@ -1,6 +1,6 @@
 const Product = require('../../models/Product');
 
-// --- TAMBAHKAN FUNGSI INI DI ATAS ---
+// --- HELPER: Buat Slug Bersih ---
 const createSlug = (text) => {
     return text.toString().toLowerCase()
         .replace(/\(/g, '') // Hapus tanda kurung buka
@@ -90,19 +90,19 @@ const createProduct = async (req, res) => {
         }
 
         // 4. SIMPAN PRODUK KE DATABASE
-    const product = new Product({
-    name,
-    slug: createSlug(name), // <--- TAMBAHKAN BARIS INI (Paksa slug bersih)
-    description,
-    price,
-    originalPrice,
-    category,
-    subcategory: subcategory || null,
-    affiliateLink,
-    images: imageUrls,
-    platform,
-    user: req.user._id
-});
+        const product = new Product({
+            name,
+            slug: createSlug(name), // Paksa slug bersih
+            description,
+            price,
+            originalPrice,
+            category,
+            subcategory: subcategory || null,
+            affiliateLink,
+            images: imageUrls,
+            platform,
+            user: req.user._id
+        });
 
         const createdProduct = await product.save();
         res.status(201).json(createdProduct);
@@ -209,5 +209,5 @@ module.exports = {
     deleteProduct, 
     getProductBySlug,
     searchProducts,
-    updateProduct // <--- TAMBAH INI
+    updateProduct
 };

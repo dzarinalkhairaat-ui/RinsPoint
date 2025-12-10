@@ -1,133 +1,66 @@
-const axios = require('axios');
-const { HttpsProxyAgent } = require('https-proxy-agent');
+const Product = require('../../models/Product');
 const Transaction = require('../../models/Transaction');
 
-// --- KONFIGURASI ---
-const PORTAL_USERID = process.env.PORTAL_USERID;
-const PORTAL_KEY = process.env.PORTAL_KEY;
-const PORTAL_SECRET = process.env.PORTAL_SECRET;
-const PROXY_URL = process.env.FIXIE_URL; 
-const BASE_URL = 'https://portalpulsa.com/api/connect/';
-
-// Setup Agent Proxy
-const proxyAgent = PROXY_URL ? new HttpsProxyAgent(PROXY_URL) : null;
-
-// Helper: Config Axios (Timeout 60 Detik)
-const getAxiosConfig = () => {
-    const config = { 
-        headers: {
-            'portal-userid': PORTAL_USERID,
-            'portal-key': PORTAL_KEY,
-            'portal-secret': PORTAL_SECRET,
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        timeout: 9000 // <--- PENTING: Ubah jadi 9000 (9 Detik) agar aman di Vercel Free
-    };
-    
-    if (proxyAgent) {
-        config.httpsAgent = proxyAgent;
-        config.proxy = false; 
-    }
-    return config;
-};
-
-// @desc    Ambil Daftar Harga (Pricelist)
+// @desc    Ambil Daftar Harga (MODE MANUAL - DARI DATABASE SENDIRI)
 const getPriceList = async (req, res) => {
     try {
-        const params = new URLSearchParams();
-        params.append('inquiry', 'HARGA'); 
-        params.append('code', '');     
+        // 1. Ambil semua produk dari database lokal
+        // Kita populate kategori agar bisa mendapatkan namanya (misal: "Pulsa", "Data")
+        const products = await Product.find().populate('category');
 
-        const response = await axios.post(BASE_URL, params, getAxiosConfig());
-        const data = response.data;
-
-        if (data.result === 'failed') {
-            return res.status(500).json({ message: "PortalPulsa: " + data.message });
-        }
-
-        // Format data
-        const formattedData = data.message.map(item => ({
-            buyer_sku_code: item.code,
-            product_name: item.description,
+        // 2. Format datanya agar mirip dengan format yang diharapkan Frontend
+        const formattedData = products.map(item => {
+            // Cek apakah produk ini punya kategori, kalau tidak kasih label 'Umum'
+            const categoryName = item.category ? item.category.name : 'Umum';
             
-            // --- KOREKSI PENTING DI SINI ---
-            // PortalPulsa menyimpan kategori di field 'operator'
-            category: item.operator, 
-            brand: item.operator,
-            type: item.type,
-            
-            // Fix Harga (Pastikan jadi Number)
-            price: Number(item.price) + 500, 
-            
-            buyer_product_status: item.status === 'normal',
-            seller_product_status: item.status === 'normal',
-            desc: item.description
-        }));
+            return {
+                buyer_sku_code: item._id,     // ID Produk sebagai Kode
+                product_name: item.name,      // Nama Produk
+                category: categoryName,       // Kategori (Penting untuk filter Frontend)
+                brand: 'Manual',              // Brand kita set 'Manual' atau bisa ambil dari deskripsi
+                type: 'Manual',
+                price: item.price,            // Harga jual langsung
+                buyer_product_status: true,   // Anggap selalu stok ada
+                seller_product_status: true,
+                desc: item.description
+            };
+        });
 
         res.json({ data: formattedData });
 
     } catch (error) {
-        console.error("Error PPOB:", error.message);
-        if (error.code === 'ECONNABORTED') {
-            res.status(500).json({ message: "Koneksi Timeout (Coba lagi nanti)" });
-        } else if (error.response) {
-            res.status(500).json({ message: `Server Error: ${error.response.status}` });
-        } else {
-            res.status(500).json({ message: error.message });
-        }
+        console.error("Manual PPOB Error:", error.message);
+        res.status(500).json({ message: "Gagal mengambil data produk lokal" });
     }
 };
 
-// @desc    Buat Transaksi Baru
+// @desc    Buat Transaksi (MODE MANUAL)
 const createTransaction = async (req, res) => {
     const { productCode, productName, customerPhone, price } = req.body;
 
     try {
         const trxId = 'TRX-' + Date.now();
 
+        // Simpan transaksi langsung sebagai PENDING
+        // Nanti Anda proses manual di dashboard Admin
         const transaction = await Transaction.create({
             trxId: trxId,
             customerPhone: customerPhone,
             productCode: productCode,
             amount: price,
             status: 'pending',
+            note: 'Pesanan Manual - Menunggu Konfirmasi Admin',
             providerResponse: { productName }
         });
-
-        // Request Transaksi
-        const params = new URLSearchParams();
-        params.append('inquiry', 'I'); 
-        params.append('code', productCode);
-        params.append('phone', customerPhone);
-        params.append('trxid_api', trxId);
-        params.append('no', 1);
-
-        const response = await axios.post(BASE_URL, params, getAxiosConfig());
-        const result = response.data;
-
-        if (result.result === 'success') {
-            transaction.providerResponse = result;
-            transaction.note = result.message;
-            if (result.sn && result.sn !== '') {
-                transaction.status = 'success';
-                transaction.sn = result.sn;
-            }
-            await transaction.save();
-        } else {
-            transaction.status = 'failed';
-            transaction.note = result.message;
-            await transaction.save();
-        }
 
         res.status(201).json(transaction);
 
     } catch (error) {
-        console.error("Trx Error:", error.message);
-        res.status(500).json({ message: 'Transaksi Gagal' });
+        console.error("Trx Error:", error);
+        res.status(500).json({ message: 'Gagal membuat pesanan' });
     }
 };
 
-// @desc    Detail Transaksi
 const getTransactionDetail = async (req, res) => {
     try {
         const transaction = await Transaction.findOne({ trxId: req.params.trxId });
@@ -136,10 +69,10 @@ const getTransactionDetail = async (req, res) => {
                 trxId: transaction.trxId,
                 status: transaction.status,
                 amount: transaction.amount,
-                sn: transaction.sn,
+                sn: transaction.sn || '-',
                 customerPhone: transaction.customerPhone,
                 digiflazzResponse: { 
-                    productName: transaction.providerResponse?.productName || transaction.productCode 
+                    productName: transaction.providerResponse?.productName 
                 }
             });
         } else {
@@ -150,27 +83,8 @@ const getTransactionDetail = async (req, res) => {
     }
 };
 
-// @desc    Webhook Handler
 const handleWebhook = async (req, res) => {
-    try {
-        const { trxid_api, status, sn, note } = req.body;
-        console.log(`Webhook: ${trxid_api} | Status: ${status}`);
-
-        const transaction = await Transaction.findOne({ trxId: trxid_api });
-
-        if (transaction) {
-            if (status == 1) transaction.status = 'success';
-            else if (status == 2 || status == 3) transaction.status = 'failed';
-            
-            if (sn) transaction.sn = sn;
-            if (note) transaction.note = note;
-
-            await transaction.save();
-        }
-        res.status(200).json({ result: 'success' });
-    } catch (error) {
-        res.status(500).json({ result: 'failed' });
-    }
+    res.status(200).json({ message: "Manual mode, webhook ignored" });
 };
 
 module.exports = { getPriceList, createTransaction, getTransactionDetail, handleWebhook };

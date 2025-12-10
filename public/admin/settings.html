@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pengaturan - Admin</title>
+    
     <link rel="stylesheet" href="../css/style.css">
 
     <link rel="manifest" href="/manifest.json">
@@ -14,33 +15,37 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <script src="../js/auth.js"></script>
     <script>checkAuth();</script>
+
     <style>
         /* CSS Banner Upload */
         .banner-group {
             background: #0F172A; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid #334155;
+            text-align: center; /* Rata tengah biar rapi */
         }
-        .banner-group h4 { color: #4ADE80; margin-bottom: 1rem; }
+        .banner-group h4 { color: #4ADE80; margin-bottom: 1rem; text-align: left; }
         .preview-box {
-            width: 100%; height: 120px; background: #1E293B; border-radius: 10px; 
-            display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 10px;
+            width: 100%; height: 150px; /* Sedikit lebih tinggi biar puas lihat gambarnya */
+            background: #1E293B; border-radius: 10px; 
+            display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 15px;
             border: 2px dashed #334155; position: relative;
         }
         .preview-box img { width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; }
         .preview-box .placeholder { color: #64748b; font-size: 0.8rem; }
+        
+        /* Tombol Upload dipercantik */
         .btn-upload {
-            display: inline-block; padding: 8px 12px; background: #334155; color: white; 
-            border-radius: 8px; cursor: pointer; font-size: 0.8rem;
+            display: inline-block; padding: 10px 20px; 
+            background: #334155; color: white; 
+            border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+            transition: 0.3s; width: 100%;
+            border: 1px solid #475569;
         }
+        .btn-upload:hover { background: #475569; }
         .btn-upload input { display: none; }
     </style>
-
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#0F172A">
-    <link rel="apple-touch-icon" href="/assets/images/icon.png">
-    
-    <script src="/js/pwa-register.js"></script>
 </head>
 <body>
 
@@ -59,7 +64,6 @@
             </div>
 
             <div id="tab-umum" class="tab-content active">
-                
                 <div class="setting-card" style="border: 1px solid #4ADE80;">
                     <h3 style="color:#4ADE80;"><i class="fa-solid fa-store"></i> Pengaturan Toko</h3>
                     <p style="color:#94a3b8; font-size:0.8rem; margin-bottom:1rem;">Atur keuntungan dan identitas toko.</p>
@@ -70,9 +74,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label>Margin PPOB (Keuntungan per transaksi)</label>
+                        <label>Margin PPOB</label>
                         <input type="number" id="ppobMargin" placeholder="500" style="font-weight:bold; color:#F59E0B;">
-                        <small style="color:#64748b;">Contoh: Jika diisi 1000, harga pulsa modal 5.000 akan dijual 6.000.</small>
                     </div>
 
                     <button class="btn-save" onclick="saveGeneral()">SIMPAN PENGATURAN TOKO</button>
@@ -80,15 +83,10 @@
 
                 <div class="setting-card" style="margin-top: 2rem;">
                     <h3><i class="fa-solid fa-user-shield"></i> Ganti Akun Admin</h3>
-                    <p style="color:#94a3b8; font-size:0.8rem; margin-bottom:1rem;">
-                        Biarkan kosong jika tidak ingin mengubah password/email.
-                    </p>
-
                     <div class="form-group">
                         <label>Email Login Baru</label>
                         <input type="email" id="newEmail" placeholder="admin@baru.com">
                     </div>
-                    
                     <div class="form-group">
                         <label>Password Baru</label>
                         <div style="position:relative;">
@@ -96,15 +94,13 @@
                             <i class="fa-solid fa-eye" onclick="togglePass('newPassword')" style="position:absolute; right:10px; top:12px; color:#94a3b8; cursor:pointer;"></i>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label>Konfirmasi Password</label>
                         <div style="position:relative;">
                             <input type="password" id="confirmPassword" placeholder="******">
                         </div>
                     </div>
-
-                    <button class="btn-save" onclick="updateAdminAccount()" style="background:#334155;">UPDATE AKUN LOGIN</button>
+                    <button class="btn-save" onclick="updateAdminAccount()">UPDATE AKUN LOGIN</button>
                 </div>
             </div>
 
@@ -132,29 +128,21 @@
 
             <div id="tab-banner" class="tab-content">
                 <div class="setting-card">
-                    <h3>Kelola 3 Banner Utama</h3>
-                    <p style="color:#94a3b8; font-size:0.8rem; margin-bottom:1.5rem;">Upload gambar banner dari galeri. Rasio disarankan 2:1 (lebar).</p>
+                    <h3>Kelola Banner Utama</h3>
+                    <p style="color:#94a3b8; font-size:0.8rem; margin-bottom:1.5rem;">Upload gambar banner saja (Rasio 2:1).</p>
 
                     <form id="bannerForm" enctype="multipart/form-data">
+                        
                         <div class="banner-group">
                             <h4>Banner 1</h4>
                             <div class="preview-box" id="preview1">
                                 <img src="" alt="Preview" style="display:none;">
                                 <span class="placeholder">Belum ada gambar</span>
                             </div>
-                            <div class="form-group">
-                                <label class="btn-upload">
-                                    <i class="fa-solid fa-image"></i> Pilih Gambar Banner 1
-                                    <input type="file" name="banner1_image" accept="image/*" onchange="previewBanner(this, 'preview1')">
-                                </label>
-                            </div>
-                            <div class="form-group"><input type="text" id="banner1_title" name="banner1_title" placeholder="Judul Utama"></div>
-                            <div class="form-group"><input type="text" id="banner1_subtitle" name="banner1_subtitle" placeholder="Sub Judul"></div>
-                            <div class="form-group"><input type="text" id="banner1_link" name="banner1_link" placeholder="Link Tujuan (Opsional)"></div>
-                            <div class="form-group">
-                                <label style="font-size:0.8rem;">Warna Background (CSS Gradient)</label>
-                                <input type="text" id="banner1_bg" name="banner1_bg" placeholder="linear-gradient(...)">
-                            </div>
+                            <label class="btn-upload">
+                                <i class="fa-solid fa-upload"></i> Pilih Gambar Banner 1
+                                <input type="file" name="banner1_image" accept="image/*" onchange="previewBanner(this, 'preview1')">
+                            </label>
                         </div>
 
                         <div class="banner-group">
@@ -163,19 +151,10 @@
                                 <img src="" alt="Preview" style="display:none;">
                                 <span class="placeholder">Belum ada gambar</span>
                             </div>
-                            <div class="form-group">
-                                <label class="btn-upload">
-                                    <i class="fa-solid fa-image"></i> Pilih Gambar Banner 2
-                                    <input type="file" name="banner2_image" accept="image/*" onchange="previewBanner(this, 'preview2')">
-                                </label>
-                            </div>
-                             <div class="form-group"><input type="text" id="banner2_title" name="banner2_title" placeholder="Judul Utama"></div>
-                            <div class="form-group"><input type="text" id="banner2_subtitle" name="banner2_subtitle" placeholder="Sub Judul"></div>
-                            <div class="form-group"><input type="text" id="banner2_link" name="banner2_link" placeholder="Link Tujuan (Opsional)"></div>
-                            <div class="form-group">
-                                <label style="font-size:0.8rem;">Warna Background (CSS Gradient)</label>
-                                <input type="text" id="banner2_bg" name="banner2_bg" placeholder="linear-gradient(...)">
-                            </div>
+                            <label class="btn-upload">
+                                <i class="fa-solid fa-upload"></i> Pilih Gambar Banner 2
+                                <input type="file" name="banner2_image" accept="image/*" onchange="previewBanner(this, 'preview2')">
+                            </label>
                         </div>
 
                         <div class="banner-group">
@@ -184,22 +163,13 @@
                                 <img src="" alt="Preview" style="display:none;">
                                 <span class="placeholder">Belum ada gambar</span>
                             </div>
-                            <div class="form-group">
-                                <label class="btn-upload">
-                                    <i class="fa-solid fa-image"></i> Pilih Gambar Banner 3
-                                    <input type="file" name="banner3_image" accept="image/*" onchange="previewBanner(this, 'preview3')">
-                                </label>
-                            </div>
-                             <div class="form-group"><input type="text" id="banner3_title" name="banner3_title" placeholder="Judul Utama"></div>
-                            <div class="form-group"><input type="text" id="banner3_subtitle" name="banner3_subtitle" placeholder="Sub Judul"></div>
-                            <div class="form-group"><input type="text" id="banner3_link" name="banner3_link" placeholder="Link Tujuan (Opsional)"></div>
-                            <div class="form-group">
-                                <label style="font-size:0.8rem;">Warna Background (CSS Gradient)</label>
-                                <input type="text" id="banner3_bg" name="banner3_bg" placeholder="linear-gradient(...)">
-                            </div>
+                            <label class="btn-upload">
+                                <i class="fa-solid fa-upload"></i> Pilih Gambar Banner 3
+                                <input type="file" name="banner3_image" accept="image/*" onchange="previewBanner(this, 'preview3')">
+                            </label>
                         </div>
 
-                        <button type="submit" class="btn-save" id="btnSaveBanner">UPLOAD & SIMPAN BANNER</button>
+                        <button type="submit" class="btn-save" id="btnSaveBanner">UPLOAD SEMUA BANNER</button>
                     </form>
                 </div>
             </div>
@@ -212,7 +182,6 @@
             const input = document.getElementById(id);
             input.type = input.type === 'password' ? 'text' : 'password';
         }
-        // ... script lainnya ...
     </script>
 
     <script src="../js/settings.js"></script>
