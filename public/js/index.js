@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // =========================================
-// 1. BANNER SLIDER (VERSI STANDAR STABIL)
+// 1. BANNER SLIDER (VERSI COMPACT & RAPI)
 // =========================================
 let currentSlide = 0;
 let totalSlides = 1; 
@@ -44,30 +44,30 @@ function renderBanners(banners) {
         const div = document.createElement('div');
         div.className = 'hero-banner slide';
         
-        // --- KEMBALI KE PENGATURAN AWAL YANG RAPI ---
+        // --- SETTINGAN UKURAN COMPACT (SEPERTI SEMULA) ---
         div.style.padding = '0'; 
         div.style.background = 'transparent';
         div.style.overflow = 'hidden';
         div.style.position = 'relative';
         
-        // Kita kunci tingginya agar slider stabil (tidak naik turun)
-        // Tinggi 180px - 200px adalah standar banner mobile yang enak dilihat
-        div.style.height = '190px'; 
+        // KITA PANGKAS JADI 160px (Lebih pendek dan rapi)
+        div.style.height = '160px'; 
         div.style.width = '100%';
+        div.style.borderRadius = '16px'; // Sudut membulat manis
 
         if (banner.imageUrl) {
             div.innerHTML = `
                 <img src="${banner.imageUrl}" alt="Banner ${index + 1}" 
-                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block;">
+                     style="width: 100%; height: 100%; object-fit: cover; display: block;">
             `;
-            // object-fit: cover = Gambar mengisi penuh kotak dengan rapi (Standard Aplikasi)
+            // object-fit: cover = Memastikan gambar memenuhi kotak 160px dengan rapi
         } else {
             // Fallback (Gradient)
             div.style.background = 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)';
             div.style.display = 'flex';
             div.style.alignItems = 'center';
             div.style.justifyContent = 'center';
-            div.style.padding = '1.5rem'; // Kembalikan padding untuk teks
+            div.style.padding = '1rem';
             div.innerHTML = `
                 <div class="banner-text" style="text-align:center;">
                     <h2 style="font-size: 1.2rem; margin:0;">RinsPoint</h2>
@@ -120,7 +120,7 @@ function updateSlider() {
 }
 
 // =========================================
-// 2. KATEGORI (TIDAK BERUBAH)
+// 2. KATEGORI (TETAP SAMA)
 // =========================================
 async function fetchCategories() {
     try {
