@@ -4,244 +4,266 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pembayaran - RinsPoint</title>
-    
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        .payment-card {
-            background: #1e293b;
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid #334155;
-            margin-bottom: 20px;
-        }
-        .row-detail {
-            display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem;
-        }
+        .payment-card { background: #1e293b; border-radius: 16px; padding: 20px; border: 1px solid #334155; margin-bottom: 20px; }
+        .row-detail { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; }
         .label { color: #94a3b8; }
         .value { color: white; font-weight: 500; text-align: right; }
-        .total-row {
-            margin-top: 15px; padding-top: 15px; border-top: 1px dashed #334155;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .total-row { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #334155; display: flex; justify-content: space-between; align-items: center; }
         .total-label { color: white; font-weight: 700; font-size: 1rem; }
         .total-value { color: #4ade80; font-weight: 700; font-size: 1.3rem; }
 
-        .payment-method {
-            display: flex; align-items: center; gap: 15px;
-            background: #0f172a; padding: 15px; border-radius: 12px;
-            border: 1px solid #334155; margin-bottom: 10px; cursor: pointer;
-        }
+        .section-title { color: white; font-size: 1rem; margin-bottom: 10px; font-weight: 600; }
+        .method-group { margin-bottom: 15px; }
+        .method-label { color: #94a3b8; font-size: 0.8rem; margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .payment-method { display: flex; align-items: center; gap: 15px; background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 10px; cursor: pointer; transition: 0.2s; position: relative; }
         .payment-method.active { border-color: #4ade80; background: rgba(74, 222, 128, 0.05); }
-        .method-icon { font-size: 1.5rem; color: #4ade80; width: 30px; text-align: center; }
+        .method-icon { font-size: 1.5rem; color: #4ade80; width: 40px; text-align: center; }
+        .method-info { flex: 1; }
+        .method-name { color: white; font-weight: 600; font-size: 0.95rem; }
+        .method-desc { color: #94a3b8; font-size: 0.75rem; }
+        .check-icon { display: none; color: #4ade80; font-size: 1.2rem; }
+        .payment-method.active .check-icon { display: block; }
 
-        .btn-confirm {
-            background: #25D366; /* Warna WA */
-            color: white; border: none; width: 100%; padding: 15px;
-            border-radius: 12px; font-weight: 700; font-size: 1rem;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
-            margin-top: 20px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
-        }
-        .btn-confirm:active { transform: scale(0.98); }
+        .btn-copy { background: #334155; color: white; border: none; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; margin-left: 5px; }
 
-        /* PERINGATAN NOMOR */
-        .warning-box {
-            background: rgba(245, 158, 11, 0.1); 
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: 10px; padding: 10px; margin-bottom: 15px;
-            display: flex; gap: 10px; align-items: start;
-        }
-        .warning-text { color: #f59e0b; font-size: 0.8rem; line-height: 1.4; }
+        .upload-box { border: 2px dashed #334155; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; background: #0f172a; margin-top: 10px; transition: 0.2s; position: relative; overflow: hidden; }
+        .upload-box:hover { border-color: #4ade80; }
+        .upload-text { color: #94a3b8; font-size: 0.85rem; margin-top: 5px; }
+        #previewImg { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; display: none; background: #0f172a; }
 
-        /* MODAL PILIH ADMIN */
-        .admin-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 9999; display: none;
-            justify-content: center; align-items: center; padding: 20px;
-            backdrop-filter: blur(5px);
-        }
-        .admin-modal.show { display: flex; }
-        .admin-box {
-            background: #1e293b; width: 100%; max-width: 350px;
-            border-radius: 20px; padding: 20px; border: 1px solid #334155;
-        }
-        .admin-list { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .admin-item {
-            background: #0f172a; padding: 12px; border-radius: 10px;
-            display: flex; align-items: center; gap: 10px; cursor: pointer;
-            border: 1px solid #334155; transition: 0.2s;
-        }
-        .admin-item:active { transform: scale(0.98); background: #334155; }
-        .admin-avatar {
-            width: 40px; height: 40px; background: #25D366; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; color: white;
-        }
+        .btn-confirm { background: #4ade80; color: #064e3b; border: none; width: 100%; padding: 15px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; box-shadow: 0 4px 10px rgba(74, 222, 128, 0.2); }
+        .btn-confirm:disabled { background: #334155; color: #94a3b8; cursor: not-allowed; box-shadow: none; }
+
+        /* MODAL (UNTUK ADMIN DAN QRIS) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-overlay.show { display: flex; }
+        .modal-box { background: #1e293b; width: 100%; max-width: 350px; border-radius: 20px; padding: 20px; border: 1px solid #334155; text-align: center; }
+        
+        .admin-list { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+        .admin-item { background: #0f172a; padding: 12px; border-radius: 10px; display: flex; align-items: center; gap: 10px; cursor: pointer; border: 1px solid #334155; margin-bottom: 10px; }
+        .admin-avatar { width: 40px; height: 40px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; }
+
+        /* QRIS IMAGE IN MODAL */
+        #qrisImage { width: 100%; max-width: 300px; border-radius: 10px; margin: 10px 0; border: 2px solid white; }
     </style>
 </head>
 <body>
 
     <div class="mobile-container">
-        
         <header class="main-header">
             <a href="/ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="logo-text">Rincian Pembayaran</div>
+            <div class="logo-text">Pembayaran</div>
         </header>
 
-        <main style="padding: 20px;">
-            
-            <h3 style="color: white; margin-bottom: 10px;">Ringkasan Pesanan</h3>
-            
-            <div class="warning-box">
-                <i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b; margin-top: 2px;"></i>
-                <div class="warning-text">
-                    Mohon cek kembali Nomor Tujuan / ID Game Anda. Kesalahan nomor bukan tanggung jawab kami.
-                </div>
-            </div>
-            
+        <main style="padding: 20px; padding-bottom: 100px;">
             <div class="payment-card">
-                <div class="row-detail">
-                    <span class="label">Produk</span>
-                    <span class="value" id="dispProduct">-</span>
-                </div>
-                <div class="row-detail">
-                    <span class="label">Nomor Tujuan</span>
-                    <span class="value" id="dispNumber">-</span>
-                </div>
-                <div class="row-detail">
-                    <span class="label">Kategori</span>
-                    <span class="value" id="dispCategory">-</span>
-                </div>
-                
-                <div class="total-row">
-                    <span class="total-label">Total Bayar</span>
-                    <span class="total-value" id="dispPrice">Rp 0</span>
-                </div>
+                <div class="row-detail"><span class="label">Produk</span><span class="value" id="dispProduct">-</span></div>
+                <div class="row-detail"><span class="label">Nomor Tujuan</span><span class="value" id="dispNumber">-</span></div>
+                <div class="total-row"><span class="total-label">Total Bayar</span><span class="total-value" id="dispPrice">Rp 0</span></div>
             </div>
 
-            <h3 style="color: white; margin-bottom: 15px;">Metode Pembayaran</h3>
-            
-            <div class="payment-method active">
-                <div class="method-icon"><i class="fa-brands fa-whatsapp"></i></div>
-                <div style="flex: 1;">
-                    <div style="color: white; font-weight: 600; font-size: 0.95rem;">Bayar via Admin (Manual)</div>
-                    <div style="color: #94a3b8; font-size: 0.8rem;">Transfer Bank / E-Wallet / QRIS</div>
-                </div>
-                <i class="fa-solid fa-circle-check" style="color: #4ade80;"></i>
+            <div id="paymentMethodsContainer">
+                <p style="text-align:center; color:#64748b;">Memuat metode pembayaran...</p>
             </div>
 
-            <button onclick="openAdminModal()" class="btn-confirm">
-                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i>
-                Konfirmasi Pesanan
+            <div class="section-title" style="margin-top: 20px;">Bukti Pembayaran</div>
+            <div class="upload-box" onclick="document.getElementById('proofFile').click()">
+                <input type="file" id="proofFile" accept="image/*" style="display: none;" onchange="previewProof(this)">
+                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: #4ade80;"></i>
+                <div class="upload-text">Klik untuk upload bukti transfer</div>
+                <img id="previewImg">
+            </div>
+
+            <button onclick="openAdminModal()" id="btnConfirm" class="btn-confirm" disabled>
+                <i class="fa-solid fa-paper-plane"></i> Konfirmasi Pembayaran
             </button>
-
-            <p style="color: #64748b; font-size: 0.8rem; text-align: center; margin-top: 15px; line-height: 1.5;">
-                Klik tombol di atas untuk memilih Admin dan menyelesaikan pembayaran.
-            </p>
-
         </main>
     </div>
 
-    <div id="adminModal" class="admin-modal">
-        <div class="admin-box">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 style="color: white; margin: 0;">Pilih Admin</h3>
-                <i class="fa-solid fa-xmark" style="color: #ef4444; font-size: 1.5rem; cursor: pointer;" onclick="closeAdminModal()"></i>
-            </div>
-            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 15px;">Silakan pilih Admin yang tersedia untuk konfirmasi:</p>
+    <div id="adminModal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="color:white; margin:0 0 15px 0;">Pilih Admin</h3>
+            <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:15px;">Kirim bukti ke admin yang tersedia:</p>
+            <div id="adminListContainer" class="admin-list"></div>
+            <button onclick="document.getElementById('adminModal').classList.remove('show')" style="width:100%; padding:10px; background:transparent; border:1px solid #ef4444; color:#ef4444; border-radius:10px; margin-top:10px; cursor:pointer;">Batal</button>
+        </div>
+    </div>
+
+    <div id="qrisModal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="color:white; margin:0;">Scan QRIS</h3>
+            <p style="color:#94a3b8; font-size:0.85rem; margin-top:5px;">Scan kode di bawah ini untuk bayar</p>
             
-            <div id="adminListContainer" class="admin-list">
-                <div style="text-align: center; color: #64748b;">Memuat kontak...</div>
-            </div>
+            <img id="qrisImage" src="" alt="QR Code">
+            
+            <p style="color:white; font-weight:bold; font-size:1.1rem; margin-bottom:5px;" id="qrisName">-</p>
+            
+            <button onclick="document.getElementById('qrisModal').classList.remove('show')" style="width:100%; background:#4ade80; color:#064e3b; padding:12px; border-radius:10px; border:none; font-weight:bold; cursor:pointer; margin-top:10px;">Tutup</button>
         </div>
     </div>
 
     <script>
         const API_URL = '/api';
         let transaction = null;
-        let adminContacts = []; 
+        let selectedMethod = null;
+        let adminContacts = [];
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // 1. Ambil Data Transaksi
             const rawData = localStorage.getItem('currentTransaction');
-            if (!rawData) {
-                alert('Tidak ada data transaksi.');
-                window.location.href = '/ppob.html';
-                return;
-            }
+            if (!rawData) { alert('Data transaksi hilang.'); window.location.href = '/ppob.html'; return; }
             transaction = JSON.parse(rawData);
 
-            // 2. Render Data ke HTML
             document.getElementById('dispProduct').innerText = transaction.productName;
             document.getElementById('dispNumber').innerText = transaction.customerNumber;
-            document.getElementById('dispCategory').innerText = transaction.productCategory.name || transaction.productCategory;
             document.getElementById('dispPrice').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(transaction.productPrice);
 
-            // 3. Ambil Data Admin dari Server
+            await loadPaymentMethods();
+            await loadAdmins();
+        });
+
+        async function loadPaymentMethods() {
+            const container = document.getElementById('paymentMethodsContainer');
+            try {
+                const res = await fetch(`${API_URL}/payments`);
+                const methods = await res.json();
+                container.innerHTML = '';
+
+                const groups = { bank: [], ewallet: [], qris: [] };
+                methods.forEach(m => { if(m.isActive) groups[m.type].push(m); });
+
+                if (groups.qris.length > 0) renderGroup(container, 'Scan QRIS', groups.qris);
+                if (groups.bank.length > 0) renderGroup(container, 'Transfer Bank', groups.bank);
+                if (groups.ewallet.length > 0) renderGroup(container, 'E-Wallet', groups.ewallet);
+
+            } catch (error) { console.error(error); container.innerHTML = '<p style="color:#ef4444; text-align:center;">Gagal memuat metode pembayaran.</p>'; }
+        }
+
+        function renderGroup(container, title, items) {
+            let html = `<div class="method-group"><span class="method-label">${title}</span>`;
+            items.forEach(m => {
+                let iconHtml = '<i class="fa-solid fa-building-columns"></i>';
+                if(m.type === 'ewallet') iconHtml = '<i class="fa-solid fa-wallet"></i>';
+                if(m.type === 'qris') iconHtml = '<i class="fa-solid fa-qrcode"></i>';
+                
+                if(m.icon && m.type !== 'qris') iconHtml = `<img src="${m.icon}" style="width:100%; height:100%; object-fit:contain;">`;
+
+                let desc = `${m.number} a.n ${m.holder}`;
+                if (m.type === 'qris') desc = 'Klik untuk melihat QR Code';
+
+                html += `
+                <div class="payment-method" onclick='selectMethod(this, ${JSON.stringify(m)})'>
+                    <div class="method-icon">${iconHtml}</div>
+                    <div class="method-info">
+                        <div class="method-name">${m.name} 
+                            ${m.type !== 'qris' ? `<button class="btn-copy" onclick="copyText(event, '${m.number}')"><i class="fa-regular fa-copy"></i> Salin</button>` : ''}
+                        </div>
+                        <div class="method-desc">${desc}</div>
+                    </div>
+                    <i class="fa-solid fa-circle-check check-icon"></i>
+                </div>`;
+            });
+            html += `</div>`;
+            container.innerHTML += html;
+        }
+
+        function selectMethod(el, methodData) {
+            document.querySelectorAll('.payment-method').forEach(e => e.classList.remove('active'));
+            el.classList.add('active');
+            selectedMethod = methodData;
+            checkForm();
+
+            if (methodData.type === 'qris') {
+                document.getElementById('qrisName').innerText = methodData.name;
+                document.getElementById('qrisImage').src = methodData.icon;
+                document.getElementById('qrisModal').classList.add('show');
+            }
+        }
+
+        function previewProof(input) {
+            const preview = document.getElementById('previewImg');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+                checkForm();
+            }
+        }
+
+        function checkForm() {
+            const hasMethod = selectedMethod !== null;
+            const hasProof = document.getElementById('proofFile').files.length > 0;
+            const btn = document.getElementById('btnConfirm');
+            if (hasMethod && hasProof) { btn.disabled = false; } else { btn.disabled = true; }
+        }
+
+        function copyText(e, text) {
+            e.stopPropagation();
+            navigator.clipboard.writeText(text);
+            alert('Nomor disalin: ' + text);
+        }
+
+        async function loadAdmins() {
             try {
                 const res = await fetch(`${API_URL}/settings`);
                 const settings = await res.json();
-                
-                // Hanya ambil kontak tambahan yang aktif
-                if (settings.adminContacts && settings.adminContacts.length > 0) {
+                if (settings.adminContacts) {
                     adminContacts = settings.adminContacts.filter(a => a.isActive);
                 }
-                
-                renderAdminList();
-
-            } catch (error) {
-                console.error('Gagal ambil info admin', error);
-                document.getElementById('adminListContainer').innerHTML = '<div style="color:#ef4444; text-align:center;">Gagal memuat kontak admin.</div>';
-            }
-        });
-
-        function renderAdminList() {
-            const container = document.getElementById('adminListContainer');
-            container.innerHTML = '';
-
-            if (adminContacts.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:#ef4444; padding:10px;">Belum ada kontak admin yang ditambahkan.</div>`;
-                return;
-            }
-
-            adminContacts.forEach(admin => {
-                const div = document.createElement('div');
-                div.className = 'admin-item';
-                div.onclick = () => sendToWhatsApp(admin.phone);
-                div.innerHTML = `
-                    <div class="admin-avatar"><i class="fa-brands fa-whatsapp"></i></div>
-                    <div style="flex: 1;">
-                        <div style="color: white; font-weight: 600;">${admin.name}</div>
-                        <div style="color: #94a3b8; font-size: 0.8rem;">Online</div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right" style="color: #4ade80;"></i>
-                `;
-                container.appendChild(div);
-            });
+                const container = document.getElementById('adminListContainer');
+                container.innerHTML = '';
+                if(adminContacts.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; color:#64748b;">Tidak ada admin online.</p>';
+                    return;
+                }
+                adminContacts.forEach(admin => {
+                    const div = document.createElement('div');
+                    div.className = 'admin-item';
+                    div.onclick = () => sendOrder(admin.phone);
+                    div.innerHTML = `<div class="admin-avatar"><i class="fa-brands fa-whatsapp"></i></div><div style="flex:1;"><div style="color:white; font-weight:600;">${admin.name}</div><div style="color:#4ade80; font-size:0.75rem;">Online</div></div><i class="fa-solid fa-chevron-right" style="color:#4ade80;"></i>`;
+                    container.appendChild(div);
+                });
+            } catch (error) { console.error(error); }
         }
 
-        function openAdminModal() {
-            document.getElementById('adminModal').classList.add('show');
-        }
-        function closeAdminModal() {
-            document.getElementById('adminModal').classList.remove('show');
-        }
+        function openAdminModal() { document.getElementById('adminModal').classList.add('show'); }
 
-        function sendToWhatsApp(phone) {
-            if (!transaction) return;
+        async function sendOrder(phone) {
+            const productLine = transaction.productName;
+            const targetLine = transaction.customerNumber;
+            const priceLine = new Intl.NumberFormat('id-ID').format(transaction.productPrice);
+            const methodLine = `${selectedMethod.name} ${selectedMethod.type !== 'qris' ? '' : '(Scan QR)'}`;
 
-            const message = `Halo Admin RinsPoint, saya mau order PPOB:%0A%0A` +
-                            `📦 *Produk:* ${transaction.productName}%0A` +
-                            `📱 *Nomor:* ${transaction.customerNumber}%0A` +
-                            `💰 *Harga:* Rp ${new Intl.NumberFormat('id-ID').format(transaction.productPrice)}%0A%0A` +
-                            `Mohon diproses, pembayaran via apa ya?`;
+            // TEMPLATE AMAN (ASCII)
+            const message = `Halo Admin, konfirmasi pesanan baru:
 
-            const url = `https://wa.me/${phone}?text=${message}`;
+----------------------------
+*DATA PESANAN*
+----------------------------
+Produk  : ${productLine}
+Tujuan  : ${targetLine}
+Total   : Rp ${priceLine}
+
+----------------------------
+*PEMBAYARAN*
+----------------------------
+Metode  : ${methodLine}
+Bukti   : Terlampir
+
+Mohon segera diproses. Terima kasih!`;
+
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
             window.open(url, '_blank');
-            closeAdminModal();
+            setTimeout(() => { window.location.href = '/ppob.html'; }, 1000);
         }
     </script>
-
 </body>
 </html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kelola Pembayaran PPOB - Admin</title>
+    
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="../js/auth.js"></script>
+    <script>checkAuth();</script>
+
+    <style>
+        body { background-color: #0f172a; padding-bottom: 80px; }
+        .dashboard-header { background: #1e293b; padding: 1rem; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: flex-start; gap: 15px; }
+        .dashboard-header h2 { margin: 0; color: #4ade80; font-size: 1.1rem; }
+        
+        .content-box { padding: 20px; }
+        .btn-add { width: 100%; background: #4ade80; color: #064e3b; padding: 12px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; }
+        
+        .payment-list { display: flex; flex-direction: column; gap: 15px; }
+        .payment-item { background: #1e293b; padding: 15px; border-radius: 12px; border: 1px solid #334155; display: flex; align-items: center; gap: 15px; }
+        .payment-icon { width: 50px; height: 50px; background: #0f172a; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #334155; }
+        .payment-icon img { width: 100%; height: 100%; object-fit: contain; }
+        .payment-icon i { font-size: 1.5rem; color: #94a3b8; }
+        
+        .payment-info { flex: 1; }
+        .p-name { color: white; font-weight: 600; font-size: 1rem; }
+        .p-detail { color: #94a3b8; font-size: 0.85rem; margin-top: 2px; }
+        .btn-delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: none; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; display: none; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-overlay.show { display: flex; }
+        .modal-box { background: #1e293b; width: 100%; max-width: 400px; border-radius: 16px; padding: 20px; border: 1px solid #334155; }
+        .form-group { margin-bottom: 15px; transition: 0.3s; }
+        .form-label { display: block; color: #94a3b8; margin-bottom: 5px; font-size: 0.85rem; }
+        .form-input, .form-select { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; outline: none; }
+        .modal-footer { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-submit { flex: 1; background: #4ade80; color: #064e3b; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-cancel { flex: 1; background: #334155; color: white; padding: 12px; border-radius: 8px; border: none; cursor: pointer; }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+        <header class="dashboard-header">
+            <a href="dashboard.html" style="color:white; font-size: 1.2rem;"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2>Kelola Pembayaran</h2>
+        </header>
+
+        <div class="content-box">
+            <button class="btn-add" onclick="openModal()">
+                <i class="fa-solid fa-plus"></i> Tambah Metode Baru
+            </button>
+
+            <div id="paymentListContainer" class="payment-list">
+                <p style="text-align: center; color: #64748b;">Memuat data...</p>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="/"><i class="fa-solid fa-store"></i><span>Toko</span></a>
+            <a href="dashboard.html" class="active"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+            <a href="ppob-settings.html"><i class="fa-solid fa-sliders"></i><span>PPOB</span></a>
+            <a href="#" onclick="logout()"><i class="fa-solid fa-power-off"></i><span>LogOut</span></a>
+        </nav>
+    </div>
+
+    <div id="addModal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="color: white; margin-bottom: 20px;">Tambah Pembayaran</h3>
+            <form id="addForm">
+                <div class="form-group">
+                    <label class="form-label">Tipe Pembayaran</label>
+                    <select id="pType" class="form-select" onchange="toggleFormMode()">
+                        <option value="bank">Transfer Bank</option>
+                        <option value="ewallet">E-Wallet (Dana/Ovo/dll)</option>
+                        <option value="qris">QRIS</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Nama Bank / Wallet / QRIS</label>
+                    <input type="text" id="pName" class="form-input" placeholder="Contoh: BSI, DANA, QRIS Toko" required>
+                </div>
+
+                <div id="bankFields">
+                    <div class="form-group">
+                        <label class="form-label">Nomor Rekening / HP</label>
+                        <input type="text" id="pNumber" class="form-input" placeholder="Contoh: 731970...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Atas Nama</label>
+                        <input type="text" id="pHolder" class="form-input" placeholder="Contoh: MOH ABIDARIN">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" id="labelImage">Logo Bank (Opsional)</label>
+                    <input type="file" id="pIcon" class="form-input" accept="image/*">
+                    <small style="color:#64748b; font-size:0.7rem;">Untuk QRIS, wajib upload gambar QR Code.</small>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Batal</button>
+                    <button type="submit" class="btn-submit" id="btnSave">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/payments';
+        const token = localStorage.getItem('adminToken');
+
+        document.addEventListener('DOMContentLoaded', loadPayments);
+
+        // LOGIKA GANTI TAMPILAN FORM
+        function toggleFormMode() {
+            const type = document.getElementById('pType').value;
+            const bankFields = document.getElementById('bankFields');
+            const labelImage = document.getElementById('labelImage');
+
+            if (type === 'qris') {
+                // Mode QRIS: Sembunyikan Input Nomor, Wajibkan Gambar
+                bankFields.classList.add('hidden');
+                labelImage.innerText = "Upload Gambar QRIS (Wajib)";
+                document.getElementById('pNumber').removeAttribute('required');
+                document.getElementById('pHolder').removeAttribute('required');
+            } else {
+                // Mode Bank: Tampilkan Input Nomor
+                bankFields.classList.remove('hidden');
+                labelImage.innerText = "Logo Bank / Wallet (Opsional)";
+                document.getElementById('pNumber').setAttribute('required', 'true');
+                document.getElementById('pHolder').setAttribute('required', 'true');
+            }
+        }
+
+        async function loadPayments() {
+            const container = document.getElementById('paymentListContainer');
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+
+                container.innerHTML = '';
+                if(data.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; color:#64748b;">Belum ada metode pembayaran.</p>';
+                    return;
+                }
+
+                data.forEach(item => {
+                    let iconHtml = '<i class="fa-solid fa-money-bill"></i>';
+                    if (item.type === 'qris') iconHtml = '<i class="fa-solid fa-qrcode"></i>';
+                    if (item.icon) iconHtml = `<img src="${item.icon}" alt="icon">`;
+                    
+                    // Detail Teks (Beda QRIS dan Bank)
+                    let detailText = `${item.number} a.n ${item.holder}`;
+                    if (item.type === 'qris') detailText = 'Scan QR Code';
+
+                    const div = document.createElement('div');
+                    div.className = 'payment-item';
+                    div.innerHTML = `
+                        <div class="payment-icon">${iconHtml}</div>
+                        <div class="payment-info">
+                            <div class="p-name">${item.name} <small style="color:#60a5fa; font-size:0.7rem; border:1px solid #60a5fa; padding:1px 4px; border-radius:4px;">${item.type.toUpperCase()}</small></div>
+                            <div class="p-detail" style="font-size:0.8rem; color:#cbd5e1;">${detailText}</div>
+                        </div>
+                        <button class="btn-delete" onclick="deletePayment('${item._id}')"><i class="fa-solid fa-trash"></i></button>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<p style="color:#ef4444; text-align:center;">Gagal memuat data.</p>';
+            }
+        }
+
+        document.getElementById('addForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSave');
+            btn.innerText = 'Menyimpan...'; btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('type', document.getElementById('pType').value);
+            formData.append('name', document.getElementById('pName').value);
+            
+            // Kirim nomor hanya jika bukan QRIS
+            if (document.getElementById('pType').value !== 'qris') {
+                formData.append('number', document.getElementById('pNumber').value);
+                formData.append('holder', document.getElementById('pHolder').value);
+            }
+            
+            const iconFile = document.getElementById('pIcon').files[0];
+            if(iconFile) formData.append('icon', iconFile);
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                if(res.ok) {
+                    alert('Berhasil!');
+                    closeModal();
+                    loadPayments();
+                } else {
+                    const err = await res.json();
+                    alert('Gagal: ' + (err.message || 'Error'));
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Terjadi kesalahan server.');
+            } finally {
+                btn.innerText = 'Simpan'; btn.disabled = false;
+            }
+        });
+
+        async function deletePayment(id) {
+            if(!confirm('Yakin hapus metode ini?')) return;
+            try {
+                const res = await fetch(`${API_URL}/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if(res.ok) loadPayments();
+            } catch (error) { alert('Gagal hapus.'); }
+        }
+
+        function openModal() { 
+            document.getElementById('addModal').classList.add('show'); 
+            document.getElementById('addForm').reset(); 
+            toggleFormMode(); // Reset tampilan form
+        }
+        function closeModal() { document.getElementById('addModal').classList.remove('show'); }
+        function logout() { if(confirm('Keluar dari Admin?')) { localStorage.removeItem('adminToken'); window.location.href = '/login.html'; } }
+    </script>
+</body>
+</html>

@@ -10,35 +10,44 @@ const createSlug = (text) => {
         .replace(/-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
 };
 
-// @desc    Ambil produk (Logic Filter Platform Diperbaiki)
+// @desc    Ambil produk (Logic Filter Platform & Subkategori Diperbaiki)
 // @route   GET /api/products
 const getProducts = async (req, res) => {
     try {
         let query = {};
         
-        // 1. PRIORITAS UTAMA: Filter Platform (Untuk Admin Kelola PPOB)
+        // 1. FILTER PLATFORM (PPOB vs Affiliate)
+        // Jika ada request khusus ?platform=PPOB, tampilkan PPOB.
+        // Jika tidak, defaultnya sembunyikan PPOB (Tampilkan Affiliate saja).
         if (req.query.platform) {
             query.platform = req.query.platform;
+        } else {
+            query.platform = { $ne: 'PPOB' }; 
         }
-        // 2. Filter Kategori (Untuk Halaman Menu PPOB / Kategori Affiliate)
-        else if (req.query.category) {
+
+        // 2. FILTER KATEGORI
+        // Menggunakan IF biasa (bukan else if) agar bisa jalan bareng subkategori
+        if (req.query.category) {
             const cat = req.query.category;
-            // Cek apakah ID atau String
+            
+            // Cek apakah input berupa ID (Affiliate) atau String (PPOB)
             if (mongoose.Types.ObjectId.isValid(cat)) {
+                // Cari ID murni atau Object ID
                 query.category = { $in: [cat, new mongoose.Types.ObjectId(cat)] };
             } else {
+                // Cari String
                 query.category = cat;
             }
         } 
-        // 3. Filter Subkategori
-        else if (req.query.subcategory) {
+
+        // 3. FILTER SUBKATEGORI (PERBAIKAN UTAMA)
+        // Dulu pakai "else if", sekarang pakai "if" terpisah.
+        // Jadi filter ini akan MENAMBAHKAN kondisi, bukan menggantikan kategori.
+        if (req.query.subcategory) {
             query.subcategory = req.query.subcategory;
         }
-        // 4. DEFAULT (HOME PAGE): Sembunyikan PPOB jika tidak ada filter apapun
-        else {
-            query.platform = { $ne: 'PPOB' };
-        }
 
+        // Sorting
         let sortOption = { createdAt: -1 }; 
         if (req.query.sort === 'lowest') sortOption = { price: 1 };
         if (req.query.sort === 'highest') sortOption = { price: -1 };

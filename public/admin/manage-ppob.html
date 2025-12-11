@@ -14,129 +14,53 @@
 
     <style>
         body { background-color: #0f172a; padding-bottom: 80px; }
-        
-        /* HEADER (RAPAT KIRI) */
-        .dashboard-header {
-            background: #1e293b; padding: 1rem; position: sticky; top: 0; z-index: 100;
-            border-bottom: 1px solid #334155; 
-            display: flex; align-items: center; justify-content: flex-start; gap: 15px; 
-        }
+        .dashboard-header { background: #1e293b; padding: 1rem; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: flex-start; gap: 15px; }
         .dashboard-header h2 { margin: 0; color: #4ade80; font-size: 1.1rem; }
-
         .tools-box { margin: 15px; display: flex; flex-direction: column; gap: 10px; }
         .search-row { display: flex; gap: 10px; }
-        
-        .search-input {
-            flex: 1; background: #1e293b; border: 1px solid #334155;
-            padding: 12px; border-radius: 10px; color: white; outline: none;
-        }
-        
-        .filter-select {
-            background: #1e293b; border: 1px solid #334155; padding: 12px;
-            border-radius: 10px; color: #94a3b8; outline: none; flex: 1; cursor: pointer;
-        }
-
-        .btn-add {
-            background: #4ade80; color: #064e3b; border: none;
-            padding: 0 20px; border-radius: 10px; font-weight: bold; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        /* PRODUCT LIST STYLING */
+        .search-input { flex: 1; background: #1e293b; border: 1px solid #334155; padding: 12px; border-radius: 10px; color: white; outline: none; }
+        .filter-select { background: #1e293b; border: 1px solid #334155; padding: 12px; border-radius: 10px; color: #94a3b8; outline: none; flex: 1; cursor: pointer; }
+        .btn-add { background: #4ade80; color: #064e3b; border: none; padding: 0 20px; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .ppob-list { padding: 0 15px; display: grid; gap: 10px; }
-        
-        .ppob-item {
-            background: #1e293b; padding: 12px; border-radius: 12px;
-            border: 1px solid #334155; display: flex; align-items: center; gap: 12px;
-        }
-        
-        /* THUMBNAIL LIST */
-        .item-thumb {
-            width: 50px; height: 50px; border-radius: 8px; object-fit: cover;
-            background: #0f172a; border: 1px solid #334155;
-        }
-        .item-thumb-placeholder {
-            width: 50px; height: 50px; border-radius: 8px; background: rgba(74, 222, 128, 0.1);
-            display: flex; align-items: center; justify-content: center;
-            color: #4ade80; font-size: 1.2rem; border: 1px solid rgba(74, 222, 128, 0.2);
-        }
-
+        .ppob-item { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; display: flex; align-items: center; gap: 12px; }
+        .item-thumb { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: #0f172a; border: 1px solid #334155; }
+        .item-thumb-placeholder { width: 50px; height: 50px; border-radius: 8px; background: rgba(74, 222, 128, 0.1); display: flex; align-items: center; justify-content: center; color: #4ade80; font-size: 1.2rem; border: 1px solid rgba(74, 222, 128, 0.2); }
         .item-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-        
-        .item-category {
-            font-size: 0.65rem; background: rgba(255, 255, 255, 0.1); 
-            color: #cbd5e1; padding: 2px 6px; border-radius: 4px; width: fit-content;
-        }
+        .item-category { font-size: 0.65rem; background: rgba(255, 255, 255, 0.1); color: #cbd5e1; padding: 2px 6px; border-radius: 4px; width: fit-content; }
         .item-name { color: white; font-weight: 600; font-size: 0.95rem; }
         .item-price { color: #f59e0b; font-weight: bold; font-size: 0.9rem; }
-
         .item-actions { display: flex; gap: 8px; }
         .btn-icon { background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 5px; }
         .btn-edit { color: #3b82f6; }
         .btn-delete { color: #ef4444; }
-
-        /* MODAL FORM */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 200; display: none;
-            justify-content: center; align-items: center; padding: 20px;
-            backdrop-filter: blur(5px);
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; display: none; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
         .modal-overlay.show { display: flex; }
-        
-        .modal-box {
-            background: #1e293b; width: 100%; max-width: 400px;
-            border-radius: 16px; padding: 20px; border: 1px solid #334155;
-            max-height: 90vh; overflow-y: auto;
-        }
-        
+        .modal-box { background: #1e293b; width: 100%; max-width: 400px; border-radius: 16px; padding: 20px; border: 1px solid #334155; max-height: 90vh; overflow-y: auto; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; color: #94a3b8; margin-bottom: 5px; font-size: 0.85rem; }
-        .form-input {
-            width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155;
-            border-radius: 8px; color: white; outline: none;
-        }
-        .form-select {
-            width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155;
-            border-radius: 8px; color: white; outline: none; cursor: pointer;
-        }
-
-        /* PREVIEW IMAGE IN MODAL */
-        .img-preview-box {
-            width: 100%; height: 150px; background: #0f172a;
-            border: 2px dashed #334155; border-radius: 10px;
-            margin-top: 10px; overflow: hidden; display: none; 
-            align-items: center; justify-content: center;
-        }
+        .form-input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; outline: none; }
+        .form-select { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; outline: none; cursor: pointer; }
+        .img-preview-box { width: 100%; height: 150px; background: #0f172a; border: 2px dashed #334155; border-radius: 10px; margin-top: 10px; overflow: hidden; display: none; align-items: center; justify-content: center; }
         .img-preview-box.active { display: flex; }
         .img-preview-box img { width: 100%; height: 100%; object-fit: contain; }
-
         .modal-footer { display: flex; gap: 10px; margin-top: 20px; }
         .btn-submit { flex: 1; background: #4ade80; color: #064e3b; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
         .btn-cancel { flex: 1; background: #334155; color: white; padding: 12px; border-radius: 8px; border: none; cursor: pointer; }
-        
-        .margin-info {
-            background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3);
-            color: #60a5fa; font-size: 0.75rem; padding: 8px; border-radius: 8px; margin-top: 5px;
-        }
+        .margin-info { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; font-size: 0.75rem; padding: 8px; border-radius: 8px; margin-top: 5px; }
     </style>
 </head>
 <body>
 
     <div class="mobile-container">
         <header class="dashboard-header">
-            <a href="dashboard.html" style="color:white; font-size: 1.2rem;">
-                <i class="fa-solid fa-arrow-left"></i>
-            </a>
+            <a href="dashboard.html" style="color:white; font-size: 1.2rem;"><i class="fa-solid fa-arrow-left"></i></a>
             <h2>Kelola PPOB</h2>
         </header>
 
         <div class="tools-box">
             <div class="search-row">
                 <input type="text" id="searchInput" class="search-input" placeholder="Cari produk..." onkeyup="filterProducts()">
-                <button class="btn-add" onclick="openModal('add')">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
+                <button class="btn-add" onclick="openModal('add')"><i class="fa-solid fa-plus"></i></button>
             </div>
             <select id="filterCategory" class="filter-select" onchange="filterProducts()">
                 <option value="">Semua Kategori</option>
@@ -163,15 +87,9 @@
     <div id="productModal" class="modal-overlay">
         <div class="modal-box">
             <h3 id="modalTitle" style="color:white; margin-bottom:20px;">Tambah Produk</h3>
-            
             <form id="ppobForm">
                 <input type="hidden" id="productId"> 
-
-                <div class="form-group">
-                    <label>Nama Produk</label>
-                    <input type="text" id="pName" class="form-input" placeholder="Contoh: Pulsa 10.000" required>
-                </div>
-
+                <div class="form-group"><label>Nama Produk</label><input type="text" id="pName" class="form-input" placeholder="Contoh: Pulsa 10.000" required></div>
                 <div class="form-group">
                     <label>Kategori</label>
                     <select id="pCategory" class="form-select" required>
@@ -196,28 +114,19 @@
                         </optgroup>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label>Harga Modal (Rp)</label>
                     <input type="number" id="pBasePrice" class="form-input" placeholder="Contoh: 10500" required>
-                    
                     <div class="margin-info">
-                        <i class="fa-solid fa-circle-info"></i> 
-                        Margin Aktif: <b>Rp <span id="displayMargin">0</span></b>
-                        <br>
+                        <i class="fa-solid fa-circle-info"></i> Margin Aktif: <b>Rp <span id="displayMargin">0</span></b><br>
                         Harga Jual nanti: <b>Rp <span id="displayFinalPrice">0</span></b>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label>Gambar (Opsional)</label>
                     <input type="file" id="pImage" class="form-input" accept="image/*" onchange="previewImage(this)">
-                    
-                    <div id="imagePreviewBox" class="img-preview-box">
-                        <img id="imgPreview" src="" alt="Preview">
-                    </div>
+                    <div id="imagePreviewBox" class="img-preview-box"><img id="imgPreview" src="" alt="Preview"></div>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn-cancel" onclick="closeModal()">Batal</button>
                     <button type="submit" class="btn-submit" id="btnSave">Simpan</button>
@@ -231,12 +140,6 @@
         const token = localStorage.getItem('adminToken');
         let allProducts = [];
         let globalMargin = 0;
-
-        const ppobCategories = [
-            'Pulsa', 'Data', 'PLN', 
-            'Dana', 'Ovo', 'Gopay', 'ShopeePay', 
-            'Mobile Legend', 'PUBG', 'Free Fire', 'Roblox', 'GooglePlay'
-        ];
 
         document.addEventListener('DOMContentLoaded', async () => {
             await loadGlobalSettings(); 
@@ -252,41 +155,28 @@
             } catch (error) { console.error(error); }
         }
 
-        // --- FETCH DENGAN FILTER PLATFORM PPOB ---
         async function loadPPOBProducts() {
             const container = document.getElementById('ppobListContainer');
             try {
-                // UPDATE: Tambahkan ?platform=PPOB agar backend mengirim produk PPOB
                 const res = await fetch(`${API_URL}/products?platform=PPOB`);
                 const data = await res.json();
-                
-                allProducts = data; // Data sudah terfilter dari backend
+                allProducts = data;
                 filterProducts();
-
-            } catch (error) {
-                console.error(error);
-                container.innerHTML = '<p style="text-align:center; color:#ef4444;">Gagal memuat data.</p>';
-            }
+            } catch (error) { console.error(error); container.innerHTML = '<p style="text-align:center; color:#ef4444;">Gagal memuat data.</p>'; }
         }
 
         function renderList(products) {
             const container = document.getElementById('ppobListContainer');
             container.innerHTML = '';
-
             if (products.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:#64748b; padding:40px;">
-                    <i class="fa-solid fa-box-open" style="font-size:3rem; margin-bottom:10px;"></i><br>
-                    Data kosong.<br>Klik tombol + untuk menambah.
-                </div>`;
+                container.innerHTML = `<div style="text-align:center; color:#64748b; padding:40px;"><i class="fa-solid fa-box-open" style="font-size:3rem; margin-bottom:10px;"></i><br>Data kosong.<br>Klik tombol + untuk menambah.</div>`;
                 return;
             }
-
             products.forEach(p => {
                 const catName = p.category ? (p.category.name || p.category) : '-';
-                const harga = new Intl.NumberFormat('id-ID').format(p.price);
-                const estimasiModal = p.price - globalMargin;
-                const modalFmt = new Intl.NumberFormat('id-ID').format(estimasiModal > 0 ? estimasiModal : 0);
-
+                // Tampilkan Harga Modal di Admin (Data Asli)
+                const hargaModal = new Intl.NumberFormat('id-ID').format(p.price); 
+                
                 let thumbHTML = '';
                 if (p.images && p.images.length > 0) {
                     thumbHTML = `<img src="${p.images[0]}" class="item-thumb" alt="img">`;
@@ -301,16 +191,11 @@
                     <div class="item-info">
                         <span class="item-category">${catName}</span>
                         <div class="item-name">${p.name}</div>
-                        <div class="item-price">Rp ${harga}</div>
-                        <small style="color:#64748b; font-size:0.65rem;">(Modal ~Rp ${modalFmt})</small>
+                        <div class="item-price">Rp ${hargaModal} (Modal)</div>
                     </div>
                     <div class="item-actions">
-                        <button class="btn-icon btn-edit" onclick='editProduct(${JSON.stringify(p)})'>
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </button>
-                        <button class="btn-icon btn-delete" onclick="deleteProduct('${p._id}')">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+                        <button class="btn-icon btn-edit" onclick='editProduct(${JSON.stringify(p)})'><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="btn-icon btn-delete" onclick="deleteProduct('${p._id}')"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
                 container.appendChild(div);
@@ -342,16 +227,14 @@
             const name = document.getElementById('pName').value;
             const category = document.getElementById('pCategory').value;
             
+            // PENTING: Simpan Harga Modal (Tanpa Margin)
             const basePrice = parseInt(document.getElementById('pBasePrice').value) || 0;
-            const sellingPrice = basePrice + parseInt(globalMargin);
 
             const formData = new FormData();
             formData.append('name', name);
             formData.append('category', category);
-            formData.append('price', sellingPrice); 
+            formData.append('price', basePrice); // Simpan Modal ke DB
             formData.append('description', 'Produk PPOB Manual'); 
-            
-            // PENTING: Set platform ke PPOB
             formData.append('platform', 'PPOB'); 
             
             const imageFile = document.getElementById('pImage').files[0];
@@ -360,11 +243,7 @@
             try {
                 let url = `${API_URL}/products`;
                 let method = 'POST';
-
-                if (id) {
-                    url += `/${id}`;
-                    method = 'PUT';
-                }
+                if (id) { url += `/${id}`; method = 'PUT'; }
 
                 const res = await fetch(url, {
                     method: method,
@@ -380,14 +259,8 @@
                     const err = await res.json();
                     alert('Gagal: ' + (err.message || 'Error server'));
                 }
-
-            } catch (error) {
-                console.error(error);
-                alert('Terjadi kesalahan.');
-            } finally {
-                btn.innerText = 'Simpan';
-                btn.disabled = false;
-            }
+            } catch (error) { console.error(error); alert('Terjadi kesalahan.'); } 
+            finally { btn.innerText = 'Simpan'; btn.disabled = false; }
         });
 
         async function deleteProduct(id) {
@@ -404,12 +277,10 @@
         function openModal(mode) {
             document.getElementById('productModal').classList.add('show');
             document.getElementById('imagePreviewBox').classList.remove('active');
-            
             if (mode === 'add') {
                 document.getElementById('modalTitle').innerText = 'Tambah Produk PPOB';
                 document.getElementById('ppobForm').reset();
                 document.getElementById('productId').value = '';
-                
                 document.getElementById('displayMargin').innerText = new Intl.NumberFormat('id-ID').format(globalMargin);
                 document.getElementById('displayFinalPrice').innerText = '0';
             }
@@ -420,42 +291,29 @@
             document.getElementById('modalTitle').innerText = 'Edit Produk';
             document.getElementById('productId').value = p._id;
             document.getElementById('pName').value = p.name;
-            
-            const estimasiModal = (p.price - globalMargin) > 0 ? (p.price - globalMargin) : p.price;
-            document.getElementById('pBasePrice').value = estimasiModal;
-            
+            document.getElementById('pBasePrice').value = p.price; // Harga Modal dari DB
             document.getElementById('pBasePrice').dispatchEvent(new Event('input'));
-
             const catName = p.category ? (p.category.name || p.category) : '';
             document.getElementById('pCategory').value = catName;
-
             if(p.images && p.images.length > 0) {
                 document.getElementById('imgPreview').src = p.images[0];
                 document.getElementById('imagePreviewBox').classList.add('active');
             }
         }
 
-        function closeModal() {
-            document.getElementById('productModal').classList.remove('show');
-        }
+        function closeModal() { document.getElementById('productModal').classList.remove('show'); }
 
         function filterProducts() {
             const searchQuery = document.getElementById('searchInput').value.toLowerCase();
             const categoryQuery = document.getElementById('filterCategory').value;
-
             const filtered = allProducts.filter(p => {
                 const nameMatch = p.name.toLowerCase().includes(searchQuery);
                 const catName = p.category ? (p.category.name || p.category) : '';
-                
                 let catMatch = true;
                 if(categoryQuery) {
-                    if(categoryQuery === 'E-Wallet') {
-                        catMatch = ['Dana','Ovo','Gopay','ShopeePay'].includes(catName);
-                    } else if(categoryQuery === 'Game') {
-                        catMatch = ['Mobile Legend','PUBG','Free Fire','Roblox','GooglePlay'].includes(catName);
-                    } else {
-                        catMatch = catName === categoryQuery;
-                    }
+                    if(categoryQuery === 'E-Wallet') { catMatch = ['Dana','Ovo','Gopay','ShopeePay'].includes(catName); } 
+                    else if(categoryQuery === 'Game') { catMatch = ['Mobile Legend','PUBG','Free Fire','Roblox','GooglePlay'].includes(catName); } 
+                    else { catMatch = catName === categoryQuery; }
                 }
                 return nameMatch && catMatch;
             });
@@ -475,6 +333,5 @@
             }
         }
     </script>
-
 </body>
 </html>

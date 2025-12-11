@@ -10,7 +10,7 @@ const getSettings = async (req, res) => {
         if (!setting) {
             setting = await Setting.create({
                 siteName: 'RinsPoint',
-                adminPhone: '6281234567890',
+                adminPhone: '', // Nomor default dikosongkan
                 adminContacts: [],
                 banners: []
             });
@@ -38,10 +38,15 @@ const updateSettings = async (req, res) => {
 
         // Update Field Standar
         if (siteName) setting.siteName = siteName;
+        // Update adminContacts jika ada data baru
         if (adminContacts) setting.adminContacts = adminContacts;
+        
         if (banners) setting.banners = banners;
         if (ppobMargin) setting.ppobMargin = ppobMargin;
-        if (adminPhone) setting.adminPhone = adminPhone;
+        
+        // Update Admin Phone
+        // Cek jika undefined jangan update, tapi jika string kosong ('') tetap update (untuk menghapus)
+        if (adminPhone !== undefined) setting.adminPhone = adminPhone;
 
         // --- PERBAIKAN LOGIKA STATUS PPOB ---
         // FormData mengirim boolean sebagai string "true"/"false"
