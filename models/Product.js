@@ -10,19 +10,19 @@ const productSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    // --- TAMBAHKAN INI ---
     slug: {
         type: String,
         required: true,
-        unique: true, // Pastikan tidak ada slug kembar
+        unique: true,
     },
-    // ---------------------
-    images: [String], // Array URL Gambar
+    images: [String], 
+    
+    // UBAH: Tipe Mixed agar bisa menerima ObjectId (Affiliate) ATAU String (PPOB)
     category: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
+        type: mongoose.Schema.Types.Mixed, 
         required: true
     },
+    
     subcategory: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'SubCategory'
@@ -40,13 +40,19 @@ const productSchema = mongoose.Schema({
         type: Number,
         default: 0,
     },
+    
+    // UBAH: Tidak wajib, agar PPOB bisa masuk tanpa error
     affiliateLink: {
         type: String,
-        required: true
+        required: false 
     },
+    
+    // Penanda jenis produk (PPOB atau Affiliate/Umum)
+    // Default 'Affiliate' agar produk lama tetap aman
     platform: {
         type: String,
-        required: false
+        required: false,
+        default: 'Affiliate' 
     }
 }, {
     timestamps: true,

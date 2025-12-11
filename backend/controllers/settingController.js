@@ -10,7 +10,7 @@ const getSettings = async (req, res) => {
         if (!setting) {
             setting = await Setting.create({
                 siteName: 'RinsPoint',
-                adminPhone: '6281234567890', // Default Nomor
+                adminPhone: '6281234567890',
                 adminContacts: [],
                 banners: []
             });
@@ -22,21 +22,58 @@ const getSettings = async (req, res) => {
     }
 };
 
-// @desc    Update Pengaturan Umum (Admin Only)
+// @desc    Update Pengaturan Umum & PPOB (Admin Only)
 // @route   PUT /api/settings
 const updateSettings = async (req, res) => {
     try {
         let setting = await Setting.findOne();
         if (!setting) setting = new Setting();
 
-        // Ambil data dari body
-        const { siteName, adminContacts, banners, ppobMargin, adminPhone } = req.body;
+        // 1. Ambil Data Text dari Body
+        const { 
+            siteName, adminContacts, banners, 
+            ppobMargin, adminPhone,
+            ppobStatus, ppobOpenTime, ppobCloseTime 
+        } = req.body;
 
+        // Update Field Standar
         if (siteName) setting.siteName = siteName;
         if (adminContacts) setting.adminContacts = adminContacts;
         if (banners) setting.banners = banners;
         if (ppobMargin) setting.ppobMargin = ppobMargin;
         if (adminPhone) setting.adminPhone = adminPhone;
+
+        // --- PERBAIKAN LOGIKA STATUS PPOB ---
+        // FormData mengirim boolean sebagai string "true"/"false"
+        // Kita harus parse manual agar akurat
+        if (ppobStatus !== undefined) {
+            if (ppobStatus === 'true') {
+                setting.ppobStatus = true;
+            } else if (ppobStatus === 'false') {
+                setting.ppobStatus = false;
+            } else {
+                setting.ppobStatus = !!ppobStatus; // Fallback
+            }
+        }
+
+        if (ppobOpenTime) setting.ppobOpenTime = ppobOpenTime;
+        if (ppobCloseTime) setting.ppobCloseTime = ppobCloseTime;
+
+        // 2. Handle File Upload (Logo Provider)
+        if (req.files && req.files.length > 0) {
+            req.files.forEach(file => {
+                // Cek apakah fieldname dimulai dengan 'logo_'
+                if (file.fieldname.startsWith('logo_')) {
+                    const providerName = file.fieldname.replace('logo_', ''); // telkomsel, indosat, dll
+                    
+                    // Pastikan object providerLogos ada
+                    if (!setting.providerLogos) setting.providerLogos = {};
+                    
+                    // Simpan URL file
+                    setting.providerLogos[providerName] = file.path;
+                }
+            });
+        }
 
         const updatedSetting = await setting.save();
         res.json(updatedSetting);
@@ -73,18 +110,14 @@ const updateDigiflazz = async (req, res) => {
 const updateBanners = async (req, res) => {
     try {
         let setting = await Setting.findOne();
-        if (!setting) setting = new Setting(); // Buat baru jika belum ada
+        if (!setting) setting = new Setting(); 
 
-        // Pastikan array banners ada isinya (minimal 3 slot kosong)
         while (setting.banners.length < 3) {
             setting.banners.push({});
         }
 
-        // Cek apakah ada file yang diupload?
         if (req.files && req.files.length > 0) {
             req.files.forEach(file => {
-                // Cloudinary Middleware sudah mengupload file dan menaruh URL di file.path
-                
                 if (file.fieldname === 'banner1_image') {
                     setting.banners[0].imageUrl = file.path; 
                 } else if (file.fieldname === 'banner2_image') {
@@ -95,7 +128,7 @@ const updateBanners = async (req, res) => {
             });
             
             await setting.save();
-            res.json(setting); // Kirim balik data setting terbaru
+            res.json(setting); 
         } else {
             res.status(400).json({ message: 'Tidak ada gambar yang dipilih.' });
         }

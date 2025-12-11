@@ -8,20 +8,28 @@ const {
     searchProducts,
     updateProduct
 } = require('../controllers/productController');
-const { protect } = require('../middleware/authMiddleware');
-const upload = require('../middleware/uploadMiddleware'); // Import Upload
+const { protect, admin } = require('../middleware/authMiddleware');
+const upload = require('../middleware/uploadMiddleware'); 
 
 // Route Public
 router.get('/', getProducts);
 router.get('/search', searchProducts);
 router.get('/item/:slug', getProductBySlug);
 
-// Route Admin (Upload Gambar Aktif)
-// upload.array('images', 5) artinya menerima maksimal 5 file dengan nama field 'images'
-router.post('/', protect, upload.array('images', 5), createProduct);
+// Route Admin (Create)
+// Support dual mode upload: 'image' (PPOB) atau 'images' (Affiliate)
+router.post('/', protect, admin, upload.fields([
+    { name: 'image', maxCount: 1 }, 
+    { name: 'images', maxCount: 5 }
+]), createProduct);
 
-router.delete('/:id', protect, deleteProduct);
+// Route Admin (Delete)
+router.delete('/:id', protect, admin, deleteProduct);
 
-router.put('/:id', protect, upload.array('images', 5), updateProduct);
+// Route Admin (Update)
+router.put('/:id', protect, admin, upload.fields([
+    { name: 'image', maxCount: 1 }, 
+    { name: 'images', maxCount: 5 }
+]), updateProduct);
 
 module.exports = router;

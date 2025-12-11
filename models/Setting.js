@@ -3,17 +3,34 @@ const mongoose = require('mongoose');
 const settingSchema = new mongoose.Schema({
     siteName: { type: String, default: 'RinsPoint' },
     
-    // --- UPDATE: NOMOR WA UTAMA (Untuk Floating & Notif) ---
+    // --- KONTAK ADMIN ---
     adminPhone: { type: String, default: '6281234567890' }, 
-
-    // Kontak tambahan (Opsional, fitur lama Anda)
     adminContacts: [{
         name: String,
         phone: String,
         isActive: { type: Boolean, default: true }
     }],
     
+    // --- PENGATURAN PPOB (MARGIN & JAM KERJA) ---
     ppobMargin: { type: Number, default: 500 },
+    ppobStatus: { type: Boolean, default: true }, // Toko Buka (true) / Tutup (false)
+    ppobOpenTime: { type: String, default: "06:00" }, 
+    ppobCloseTime: { type: String, default: "23:30" },
+
+    // --- LOGO PROVIDER CUSTOM ---
+    providerLogos: {
+        telkomsel: { type: String, default: '' },
+        indosat: { type: String, default: '' },
+        xl: { type: String, default: '' },
+        axis: { type: String, default: '' },
+        tri: { type: String, default: '' },
+        smartfren: { type: String, default: '' },
+        pln: { type: String, default: '' },
+        dana: { type: String, default: '' },
+        ovo: { type: String, default: '' },
+        gopay: { type: String, default: '' },
+        shopeepay: { type: String, default: '' }
+    },
     
     // Kredensial Digiflazz
     digiflazz: {
@@ -28,10 +45,10 @@ const settingSchema = new mongoose.Schema({
         subtitle: String,   
         gradient: String,   
         svgIcon: String,
-        link: String,       
+        link: String,        
         background: String, 
         imageUrl: String    
     }]
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Setting', settingSchema);

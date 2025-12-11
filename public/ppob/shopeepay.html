@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Top Up MLBB - RinsPoint</title>
+    <title>Top Up ShopeePay - RinsPoint</title>
     
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- STYLE MODERN MLBB (GOLD) --- */
+        /* --- STYLE MODERN SHOPEE (ORANYE) --- */
         .sticky-input-area {
             position: sticky; top: 60px; background: #0f172a; padding: 1rem;
             z-index: 90; border-bottom: 1px solid #334155;
@@ -24,20 +24,19 @@
         }
         
         .input-wrapper:focus-within {
-            border-color: #eab308; /* Gold MLBB */
-            box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.3);
+            border-color: #ee4d2d; /* Oranye Shopee */
+            box-shadow: 0 0 0 2px rgba(238, 77, 45, 0.3);
         }
 
-        .input-wrapper i { color: #eab308; font-size: 1.2rem; margin-right: 10px; }
+        .input-wrapper i { color: #ee4d2d; font-size: 1.2rem; margin-right: 10px; }
 
         .phone-field {
             flex: 1; background: transparent; border: none; color: white;
-            font-size: 1rem; font-weight: 600; padding: 10px 0; outline: none; letter-spacing: 0.5px;
+            font-size: 1.1rem; font-weight: 600; padding: 10px 0; outline: none; letter-spacing: 1px;
         }
 
         .product-list-container { padding: 1rem; display: grid; gap: 12px; }
 
-        /* Card Modern */
         .product-card-modern {
             background: linear-gradient(145deg, #1e293b, #172033);
             border: 1px solid #334155; border-radius: 16px; padding: 15px;
@@ -52,10 +51,10 @@
         .prod-sub { color: #94a3b8; font-size: 0.75rem; }
         
         .prod-price-box { text-align: right; }
-        .price-tag { color: #eab308; font-weight: 700; font-size: 1.1rem; }
+        .price-tag { color: #ee4d2d; font-weight: 700; font-size: 1.1rem; } 
         
         .btn-mini-add {
-            background: rgba(234, 179, 8, 0.15); color: #eab308;
+            background: rgba(238, 77, 45, 0.15); color: #ee4d2d;
             padding: 5px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: bold;
             margin-top: 4px; display: inline-block;
         }
@@ -64,7 +63,7 @@
         .confirm-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; }
         .confirm-box { width: 100%; max-width: 380px; background: #1e293b; border-radius: 24px; padding: 25px; border: 1px solid #334155; text-align: center; }
         .btn-full { width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; border: none; margin-bottom: 10px; }
-        .btn-gold { background: #eab308; color: #000; } /* Tombol Gold */
+        .btn-shopee { background: #ee4d2d; color: white; } /* Tombol Oranye */
         .btn-gray { background: #334155; color: #cbd5e1; }
     </style>
 </head>
@@ -73,14 +72,14 @@
     <div class="mobile-container">
         <header class="main-header" style="position: sticky; top: 0; z-index: 100;">
             <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="logo-text">Mobile Legends</div>
+            <div class="logo-text">Saldo ShopeePay</div>
         </header>
 
         <div class="sticky-input-area">
-            <label style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 8px; display: block;">Masukkan User ID (Zone ID)</label>
+            <label style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 8px; display: block;">Masukkan Nomor Shopee</label>
             <div class="input-wrapper">
-                <i class="fa-solid fa-gamepad"></i>
-                <input type="text" id="headerPhoneNumber" class="phone-field" placeholder="12345678 (1234)" autocomplete="off">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <input type="tel" id="headerPhoneNumber" class="phone-field" placeholder="08xx xxxx xxxx" autocomplete="off">
             </div>
         </div>
 
@@ -91,7 +90,7 @@
 
     <div id="purchaseModal" class="confirm-modal">
         <div class="confirm-box" style="text-align: left;">
-            <h3 style="color: #eab308; margin-bottom: 20px; text-align: center;">Konfirmasi Diamond</h3>
+            <h3 style="color: #ee4d2d; margin-bottom: 20px; text-align: center;">Konfirmasi Shopee</h3>
             
             <div style="background: #0f172a; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #334155;">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
@@ -100,19 +99,19 @@
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span style="color: #94a3b8; font-size: 0.8rem;">Total Bayar</span>
-                    <span id="detailPrice" style="color: #eab308; font-weight: 700; font-size: 1.2rem;">-</span>
+                    <span id="detailPrice" style="color: #ee4d2d; font-weight: 700; font-size: 1.2rem;">-</span>
                 </div>
             </div>
 
             <div style="margin-bottom: 20px;">
-                <label style="color: #cbd5e1; font-size: 0.8rem; margin-bottom: 5px; display: block;">ID Game</label>
-                <div style="background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; color: white; font-weight: bold; font-size: 1rem; letter-spacing: 1px;">
+                <label style="color: #cbd5e1; font-size: 0.8rem; margin-bottom: 5px; display: block;">Nomor Tujuan</label>
+                <div style="background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; color: white; font-weight: bold; font-size: 1.1rem; letter-spacing: 1px;">
                     <span id="displayNumber">-</span>
                 </div>
                 <input type="hidden" id="customerNumber"> 
             </div>
 
-            <button onclick="processToPayment()" class="btn-full btn-gold">Bayar Sekarang</button>
+            <button onclick="processToPayment()" class="btn-full btn-shopee">Bayar Sekarang</button>
             <button onclick="closePurchaseModal()" class="btn-full btn-gray">Batal</button>
         </div>
     </div>
@@ -122,7 +121,7 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            loadProductsByCategory('Mobile Legend'); 
+            loadProductsByCategory('ShopeePay'); 
         });
 
         function renderProducts(products, categoryName) {
@@ -131,8 +130,8 @@
 
             if (products.length === 0) {
                 container.innerHTML = `<div style="text-align:center; padding:40px; color:#64748b;">
-                    <i class="fa-solid fa-gamepad" style="font-size:3rem; margin-bottom:10px;"></i><br>
-                    Belum ada produk MLBB
+                    <i class="fa-solid fa-bag-shopping" style="font-size:3rem; margin-bottom:10px;"></i><br>
+                    Belum ada produk Shopee
                 </div>`;
                 return;
             }
@@ -145,7 +144,7 @@
                 div.innerHTML = `
                     <div class="prod-info">
                         <div class="prod-name">${prod.name}</div>
-                        <div class="prod-sub">Fast Proses</div>
+                        <div class="prod-sub">Top Up Saldo</div>
                     </div>
                     <div class="prod-price-box">
                         <div class="price-tag">Rp ${harga}</div>
@@ -158,8 +157,8 @@
 
         function showPurchaseModalWithNumber(product) {
             const phoneNumber = document.getElementById('headerPhoneNumber').value;
-            if (!phoneNumber || phoneNumber.length < 5) {
-                alert('Silakan masukkan User ID dan Zone ID!');
+            if (!phoneNumber || phoneNumber.length < 10) {
+                alert('Silakan masukkan nomor ShopeePay terlebih dahulu!');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 document.getElementById('headerPhoneNumber').focus();
                 return;

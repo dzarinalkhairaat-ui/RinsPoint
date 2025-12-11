@@ -18,12 +18,6 @@
     
     <script src="../js/auth.js"></script>
     <script>checkAuth();</script>
-
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#0F172A">
-    <link rel="apple-touch-icon" href="/assets/images/icon.png">
-    
-    <script src="/js/pwa-register.js"></script>
 </head>
 <body>
 
@@ -65,13 +59,14 @@
                     <i class="fa-solid fa-tags"></i>
                     <span>Kelola Kategori</span>
                 </a>
-                <a href="transactions.html" class="menu-item">
-                    <i class="fa-solid fa-mobile-screen"></i>
-                    <span>Riwayat PPOB</span>
+                
+                <a href="manage-ppob.html" class="menu-item">
+                    <i class="fa-solid fa-server"></i> <span>Kelola PPOB</span>
                 </a>
+                
                 <a href="settings.html" class="menu-item">
                     <i class="fa-solid fa-gear"></i>
-                    <span>Pengaturan Website</span>
+                    <span>Pengaturan</span>
                 </a>
             </div>
         </main>
@@ -87,9 +82,9 @@
                 <span>Dashboard</span>
             </a>
 
-            <a href="#" onclick="openReAuthModal()">
-                <i class="fa-solid fa-key"></i>
-                <span>API Setting</span>
+            <a href="ppob-settings.html">
+                <i class="fa-solid fa-sliders"></i>
+                <span>PPOB</span>
             </a>
 
             <a href="#" onclick="logout()">
@@ -99,14 +94,6 @@
         </nav>
 
     </div>
-
-    <script>
-        // Tampilkan email admin
-        const adminEmail = localStorage.getItem('adminName');
-        if(adminEmail) {
-            document.getElementById('adminNameDisplay').innerText = adminEmail.split('@')[0];
-        }
-    </script>
 
     <div class="pin-modal-overlay" id="pinModal">
         <div class="pin-box">
@@ -122,7 +109,11 @@
     </div>
 
     <script>
-        // Logika Modal PIN
+        const adminEmail = localStorage.getItem('adminName');
+        if(adminEmail && document.getElementById('adminNameDisplay')) {
+            document.getElementById('adminNameDisplay').innerText = adminEmail.split('@')[0];
+        }
+
         const pinModal = document.getElementById('pinModal');
         const pinInput = document.getElementById('pinInput');
 
@@ -141,7 +132,6 @@
             if (pin.length < 4) return alert('PIN terlalu pendek!');
 
             try {
-                // Cek PIN ke Backend
                 const res = await fetch('/api/auth/verify-pin', {
                     method: 'POST',
                     headers: {
@@ -154,7 +144,6 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    // Jika Benar -> Redirect ke Halaman Saldo
                     window.location.href = 'saldo.html';
                 } else {
                     alert('PIN Salah! Coba lagi.');
@@ -164,62 +153,12 @@
                 alert('Error server.');
             }
         }
-    </script>
-
-    <div class="pin-modal-overlay" id="reAuthModal">
-        <div class="pin-box">
-            <i class="fa-solid fa-lock" style="color: #F59E0B;"></i>
-            <h3>Keamanan Tinggi</h3>
-            <p>Masukkan Email & Password Admin untuk akses Konfigurasi API.</p>
-            
-            <input type="email" id="reAuthEmail" placeholder="Email Admin" style="font-size:1rem; letter-spacing:0; text-align:left;">
-            <input type="password" id="reAuthPass" placeholder="Password" style="font-size:1rem; letter-spacing:0; text-align:left;">
-            
-            <button class="btn-submit" onclick="submitReAuth()">VERIFIKASI</button>
-            <div style="margin-top: 15px; color: #94a3b8; font-size: 0.8rem; cursor: pointer;" onclick="closeReAuthModal()">Batal</div>
-        </div>
-    </div>
-
-    <script>
-        // Logika Modal Re-Auth
-        const reAuthModal = document.getElementById('reAuthModal');
-
-        function openReAuthModal() {
-            reAuthModal.classList.add('show');
-            document.getElementById('reAuthEmail').value = '';
-            document.getElementById('reAuthPass').value = '';
-        }
-
-        function closeReAuthModal() {
-            reAuthModal.classList.remove('show');
-        }
-
-        async function submitReAuth() {
-            const email = document.getElementById('reAuthEmail').value;
-            const password = document.getElementById('reAuthPass').value;
-
-            if (!email || !password) return alert('Mohon isi semua data!');
-
-            try {
-                // Gunakan endpoint Login yang sudah ada untuk verifikasi
-                const res = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await res.json();
-
-                if (res.ok) {
-                    // JIKA BENAR -> Redirect ke Halaman API
-                    // Kita simpan token "super_access" sebentar di session
-                    sessionStorage.setItem('apiAccessGranted', 'true');
-                    window.location.href = 'api-settings.html';
-                } else {
-                    alert('Email atau Password Salah!');
-                }
-            } catch (error) {
-                alert('Terjadi kesalahan server.');
+        
+        function logout() {
+            if(confirm('Yakin ingin keluar?')) {
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminName');
+                window.location.href = '/login.html';
             }
         }
     </script>

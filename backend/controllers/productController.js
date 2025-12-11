@@ -1,42 +1,49 @@
+// PATH: Mundur 2 langkah ke root folder models
 const Product = require('../../models/Product');
+const mongoose = require('mongoose');
 
 // --- HELPER: Buat Slug Bersih ---
 const createSlug = (text) => {
     return text.toString().toLowerCase()
-        .replace(/\(/g, '') // Hapus tanda kurung buka
-        .replace(/\)/g, '') // Hapus tanda kurung tutup
-        .replace(/[^\w\s-]/g, '') // Hapus simbol aneh lain
-        .replace(/\s+/g, '-') // Ganti spasi dengan strip
-        .replace(/-+/g, '-') // Ganti strip beruntun jadi satu
-        .replace(/^-+/, '') // Hapus strip di awal
-        .replace(/-+$/, ''); // Hapus strip di akhir
+        .replace(/\(/g, '').replace(/\)/g, '')
+        .replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
+        .replace(/-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
 };
 
-// @desc    Ambil semua produk (Filter: Category, Subcategory, Sort)
+// @desc    Ambil produk (Logic Filter Platform Diperbaiki)
 // @route   GET /api/products
-// @access  Public
 const getProducts = async (req, res) => {
     try {
         let query = {};
         
-        // Filter Kategori Utama
-        if (req.query.category) {
-            query.category = req.query.category;
+        // 1. PRIORITAS UTAMA: Filter Platform (Untuk Admin Kelola PPOB)
+        if (req.query.platform) {
+            query.platform = req.query.platform;
         }
-
-        // Filter Subkategori
-        if (req.query.subcategory) {
+        // 2. Filter Kategori (Untuk Halaman Menu PPOB / Kategori Affiliate)
+        else if (req.query.category) {
+            const cat = req.query.category;
+            // Cek apakah ID atau String
+            if (mongoose.Types.ObjectId.isValid(cat)) {
+                query.category = { $in: [cat, new mongoose.Types.ObjectId(cat)] };
+            } else {
+                query.category = cat;
+            }
+        } 
+        // 3. Filter Subkategori
+        else if (req.query.subcategory) {
             query.subcategory = req.query.subcategory;
         }
+        // 4. DEFAULT (HOME PAGE): Sembunyikan PPOB jika tidak ada filter apapun
+        else {
+            query.platform = { $ne: 'PPOB' };
+        }
 
-        // Logic Sortir
         let sortOption = { createdAt: -1 }; 
         if (req.query.sort === 'lowest') sortOption = { price: 1 };
         if (req.query.sort === 'highest') sortOption = { price: -1 };
 
-        const products = await Product.find(query)
-            .populate('category', 'name') 
-            .sort(sortOption);
+        const products = await Product.find(query).sort(sortOption);
             
         res.json(products);
     } catch (error) {
@@ -44,63 +51,56 @@ const getProducts = async (req, res) => {
     }
 };
 
-// @desc    Tambah produk baru (Support Upload Gambar)
-// @route   POST /api/products
-// @access  Private (Admin Only)
+// @desc    Tambah produk (Support Hybrid)
 const createProduct = async (req, res) => {
     try {
         const { name, description, price, originalPrice, category, subcategory, affiliateLink, platform } = req.body;
 
-        // 1. TANGKAP FILE GAMBAR (Dari Cloudinary Middleware)
-        let imageUrls = [];
+        if (!name || !category || !price) {
+            return res.status(400).json({ message: 'Mohon lengkapi nama, kategori, dan harga.' });
+        }
 
-        // Cek apakah ada file yang diupload via Multer
-        if (req.files && req.files.length > 0) {
-            // Ambil URL secure dari Cloudinary
-            imageUrls = req.files.map(file => file.path);
-        } else {
-            // Cek jika dikirim sebagai text URL (Fallback)
-            if (req.body.images) {
-                imageUrls = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
+        // Handle Images
+        let imageUrls = [];
+        if (req.files) {
+            if (req.files['image']) {
+                imageUrls.push(req.files['image'][0].path);
+            }
+            if (req.files['images']) {
+                const paths = req.files['images'].map(file => file.path);
+                imageUrls = imageUrls.concat(paths);
+            }
+        } else if (req.body.images) {
+             imageUrls = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
+        }
+
+        // Tentukan Platform
+        let finalPlatform = platform || 'Affiliate';
+        if (!affiliateLink || affiliateLink.trim() === "") {
+            finalPlatform = 'PPOB';
+        }
+
+        // Validasi Affiliate
+        if (finalPlatform !== 'PPOB') {
+            if (!affiliateLink) return res.status(400).json({ message: 'Link Affiliate wajib diisi.' });
+            
+            const validPatterns = [/shopee/, /tokopedia/, /tiktok/, /lazada/];
+            if (!validPatterns.some(pattern => pattern.test(affiliateLink))) {
+                return res.status(400).json({ message: 'Link Affiliate tidak valid.' });
             }
         }
 
-        // 2. VALIDASI JUMLAH GAMBAR (Min 2, Max 5)
-        if (imageUrls.length < 2) {
-            return res.status(400).json({ message: 'Gagal: Wajib upload minimal 2 gambar produk!' });
-        }
-        if (imageUrls.length > 5) {
-            return res.status(400).json({ message: 'Gagal: Maksimal 5 gambar produk.' });
-        }
-
-        // 3. VALIDASI LINK AFFILIATE (Regex)
-        const validPatterns = [
-            /shopee\.co\.id/, /shope\.ee/, 
-            /tokopedia\.com/, /tokopedia\.link/,
-            /tiktok\.com/, /vt\.tiktok\.com/,
-            /lazada\.co\.id/, /s\.lazada/
-        ];
-
-        const isValidLink = validPatterns.some(pattern => pattern.test(affiliateLink));
-
-        if (!isValidLink) {
-            return res.status(400).json({ 
-                message: 'Link Affiliate tidak valid! Gunakan link Shopee, Tokopedia, TikTok, atau Lazada.' 
-            });
-        }
-
-        // 4. SIMPAN PRODUK KE DATABASE
         const product = new Product({
             name,
-            slug: createSlug(name), // Paksa slug bersih
-            description,
+            slug: createSlug(name) + '-' + Date.now().toString().slice(-4), 
+            description: description || 'Deskripsi Produk',
             price,
-            originalPrice,
-            category,
+            originalPrice: originalPrice || 0,
+            category, 
             subcategory: subcategory || null,
-            affiliateLink,
+            affiliateLink: affiliateLink || '', 
             images: imageUrls,
-            platform,
+            platform: finalPlatform, 
             user: req.user._id
         });
 
@@ -108,18 +108,29 @@ const createProduct = async (req, res) => {
         res.status(201).json(createdProduct);
 
     } catch (error) {
-        console.error(error);
+        console.error("Create Error:", error);
         res.status(500).json({ message: 'Server Error: ' + error.message });
     }
 };
 
+// @desc    Cari produk
+const searchProducts = async (req, res) => {
+    const keyword = req.query.keyword;
+    try {
+        const products = await Product.find({
+            name: { $regex: keyword, $options: 'i' },
+            platform: { $ne: 'PPOB' } 
+        });
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // @desc    Hapus produk
-// @route   DELETE /api/products/:id
-// @access  Private (Admin Only)
 const deleteProduct = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
-
         if (product) {
             await product.deleteOne();
             res.json({ message: 'Produk berhasil dihapus' });
@@ -131,15 +142,12 @@ const deleteProduct = async (req, res) => {
     }
 };
 
-// @desc    Ambil detail produk by slug
-// @route   GET /api/products/item/:slug
+// @desc    Detail produk
 const getProductBySlug = async (req, res) => {
     try {
-        const product = await Product.findOne({ slug: req.params.slug })
-                                     .populate('category', 'name icon');
-
+        const product = await Product.findOne({ slug: req.params.slug });
         if (product) {
-            res.json(product);
+             res.json(product);
         } else {
             res.status(404).json({ message: 'Produk tidak ditemukan' });
         }
@@ -148,51 +156,31 @@ const getProductBySlug = async (req, res) => {
     }
 };
 
-// @desc    Cari produk
-// @route   GET /api/products/search?keyword=...
-const searchProducts = async (req, res) => {
-    const keyword = req.query.keyword;
-    
-    try {
-        const products = await Product.find({
-            name: { $regex: keyword, $options: 'i' }
-        });
-        
-        res.json(products);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
 // @desc    Update Produk
-// @route   PUT /api/products/:id
-// @access  Private (Admin)
 const updateProduct = async (req, res) => {
     try {
         const { name, description, price, originalPrice, category, subcategory, affiliateLink, platform } = req.body;
-        
         const product = await Product.findById(req.params.id);
+
         if (!product) return res.status(404).json({ message: 'Produk tidak ditemukan' });
 
-        // 1. Cek Update Gambar
-        let imageUrls = product.images; // Default pakai gambar lama
-
-        if (req.files && req.files.length > 0) {
-            // Jika ada upload baru, ganti semua gambar
-            imageUrls = req.files.map(file => file.path);
+        if (req.files) {
+            if (req.files['image']) {
+                product.images = [req.files['image'][0].path];
+            } else if (req.files['images']) {
+                product.images = req.files['images'].map(file => file.path);
+            }
         }
 
-        // 2. Update Field
         product.name = name || product.name;
-        if (name) product.slug = createSlug(name);
+        if(name) product.slug = createSlug(name) + '-' + Date.now().toString().slice(-4);
         product.description = description || product.description;
         product.price = price || product.price;
         product.originalPrice = originalPrice || product.originalPrice;
         product.category = category || product.category;
         product.subcategory = subcategory || product.subcategory;
-        product.affiliateLink = affiliateLink || product.affiliateLink;
+        product.affiliateLink = affiliateLink !== undefined ? affiliateLink : product.affiliateLink;
         product.platform = platform || product.platform;
-        product.images = imageUrls;
 
         const updatedProduct = await product.save();
         res.json(updatedProduct);
@@ -202,12 +190,11 @@ const updateProduct = async (req, res) => {
     }
 };
 
-// UPDATE EXPORTS
 module.exports = { 
     getProducts, 
     createProduct, 
     deleteProduct, 
-    getProductBySlug,
-    searchProducts,
-    updateProduct
+    getProductBySlug, 
+    searchProducts, 
+    updateProduct 
 };

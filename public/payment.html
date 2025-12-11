@@ -4,280 +4,244 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pembayaran - RinsPoint</title>
+    
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* TAMBAHAN CSS KHUSUS QRIS & LIST */
-        .qris-box {
-            background: white; padding: 1.5rem; border-radius: 16px;
-            text-align: center; margin-bottom: 2rem;
-            box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+        .payment-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #334155;
+            margin-bottom: 20px;
         }
-        .qris-box img { width: 100%; max-width: 250px; height: auto; border: 2px solid #000; border-radius: 8px; }
-        .qris-info { color: #333; font-size: 0.8rem; margin-top: 10px; font-weight: 600; }
-        .qris-logos { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
-        .qris-logos i { font-size: 1.5rem; color: #333; }
-
-        /* Judul Section */
-        .method-title {
-            font-size: 0.9rem; color: #4ADE80; font-weight: 600;
-            margin-bottom: 10px; margin-top: 1.5rem; letter-spacing: 1px;
-            text-transform: uppercase; border-left: 3px solid #4ADE80; padding-left: 10px;
+        .row-detail {
+            display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem;
         }
-
-        /* Item Bank/Wallet */
-        .bank-item {
-            background: #1E293B; border-radius: 12px; padding: 1rem;
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 10px; border: 1px solid rgba(148, 163, 184, 0.1);
+        .label { color: #94a3b8; }
+        .value { color: white; font-weight: 500; text-align: right; }
+        .total-row {
+            margin-top: 15px; padding-top: 15px; border-top: 1px dashed #334155;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .bank-info { display: flex; align-items: center; gap: 1rem; }
-        .bank-icon { width: 50px; height: 30px; object-fit: contain; background: white; border-radius: 4px; padding: 2px; }
-        .bank-text strong { display: block; color: white; font-size: 0.9rem; }
-        .bank-text span { color: #94a3b8; font-size: 0.85rem; font-family: monospace; }
-        
-        .btn-copy { color: #4ADE80; cursor: pointer; font-size: 1.2rem; transition: 0.2s; }
-        .btn-copy:active { transform: scale(0.8); }
+        .total-label { color: white; font-weight: 700; font-size: 1rem; }
+        .total-value { color: #4ade80; font-weight: 700; font-size: 1.3rem; }
 
-        .loading-text { text-align: center; color: #94a3b8; margin-top: 2rem; }
+        .payment-method {
+            display: flex; align-items: center; gap: 15px;
+            background: #0f172a; padding: 15px; border-radius: 12px;
+            border: 1px solid #334155; margin-bottom: 10px; cursor: pointer;
+        }
+        .payment-method.active { border-color: #4ade80; background: rgba(74, 222, 128, 0.05); }
+        .method-icon { font-size: 1.5rem; color: #4ade80; width: 30px; text-align: center; }
 
-        /* Style Khusus SN / Token */
-        .sn-box {
-            background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e;
-            padding: 10px; border-radius: 8px; margin-top: 10px;
-            display: none; /* Sembunyi default */
-            flex-direction: column; gap: 5px;
+        .btn-confirm {
+            background: #25D366; /* Warna WA */
+            color: white; border: none; width: 100%; padding: 15px;
+            border-radius: 12px; font-weight: 700; font-size: 1rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-top: 20px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+        }
+        .btn-confirm:active { transform: scale(0.98); }
+
+        /* PERINGATAN NOMOR */
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1); 
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 10px; padding: 10px; margin-bottom: 15px;
+            display: flex; gap: 10px; align-items: start;
+        }
+        .warning-text { color: #f59e0b; font-size: 0.8rem; line-height: 1.4; }
+
+        /* MODAL PILIH ADMIN */
+        .admin-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 9999; display: none;
+            justify-content: center; align-items: center; padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+        .admin-modal.show { display: flex; }
+        .admin-box {
+            background: #1e293b; width: 100%; max-width: 350px;
+            border-radius: 20px; padding: 20px; border: 1px solid #334155;
+        }
+        .admin-list { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .admin-item {
+            background: #0f172a; padding: 12px; border-radius: 10px;
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
+            border: 1px solid #334155; transition: 0.2s;
+        }
+        .admin-item:active { transform: scale(0.98); background: #334155; }
+        .admin-avatar {
+            width: 40px; height: 40px; background: #25D366; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: white;
         }
     </style>
 </head>
 <body>
 
     <div class="mobile-container">
+        
         <header class="main-header">
-            <a href="/" class="btn-back" style="color:white; margin-right:1rem;"><i class="fa-solid fa-house"></i></a>
-            <div class="logo-text">Selesaikan Pembayaran</div>
+            <a href="/ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <div class="logo-text">Rincian Pembayaran</div>
         </header>
 
-        <main class="payment-page">
+        <main style="padding: 20px;">
             
-            <div class="status-banner">
-                <p>Selesaikan pembayaran dalam</p>
-                <div class="timer" id="countdown">23:59:59</div>
+            <h3 style="color: white; margin-bottom: 10px;">Ringkasan Pesanan</h3>
+            
+            <div class="warning-box">
+                <i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b; margin-top: 2px;"></i>
+                <div class="warning-text">
+                    Mohon cek kembali Nomor Tujuan / ID Game Anda. Kesalahan nomor bukan tanggung jawab kami.
+                </div>
             </div>
-
-            <div class="invoice-card">
-                <div class="amount-box">
-                    <span>Total Pembayaran</span>
-                    <h2 id="totalAmount">Rp 0 <i class="fa-regular fa-copy copy-icon" onclick="copyText('amountRaw')"></i></h2>
-                    <span id="amountRaw" style="display:none;">0</span> 
-                </div>
-                
-                <div class="detail-row">
-                    <span class="label">ID Transaksi</span>
-                    <span class="value" id="trxId">-</span>
-                </div>
-                <div class="detail-row">
+            
+            <div class="payment-card">
+                <div class="row-detail">
                     <span class="label">Produk</span>
-                    <span class="value" id="productName">-</span>
+                    <span class="value" id="dispProduct">-</span>
                 </div>
-                <div class="detail-row">
+                <div class="row-detail">
                     <span class="label">Nomor Tujuan</span>
-                    <span class="value" id="customerPhone">-</span>
+                    <span class="value" id="dispNumber">-</span>
+                </div>
+                <div class="row-detail">
+                    <span class="label">Kategori</span>
+                    <span class="value" id="dispCategory">-</span>
                 </div>
                 
-                <div class="detail-row">
-                    <span class="label">Status</span>
-                    <span class="value" id="trxStatus" style="color:#F59E0B; font-weight:bold;">PENDING</span>
-                </div>
-
-                <div id="snRow" class="sn-box">
-                    <span style="color:#4ADE80; font-size:0.8rem;">SN / KODE TOKEN:</span>
-                    <span id="trxSN" style="color:white; font-family:monospace; font-size:1.1rem; font-weight:bold; word-break:break-all;">-</span>
+                <div class="total-row">
+                    <span class="total-label">Total Bayar</span>
+                    <span class="total-value" id="dispPrice">Rp 0</span>
                 </div>
             </div>
 
-            <div class="payment-methods">
-                
-                <div class="method-title">Scan QRIS (Otomatis & Cepat)</div>
-                <div class="qris-box">
-                    <img src="assets/images/qris.png" alt="Scan QRIS RinsPoint" onerror="this.src='https://via.placeholder.com/250x250?text=QRIS+CODE'">
-                    <div class="qris-info">Scan menggunakan e-Wallet / M-Banking</div>
-                    <div class="qris-logos">
-                        <i class="fa-solid fa-wallet"></i>
-                        <i class="fa-solid fa-building-columns"></i>
-                    </div>
-                </div>
-
-                <div class="method-title">Transfer Bank</div>
-                
-                <div class="bank-item">
-                    <div class="bank-info">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg" class="bank-icon" alt="BCA">
-                        <div class="bank-text">
-                            <strong>Bank BCA</strong>
-                            <span id="rekBCA">1234567890</span>
-                        </div>
-                    </div>
-                    <i class="fa-regular fa-copy btn-copy" onclick="copyText('rekBCA')"></i>
-                </div>
-
-                <div class="bank-item">
-                    <div class="bank-info">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/68/BANK_BRI_logo.svg" class="bank-icon" alt="BRI">
-                        <div class="bank-text">
-                            <strong>Bank BRI</strong>
-                            <span id="rekBRI">0000123456789</span>
-                        </div>
-                    </div>
-                    <i class="fa-regular fa-copy btn-copy" onclick="copyText('rekBRI')"></i>
-                </div>
-
-                <div class="bank-item">
-                    <div class="bank-info">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg" class="bank-icon" alt="Mandiri">
-                        <div class="bank-text">
-                            <strong>Bank Mandiri</strong>
-                            <span id="rekMandiri">111222333444</span>
-                        </div>
-                    </div>
-                    <i class="fa-regular fa-copy btn-copy" onclick="copyText('rekMandiri')"></i>
-                </div>
-
-                <div class="method-title">E-Wallet</div>
-
-                <div class="bank-item">
-                    <div class="bank-info">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/1200px-Logo_dana_blue.svg.png" class="bank-icon" alt="DANA">
-                        <div class="bank-text">
-                            <strong>DANA</strong>
-                            <span id="rekDANA">081234567890</span>
-                        </div>
-                    </div>
-                    <i class="fa-regular fa-copy btn-copy" onclick="copyText('rekDANA')"></i>
-                </div>
-
-                <div class="bank-item">
-                    <div class="bank-info">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fe/Shopee.svg" class="bank-icon" alt="Shopee">
-                        <div class="bank-text">
-                            <strong>ShopeePay</strong>
-                            <span id="rekShopee">081234567890</span>
-                        </div>
-                    </div>
-                    <i class="fa-regular fa-copy btn-copy" onclick="copyText('rekShopee')"></i>
-                </div>
-
-            </div>
+            <h3 style="color: white; margin-bottom: 15px;">Metode Pembayaran</h3>
             
-            <a href="#" id="btnConfirmWA" class="btn-confirm-wa" target="_blank">
-                <i class="fa-brands fa-whatsapp"></i> Konfirmasi ke Admin
-            </a>
+            <div class="payment-method active">
+                <div class="method-icon"><i class="fa-brands fa-whatsapp"></i></div>
+                <div style="flex: 1;">
+                    <div style="color: white; font-weight: 600; font-size: 0.95rem;">Bayar via Admin (Manual)</div>
+                    <div style="color: #94a3b8; font-size: 0.8rem;">Transfer Bank / E-Wallet / QRIS</div>
+                </div>
+                <i class="fa-solid fa-circle-check" style="color: #4ade80;"></i>
+            </div>
+
+            <button onclick="openAdminModal()" class="btn-confirm">
+                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i>
+                Konfirmasi Pesanan
+            </button>
+
+            <p style="color: #64748b; font-size: 0.8rem; text-align: center; margin-top: 15px; line-height: 1.5;">
+                Klik tombol di atas untuk memilih Admin dan menyelesaikan pembayaran.
+            </p>
 
         </main>
     </div>
 
-    <script src="js/whatsapp.js"></script>
+    <div id="adminModal" class="admin-modal">
+        <div class="admin-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="color: white; margin: 0;">Pilih Admin</h3>
+                <i class="fa-solid fa-xmark" style="color: #ef4444; font-size: 1.5rem; cursor: pointer;" onclick="closeAdminModal()"></i>
+            </div>
+            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 15px;">Silakan pilih Admin yang tersedia untuk konfirmasi:</p>
+            
+            <div id="adminListContainer" class="admin-list">
+                <div style="text-align: center; color: #64748b;">Memuat kontak...</div>
+            </div>
+        </div>
+    </div>
 
     <script>
         const API_URL = '/api';
-        
-        document.addEventListener('DOMContentLoaded', async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const trxId = urlParams.get('trxId');
+        let transaction = null;
+        let adminContacts = []; 
 
-            if (!trxId) {
-                alert('ID Transaksi tidak ditemukan');
-                window.location.href = '/';
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 1. Ambil Data Transaksi
+            const rawData = localStorage.getItem('currentTransaction');
+            if (!rawData) {
+                alert('Tidak ada data transaksi.');
+                window.location.href = '/ppob.html';
                 return;
             }
+            transaction = JSON.parse(rawData);
 
+            // 2. Render Data ke HTML
+            document.getElementById('dispProduct').innerText = transaction.productName;
+            document.getElementById('dispNumber').innerText = transaction.customerNumber;
+            document.getElementById('dispCategory').innerText = transaction.productCategory.name || transaction.productCategory;
+            document.getElementById('dispPrice').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(transaction.productPrice);
+
+            // 3. Ambil Data Admin dari Server
             try {
-                // 1. AMBIL NOMOR ADMIN TERBARU (LANGSUNG DARI DATABASE)
-                // Ini mencegah bug nomor lama karena cache/loading lambat
-                let adminWA = "6281234567890"; // Fallback awal
-                try {
-                    const resSettings = await fetch(`${API_URL}/settings`);
-                    const dataSettings = await resSettings.json();
-                    if (dataSettings && dataSettings.adminPhone) {
-                        adminWA = dataSettings.adminPhone;
-                        // Format nomor (hapus 0 di depan, ganti 62)
-                        adminWA = adminWA.replace(/\D/g, '');
-                        if (adminWA.startsWith('0')) adminWA = '62' + adminWA.slice(1);
-                    }
-                } catch (errSetting) {
-                    console.error("Gagal load nomor admin:", errSetting);
-                }
-
-                // 2. AMBIL DETAIL TRANSAKSI
-                const res = await fetch(`${API_URL}/ppob/transaction/${trxId}`);
-                const data = await res.json();
-
-                if (!res.ok) throw new Error(data.message);
-
-                // Isi Data Dasar
-                document.getElementById('trxId').innerText = data.trxId;
-                document.getElementById('productName').innerText = data.digiflazzResponse?.productName || data.productCode;
-                document.getElementById('customerPhone').innerText = data.customerPhone;
+                const res = await fetch(`${API_URL}/settings`);
+                const settings = await res.json();
                 
-                // Format Rupiah
-                const total = data.amount;
-                document.getElementById('totalAmount').innerHTML = `Rp ${new Intl.NumberFormat('id-ID').format(total)} <i class="fa-regular fa-copy copy-icon" onclick="copyText('amountRaw')"></i>`;
-                document.getElementById('amountRaw').innerText = total;
-
-                // --- LOGIKA STATUS & SN ---
-                const statusEl = document.getElementById('trxStatus');
-                statusEl.innerText = data.status.toUpperCase();
-
-                if (data.status === 'success') {
-                    statusEl.style.color = '#4ADE80'; // Hijau
-                    document.querySelector('.status-banner').style.display = 'none'; // Sembunyikan Timer
-                    
-                    // Tampilkan SN jika ada
-                    if (data.sn) {
-                        document.getElementById('snRow').style.display = 'flex';
-                        document.getElementById('trxSN').innerText = data.sn;
-                    }
-                } else if (data.status === 'failed') {
-                    statusEl.style.color = '#EF4444'; // Merah
-                    statusEl.innerText = 'GAGAL / REFUND';
+                // Hanya ambil kontak tambahan yang aktif
+                if (settings.adminContacts && settings.adminContacts.length > 0) {
+                    adminContacts = settings.adminContacts.filter(a => a.isActive);
                 }
-
-                // --- UPDATE LINK WA (PAKAI NOMOR YANG BARU DIAMBIL) ---
-                const msg = `Halo Admin RinsPoint,%0ASaya sudah transfer Rp ${new Intl.NumberFormat('id-ID').format(total)}.%0A%0A*Detail:*%0A- No Order: ${data.trxId}%0A- Status: ${data.status.toUpperCase()}%0A%0AMohon diproses.`;
-                document.getElementById('btnConfirmWA').href = `https://wa.me/${adminWA}?text=${msg}`;
-
-                // Jalankan timer hanya jika masih pending
-                if(data.status === 'pending') startTimer(24 * 60 * 60);
+                
+                renderAdminList();
 
             } catch (error) {
-                alert('Gagal memuat transaksi: ' + error.message);
-                window.location.href = '/';
+                console.error('Gagal ambil info admin', error);
+                document.getElementById('adminListContainer').innerHTML = '<div style="color:#ef4444; text-align:center;">Gagal memuat kontak admin.</div>';
             }
         });
 
-        function copyText(elementId) {
-            const text = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(text).then(() => alert('Disalin: ' + text));
+        function renderAdminList() {
+            const container = document.getElementById('adminListContainer');
+            container.innerHTML = '';
+
+            if (adminContacts.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:#ef4444; padding:10px;">Belum ada kontak admin yang ditambahkan.</div>`;
+                return;
+            }
+
+            adminContacts.forEach(admin => {
+                const div = document.createElement('div');
+                div.className = 'admin-item';
+                div.onclick = () => sendToWhatsApp(admin.phone);
+                div.innerHTML = `
+                    <div class="admin-avatar"><i class="fa-brands fa-whatsapp"></i></div>
+                    <div style="flex: 1;">
+                        <div style="color: white; font-weight: 600;">${admin.name}</div>
+                        <div style="color: #94a3b8; font-size: 0.8rem;">Online</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right" style="color: #4ade80;"></i>
+                `;
+                container.appendChild(div);
+            });
         }
 
-        function startTimer(duration) {
-            let timer = duration, hours, minutes, seconds;
-            const interval = setInterval(() => {
-                hours = parseInt(timer / 3600, 10);
-                minutes = parseInt((timer % 3600) / 60, 10);
-                seconds = parseInt(timer % 60, 10);
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.add('show');
+        }
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.remove('show');
+        }
 
-                hours = hours < 10 ? "0" + hours : hours;
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
+        function sendToWhatsApp(phone) {
+            if (!transaction) return;
 
-                const display = document.getElementById('countdown');
-                if(display) display.textContent = hours + ":" + minutes + ":" + seconds;
+            const message = `Halo Admin RinsPoint, saya mau order PPOB:%0A%0A` +
+                            `📦 *Produk:* ${transaction.productName}%0A` +
+                            `📱 *Nomor:* ${transaction.customerNumber}%0A` +
+                            `💰 *Harga:* Rp ${new Intl.NumberFormat('id-ID').format(transaction.productPrice)}%0A%0A` +
+                            `Mohon diproses, pembayaran via apa ya?`;
 
-                if (--timer < 0) clearInterval(interval);
-            }, 1000);
+            const url = `https://wa.me/${phone}?text=${message}`;
+            window.open(url, '_blank');
+            closeAdminModal();
         }
     </script>
+
 </body>
 </html>

@@ -98,7 +98,23 @@
 
             // Render Info
             document.title = prod.name;
-            document.getElementById('detailCategory').innerText = prod.category?.name || 'Umum';
+            
+            // --- FIX CATEGORY DISPLAY ---
+            // Cek apakah category itu Object (Affiliate) atau String (PPOB)
+            let catDisplay = 'Umum';
+            let catValueForQuery = null;
+
+            if (prod.category) {
+                if (typeof prod.category === 'object' && prod.category.name) {
+                    catDisplay = prod.category.name; // Affiliate
+                    catValueForQuery = prod.category._id; // Gunakan ID untuk query affiliate
+                } else {
+                    catDisplay = prod.category; // PPOB (String)
+                    catValueForQuery = prod.category; // Gunakan string untuk query PPOB
+                }
+            }
+
+            document.getElementById('detailCategory').innerText = catDisplay;
             document.getElementById('detailName').innerText = prod.name;
             document.getElementById('detailPrice').innerText = `Rp ${new Intl.NumberFormat('id-ID').format(prod.price)}`;
             
@@ -106,47 +122,83 @@
                 document.getElementById('detailOriginalPrice').innerText = `Rp ${new Intl.NumberFormat('id-ID').format(prod.originalPrice)}`;
             }
             document.getElementById('detailDesc').innerText = prod.description;
-            document.getElementById('btnBuyLink').href = prod.affiliateLink || '#';
             
-            loadRelatedProducts(prod.category?._id, prod._id);
+            // Handle Link (If PPOB, maybe hide or point to WhatsApp/Checkout page)
+            if (prod.affiliateLink) {
+                document.getElementById('btnBuyLink').href = prod.affiliateLink;
+            } else {
+                document.getElementById('btnBuyLink').href = '#'; // Or logic to add to cart/checkout
+                document.getElementById('btnBuyLink').innerText = 'Beli Langsung';
+                document.getElementById('btnBuyLink').onclick = (e) => {
+                    e.preventDefault();
+                    // Simple Add to Cart logic then redirect
+                    addToCartLogic();
+                    window.location.href = '/checkout.html'; // Assuming you have a checkout page
+                };
+            }
+            
+            // Load Related Products dengan nilai kategori yang benar
+            loadRelatedProducts(catValueForQuery, prod._id);
         }
 
-        async function loadRelatedProducts(catId, currentId) {
+        async function loadRelatedProducts(catValue, currentId) {
             const container = document.getElementById('relatedProductsContainer');
-            if(!catId) return;
+            if(!catValue) {
+                container.innerHTML = '<p>Tidak ada rekomendasi.</p>';
+                return;
+            }
+
             try {
-                const res = await fetch(`${API_URL}/products?category=${catId}`);
+                // Fetch products based on category (Works for both ID and String)
+                const res = await fetch(`${API_URL}/products?category=${catValue}`);
                 const products = await res.json();
+                
+                // Filter current product out & limit to 4
                 const related = products.filter(p => p._id !== currentId).slice(0, 4);
                 
                 container.innerHTML = '';
-                if(related.length === 0) container.innerHTML = '<p>Tidak ada rekomendasi.</p>';
+                if(related.length === 0) {
+                    container.innerHTML = '<p style="color:#64748b; font-size:0.8rem;">Tidak ada produk serupa lainnya.</p>';
+                    return;
+                }
 
                 related.forEach(p => {
+                    const img = (p.images && p.images.length > 0) ? p.images[0] : 'https://via.placeholder.com/150';
                     const div = document.createElement('div');
                     div.style.cssText = "background:#1E293B; border-radius:12px; overflow:hidden; cursor:pointer;";
                     div.onclick = () => window.location.href=`product.html?slug=${p.slug}`;
                     div.innerHTML = `
-                        <img src="${p.images[0] || ''}" style="width:100%; aspect-ratio:1/1; object-fit:cover;">
+                        <img src="${img}" style="width:100%; aspect-ratio:1/1; object-fit:cover;" onerror="this.src='https://via.placeholder.com/150'">
                         <div style="padding:10px;">
-                            <h4 style="color:white; font-size:0.8rem;">${p.name}</h4>
-                            <div style="color:#4ADE80; font-weight:700;">Rp ${new Intl.NumberFormat('id-ID').format(p.price)}</div>
+                            <h4 style="color:white; font-size:0.8rem; margin-bottom:4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${p.name}</h4>
+                            <div style="color:#4ADE80; font-weight:700; font-size:0.9rem;">Rp ${new Intl.NumberFormat('id-ID').format(p.price)}</div>
                         </div>`;
                     container.appendChild(div);
                 });
-            } catch(e){}
+            } catch(e){
+                console.error("Related products error:", e);
+                container.innerHTML = '<p style="color:#ef4444; font-size:0.8rem;">Gagal memuat rekomendasi.</p>';
+            }
         }
 
-        // --- ADD TO CART ---
-        document.getElementById('btnAddToCart').addEventListener('click', () => {
+        function addToCartLogic() {
             if (!currentProduct) return;
-            
             const btn = document.getElementById('btnAddToCart');
+            
+            // Visual Effect
             btn.style.transform = "scale(0.95)";
             setTimeout(() => btn.style.transform = "scale(1)", 150);
 
-            // Simpan ke Storage
+            // Save to Storage
             let cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
+            
+            // Check duplications (Optional: increase qty instead)
+            const existingItem = cart.find(item => item.id === currentProduct._id);
+            if(existingItem) {
+                // alert('Produk sudah ada di keranjang');
+                // return; 
+            }
+
             const img = (currentProduct.images && currentProduct.images.length > 0) ? currentProduct.images[0] : '';
             
             cart.push({
@@ -157,7 +209,7 @@
             });
             localStorage.setItem('rinsCart', JSON.stringify(cart));
 
-            // Efek Visual Tombol
+            // Button Feedback
             const oldHtml = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-check"></i> Masuk!';
             btn.style.background = '#4ADE80'; btn.style.color = '#064E3B';
@@ -167,7 +219,10 @@
                 btn.style.background = 'transparent'; 
                 btn.style.color = '#4ADE80'; 
             }, 1500);
-        });
+        }
+
+        // --- ADD TO CART LISTENER ---
+        document.getElementById('btnAddToCart').addEventListener('click', addToCartLogic);
     </script>
 </body>
 </html>

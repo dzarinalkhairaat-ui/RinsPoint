@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PPOB Setting - RinsPoint</title>
+    
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="../js/auth.js"></script>
+    <script>checkAuth();</script>
+
+    <style>
+        body { background-color: #0f172a; padding-bottom: 80px; }
+        
+        .dashboard-header {
+            background: #1e293b; padding: 1rem; position: sticky; top: 0; z-index: 100;
+            border-bottom: 1px solid #334155; 
+            display: flex; align-items: center; justify-content: flex-start; gap: 15px;
+        }
+        
+        .dashboard-header h2 { margin: 0; color: #4ade80; font-size: 1.1rem; }
+
+        /* Card Style Modern */
+        .setting-card {
+            background: #1e293b; border-radius: 16px; border: 1px solid #334155;
+            padding: 20px; margin-bottom: 20px;
+        }
+        
+        .card-header {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 15px;
+            border-bottom: 1px dashed #334155; padding-bottom: 10px;
+        }
+        .card-header i { color: #4ade80; font-size: 1.2rem; }
+        .card-header h3 { color: white; margin: 0; font-size: 1rem; }
+
+        /* Form Elements */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; color: #94a3b8; margin-bottom: 8px; font-size: 0.85rem; }
+        
+        .input-dark {
+            width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155;
+            border-radius: 10px; color: white; outline: none; transition: 0.3s;
+        }
+        .input-dark:focus { border-color: #4ade80; }
+
+        /* Toggle Switch */
+        .switch-wrapper { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 15px; border-radius: 10px; border: 1px solid #334155; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #4ade80; }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        /* Logo Grid */
+        .logo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .logo-item { background: #0f172a; padding: 10px; border-radius: 10px; border: 1px solid #334155; text-align: center; }
+        .logo-preview { width: 100%; height: 40px; object-fit: contain; margin-bottom: 5px; background: rgba(255,255,255,0.05); border-radius: 6px; }
+        .btn-upload-mini {
+            background: #334155; color: white; border: none; padding: 5px 10px;
+            border-radius: 6px; font-size: 0.7rem; cursor: pointer; width: 100%;
+        }
+
+        .btn-save {
+            width: 100%; background: #4ade80; color: #064e3b; padding: 14px;
+            border: none; border-radius: 12px; font-weight: bold; font-size: 1rem;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+        
+        <header class="dashboard-header">
+            <a href="dashboard.html" style="color:white; font-size: 1.2rem;">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <h2>Pengaturan PPOB</h2>
+        </header>
+
+        <main class="dashboard-content" style="padding: 20px;">
+            
+            <form id="ppobSettingsForm" enctype="multipart/form-data">
+                
+                <div class="setting-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-clock"></i>
+                        <h3>Jam Operasional</h3>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="switch-wrapper">
+                            <span style="color: white; font-weight: 500;">Status Toko PPOB</span>
+                            <label class="switch">
+                                <input type="checkbox" id="ppobStatus">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <small style="color:#64748b; font-size:0.75rem; display:block; margin-top:5px;">
+                            Jika dimatikan, semua produk PPOB tidak bisa dibeli.
+                        </small>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group">
+                            <label>Jam Buka</label>
+                            <input type="time" id="openTime" class="input-dark">
+                        </div>
+                        <div class="form-group">
+                            <label>Jam Tutup</label>
+                            <input type="time" id="closeTime" class="input-dark">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                        <h3>Keuntungan (Margin)</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Margin Global (Rupiah)</label>
+                        <input type="number" id="ppobMargin" class="input-dark" placeholder="Contoh: 500">
+                        <small style="color:#64748b;">Keuntungan yang ditambahkan otomatis ke harga asli.</small>
+                    </div>
+                </div>
+
+                <div class="setting-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-images"></i>
+                        <h3>Logo Provider</h3>
+                    </div>
+                    <p style="color:#94a3b8; font-size:0.8rem; margin-bottom:15px;">Upload logo (PNG/SVG) untuk mengganti logo default.</p>
+                    
+                    <div class="logo-grid">
+                        <div class="logo-item">
+                            <img id="prev_telkomsel" src="" class="logo-preview" alt="Tsel">
+                            <label for="up_telkomsel" class="btn-upload-mini">Ubah Telkomsel</label>
+                            <input type="file" id="up_telkomsel" name="logo_telkomsel" accept="image/*" hidden onchange="previewLogo(this, 'prev_telkomsel')">
+                        </div>
+                        <div class="logo-item">
+                            <img id="prev_indosat" src="" class="logo-preview" alt="Isat">
+                            <label for="up_indosat" class="btn-upload-mini">Ubah Indosat</label>
+                            <input type="file" id="up_indosat" name="logo_indosat" accept="image/*" hidden onchange="previewLogo(this, 'prev_indosat')">
+                        </div>
+                        <div class="logo-item">
+                            <img id="prev_xl" src="" class="logo-preview" alt="XL">
+                            <label for="up_xl" class="btn-upload-mini">Ubah XL</label>
+                            <input type="file" id="up_xl" name="logo_xl" accept="image/*" hidden onchange="previewLogo(this, 'prev_xl')">
+                        </div>
+                        <div class="logo-item">
+                            <img id="prev_axis" src="" class="logo-preview" alt="Axis">
+                            <label for="up_axis" class="btn-upload-mini">Ubah Axis</label>
+                            <input type="file" id="up_axis" name="logo_axis" accept="image/*" hidden onchange="previewLogo(this, 'prev_axis')">
+                        </div>
+                        <div class="logo-item">
+                            <img id="prev_tri" src="" class="logo-preview" alt="Tri">
+                            <label for="up_tri" class="btn-upload-mini">Ubah Tri</label>
+                            <input type="file" id="up_tri" name="logo_tri" accept="image/*" hidden onchange="previewLogo(this, 'prev_tri')">
+                        </div>
+                        <div class="logo-item">
+                            <img id="prev_smartfren" src="" class="logo-preview" alt="Smart">
+                            <label for="up_smartfren" class="btn-upload-mini">Ubah Smartfren</label>
+                            <input type="file" id="up_smartfren" name="logo_smartfren" accept="image/*" hidden onchange="previewLogo(this, 'prev_smartfren')">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="btnSave" class="btn-save">SIMPAN PENGATURAN</button>
+            </form>
+
+        </main>
+
+        <nav class="bottom-nav">
+            <a href="/"><i class="fa-solid fa-store"></i><span>Toko</span></a>
+            <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+            <a href="#" class="active"><i class="fa-solid fa-sliders"></i><span>PPOB</span></a>
+            <a href="#" onclick="logout()"><i class="fa-solid fa-power-off"></i><span>LogOut</span></a>
+        </nav>
+
+    </div>
+
+    <script>
+        const API_URL = '/api';
+        const token = localStorage.getItem('adminToken');
+
+        // 1. LOAD DATA SAAT BUKA
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch(`${API_URL}/settings`);
+                const data = await res.json();
+
+                // Isi Form Jam Operasional
+                document.getElementById('ppobStatus').checked = data.ppobStatus !== false; // Default true
+                document.getElementById('openTime').value = data.ppobOpenTime || "06:00";
+                document.getElementById('closeTime').value = data.ppobCloseTime || "23:30";
+                
+                // Isi Margin
+                document.getElementById('ppobMargin').value = data.ppobMargin || 500;
+
+                // Isi Preview Logo (Jika ada di DB)
+                const logos = data.providerLogos || {};
+                if(logos.telkomsel) document.getElementById('prev_telkomsel').src = logos.telkomsel;
+                if(logos.indosat) document.getElementById('prev_indosat').src = logos.indosat;
+                if(logos.xl) document.getElementById('prev_xl').src = logos.xl;
+                if(logos.axis) document.getElementById('prev_axis').src = logos.axis;
+                if(logos.tri) document.getElementById('prev_tri').src = logos.tri;
+                if(logos.smartfren) document.getElementById('prev_smartfren').src = logos.smartfren;
+
+            } catch (error) {
+                console.error("Gagal load setting", error);
+            }
+        });
+
+        // 2. PREVIEW GAMBAR
+        window.previewLogo = function(input, imgId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(imgId).src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // 3. SIMPAN PENGATURAN
+        document.getElementById('ppobSettingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSave');
+            btn.innerText = 'Menyimpan...';
+            btn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                
+                // Masukkan Data Text
+                formData.append('ppobStatus', document.getElementById('ppobStatus').checked);
+                formData.append('ppobOpenTime', document.getElementById('openTime').value);
+                formData.append('ppobCloseTime', document.getElementById('closeTime').value);
+                formData.append('ppobMargin', document.getElementById('ppobMargin').value);
+
+                // Masukkan File Gambar (Jika ada yg diupload)
+                const fileInputs = document.querySelectorAll('input[type="file"]');
+                fileInputs.forEach(input => {
+                    if(input.files[0]) {
+                        formData.append(input.name, input.files[0]);
+                    }
+                });
+
+                // Kirim ke Backend
+                const res = await fetch(`${API_URL}/settings`, { // Gunakan endpoint setting yg sudah ada
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData // Kirim sebagai FormData agar bisa upload gambar
+                });
+
+                if (res.ok) {
+                    alert('Pengaturan PPOB Berhasil Disimpan!');
+                    window.location.reload();
+                } else {
+                    throw new Error('Gagal menyimpan');
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert('Terjadi kesalahan saat menyimpan.');
+            } finally {
+                btn.innerText = 'SIMPAN PENGATURAN';
+                btn.disabled = false;
+            }
+        });
+
+        function logout() {
+            if(confirm('Yakin ingin keluar?')) {
+                localStorage.removeItem('adminToken');
+                window.location.href = '/login.html';
+            }
+        }
+    </script>
+
+</body>
+</html>

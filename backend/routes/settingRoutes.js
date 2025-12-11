@@ -3,23 +3,23 @@ const router = express.Router();
 const { 
     getSettings, 
     updateSettings, 
-    updateDigiflazz,
+    updateDigiflazz, 
     updateBanners 
 } = require('../controllers/settingController');
-const { protect } = require('../middleware/authMiddleware');
-const upload = require('../middleware/uploadMiddleware'); // Import Upload Middleware
+const { protect, admin } = require('../middleware/authMiddleware');
+const upload = require('../middleware/uploadMiddleware'); // Wajib ada untuk FormData
 
-// Route GET Public (Ambil data setting untuk frontend)
+// Get Settings (Public)
 router.get('/', getSettings);
 
-// Route PUT Admin (Update Setting Umum & Kontak)
-router.put('/', protect, updateSettings);
+// Update Settings Umum & PPOB (Admin)
+// PENTING: upload.any() ditambahkan agar backend bisa membaca FormData (Gambar + Text)
+router.put('/', protect, admin, upload.any(), updateSettings);
 
-// Route PUT Admin (Update Konfigurasi Digiflazz)
-router.put('/digiflazz', protect, updateDigiflazz);
+// Update Konfigurasi Digiflazz (Admin)
+router.put('/digiflazz', protect, admin, updateDigiflazz);
 
-// Route POST Admin (Upload Banner Gambar)
-// Menggunakan upload.any() agar bisa menerima multiple files (banner1_image, banner2_image, dst)
-router.post('/banners', protect, upload.any(), updateBanners);
+// Upload Banners (Admin)
+router.post('/banners', protect, admin, upload.any(), updateBanners);
 
 module.exports = router;
