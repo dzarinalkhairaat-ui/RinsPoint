@@ -3,223 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Isi Pulsa - RinsPoint</title>
+    <title>Pilih Operator - RinsPoint</title>
     
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- STYLE KHUSUS PULSA MODERN --- */
+        /* --- FIX BACKGROUND ABSOLUT --- */
+        /* Pastikan HTML dan BODY warnanya sama, jadi saat overscroll tetap gelap */
+        html {
+            background-color: #0f172a;
+            height: 100%; /* Pastikan html setinggi viewport */
+        }
+
+        body { 
+            background-color: #0f172a; 
+            min-height: 100vh; /* Minimal setinggi layar */
+            margin: 0;
+            padding-bottom: 90px; /* Ruang untuk navbar bawah */
+            color: #f8fafc; 
+            font-family: 'Poppins', sans-serif; 
+            /* Memastikan background meluas ke area padding bawah */
+            box-sizing: border-box; 
+        }
         
-        .sticky-input-area {
-            position: sticky; top: 60px; background: #0f172a; padding: 1rem;
-            z-index: 90; border-bottom: 1px solid #334155;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        .ppob-header {
+            background: #1e293b; padding: 15px 20px;
+            position: sticky; top: 0; z-index: 50;
+            border-bottom: 1px solid #334155;
+            display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-
-        .input-wrapper {
-            position: relative; background: #1e293b; border-radius: 12px;
-            border: 1px solid #334155; display: flex; align-items: center;
-            padding: 5px 15px; transition: 0.3s;
+        .ppob-header h2 { margin: 0; color: #4ade80; font-size: 1.2rem; font-weight: 600; }
+        .btn-back { color: #cbd5e1; font-size: 1.2rem; text-decoration: none; }
+        
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        
+        .section-title { 
+            font-size: 0.9rem; color: #94a3b8; margin-bottom: 15px; 
+            text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
         }
         
-        .input-wrapper:focus-within {
-            border-color: #4ade80; box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2);
+        /* GRID PROVIDER */
+        .provider-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 12px; 
         }
-
-        .input-wrapper i { color: #94a3b8; font-size: 1.2rem; margin-right: 10px; }
-
-        .phone-field {
-            flex: 1; background: transparent; border: none; color: white;
-            font-size: 1.1rem; font-weight: 600; padding: 10px 0; outline: none; letter-spacing: 1px;
+        .provider-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px; 
+            aspect-ratio: 3 / 4.5; 
+            display: block; 
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-decoration: none; 
         }
-
-        .provider-detection-box {
-            margin-top: 15px; text-align: center; height: 0; overflow: hidden;
-            transition: height 0.3s ease, opacity 0.3s ease; opacity: 0;
+        .provider-card:active { transform: scale(0.95); border-color: #4ade80; }
+        
+        .provider-img {
+            width: 100%; height: 100%;
+            object-fit: cover; 
+            display: block;
         }
-
-        .provider-detection-box.active { height: 60px; opacity: 1; }
-
-        .provider-logo-img {
-            height: 45px; object-fit: contain;
-            background: rgba(30, 41, 59, 0.8);
-            padding: 5px 15px; border-radius: 12px;
-            border: 1px solid rgba(74, 222, 128, 0.3);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
-        }
-
-        .product-list-container { padding: 1rem; display: grid; gap: 12px; }
-
-        .product-card-modern {
-            background: linear-gradient(145deg, #1e293b, #172033);
-            border: 1px solid #334155; border-radius: 16px; padding: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            position: relative; overflow: hidden; transition: transform 0.2s, border-color 0.2s;
-        }
-
-        .product-card-modern:active { transform: scale(0.98); }
-
-        .prod-info { flex: 1; }
-        .prod-name { color: #fff; font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
-        .prod-sub { color: #94a3b8; font-size: 0.75rem; }
-        .prod-price-box { text-align: right; }
-        .price-tag { color: #4ade80; font-weight: 700; font-size: 1.1rem; }
-        .btn-mini-add {
-            background: rgba(74, 222, 128, 0.1); color: #4ade80;
-            padding: 5px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: bold;
-            margin-top: 4px; display: inline-block;
-        }
-
-        .confirm-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .confirm-box { width: 100%; max-width: 380px; background: #1e293b; border-radius: 24px; padding: 25px; border: 1px solid #334155; text-align: center; }
-        .btn-full { width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; border: none; margin-bottom: 10px; }
-        .btn-green { background: #4ade80; color: #064e3b; }
-        .btn-gray { background: #334155; color: #cbd5e1; }
     </style>
 </head>
 <body>
-
     <div class="mobile-container">
-        <header class="main-header" style="position: sticky; top: 0; z-index: 100;">
-            <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="logo-text">Isi Pulsa</div>
+        <header class="ppob-header">
+            <a href="/" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2>Isi Pulsa</h2>
         </header>
-
-        <div class="sticky-input-area">
-            <label style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 8px; display: block;">Masukkan Nomor Tujuan</label>
-            <div class="input-wrapper">
-                <i class="fa-solid fa-mobile-screen"></i>
-                <input type="tel" id="headerPhoneNumber" class="phone-field" placeholder="08xx xxxx xxxx" autocomplete="off" oninput="detectProvider(this.value)">
-            </div>
+        <main class="container">
+            <div class="section-title">Pilih Operator</div>
             
-            <div id="providerBox" class="provider-detection-box">
-                <img id="providerLogo" src="" alt="Provider" class="provider-logo-img">
+            <div class="provider-grid">
+                <a href="pulsa/telkomsel.html" class="provider-card">
+                    <img src="../assets/images/pulsa/telkomsel.jpeg" class="provider-img" alt="Telkomsel">
+                </a>
+                <a href="pulsa/indosat.html" class="provider-card">
+                    <img src="../assets/images/pulsa/indosat.jpeg" class="provider-img" alt="Indosat">
+                </a>
+                <a href="pulsa/xl.html" class="provider-card">
+                    <img src="../assets/images/pulsa/xl.jpeg" class="provider-img" alt="XL">
+                </a>
+                <a href="pulsa/axis.html" class="provider-card">
+                    <img src="../assets/images/pulsa/axis.jpeg" class="provider-img" alt="Axis">
+                </a>
+                <a href="pulsa/tri.html" class="provider-card">
+                    <img src="../assets/images/pulsa/tri.jpeg" class="provider-img" alt="Tri">
+                </a>
+                <a href="pulsa/smartfren.html" class="provider-card">
+                    <img src="../assets/images/pulsa/smartfren.jpeg" class="provider-img" alt="Smartfren">
+                </a>
+                <a href="pulsa/byu.html" class="provider-card">
+                    <img src="../assets/images/pulsa/by.u.jpeg" class="provider-img" alt="By.u">
+                </a>
             </div>
-        </div>
-
-        <main style="padding-bottom: 50px;">
-            <div id="productsContainer" class="product-list-container"></div>
         </main>
     </div>
 
-    <div id="purchaseModal" class="confirm-modal">
-        <div class="confirm-box" style="text-align: left;">
-            <h3 style="color: #4ade80; margin-bottom: 20px; text-align: center;">Konfirmasi</h3>
-            
-            <div style="background: #0f172a; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #334155;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="color: #94a3b8; font-size: 0.8rem;">Produk</span>
-                    <span id="detailName" style="color: white; font-weight: 600; font-size: 0.9rem;">-</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #94a3b8; font-size: 0.8rem;">Total Bayar</span>
-                    <span id="detailPrice" style="color: #f59e0b; font-weight: 700; font-size: 1.2rem;">-</span>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label style="color: #cbd5e1; font-size: 0.8rem; margin-bottom: 5px; display: block;">Nomor Tujuan</label>
-                <div style="background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; color: white; font-weight: bold; font-size: 1.1rem; letter-spacing: 1px;">
-                    <span id="displayNumber">08xx-xxxx-xxxx</span>
-                </div>
-                <input type="hidden" id="customerNumber"> 
-            </div>
-
-            <button onclick="processToPayment()" class="btn-full btn-green">Bayar Sekarang</button>
-            <button onclick="closePurchaseModal()" class="btn-full btn-gray">Batal</button>
-        </div>
-    </div>
-
-    <script src="../js/ppob.js"></script>
-    <script src="../js/loading.js"></script>
-    
-    <script>
-        function detectProvider(number) {
-            number = number.replace(/[^0-9]/g, '');
-            const prefix = number.substring(0, 4);
-            const providerBox = document.getElementById('providerBox');
-            const providerLogo = document.getElementById('providerLogo');
-            
-            let logoUrl = '';
-
-            // LOGO PROVIDER INDONESIA (VERSI PNG/STABIL)
-            if (prefix.length >= 4) {
-                if (/^08(11|12|13|21|22|23|52|53|51)/.test(prefix)) {
-                    logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Telkomsel_2021_icon.svg/1200px-Telkomsel_2021_icon.svg.png'; // Telkomsel
-                } else if (/^08(14|15|16|55|56|57|58)/.test(prefix)) {
-                    logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Indosat_Ooredoo_Hutchison.svg/1200px-Indosat_Ooredoo_Hutchison.svg.png'; // Indosat Fix
-                } else if (/^08(17|18|19|59|77|78)/.test(prefix)) {
-                    logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/XL_Axiata_2016_icon.svg/1200px-XL_Axiata_2016_icon.svg.png'; // XL
-                } else if (/^08(31|32|33|38)/.test(prefix)) {
-                    logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Axis_Telekom_Indonesia_2015.svg/1200px-Axis_Telekom_Indonesia_2015.svg.png'; // Axis
-                } else if (/^08(95|96|97|98|99)/.test(prefix)) {
-                    logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Tri_Indonesia_2016_icon.svg/1200px-Tri_Indonesia_2016_icon.svg.png'; // Tri
-                } else if (/^08(81|82|83|84|85|86|87|88|89)/.test(prefix)) {
-                    logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Smartfren_2019_icon.svg/1200px-Smartfren_2019_icon.svg.png'; // Smartfren
-                }
-            }
-
-            if (logoUrl) {
-                providerLogo.src = logoUrl;
-                providerBox.classList.add('active');
-            } else {
-                providerBox.classList.remove('active');
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProductsByCategory('Pulsa'); 
-        });
-
-        function renderProducts(products, categoryName) {
-            const container = document.getElementById('productsContainer');
-            container.innerHTML = '';
-
-            if (products.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:40px; color:#64748b;">
-                    <i class="fa-solid fa-box-open" style="font-size:3rem; margin-bottom:10px;"></i><br>
-                    Belum ada produk
-                </div>`;
-                return;
-            }
-
-            products.forEach(prod => {
-                const harga = new Intl.NumberFormat('id-ID').format(prod.price);
-                const div = document.createElement('div');
-                div.className = 'product-card-modern';
-                div.onclick = () => showPurchaseModalWithNumber(prod);
-                div.innerHTML = `
-                    <div class="prod-info">
-                        <div class="prod-name">${prod.name}</div>
-                        <div class="prod-sub">All Operator</div>
-                    </div>
-                    <div class="prod-price-box">
-                        <div class="price-tag">Rp ${harga}</div>
-                        <span class="btn-mini-add">PILIH</span>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function showPurchaseModalWithNumber(product) {
-            const phoneNumber = document.getElementById('headerPhoneNumber').value;
-            if (!phoneNumber || phoneNumber.length < 10) {
-                alert('Silakan masukkan nomor tujuan terlebih dahulu!');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                document.getElementById('headerPhoneNumber').focus();
-                return;
-            }
-            selectedProduct = product;
-            document.getElementById('detailName').innerText = product.name;
-            document.getElementById('detailPrice').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(product.price);
-            document.getElementById('displayNumber').innerText = phoneNumber;
-            document.getElementById('customerNumber').value = phoneNumber; 
-            document.getElementById('purchaseModal').style.display = 'flex';
-        }
-    </script>
+    <nav class="bottom-nav">
+            <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+            <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
+            <a href="cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span><span class="cart-badge-fixed" id="cartBadge">0</span></a>
+            <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+        </nav>
+        
 </body>
 </html>
