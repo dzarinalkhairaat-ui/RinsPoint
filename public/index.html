@@ -5,27 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RinsPoint - Toko Serba Ada</title>
     
-    <link rel="stylesheet" href="css/style.css">
-
+    <link rel="stylesheet" href="css/style.css?v=PRODUCT_MARGIN_FIX">
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#0F172A"> <link rel="apple-touch-icon" href="/assets/images/icon.png">
+    <meta name="theme-color" content="#0F172A">
+    <link rel="apple-touch-icon" href="/assets/images/icon.png">
     
     <script src="/js/pwa-register.js"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- LAYOUT BANNER MANUAL --- */
+        .hero-section {
+            width: 100%;
+            margin-bottom: 10px; 
+            padding: 10px 10px 0 10px; 
+            box-sizing: border-box;
+        }
+
+        .static-banner {
+            width: 100%;
+            height: auto; 
+            display: block;
+            border-radius: 12px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+        }
+
+        /* --- PERBAIKAN JARAK PRODUK (FINAL) --- */
+        .latest-products-section {
+            width: 100%;
+            /* Padding Kiri-Kanan 15px agar ada jarak aman dari tepi layar */
+            padding: 0 15px; 
+            box-sizing: border-box;
+            margin-bottom: 80px; 
+        }
+        
+        .latest-products-section .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            margin-top: 10px;
+            /* Pastikan header juga sejajar dengan grid produk */
+            padding: 0 2px; 
+        }
+
+        /* --- CSS GRID PRODUK --- */
+        /* Pastikan CSS ini ada atau sesuaikan dengan style.css Anda */
+        .products-grid {
+            display: grid;
+            /* Grid 2 kolom yang responsif */
+            grid-template-columns: repeat(2, 1fr); 
+            /* Jarak antar kartu (tengah) */
+            gap: 15px; 
+            width: 100%;
+        }
+
+        /* Optional: Style kartu produk agar tidak terlalu lebar di layar besar */
+        .product-card {
+            background: #fff; /* Atau warna tema Anda */
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            /* Pastikan kartu tidak keluar jalur */
+            width: 100%; 
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 <body>
-
     <div class="mobile-container">
         
         <header class="main-header">
-            <div class="logo-text">
-                <span class="brand-green">Rins</span>Point
-            </div>
-            
+            <div class="logo-text"><span class="brand-green">Rins</span>Point</div>
             <div class="search-bar">
-                <i class="fa-solid fa-search" id="homeSearchIcon" style="cursor: pointer;"></i>
+                <i class="fa-solid fa-search" id="homeSearchIcon"></i>
                 <input type="text" id="homeSearchInput" placeholder="Cari produk...">
             </div>
         </header>
@@ -33,41 +87,12 @@
         <main class="home-page">
             
             <div class="hero-section">
-                <div class="slider-container">
-                    <div class="slider-track" id="sliderTrack">
-                        <div class="hero-banner slide">
-                            <div class="banner-text">
-                                <h2>Belanja Hemat,<br>Pasti Untung!</h2>
-                                <p>Diskon spesial hari ini</p>
-                            </div>
-                            <div class="banner-decoration"></div>
-                        </div>
-                        <div class="hero-banner slide" style="background: linear-gradient(135deg, #0D9488 0%, #115E59 100%) !important;">
-                            <div class="banner-text">
-                                <h2>Produk Baru<br>Telah Tiba!</h2>
-                                <p>Cek koleksi terbaru kami</p>
-                            </div>
-                            <i class="fa-solid fa-box-open" style="position: absolute; right: -20px; bottom: -20px; font-size: 8rem; color: rgba(255,255,255,0.1);"></i>
-                        </div>
-                        <div class="hero-banner slide" style="background: linear-gradient(135deg, #2563EB 0%, #1E3A8A 100%) !important;">
-                            <div class="banner-text">
-                                <h2>Gratis Ongkir<br>Se-Indonesia</h2>
-                                <p>Min. belanja Rp 50rb</p>
-                            </div>
-                            <i class="fa-solid fa-truck-fast" style="position: absolute; right: -20px; bottom: -20px; font-size: 8rem; color: rgba(255,255,255,0.1);"></i>
-                        </div>
-                    </div>
-                    <div class="slider-dots" id="sliderDots">
-                        <span class="dot active" onclick="goToSlide(0)"></span>
-                        <span class="dot" onclick="goToSlide(1)"></span>
-                        <span class="dot" onclick="goToSlide(2)"></span>
-                    </div>
-                </div>
+                <img src="assets/images/banner.jpg" alt="Promo RinsPoint" class="static-banner">
             </div>
 
             <div class="categories-section">
                 <div class="category-scroll-wrapper" id="categoryContainer">
-                    <p style="padding: 1rem; color: #94a3b8;">Loading...</p>
+                    <p style="padding:1rem; color:#94a3b8;">Loading...</p>
                 </div>
             </div>
 
@@ -77,88 +102,44 @@
                     <a href="products.html" class="see-all">Lihat Semua</a>
                 </div>
                 <div class="products-grid" id="productsContainer">
-                    <p style="color: #64748b; padding: 1rem;">Memuat produk...</p>
+                    <p style="color:#64748b; padding:1rem;">Memuat produk...</p>
                 </div>
             </div>
         </main>
 
         <footer class="main-footer">
-            <div class="footer-logo">
-                <span style="color: #4ade80;">Rins</span>Point
-            </div>
+            <div class="footer-logo"><span style="color:#4ade80;">Rins</span>Point</div>
             <div class="social-links">
-                <a href="https://www.instagram.com/rinssstore_?igsh=M254MG90azFxdm5x"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://www.facebook.com/muhammad.darin.56"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="https://www.tiktok.com/@abudzaarr?_r=1&_t=ZS-920MOJzN50y"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#"><i class="fa-brands fa-tiktok"></i></a>
             </div>
-            <div class="footer-menu">
-                <a href="about.html">Tentang Kami</a>
-                <a href="how-to.html">Cara Belanja</a>
-            </div>
+            <div class="footer-menu"><a href="about.html">Tentang Kami</a><a href="how-to.html">Cara Belanja</a></div>
             <div class="copyright">&copy; 2025 RinsPoint. All rights reserved.</div>
         </footer>
 
         <nav class="bottom-nav">
             <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
             <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
-            
-            <a href="cart.html">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span>Troli</span>
-                <span class="cart-badge-fixed" id="cartBadge">0</span>
-            </a>
-
+            <a href="cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span><span class="cart-badge-fixed" id="cartBadge">0</span></a>
             <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
         </nav>
-
     </div>
 
     <script src="js/loading.js"></script>
-    <script src="js/index.js"></script>
+    <script src="js/index.js?v=MANUAL_SPACING_FIX_V2"></script>
     <script src="js/whatsapp.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // ===========================================
-            // 2. LOGIKA PENCARIAN
-            // ===========================================
+        document.addEventListener('DOMContentLoaded', async () => {
             const homeInput = document.getElementById('homeSearchInput');
             const homeIcon = document.getElementById('homeSearchIcon');
-
-            const goToSearchPage = () => {
-                const keyword = homeInput.value.trim();
-                if (keyword) {
-                    window.location.href = `search.html?keyword=${encodeURIComponent(keyword)}`;
-                } else {
-                    homeInput.focus();
-                }
-            };
-
-            if (homeInput) {
-                homeInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') goToSearchPage();
-                });
-            }
-
-            if (homeIcon) {
-                homeIcon.addEventListener('click', goToSearchPage);
-            }
-
-            // ===========================================
-            // 3. LOGIKA BADGE TROLI
-            // ===========================================
-            const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
-            const badge = document.getElementById('cartBadge');
-            
-            if (badge) {
-                badge.innerText = cart.length;
-                if (cart.length > 0) {
-                    badge.classList.add('show');
-                } else {
-                    badge.classList.remove('show');
-                }
-            }
+            const goToSearchPage = () => { const k = homeInput.value.trim(); if(k) window.location.href=`search.html?keyword=${encodeURIComponent(k)}`; else homeInput.focus(); };
+            if(homeInput) homeInput.addEventListener('keypress', (e)=>{if(e.key==='Enter')goToSearchPage()});
+            if(homeIcon) homeIcon.addEventListener('click', goToSearchPage);
+            const cart = JSON.parse(localStorage.getItem('rinsCart'))||[]; 
+            const badge = document.getElementById('cartBadge'); 
+            if(badge){ badge.innerText=cart.length; badge.classList.toggle('show', cart.length>0); }
         });
     </script>
 </body>

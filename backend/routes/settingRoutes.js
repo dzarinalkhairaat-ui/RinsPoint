@@ -3,23 +3,21 @@ const router = express.Router();
 const { 
     getSettings, 
     updateSettings, 
-    updateDigiflazz, 
-    updateBanners 
+    updateDigiflazz 
 } = require('../controllers/settingController');
-const { protect, admin } = require('../middleware/authMiddleware');
-const upload = require('../middleware/uploadMiddleware'); // Wajib ada untuk FormData
 
-// Get Settings (Public)
+// --- RUTE PENGATURAN BERSIH ---
+
+// Ambil Data Setting
 router.get('/', getSettings);
 
-// Update Settings Umum & PPOB (Admin)
-// PENTING: upload.any() ditambahkan agar backend bisa membaca FormData (Gambar + Text)
-router.put('/', protect, admin, upload.any(), updateSettings);
+// Update Teks (Nama Toko, Kontak, dll)
+router.put('/', updateSettings);
 
-// Update Konfigurasi Digiflazz (Admin)
-router.put('/digiflazz', protect, admin, updateDigiflazz);
+// Update Konfigurasi Digiflazz
+router.put('/digiflazz', updateDigiflazz);
 
-// Upload Banners (Admin)
-router.post('/banners', protect, admin, upload.any(), updateBanners);
+// FITUR UPLOAD BANNER SUDAH DIHAPUS TOTAL DARI SINI
+// SEHINGGA TIDAK AKAN ADA ERROR "CALLBACK UNDEFINED" LAGI
 
 module.exports = router;
