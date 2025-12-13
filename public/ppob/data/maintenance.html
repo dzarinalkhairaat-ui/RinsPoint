@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fitur Sedang Diupdate - RinsPoint</title>
+    
+    <link rel="stylesheet" href="../../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- RESET & LAYOUT PUSAT --- */
+        html, body {
+            height: 100%;
+            background-color: #0f172a; /* Background Gelap Utama */
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            color: #f8fafc;
+            overflow: hidden; /* Mencegah scroll */
+        }
+        
+        .maintenance-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            background: radial-gradient(circle at center, rgba(56, 189, 248, 0.1) 0%, #0f172a 70%); /* Efek cahaya biru di tengah */
+        }
+
+        /* --- KARTU MEWAH --- */
+        .maintenance-card {
+            background: rgba(30, 41, 59, 0.8); /* Semi transparan */
+            backdrop-filter: blur(10px); /* Efek kaca buram mewah */
+            padding: 50px 30px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid rgba(56, 189, 248, 0.2); /* Border biru tipis */
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5), 
+                        0 0 20px rgba(56, 189, 248, 0.1) inset; /* Glow dalam */
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+        }
+
+        /* --- ANIMASI GERIGI BERPUTAR --- */
+        .icon-wrapper {
+            font-size: 5rem;
+            color: #38bdf8; /* Warna Sky Blue */
+            margin-bottom: 30px;
+            display: inline-block;
+            /* Animasi berputar tanpa henti */
+            animation: spin-slow 6s linear infinite;
+        }
+
+        /* Keyframes untuk putaran */
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h2 {
+            margin: 0 0 15px 0;
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; /* Efek teks gradasi */
+        }
+        p {
+            color: #94a3b8;
+            margin-bottom: 35px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* --- TOMBOL KEMBALI --- */
+        .btn-back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 35px;
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-back-home:hover {
+            background: #38bdf8;
+            color: #0f172a;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="maintenance-container">
+        <div class="maintenance-card">
+            <div class="icon-wrapper">
+                <i class="fa-solid fa-gear"></i>
+            </div>
+            <h2>Fitur Sedang Diupdate</h2>
+            <p>Kami sedang meningkatkan performa dan layanan Paket Data untuk Anda. Mohon kembali lagi dalam beberapa saat.</p>
+            
+            <a href="../data.html" class="btn-back-home">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -18,23 +18,29 @@
         /* --- LAYOUT BANNER MANUAL --- */
         .hero-section {
             width: 100%;
-            margin-bottom: 10px; 
-            padding: 10px 10px 0 10px; 
+            margin-bottom: 15px; 
+            padding: 15px 15px 0 15px; 
             box-sizing: border-box;
         }
-
+        
         .static-banner {
             width: 100%;
             height: auto; 
             display: block;
-            border-radius: 12px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+            border-radius: 15px; 
+            
+            /* --- UPDATE: SHADOW HIJAU (GLOW EFFECT) --- */
+            /* Menggunakan RGB dari #4ade80 (74, 222, 128) */
+            box-shadow: 0 10px 30px -5px rgba(74, 222, 128, 0.4), 
+                        0 5px 15px -3px rgba(74, 222, 128, 0.2);
+            
+            /* Border tipis hijau transparan agar makin menyatu */
+            border: 1px solid rgba(74, 222, 128, 0.2);
         }
 
         /* --- PERBAIKAN JARAK PRODUK (FINAL) --- */
         .latest-products-section {
             width: 100%;
-            /* Padding Kiri-Kanan 15px agar ada jarak aman dari tepi layar */
             padding: 0 15px; 
             box-sizing: border-box;
             margin-bottom: 80px; 
@@ -46,28 +52,22 @@
             align-items: center;
             margin-bottom: 15px;
             margin-top: 10px;
-            /* Pastikan header juga sejajar dengan grid produk */
             padding: 0 2px; 
         }
 
         /* --- CSS GRID PRODUK --- */
-        /* Pastikan CSS ini ada atau sesuaikan dengan style.css Anda */
         .products-grid {
             display: grid;
-            /* Grid 2 kolom yang responsif */
             grid-template-columns: repeat(2, 1fr); 
-            /* Jarak antar kartu (tengah) */
             gap: 15px; 
             width: 100%;
         }
-
-        /* Optional: Style kartu produk agar tidak terlalu lebar di layar besar */
+        
         .product-card {
-            background: #fff; /* Atau warna tema Anda */
+            background: #fff; 
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            /* Pastikan kartu tidak keluar jalur */
             width: 100%; 
             box-sizing: border-box;
         }
@@ -83,7 +83,6 @@
                 <input type="text" id="homeSearchInput" placeholder="Cari produk...">
             </div>
         </header>
-
         <main class="home-page">
             
             <div class="hero-section">
@@ -95,7 +94,6 @@
                     <p style="padding:1rem; color:#94a3b8;">Loading...</p>
                 </div>
             </div>
-
             <div class="latest-products-section">
                 <div class="section-header">
                     <h3>Terbaru</h3>
@@ -106,18 +104,16 @@
                 </div>
             </div>
         </main>
-
         <footer class="main-footer">
             <div class="footer-logo"><span style="color:#4ade80;">Rins</span>Point</div>
             <div class="social-links">
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="https://www.instagram.com/rinssstore_?igsh=M254MG90azFxdm5x"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.facebook.com/muhammad.darin.56"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://www.tiktok.com/@abudzaarr?_r=1&_t=ZS-920MOJzN50y"><i class="fa-brands fa-tiktok"></i></a>
             </div>
             <div class="footer-menu"><a href="about.html">Tentang Kami</a><a href="how-to.html">Cara Belanja</a></div>
             <div class="copyright">&copy; 2025 RinsPoint. All rights reserved.</div>
         </footer>
-
         <nav class="bottom-nav">
             <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
             <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
@@ -125,11 +121,9 @@
             <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
         </nav>
     </div>
-
     <script src="js/loading.js"></script>
     <script src="js/index.js?v=MANUAL_SPACING_FIX_V2"></script>
     <script src="js/whatsapp.js"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const homeInput = document.getElementById('homeSearchInput');

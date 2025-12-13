@@ -9,17 +9,15 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
     <style>
         /* 1. RESET GRID AGAR RAPI (4 KOLOM) */
         .ppob-grid {
             display: grid !important;
-            grid-template-columns: repeat(4, 1fr) !important; /* Paksa 4 kolom */
+            grid-template-columns: repeat(4, 1fr) !important; 
             gap: 15px !important;
             padding: 0 1rem !important;
             margin-bottom: 1.5rem !important;
         }
-
         /* 2. ITEM PPOB */
         .ppob-item {
             display: flex !important;
@@ -32,28 +30,39 @@
             border: none !important;
         }
         .ppob-item:active { transform: scale(0.95) !important; }
-
+        
         /* 3. KOTAK IKON */
         .icon-box {
             width: 55px !important;
             height: 55px !important;
-            background: rgba(74, 222, 128, 0.1) !important; /* Hijau Transparan */
-            border-radius: 18px !important; /* Lebih bulat modern */
+            background: rgba(74, 222, 128, 0.1) !important; 
+            border-radius: 18px !important; 
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             margin-bottom: 8px !important;
             border: 1px solid rgba(74, 222, 128, 0.3) !important;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+            overflow: hidden !important; 
         }
         .icon-box i { font-size: 1.4rem !important; color: #4ade80 !important; }
-
-        /* Varian Game (Kuning) */
-        .icon-box.game {
-            background: rgba(245, 158, 11, 0.1) !important;
-            border-color: rgba(245, 158, 11, 0.3) !important;
+        
+        /* CLASS KHUSUS UNTUK ICON GAMBAR GAME (TRANSPARAN) */
+        .icon-box.game-img-box {
+            background: transparent !important; 
+            border: none !important; 
+            box-shadow: none !important; 
+            padding: 0 !important;
         }
-        .icon-box.game i { color: #f59e0b !important; }
+        
+        /* STYLE GAMBAR GAME */
+        .game-icon-img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important; 
+            border-radius: 18px !important; 
+            display: block !important;
+        }
 
         .ppob-item span {
             font-size: 0.75rem !important;
@@ -76,10 +85,7 @@
             align-items: center !important;
             padding: 20px !important;
         }
-        
-        /* CLASS UNTUK MEMUNCULKAN POPUP */
         .confirm-modal.show-flex { display: flex !important; }
-
         .confirm-box {
             width: 100% !important; max-width: 380px !important;
             background: #1e293b !important; border-radius: 24px !important;
@@ -87,7 +93,6 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
             text-align: center !important;
         }
-
         .btn-full {
             width: 100% !important; padding: 14px !important;
             border-radius: 14px !important; font-weight: 700 !important;
@@ -96,7 +101,6 @@
         }
         .btn-green { background: #4ade80 !important; color: #064e3b !important; }
         .btn-outline { background: transparent !important; border: 2px solid #4ade80 !important; color: #4ade80 !important; }
-        .btn-gray { background: #334155 !important; color: #cbd5e1 !important; }
         
         .sec-title {
             font-size: 1.1rem !important; font-weight: 700 !important;
@@ -106,13 +110,11 @@
     </style>
 </head>
 <body>
-
     <div class="mobile-container">
         <header class="main-header">
             <a href="/" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <div class="logo-text">Top Up & Tagihan</div>
         </header>
-
         <main class="ppob-page" style="padding-bottom: 100px;">
             
             <div style="padding: 1.5rem 1rem 0.5rem 1rem;">
@@ -130,27 +132,28 @@
                     <div class="icon-box"><i class="fa-solid fa-wifi"></i></div>
                     <span>Data</span>
                 </a>
-                <a href="ppob/pln.html" class="ppob-item">
+                
+                <a href="maintenance.html" class="ppob-item">
                     <div class="icon-box"><i class="fa-solid fa-bolt"></i></div>
                     <span>PLN</span>
                 </a>
-                <a href="ppob/dana.html" class="ppob-item">
+                <a href="maintenance.html" class="ppob-item">
                     <div class="icon-box"><i class="fa-solid fa-wallet"></i></div>
                     <span>Dana</span>
                 </a>
-                <a href="ppob/ovo.html" class="ppob-item">
+                <a href="maintenance.html" class="ppob-item">
                     <div class="icon-box"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
                     <span>OVO</span>
                 </a>
-                <a href="ppob/gopay.html" class="ppob-item">
+                <a href="maintenance.html" class="ppob-item">
                     <div class="icon-box"><i class="fa-solid fa-motorcycle"></i></div>
                     <span>Gopay</span>
                 </a>
-                <a href="ppob/shopeepay.html" class="ppob-item">
+                <a href="maintenance.html" class="ppob-item">
                     <div class="icon-box"><i class="fa-solid fa-bag-shopping"></i></div>
                     <span>Shopee</span>
                 </a>
-                <a href="ppob/googleplay.html" class="ppob-item">
+                <a href="maintenance.html" class="ppob-item">
                     <div class="icon-box"><i class="fa-brands fa-google-play"></i></div>
                     <span>G-Play</span>
                 </a>
@@ -161,28 +164,34 @@
                     <i class="fa-solid fa-gamepad"></i> Top Up Game
                 </div>
             </div>
-
             <div class="ppob-grid">
                 <a href="ppob/mobilelegend.html" class="ppob-item">
-                    <div class="icon-box game"><i class="fa-solid fa-gamepad"></i></div>
+                    <div class="icon-box game-img-box">
+                        <img src="assets/icons/ml.png" class="game-icon-img" alt="MLBB">
+                    </div>
                     <span>MLBB</span>
                 </a>
                 <a href="ppob/pubg.html" class="ppob-item">
-                    <div class="icon-box game"><i class="fa-solid fa-crosshairs"></i></div>
+                    <div class="icon-box game-img-box">
+                        <img src="assets/icons/pubg.png" class="game-icon-img" alt="PUBG">
+                    </div>
                     <span>PUBG</span>
                 </a>
                 <a href="ppob/freefire.html" class="ppob-item">
-                    <div class="icon-box game"><i class="fa-solid fa-fire"></i></div>
+                    <div class="icon-box game-img-box">
+                        <img src="assets/icons/freefire.png" class="game-icon-img" alt="Free Fire">
+                    </div>
                     <span>Free Fire</span>
                 </a>
                 <a href="ppob/roblox.html" class="ppob-item">
-                    <div class="icon-box game"><i class="fa-solid fa-cube"></i></div>
+                    <div class="icon-box game-img-box">
+                        <img src="assets/icons/roblox.png" class="game-icon-img" alt="Roblox">
+                    </div>
                     <span>Roblox</span>
                 </a>
             </div>
-
         </main>
-
+        
         <nav class="bottom-nav">
             <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
             <a href="ppob.html" class="active"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
@@ -194,12 +203,10 @@
     <div id="noticeModal" class="confirm-modal show-flex"> 
         <div class="confirm-box">
             <i class="fa-solid fa-shield-halved" style="font-size: 4rem; color: #4ade80; margin-bottom: 20px;"></i>
-            
             <h3 style="color: white; margin-bottom: 10px; font-size: 1.4rem;">Transaksi Manual</h3>
             <p style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6;">
                 Transaksi PPOB di RinsPoint diproses & dicek langsung oleh Admin demi keamanan Anda.
             </p>
-            
             <button onclick="window.location.href='pemberitahuanppob.html'" class="btn-full btn-outline">
                 <i class="fa-solid fa-book-open"></i> Baca Selengkapnya
             </button>
@@ -208,30 +215,15 @@
             </button>
         </div>
     </div>
-
+    
     <script src="js/loading.js"></script>
-
     <script>
         function closeNotice() {
-            // Hilangkan class 'show-flex' untuk menyembunyikan modal
             document.getElementById('noticeModal').classList.remove('show-flex');
-            
-            // Simpan status bahwa user sudah klik "Mengerti"
-            // (Aktifkan baris di bawah ini JIKA ingin popup hanya muncul sekali seumur hidup)
-            // localStorage.setItem('ppobNoticeSeen', 'true');
         }
-
-        // Logic saat halaman diload
         document.addEventListener('DOMContentLoaded', () => {
-            // Cek apakah user sudah pernah klik "Mengerti"?
-            // KITA NON-AKTIFKAN DULU CEK STATUS AGAR POPUP SELALU MUNCUL SAAT TESTING
-            
-            /* if (localStorage.getItem('ppobNoticeSeen') === 'true') {
-                document.getElementById('noticeModal').classList.remove('show-flex');
-            }
-            */
+             // Logic popup
         });
     </script>
-
 </body>
 </html>

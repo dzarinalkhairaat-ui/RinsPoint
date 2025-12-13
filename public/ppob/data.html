@@ -7,231 +7,180 @@
     
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- STYLE MODERN PAKET DATA --- */
+        /* --- FIX GAP BAWAH (Wajib ada) --- */
+        html { 
+            background-color: #0f172a; 
+            height: 100%; /* Paksa tinggi HTML full layar */
+        }
+
+        body { 
+            background-color: #0f172a; 
+            min-height: 100%; /* Body minimal setinggi HTML */
+            margin: 0;
+            padding-bottom: 0; /* Padding dihandle di container */
+            color: #f8fafc; 
+            font-family: 'Poppins', sans-serif; 
+            box-sizing: border-box;
+            display: flex; 
+            flex-direction: column; /* Susunan vertikal */
+        }
+
+        /* Wrapper agar background terisi penuh */
+        .mobile-container {
+            flex: 1; /* Mengisi sisa ruang kosong */
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 480px; /* Standar mobile width */
+            margin: 0 auto;
+            background-color: #0f172a; /* Pastikan background sama */
+            min-height: 100vh;
+        }
         
-        .sticky-input-area {
-            position: sticky; top: 60px; background: #0f172a; padding: 1rem;
-            z-index: 90; border-bottom: 1px solid #334155;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        /* HEADER (Konsisten tapi Icon Data) */
+        .ppob-header {
+            background: #1e293b; padding: 15px 20px;
+            position: sticky; top: 0; z-index: 50;
+            border-bottom: 1px solid #334155;
+            display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-
-        .input-wrapper {
-            position: relative; background: #1e293b; border-radius: 12px;
-            border: 1px solid #334155; display: flex; align-items: center;
-            padding: 5px 15px; transition: 0.3s;
+        /* Judul warna Sky Blue untuk pembeda Data */
+        .ppob-header h2 { margin: 0; color: #38bdf8; font-size: 1.2rem; font-weight: 600; }
+        .btn-back { color: #cbd5e1; font-size: 1.2rem; text-decoration: none; }
+        
+        /* CONTAINER UTAMA */
+        .container { 
+            padding: 20px; 
+            width: 100%; 
+            box-sizing: border-box;
+            /* Tambah padding bawah agar konten terbawah tidak mepet */
+            padding-bottom: 100px; 
         }
         
-        .input-wrapper:focus-within {
-            border-color: #4ade80; box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2);
+        /* --- HERO INFO SECTION --- */
+        .data-hero {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
         }
-
-        .input-wrapper i { color: #94a3b8; font-size: 1.2rem; margin-right: 10px; }
-
-        .phone-field {
-            flex: 1; background: transparent; border: none; color: white;
-            font-size: 1.1rem; font-weight: 600; padding: 10px 0; outline: none; letter-spacing: 1px;
+        .data-hero::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(56,189,248,0.05) 0%, transparent 60%);
+            pointer-events: none;
         }
-
-        /* LOGO PROVIDER (Opsional jika mau dimunculkan) */
-        .provider-detection-box {
-            margin-top: 15px; text-align: center; height: 0; overflow: hidden;
-            transition: height 0.3s ease, opacity 0.3s ease; opacity: 0;
+        .hero-icon {
+            width: 50px; height: 50px;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: #38bdf8; font-size: 1.5rem;
+            border: 1px solid rgba(56, 189, 248, 0.2);
         }
-        .provider-detection-box.active { height: 60px; opacity: 1; }
-        .provider-logo-img {
-            height: 40px; object-fit: contain;
-            background: rgba(30, 41, 59, 0.8);
-            padding: 8px 15px; border-radius: 12px;
-            border: 1px solid rgba(74, 222, 128, 0.3);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
+        .hero-text h3 { margin: 0; font-size: 1rem; color: #fff; font-weight: 600; }
+        .hero-text p { margin: 4px 0 0 0; font-size: 0.75rem; color: #94a3b8; }
+
+        .section-title { 
+            font-size: 0.9rem; color: #94a3b8; margin-bottom: 15px; 
+            text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+            border-left: 3px solid #38bdf8; padding-left: 10px; 
         }
-
-        .product-list-container { padding: 1rem; display: grid; gap: 12px; }
-
-        /* Card Paket Data (Lebih Besar dikit untuk Deskripsi) */
-        .product-card-modern {
-            background: linear-gradient(145deg, #1e293b, #172033);
-            border: 1px solid #334155; border-radius: 16px; padding: 15px;
-            display: flex; flex-direction: column; /* Stack vertikal */
-            position: relative; overflow: hidden; transition: transform 0.2s, border-color 0.2s;
+        
+        /* GRID PROVIDER */
+        .provider-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 12px; 
         }
-
-        .product-card-modern:active { transform: scale(0.98); }
-
-        .prod-top {
-            display: flex; justify-content: space-between; align-items: flex-start;
-            margin-bottom: 10px; width: 100%;
+        .provider-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px; 
+            aspect-ratio: 3 / 4.5; 
+            display: block; 
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-decoration: none; 
         }
-
-        .prod-name { color: #fff; font-weight: 600; font-size: 1rem; line-height: 1.4; flex: 1; }
-        .price-tag { color: #4ade80; font-weight: 700; font-size: 1.1rem; margin-left: 10px; }
-
-        .prod-desc {
-            font-size: 0.8rem; color: #94a3b8;
-            border-top: 1px dashed #334155; padding-top: 8px; margin-top: 5px;
+        .provider-card:active { 
+            transform: scale(0.95); 
+            border-color: #38bdf8; 
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); 
         }
-
-        .btn-select {
-            align-self: flex-end;
-            background: rgba(74, 222, 128, 0.1); color: #4ade80;
-            padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: bold;
-            margin-top: 10px;
+        .provider-img {
+            width: 100%; height: 100%;
+            object-fit: cover; 
+            display: block;
         }
-
-        /* Modal Styles */
-        .confirm-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .confirm-box { width: 100%; max-width: 380px; background: #1e293b; border-radius: 24px; padding: 25px; border: 1px solid #334155; text-align: center; }
-        .btn-full { width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; border: none; margin-bottom: 10px; }
-        .btn-green { background: #4ade80; color: #064e3b; }
-        .btn-gray { background: #334155; color: #cbd5e1; }
     </style>
 </head>
 <body>
-
     <div class="mobile-container">
-        <header class="main-header" style="position: sticky; top: 0; z-index: 100;">
-            <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="logo-text">Paket Data</div>
+        <header class="ppob-header">
+            <a href="/" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2>Paket Data</h2>
         </header>
-
-        <div class="sticky-input-area">
-            <label style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 8px; display: block;">Masukkan Nomor Tujuan</label>
-            <div class="input-wrapper">
-                <i class="fa-solid fa-wifi"></i>
-                <input type="tel" id="headerPhoneNumber" class="phone-field" placeholder="08xx xxxx xxxx" autocomplete="off" oninput="detectProvider(this.value)">
-            </div>
+        
+        <main class="container">
             
-            <div id="providerBox" class="provider-detection-box">
-                <img id="providerLogo" src="" alt="Provider" class="provider-logo-img">
-            </div>
-        </div>
-
-        <main style="padding-bottom: 50px;">
-            <div id="productsContainer" class="product-list-container">
+            <div class="data-hero">
+                <div class="hero-icon">
+                    <i class="fa-solid fa-wifi"></i>
                 </div>
+                <div class="hero-text">
+                    <h3>Internet Hemat</h3>
+                    <p>Pilih provider untuk paket data terbaik.</p>
+                </div>
+            </div>
+
+            <div class="section-title">Pilih Operator</div>
+            
+            <div class="provider-grid">
+                <a href="data/maintenance.html" class="provider-card">
+                    <img src="../assets/images/pulsa/telkomsel.jpeg" class="provider-img" alt="Telkomsel">
+                </a>
+                <a href="data/maintenance.html" class="provider-card">
+                    <img src="../assets/images/pulsa/indosat.jpeg" class="provider-img" alt="Indosat">
+                </a>
+                <a href="data/maintenance.html" class="provider-card">
+                    <img src="../assets/images/pulsa/xl.jpeg" class="provider-img" alt="XL">
+                </a>
+                <a href="data/maintenance.html" class="provider-card">
+                    <img src="../assets/images/pulsa/axis.jpeg" class="provider-img" alt="Axis">
+                </a>
+                <a href="data/maintenance.html" class="provider-card">
+                    <img src="../assets/images/pulsa/tri.jpeg" class="provider-img" alt="Tri">
+                </a>
+                <a href="data/maintenance.html" class="provider-card">
+                    <img src="../assets/images/pulsa/smartfren.jpeg" class="provider-img" alt="Smartfren">
+                </a>
+                <a href="data/maintenance.html" class="provider-card">
+                    <img src="../assets/images/pulsa/by.u.jpeg" class="provider-img" alt="By.u">
+                </a>
+            </div>
         </main>
     </div>
 
-    <div id="purchaseModal" class="confirm-modal">
-        <div class="confirm-box" style="text-align: left;">
-            <h3 style="color: #4ade80; margin-bottom: 20px; text-align: center;">Konfirmasi Pembelian</h3>
-            
-            <div style="background: #0f172a; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #334155;">
-                <div style="margin-bottom: 15px;">
-                    <span style="color: #94a3b8; font-size: 0.8rem;">Paket Data</span>
-                    <div id="detailName" style="color: white; font-weight: 600; font-size: 1rem; margin-top: 5px;">-</div>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #334155; padding-top: 10px;">
-                    <span style="color: #94a3b8; font-size: 0.9rem;">Harga</span>
-                    <span id="detailPrice" style="color: #f59e0b; font-weight: 700; font-size: 1.3rem;">-</span>
-                </div>
-            </div>
+    <nav class="bottom-nav">
+            <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+            <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
+            <a href="cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span><span class="cart-badge-fixed" id="cartBadge">0</span></a>
+            <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+        </nav>
 
-            <div style="margin-bottom: 20px;">
-                <label style="color: #cbd5e1; font-size: 0.8rem; margin-bottom: 5px; display: block;">Nomor Tujuan</label>
-                <div style="background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; color: white; font-weight: bold; font-size: 1.1rem; letter-spacing: 1px;">
-                    <span id="displayNumber">08xx-xxxx-xxxx</span>
-                </div>
-                <input type="hidden" id="customerNumber"> 
-            </div>
-
-            <button onclick="processToPayment()" class="btn-full btn-green">Bayar Sekarang</button>
-            <button onclick="closePurchaseModal()" class="btn-full btn-gray">Batal</button>
-        </div>
-    </div>
-
-    <script src="../js/ppob.js"></script>
-    <script src="../js/loading.js"></script>
-    
-    <script>
-        // --- LOGIC DETEKSI PROVIDER (Sama seperti Pulsa) ---
-        function detectProvider(number) {
-            number = number.replace(/[^0-9]/g, '');
-            const prefix = number.substring(0, 4);
-            const providerBox = document.getElementById('providerBox');
-            const providerLogo = document.getElementById('providerLogo');
-            
-            let logoUrl = '';
-
-            // SEMENTARA LINK KOSONG ATAU SAMA (NANTI UPDATE VIA ADMIN)
-            // Logic prefix tetap jalan untuk deteksi internal jika perlu
-            if (prefix.length >= 4) {
-               // ... logic logo ...
-            }
-
-            // Jika ada logo url (sementara kita hide dulu karena belum ada link valid)
-            /*
-            if (logoUrl) {
-                providerLogo.src = logoUrl;
-                providerBox.classList.add('active');
-            } else {
-                providerBox.classList.remove('active');
-            }
-            */
-        }
-
-        // LOAD KATEGORI 'Data'
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProductsByCategory('Data'); 
-        });
-
-        // OVERRIDE RENDER KHUSUS DATA (Tampilan Beda dikit)
-        function renderProducts(products, categoryName) {
-            const container = document.getElementById('productsContainer');
-            container.innerHTML = '';
-
-            if (products.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:40px; color:#64748b;">
-                    <i class="fa-solid fa-wifi" style="font-size:3rem; margin-bottom:10px;"></i><br>
-                    Belum ada paket data
-                </div>`;
-                return;
-            }
-
-            products.forEach(prod => {
-                const harga = new Intl.NumberFormat('id-ID').format(prod.price);
-                
-                const div = document.createElement('div');
-                div.className = 'product-card-modern';
-                div.onclick = () => showPurchaseModalWithNumber(prod);
-                
-                // Layout khusus Paket Data (Nama lebih panjang)
-                div.innerHTML = `
-                    <div class="prod-top">
-                        <div class="prod-name">${prod.name}</div>
-                        <div class="price-tag">Rp ${harga}</div>
-                    </div>
-                    <div class="prod-desc">
-                        <i class="fa-regular fa-clock"></i> Masa Aktif Mengikuti Operator
-                    </div>
-                    <span class="btn-select">PILIH PAKET</span>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function showPurchaseModalWithNumber(product) {
-            const phoneNumber = document.getElementById('headerPhoneNumber').value;
-            
-            if (!phoneNumber || phoneNumber.length < 10) {
-                alert('Silakan masukkan nomor tujuan terlebih dahulu!');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                document.getElementById('headerPhoneNumber').focus();
-                return;
-            }
-
-            selectedProduct = product;
-            document.getElementById('detailName').innerText = product.name;
-            document.getElementById('detailPrice').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(product.price);
-            document.getElementById('displayNumber').innerText = phoneNumber;
-            document.getElementById('customerNumber').value = phoneNumber; 
-            
-            document.getElementById('purchaseModal').style.display = 'flex';
-        }
-    </script>
 </body>
 </html>
