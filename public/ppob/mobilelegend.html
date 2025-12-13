@@ -3,173 +3,418 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Top Up MLBB - RinsPoint</title>
+    <title>Top Up Mobile Legends</title>
     
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- STYLE MODERN MLBB (GOLD) --- */
-        .sticky-input-area {
-            position: sticky; top: 60px; background: #0f172a; padding: 1rem;
-            z-index: 90; border-bottom: 1px solid #334155;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        /* --- RESET & GAMING BACKGROUND --- */
+        html { height: 100%; background: #0b0f19; }
+        body { 
+            margin: 0; min-height: 100%; color: #fff; font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; position: relative;
+            background-color: #0b0f19;
         }
 
+        /* Background Abstrak */
+        .mystic-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(to bottom, #1e1b4b, #020617);
+            overflow: hidden;
+        }
+        .gold-glow {
+            position: absolute; top: -10%; right: -10%; width: 50%; height: 50%;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, transparent 70%);
+            filter: blur(50px);
+        }
+        .particle {
+            position: absolute; width: 4px; height: 4px;
+            background: #fbbf24; border-radius: 50%;
+            box-shadow: 0 0 10px #fbbf24;
+            animation: floatUp 15s infinite linear; opacity: 0;
+        }
+        .p1 { left: 10%; animation-duration: 10s; }
+        .p2 { left: 80%; animation-duration: 15s; animation-delay: 2s; }
+        
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        .mobile-container {
+            max-width: 480px; margin: 0 auto; min-height: 100vh;
+            display: flex; flex-direction: column; position: relative;
+            background: rgba(11, 15, 25, 0.85); 
+            backdrop-filter: blur(5px);
+            border-left: 1px solid rgba(251, 191, 36, 0.1);
+            border-right: 1px solid rgba(251, 191, 36, 0.1);
+        }
+
+        /* --- HEADER --- */
+        .game-header {
+            padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(11, 15, 25, 0.95); border-bottom: 1px solid rgba(251, 191, 36, 0.2);
+        }
+        .btn-back { color: #cbd5e1; font-size: 1.2rem; text-decoration: none; }
+        .header-title { 
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem; color: #fbbf24; font-weight: 700; letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        /* --- BANNER HERO --- */
+        .banner-section {
+            width: 100%; height: 220px;
+            position: relative; overflow: hidden;
+            border-bottom: 2px solid #fbbf24;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .banner-img {
+            width: 100%; height: 100%; object-fit: cover;
+            display: block; transition: transform 5s ease;
+        }
+        .banner-section:hover .banner-img { transform: scale(1.05); }
+        .banner-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(to top, #0b0f19, transparent); height: 80px;
+        }
+
+        /* --- INPUT ID --- */
+        .form-area { padding: 20px; margin-top: -30px; position: relative; z-index: 10; }
+        .input-card {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid #334155; border-radius: 16px; padding: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.6);
+        }
+        .input-label { 
+            color: #fbbf24; font-size: 0.85rem; margin-bottom: 10px; font-weight: 600; 
+            display: flex; align-items: center; gap: 8px;
+        }
+        .game-input-group { display: flex; gap: 10px; }
         .input-wrapper {
-            position: relative; background: #1e293b; border-radius: 12px;
-            border: 1px solid #334155; display: flex; align-items: center;
-            padding: 5px 15px; transition: 0.3s;
+            background: #0b0f19; border: 1px solid #334155;
+            border-radius: 10px; padding: 10px 15px; flex: 1;
+            transition: 0.3s; position: relative;
         }
-        
+        .input-wrapper.zone { flex: 0.6; }
         .input-wrapper:focus-within {
-            border-color: #eab308; /* Gold MLBB */
-            box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.3);
+            border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
         }
-
-        .input-wrapper i { color: #eab308; font-size: 1.2rem; margin-right: 10px; }
-
-        .phone-field {
-            flex: 1; background: transparent; border: none; color: white;
-            font-size: 1rem; font-weight: 600; padding: 10px 0; outline: none; letter-spacing: 0.5px;
+        .game-input {
+            width: 100%; background: transparent; border: none; outline: none;
+            color: #fff; font-size: 1rem; font-weight: 600; letter-spacing: 1px;
         }
+        .input-hint { font-size: 0.65rem; color: #64748b; position: absolute; top: -8px; left: 10px; background: #1e293b; padding: 0 5px; }
 
-        .product-list-container { padding: 1rem; display: grid; gap: 12px; }
-
-        /* Card Modern */
-        .product-card-modern {
-            background: linear-gradient(145deg, #1e293b, #172033);
-            border: 1px solid #334155; border-radius: 16px; padding: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            position: relative; overflow: hidden; transition: transform 0.2s, border-color 0.2s;
+        /* --- GRID DIAMONDS (PREMIUM STYLE) --- */
+        .grid-area { padding: 0 20px 120px 20px; }
+        .section-label { 
+            color: #e2e8f0; font-size: 0.9rem; margin-bottom: 15px; font-weight: 600; 
+            border-left: 3px solid #fbbf24; padding-left: 10px; margin-top: 25px;
+            text-transform: uppercase; letter-spacing: 1px;
         }
-
-        .product-card-modern:active { transform: scale(0.98); }
-
-        .prod-info { flex: 1; }
-        .prod-name { color: #fff; font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
-        .prod-sub { color: #94a3b8; font-size: 0.75rem; }
         
-        .prod-price-box { text-align: right; }
-        .price-tag { color: #eab308; font-weight: 700; font-size: 1.1rem; }
+        .diamond-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         
-        .btn-mini-add {
-            background: rgba(234, 179, 8, 0.15); color: #eab308;
-            padding: 5px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: bold;
-            margin-top: 4px; display: inline-block;
+        /* === KARTU PRODUK MEWAH === */
+        .diamond-card {
+            /* Background Gradient Gelap */
+            background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex; flex-direction: column; justify-content: space-between;
+            overflow: hidden; position: relative;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 125px; /* Minimal tinggi agar seragam */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
 
-        /* Modal Styles */
-        .confirm-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .confirm-box { width: 100%; max-width: 380px; background: #1e293b; border-radius: 24px; padding: 25px; border: 1px solid #334155; text-align: center; }
-        .btn-full { width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; border: none; margin-bottom: 10px; }
-        .btn-gold { background: #eab308; color: #000; } /* Tombol Gold */
-        .btn-gray { background: #334155; color: #cbd5e1; }
+        /* Hover Effect: Naik & Glow */
+        .diamond-card:hover { 
+            transform: translateY(-4px); 
+            border-color: rgba(251, 191, 36, 0.5); 
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(251, 191, 36, 0.1);
+        }
+
+        /* Abstract Circle Decoration (Pojok Kanan Atas) */
+        .diamond-card::before {
+            content: ''; position: absolute;
+            top: -30px; right: -30px; width: 100px; height: 100px;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.08) 0%, transparent 70%);
+            border-radius: 50%; z-index: 0; pointer-events: none;
+        }
+
+        /* Selected State */
+        .diamond-card.selected {
+            background: linear-gradient(160deg, #312e81 0%, #1e1b4b 100%);
+            border: 1.5px solid #fbbf24;
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.25);
+        }
+
+        /* Layout Isi Kartu */
+        .card-body { 
+            padding: 15px 15px 10px 15px; 
+            flex-grow: 1; /* Mengisi ruang kosong */
+            display: flex; flex-direction: column;
+            position: relative; z-index: 1;
+        }
+        
+        /* JUDUL PRODUK (Tinggi Dikunci agar Harga Rata) */
+        .dm-amount { 
+            font-size: 0.85rem; font-weight: 600; color: #f1f5f9; 
+            line-height: 1.3;
+            margin-bottom: auto; /* Dorong harga ke bawah */
+            min-height: 2.6em; /* Kunci tinggi min 2 baris teks */
+        }
+        
+        /* Baris Harga & Icon */
+        .dm-price-row { 
+            display: flex; align-items: center; gap: 10px; 
+            margin-top: 10px; 
+        }
+        .dm-icon-img { 
+            width: 24px; height: 24px; object-fit: contain; 
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            transition: transform 0.3s;
+        }
+        /* Icon membesar saat hover */
+        .diamond-card:hover .dm-icon-img { transform: scale(1.1) rotate(5deg); }
+        
+        .dm-price { 
+            font-size: 0.95rem; font-weight: 700; 
+            color: #fbbf24; /* Emas */
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* Footer Kartu */
+        .card-footer {
+            background: rgba(0, 0, 0, 0.3); /* Gelap transparan */
+            padding: 8px 15px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: flex-end;
+            align-items: center; position: relative; z-index: 1;
+        }
+        
+        .instant-badge {
+            background: rgba(16, 185, 129, 0.15); 
+            color: #34d399; /* Hijau Neon */
+            font-size: 0.6rem; font-weight: 800;
+            padding: 4px 8px; border-radius: 6px;
+            display: flex; align-items: center; gap: 5px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+        }
+
+        /* --- BUTTON BAYAR --- */
+        .pay-bar { margin-top: 30px; width: 100%; }
+        .btn-pay {
+            width: 100%; padding: 16px; border: none; border-radius: 12px;
+            background: linear-gradient(to right, #b45309, #d97706, #fbbf24, #d97706);
+            background-size: 300% 100%;
+            color: #000; font-size: 1rem; font-weight: 800; cursor: pointer;
+            box-shadow: 0 5px 20px rgba(251, 191, 36, 0.3);
+            transition: 0.4s; text-transform: uppercase; letter-spacing: 1px;
+            animation: shimmer 3s infinite linear;
+        }
+        @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+        .btn-pay:active { transform: scale(0.98); }
+        .btn-pay:disabled {
+            background: #334155; color: #64748b; box-shadow: none; cursor: not-allowed; animation: none;
+        }
+
     </style>
 </head>
 <body>
 
+    <div class="mystic-bg">
+        <div class="gold-glow"></div>
+        <div class="particle p1"></div>
+        <div class="particle p2"></div>
+    </div>
+
     <div class="mobile-container">
-        <header class="main-header" style="position: sticky; top: 0; z-index: 100;">
+        
+        <header class="game-header">
             <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="logo-text">Mobile Legends</div>
+            <div class="header-title">MOBILE LEGENDS</div>
+            <div style="width: 24px;"></div>
         </header>
 
-        <div class="sticky-input-area">
-            <label style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 8px; display: block;">Masukkan User ID (Zone ID)</label>
-            <div class="input-wrapper">
-                <i class="fa-solid fa-gamepad"></i>
-                <input type="text" id="headerPhoneNumber" class="phone-field" placeholder="12345678 (1234)" autocomplete="off">
+        <div class="banner-section">
+            <img src="../assets/images/ml-banner.jpg" class="banner-img" alt="MLBB Banner" onerror="this.src='https://placehold.co/600x300/1e293b/fbbf24?text=Banner+Game';">
+            <div class="banner-overlay"></div>
+        </div>
+
+        <div class="form-area">
+            <div class="input-card">
+                <div class="input-label"><i class="fa-solid fa-user-ninja"></i> Data Akun</div>
+                <div class="game-input-group">
+                    <div class="input-wrapper">
+                        <span class="input-hint">User ID</span>
+                        <input type="tel" class="game-input" placeholder="12345678" id="userId" oninput="checkForm()">
+                    </div>
+                    <div class="input-wrapper zone">
+                        <span class="input-hint">Zone ID</span>
+                        <input type="tel" class="game-input" placeholder="1234" id="zoneId" oninput="checkForm()">
+                    </div>
+                </div>
             </div>
         </div>
 
-        <main style="padding-bottom: 50px;">
-            <div id="productsContainer" class="product-list-container"></div>
-        </main>
-    </div>
-
-    <div id="purchaseModal" class="confirm-modal">
-        <div class="confirm-box" style="text-align: left;">
-            <h3 style="color: #eab308; margin-bottom: 20px; text-align: center;">Konfirmasi Diamond</h3>
+        <div class="grid-area">
             
-            <div style="background: #0f172a; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #334155;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="color: #94a3b8; font-size: 0.8rem;">Produk</span>
-                    <span id="detailName" style="color: white; font-weight: 600; font-size: 0.9rem;">-</span>
+            <div class="section-label"><i class="fa-solid fa-crown"></i> Membership & Pass</div>
+            <div class="diamond-grid">
+                
+                <div class="diamond-card" onclick="selectItem(this)">
+                    <div class="card-body">
+                        <span class="dm-amount">Weekly Diamond Pass</span>
+                        <div class="dm-price-row">
+                            <img src="../assets/icons/mobile-legend/wdp-icon.png" class="dm-icon-img" alt="Icon">
+                            <span class="dm-price">Rp 28.000</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
+                    </div>
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #94a3b8; font-size: 0.8rem;">Total Bayar</span>
-                    <span id="detailPrice" style="color: #eab308; font-weight: 700; font-size: 1.2rem;">-</span>
+
+                <div class="diamond-card" onclick="selectItem(this)">
+                    <div class="card-body">
+                        <span class="dm-amount">Twilight Pass (Season)</span>
+                        <div class="dm-price-row">
+                            <img src="../assets/icons/mobile-legend/twilight-icon.jpg" class="dm-icon-img" alt="Icon">
+                            <span class="dm-price">Rp 150.000</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
+                    </div>
                 </div>
+
             </div>
 
-            <div style="margin-bottom: 20px;">
-                <label style="color: #cbd5e1; font-size: 0.8rem; margin-bottom: 5px; display: block;">ID Game</label>
-                <div style="background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; color: white; font-weight: bold; font-size: 1rem; letter-spacing: 1px;">
-                    <span id="displayNumber">-</span>
+            <div class="section-label"><i class="fa-regular fa-gem"></i> Top Up Diamond</div>
+            <div class="diamond-grid">
+                
+                <div class="diamond-card" onclick="selectItem(this)">
+                    <div class="card-body">
+                        <span class="dm-amount">5 (5+0) Diamonds</span>
+                        <div class="dm-price-row">
+                            <img src="../assets/icons/mobile-legend/diamond-icon.png" class="dm-icon-img" alt="Icon">
+                            <span class="dm-price">Rp 1.535</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
+                    </div>
                 </div>
-                <input type="hidden" id="customerNumber"> 
+
+                <div class="diamond-card" onclick="selectItem(this)">
+                    <div class="card-body">
+                        <span class="dm-amount">12 (11+1) Diamonds</span>
+                        <div class="dm-price-row">
+                            <img src="../assets/icons/mobile-legend/diamond-icon.png" class="dm-icon-img" alt="Icon">
+                            <span class="dm-price">Rp 3.579</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
+                    </div>
+                </div>
+
+                <div class="diamond-card" onclick="selectItem(this)">
+                    <div class="card-body">
+                        <span class="dm-amount">86 (78+8) Diamonds</span>
+                        <div class="dm-price-row">
+                            <img src="../assets/icons/mobile-legend/diamond-icon.png" class="dm-icon-img" alt="Icon">
+                            <span class="dm-price">Rp 20.000</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
+                    </div>
+                </div>
+
+                <div class="diamond-card" onclick="selectItem(this)">
+                    <div class="card-body">
+                        <span class="dm-amount">172 (156+16) Diamonds</span>
+                        <div class="dm-price-row">
+                            <img src="../assets/icons/mobile-legend/diamond-icon.png" class="dm-icon-img" alt="Icon">
+                            <span class="dm-price">Rp 40.000</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
+                    </div>
+                </div>
+
+                <div class="diamond-card" onclick="selectItem(this)">
+                    <div class="card-body">
+                        <span class="dm-amount">257 (234+23) Diamonds</span>
+                        <div class="dm-price-row">
+                            <img src="../assets/icons/mobile-legend/diamond-icon.png" class="dm-icon-img" alt="Icon">
+                            <span class="dm-price">Rp 60.000</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
+                    </div>
+                </div>
+
+                <div class="diamond-card" onclick="selectItem(this)">
+                    <div class="card-body">
+                        <span class="dm-amount">706 (625+81) Diamonds</span>
+                        <div class="dm-price-row">
+                            <img src="../assets/icons/mobile-legend/diamond-icon.png" class="dm-icon-img" alt="Icon">
+                            <span class="dm-price">Rp 160.000</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
+                    </div>
+                </div>
+
             </div>
 
-            <button onclick="processToPayment()" class="btn-full btn-gold">Bayar Sekarang</button>
-            <button onclick="closePurchaseModal()" class="btn-full btn-gray">Batal</button>
+            <div class="pay-bar">
+                <button class="btn-pay" id="btnPay" disabled onclick="window.location.href='../payment.html'">
+                    Lanjut Pembayaran <i class="fa-solid fa-scroll"></i>
+                </button>
+            </div>
         </div>
+
     </div>
 
-    <script src="../js/ppob.js"></script>
-    <script src="../js/loading.js"></script>
-    
+    <nav class="bottom-nav">
+        <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+        <a href="/ppob.html" class="active"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
+        <a href="/cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span></a>
+        <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+    </nav>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProductsByCategory('Mobile Legend'); 
-        });
-
-        function renderProducts(products, categoryName) {
-            const container = document.getElementById('productsContainer');
-            container.innerHTML = '';
-
-            if (products.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:40px; color:#64748b;">
-                    <i class="fa-solid fa-gamepad" style="font-size:3rem; margin-bottom:10px;"></i><br>
-                    Belum ada produk MLBB
-                </div>`;
-                return;
-            }
-
-            products.forEach(prod => {
-                const harga = new Intl.NumberFormat('id-ID').format(prod.price);
-                const div = document.createElement('div');
-                div.className = 'product-card-modern';
-                div.onclick = () => showPurchaseModalWithNumber(prod);
-                div.innerHTML = `
-                    <div class="prod-info">
-                        <div class="prod-name">${prod.name}</div>
-                        <div class="prod-sub">Fast Proses</div>
-                    </div>
-                    <div class="prod-price-box">
-                        <div class="price-tag">Rp ${harga}</div>
-                        <span class="btn-mini-add">PILIH</span>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+        function selectItem(el) {
+            document.querySelectorAll('.diamond-card').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+            checkForm();
         }
 
-        function showPurchaseModalWithNumber(product) {
-            const phoneNumber = document.getElementById('headerPhoneNumber').value;
-            if (!phoneNumber || phoneNumber.length < 5) {
-                alert('Silakan masukkan User ID dan Zone ID!');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                document.getElementById('headerPhoneNumber').focus();
-                return;
+        function checkForm() {
+            const user = document.getElementById('userId').value;
+            const zone = document.getElementById('zoneId').value;
+            const selected = document.querySelector('.diamond-card.selected');
+            const btn = document.getElementById('btnPay');
+
+            if (user.length > 4 && zone.length > 3 && selected) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
             }
-            selectedProduct = product;
-            document.getElementById('detailName').innerText = product.name;
-            document.getElementById('detailPrice').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(product.price);
-            document.getElementById('displayNumber').innerText = phoneNumber;
-            document.getElementById('customerNumber').value = phoneNumber; 
-            document.getElementById('purchaseModal').style.display = 'flex';
         }
     </script>
 </body>

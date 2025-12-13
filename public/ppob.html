@@ -8,211 +8,333 @@
     <link rel="stylesheet" href="css/style.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* 1. RESET GRID AGAR RAPI (4 KOLOM) */
+        /* --- 1. GLOBAL SETTINGS --- */
+        html { height: 100%; background: #0f172a; }
+        body { 
+            margin: 0; min-height: 100%; color: #fff; font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; position: relative;
+            background-color: #0f172a;
+        }
+
+        /* Background Aurora Abstrak */
+        .aurora-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: #0f172a; overflow: hidden;
+        }
+        .blob {
+            position: absolute; filter: blur(80px); opacity: 0.4;
+            animation: floatBlob 15s infinite alternate; border-radius: 50%;
+        }
+        .b1 { top: -20%; right: -20%; width: 400px; height: 400px; background: #4f46e5; }
+        .b2 { bottom: 10%; left: -10%; width: 300px; height: 300px; background: #0ea5e9; animation-duration: 20s; }
+        
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-30px, 50px) scale(1.1); }
+        }
+
+        .mobile-container {
+            max-width: 480px; margin: 0 auto; min-height: 100vh;
+            display: flex; flex-direction: column; position: relative;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(12px);
+            padding-bottom: 100px; /* Space untuk navbar */
+        }
+
+        /* --- 2. HEADER SIMPEL (HIJAU & TEXT ONLY) --- */
+        .simple-header {
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .header-title-text {
+            font-size: 1.1rem; font-weight: 800; letter-spacing: 1px;
+            margin: 0;
+            /* Warna Hijau Tema */
+            color: #4ade80; 
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+        }
+
+        /* --- 3. MENU SECTIONS --- */
+        .section-header { padding: 10px 20px 5px 20px; margin-top: 10px; }
+        
+        .sec-title { 
+            font-size: 0.9rem; font-weight: 700; color: #e2e8f0; 
+            display: flex; align-items: center;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        
+        /* GARIS VERTIKAL (BERDIRI) */
+        .sec-bar { 
+            height: 18px; width: 4px;
+            background: #3b82f6; 
+            border-radius: 4px; 
+            margin-right: 12px;
+        }
+
+        /* Grid System */
         .ppob-grid {
             display: grid !important;
             grid-template-columns: repeat(4, 1fr) !important; 
-            gap: 15px !important;
-            padding: 0 1rem !important;
-            margin-bottom: 1.5rem !important;
+            gap: 20px 10px !important;
+            padding: 0 20px !important;
+            margin-bottom: 15px !important;
         }
-        /* 2. ITEM PPOB */
+
         .ppob-item {
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            cursor: pointer !important;
-            transition: transform 0.2s !important;
-            text-decoration: none !important;
-            background: transparent !important;
-            border: none !important;
+            display: flex !important; flex-direction: column !important; 
+            align-items: center !important; text-decoration: none !important;
+            cursor: pointer !important; transition: transform 0.2s !important;
         }
         .ppob-item:active { transform: scale(0.95) !important; }
-        
-        /* 3. KOTAK IKON */
+
+        /* Icon Box Default (Untuk FontAwesome) */
         .icon-box {
-            width: 55px !important;
-            height: 55px !important;
-            background: rgba(74, 222, 128, 0.1) !important; 
+            width: 58px !important; height: 58px !important;
+            background: rgba(30, 41, 59, 0.6) !important; 
+            border: 1px solid rgba(255,255,255,0.08) !important;
             border-radius: 18px !important; 
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+            display: flex !important; align-items: center !important; justify-content: center !important;
             margin-bottom: 8px !important;
-            border: 1px solid rgba(74, 222, 128, 0.3) !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-            overflow: hidden !important; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+            position: relative !important; overflow: hidden !important;
         }
-        .icon-box i { font-size: 1.4rem !important; color: #4ade80 !important; }
         
-        /* CLASS KHUSUS UNTUK ICON GAMBAR GAME (TRANSPARAN) */
-        .icon-box.game-img-box {
-            background: transparent !important; 
-            border: none !important; 
-            box-shadow: none !important; 
+        .icon-box i { font-size: 1.6rem !important; }
+        .pulsa-ico { color: #facc15; }
+        .data-ico { color: #38bdf8; }
+        .pln-ico { color: #fbbf24; }
+        .lain-ico { color: #94a3b8; }
+
+        /* Icon Box Khusus Gambar (Full Cover) */
+        .icon-box.img-box {
+            background: transparent !important; /* Hapus background warna */
+            border: none !important; /* Hapus border jika gambar full */
             padding: 0 !important;
         }
-        
-        /* STYLE GAMBAR GAME */
-        .game-icon-img {
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important; 
+
+        /* Image Icons Full Size */
+        .full-icon-img { 
+            width: 100% !important; height: 100% !important; 
+            object-fit: cover !important; /* Memenuhi kotak */
             border-radius: 18px !important; 
             display: block !important;
         }
 
         .ppob-item span {
-            font-size: 0.75rem !important;
-            color: #cbd5e1 !important;
-            text-align: center !important;
-            font-weight: 500 !important;
-            line-height: 1.2 !important;
+            font-size: 0.75rem !important; color: #cbd5e1 !important; text-align: center !important;
+            font-weight: 500 !important; line-height: 1.3 !important;
+            white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; max-width: 100% !important;
         }
 
-        /* 4. POPUP MODAL */
+        /* --- 4. POPUP MODAL (RGB BORDER) --- */
         .confirm-modal {
-            position: fixed !important;
-            top: 0 !important; left: 0 !important;
+            position: fixed !important; top: 0 !important; left: 0 !important;
             width: 100% !important; height: 100% !important;
-            background: rgba(0, 0, 0, 0.85) !important;
-            backdrop-filter: blur(5px) !important;
+            background: rgba(0, 0, 0, 0.9) !important;
+            backdrop-filter: blur(15px) !important;
             z-index: 9999 !important;
-            display: none; 
-            justify-content: center !important;
-            align-items: center !important;
+            display: none; justify-content: center !important; align-items: center !important;
             padding: 20px !important;
         }
-        .confirm-modal.show-flex { display: flex !important; }
+        .confirm-modal.show-flex { display: flex !important; animation: zoomIn 0.4s ease; }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* RGB Border Wrapper */
+        .rgb-wrapper {
+            position: relative; padding: 2px; border-radius: 26px; 
+            background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff);
+            background-size: 400%; animation: rgbFlow 5s linear infinite;
+            width: 100%; max-width: 360px;
+        }
+        .rgb-wrapper::before {
+            content: ''; position: absolute; inset: -2px;
+            background: inherit; background-size: 400%; z-index: -1; filter: blur(15px); opacity: 0.5;
+            border-radius: 30px; animation: rgbFlow 5s linear infinite;
+        }
+        @keyframes rgbFlow { 0% { background-position: 0%; } 100% { background-position: 400%; } }
+
         .confirm-box {
-            width: 100% !important; max-width: 380px !important;
-            background: #1e293b !important; border-radius: 24px !important;
-            padding: 25px !important; border: 1px solid #334155 !important;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
-            text-align: center !important;
+            background: #0f172a !important; border-radius: 24px !important; padding: 35px 25px !important;
+            text-align: center !important; position: relative !important;
         }
-        .btn-full {
-            width: 100% !important; padding: 14px !important;
-            border-radius: 14px !important; font-weight: 700 !important;
-            font-size: 1rem !important; cursor: pointer !important; border: none !important;
-            margin-bottom: 10px !important; transition: 0.2s !important;
+
+        .modal-icon-wrap {
+            width: 80px; height: 80px; margin: 0 auto 20px auto;
+            background: rgba(255, 255, 255, 0.05); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .btn-green { background: #4ade80 !important; color: #064e3b !important; }
-        .btn-outline { background: transparent !important; border: 2px solid #4ade80 !important; color: #4ade80 !important; }
         
-        .sec-title {
-            font-size: 1.1rem !important; font-weight: 700 !important;
-            margin-bottom: 15px !important; display: flex !important;
-            align-items: center !important; gap: 10px !important;
+        .btn-full {
+            width: 100% !important; padding: 15px !important;
+            border-radius: 12px !important; font-weight: 700 !important;
+            font-size: 0.95rem !important; cursor: pointer !important; border: none !important;
+            margin-bottom: 12px !important; transition: 0.2s !important;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
+        .btn-glow { background: #fff !important; color: #000 !important; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3) !important; }
+        .btn-ghost { background: transparent !important; color: #94a3b8 !important; border: 1px solid #334155 !important; }
+
     </style>
 </head>
 <body>
+
+    <div class="aurora-bg">
+        <div class="blob b1"></div>
+        <div class="blob b2"></div>
+    </div>
+
     <div class="mobile-container">
-        <header class="main-header">
-            <a href="/" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="logo-text">Top Up & Tagihan</div>
+        
+        <header class="simple-header">
+            <h1 class="header-title-text">RINSPOINT PPOB</h1>
         </header>
-        <main class="ppob-page" style="padding-bottom: 100px;">
+
+        <main class="ppob-page">
             
-            <div style="padding: 1.5rem 1rem 0.5rem 1rem;">
-                <div class="sec-title" style="color: #4ade80;">
-                    <i class="fa-solid fa-wallet"></i> E-Wallet & Pulsa
+            <div class="section-header">
+                <div class="sec-title" style="color: #60a5fa;">
+                    <div class="sec-bar" style="background:#60a5fa;"></div> ISI ULANG & TAGIHAN
                 </div>
             </div>
-            
             <div class="ppob-grid">
                 <a href="ppob/pulsa.html" class="ppob-item">
-                    <div class="icon-box"><i class="fa-solid fa-mobile-screen"></i></div>
+                    <div class="icon-box"><i class="fa-solid fa-mobile-screen-button pulsa-ico"></i></div>
                     <span>Pulsa</span>
                 </a>
                 <a href="ppob/data.html" class="ppob-item">
-                    <div class="icon-box"><i class="fa-solid fa-wifi"></i></div>
+                    <div class="icon-box"><i class="fa-solid fa-wifi data-ico"></i></div>
                     <span>Data</span>
                 </a>
-                
-                <a href="maintenance.html" class="ppob-item">
-                    <div class="icon-box"><i class="fa-solid fa-bolt"></i></div>
+                <a href="ppob/pln.html" class="ppob-item">
+                    <div class="icon-box"><i class="fa-solid fa-bolt pln-ico"></i></div>
                     <span>PLN</span>
                 </a>
                 <a href="maintenance.html" class="ppob-item">
-                    <div class="icon-box"><i class="fa-solid fa-wallet"></i></div>
-                    <span>Dana</span>
-                </a>
-                <a href="maintenance.html" class="ppob-item">
-                    <div class="icon-box"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
-                    <span>OVO</span>
-                </a>
-                <a href="maintenance.html" class="ppob-item">
-                    <div class="icon-box"><i class="fa-solid fa-motorcycle"></i></div>
-                    <span>Gopay</span>
-                </a>
-                <a href="maintenance.html" class="ppob-item">
-                    <div class="icon-box"><i class="fa-solid fa-bag-shopping"></i></div>
-                    <span>Shopee</span>
-                </a>
-                <a href="maintenance.html" class="ppob-item">
-                    <div class="icon-box"><i class="fa-brands fa-google-play"></i></div>
-                    <span>G-Play</span>
+                    <div class="icon-box"><i class="fa-solid fa-ellipsis lain-ico"></i></div>
+                    <span>Lainnya</span>
                 </a>
             </div>
 
-            <div style="padding: 1rem 1rem 0.5rem 1rem;">
+            <div class="section-header">
+                <div class="sec-title" style="color: #a78bfa;">
+                    <div class="sec-bar" style="background:#a78bfa;"></div> E-WALLET
+                </div>
+            </div>
+            <div class="ppob-grid">
+                <a href="ppob/dana.html" class="ppob-item">
+                    <div class="icon-box img-box">
+                        <img src="assets/icons/dana.jpg" class="full-icon-img" alt="Dana">
+                    </div>
+                    <span>Dana</span>
+                </a>
+                <a href="ppob/ovo.html" class="ppob-item">
+                    <div class="icon-box img-box">
+                        <img src="assets/icons/ovo.jpg" class="full-icon-img" alt="OVO">
+                    </div>
+                    <span>OVO</span>
+                </a>
+                <a href="ppob/gopay.html" class="ppob-item">
+                    <div class="icon-box img-box">
+                        <img src="assets/icons/gopay.jpg" class="full-icon-img" alt="Gopay">
+                    </div>
+                    <span>Gopay</span>
+                </a>
+                <a href="ppob/shopeepay.html" class="ppob-item">
+                    <div class="icon-box img-box">
+                        <img src="assets/icons/shopeepay.jpg" class="full-icon-img" alt="Shopee">
+                    </div>
+                    <span>Shopee</span>
+                </a>
+            </div>
+
+            <div class="section-header">
+                <div class="sec-title" style="color: #4ade80;">
+                    <div class="sec-bar" style="background:#4ade80;"></div> VOUCHER
+                </div>
+            </div>
+            <div class="ppob-grid">
+                <a href="ppob/googleplay.html" class="ppob-item">
+                    <div class="icon-box img-box">
+                        <img src="assets/icons/googleplay.jpg" class="full-icon-img" alt="GPlay">
+                    </div>
+                    <span>Google Play</span>
+                </a>
+            </div>
+
+            <div class="section-header">
                 <div class="sec-title" style="color: #f59e0b;">
-                    <i class="fa-solid fa-gamepad"></i> Top Up Game
+                    <div class="sec-bar" style="background:#f59e0b;"></div> TOP UP GAME
                 </div>
             </div>
             <div class="ppob-grid">
                 <a href="ppob/mobilelegend.html" class="ppob-item">
-                    <div class="icon-box game-img-box">
-                        <img src="assets/icons/ml.png" class="game-icon-img" alt="MLBB">
+                    <div class="icon-box img-box">
+                        <img src="assets/icons/ml.png" class="full-icon-img" alt="MLBB">
                     </div>
                     <span>MLBB</span>
                 </a>
-                <a href="ppob/pubg.html" class="ppob-item">
-                    <div class="icon-box game-img-box">
-                        <img src="assets/icons/pubg.png" class="game-icon-img" alt="PUBG">
-                    </div>
-                    <span>PUBG</span>
-                </a>
                 <a href="ppob/freefire.html" class="ppob-item">
-                    <div class="icon-box game-img-box">
-                        <img src="assets/icons/freefire.png" class="game-icon-img" alt="Free Fire">
+                    <div class="icon-box img-box">
+                        <img src="assets/icons/freefire.png" class="full-icon-img" alt="Free Fire">
                     </div>
                     <span>Free Fire</span>
                 </a>
+                <a href="ppob/pubg.html" class="ppob-item">
+                    <div class="icon-box img-box">
+                        <img src="assets/icons/pubg.png" class="full-icon-img" alt="PUBG">
+                    </div>
+                    <span>PUBG</span>
+                </a>
                 <a href="ppob/roblox.html" class="ppob-item">
-                    <div class="icon-box game-img-box">
-                        <img src="assets/icons/roblox.png" class="game-icon-img" alt="Roblox">
+                    <div class="icon-box img-box">
+                        <img src="assets/icons/roblox.png" class="full-icon-img" alt="Roblox">
                     </div>
                     <span>Roblox</span>
                 </a>
             </div>
+
         </main>
         
-        <nav class="bottom-nav">
-            <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
-            <a href="ppob.html" class="active"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
-            <a href="cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span></a>
-            <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
-        </nav>
     </div>
 
+    <nav class="bottom-nav">
+        <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+        <a href="ppob.html" class="active"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
+        <a href="cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span></a>
+        <a href="admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+    </nav>
+
     <div id="noticeModal" class="confirm-modal show-flex"> 
-        <div class="confirm-box">
-            <i class="fa-solid fa-shield-halved" style="font-size: 4rem; color: #4ade80; margin-bottom: 20px;"></i>
-            <h3 style="color: white; margin-bottom: 10px; font-size: 1.4rem;">Transaksi Manual</h3>
-            <p style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6;">
-                Transaksi PPOB di RinsPoint diproses & dicek langsung oleh Admin demi keamanan Anda.
-            </p>
-            <button onclick="window.location.href='pemberitahuanppob.html'" class="btn-full btn-outline">
-                <i class="fa-solid fa-book-open"></i> Baca Selengkapnya
-            </button>
-            <button onclick="closeNotice()" class="btn-full btn-green">
-                Oke, Mengerti
-            </button>
+        <div class="rgb-wrapper">
+            <div class="confirm-box">
+                <div class="modal-icon-wrap">
+                    <i class="fa-solid fa-shield-halved" style="font-size: 2.5rem; color: #4ade80; filter: drop-shadow(0 0 10px #4ade80);"></i>
+                </div>
+                
+                <h3 style="color: white; margin: 0 0 10px 0; font-size: 1.3rem; letter-spacing: 0.5px;">Transaksi Aman</h3>
+                
+                <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 30px; line-height: 1.6;">
+                    Transaksi Anda diproses manual oleh Admin untuk menjamin <span style="color:#fff; font-weight:600;">keamanan 100%</span>.
+                </p>
+                
+                <button onclick="window.location.href='pemberitahuanppob.html'" class="btn-full btn-ghost">
+                    <i class="fa-solid fa-book-open"></i> Baca Selengkapnya
+                </button>
+                <button onclick="closeNotice()" class="btn-full btn-glow">
+                    Oke, Mengerti
+                </button>
+            </div>
         </div>
     </div>
     
@@ -222,7 +344,7 @@
             document.getElementById('noticeModal').classList.remove('show-flex');
         }
         document.addEventListener('DOMContentLoaded', () => {
-             // Logic popup
+             // Logic popup preserved
         });
     </script>
 </body>

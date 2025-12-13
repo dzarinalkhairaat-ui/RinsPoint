@@ -3,172 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Google Play - RinsPoint</title>
+    <title>Google Play Gift Card</title>
     
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- STYLE MODERN GOOGLE PLAY (TEAL) --- */
-        .sticky-input-area {
-            position: sticky; top: 60px; background: #0f172a; padding: 1rem;
-            z-index: 90; border-bottom: 1px solid #334155;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        /* --- RESET & BACKGROUND --- */
+        html { height: 100%; background: #202124; }
+        body { 
+            margin: 0; min-height: 100%; color: #e8eaed; font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; position: relative;
+            background-color: #202124;
         }
 
-        .input-wrapper {
-            position: relative; background: #1e293b; border-radius: 12px;
-            border: 1px solid #334155; display: flex; align-items: center;
-            padding: 5px 15px; transition: 0.3s;
+        /* Animasi Background Prism */
+        .prism-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #303134 0%, #202124 100%);
         }
-        
-        .input-wrapper:focus-within {
-            border-color: #01875f; /* Hijau Teal Google Play */
-            box-shadow: 0 0 0 2px rgba(1, 135, 95, 0.3);
+        .triangle {
+            position: absolute; width: 0; height: 0;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-bottom: 170px solid rgba(255, 255, 255, 0.03);
+            filter: blur(30px); animation: floatTri 12s infinite linear;
+        }
+        /* Warna-warni Google */
+        .t1 { top: 10%; left: 10%; border-bottom-color: rgba(66, 133, 244, 0.2); animation-duration: 15s; } /* Blue */
+        .t2 { bottom: 20%; right: 10%; border-bottom-color: rgba(234, 67, 53, 0.2); animation-duration: 18s; transform: rotate(45deg); } /* Red */
+        .t3 { top: 40%; right: 30%; border-bottom-color: rgba(251, 188, 5, 0.2); animation-duration: 20s; transform: rotate(180deg); } /* Yellow */
+        .t4 { bottom: 10%; left: 20%; border-bottom-color: rgba(52, 168, 83, 0.2); animation-duration: 12s; transform: rotate(-45deg); } /* Green */
+
+        @keyframes floatTri {
+            0% { transform: translateY(0) rotate(0deg) scale(1); }
+            50% { transform: translateY(-40px) rotate(10deg) scale(1.1); }
+            100% { transform: translateY(0) rotate(0deg) scale(1); }
         }
 
-        .input-wrapper i { color: #01875f; font-size: 1.2rem; margin-right: 10px; }
-
-        .phone-field {
-            flex: 1; background: transparent; border: none; color: white;
-            font-size: 1.1rem; font-weight: 600; padding: 10px 0; outline: none; letter-spacing: 1px;
+        .mobile-container {
+            max-width: 480px; margin: 0 auto; min-height: 100vh;
+            display: flex; flex-direction: column; position: relative;
+            background: rgba(32, 33, 36, 0.6); 
+            backdrop-filter: blur(10px);
+            border-left: 1px solid rgba(255,255,255,0.05);
+            border-right: 1px solid rgba(255,255,255,0.05);
         }
 
-        .product-list-container { padding: 1rem; display: grid; gap: 12px; }
+        /* --- HEADER --- */
+        .play-header {
+            padding: 20px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(32, 33, 36, 0.95); border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .btn-back { color: #e8eaed; font-size: 1.2rem; text-decoration: none; }
+        .page-title { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.5px; }
+        .page-title span { color: #4285F4; } /* Blue Accent */
 
-        .product-card-modern {
-            background: linear-gradient(145deg, #1e293b, #172033);
-            border: 1px solid #334155; border-radius: 16px; padding: 15px;
+        /* --- HERO: GIFT CARD --- */
+        .hero-area { padding: 30px 20px; }
+        .gift-card {
+            background: #fff;
+            border-radius: 16px; padding: 5px; /* Border like wrapper */
+            background: linear-gradient(45deg, #4285F4, #EA4335, #FBBC05, #34A853);
+            box-shadow: 0 10px 30px -5px rgba(66, 133, 244, 0.3);
+            position: relative;
+        }
+        .inner-card {
+            background: #202124; border-radius: 14px; padding: 20px;
             display: flex; justify-content: space-between; align-items: center;
-            position: relative; overflow: hidden; transition: transform 0.2s, border-color 0.2s;
+            height: 120px; position: relative; overflow: hidden;
+        }
+        /* Pattern segitiga di dalam kartu */
+        .inner-card::after {
+            content: '\f04b'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; right: -20px; bottom: -20px;
+            font-size: 8rem; color: rgba(255,255,255,0.03); transform: rotate(-15deg);
         }
 
-        .product-card-modern:active { transform: scale(0.98); }
+        .card-text h3 { margin: 0; font-size: 1.2rem; color: #fff; font-weight: 700; text-transform: uppercase; }
+        .card-text p { margin: 5px 0 0 0; font-size: 0.75rem; color: #9aa0a6; }
+        .play-logo { font-size: 2.5rem; background: linear-gradient(45deg, #4285F4, #EA4335, #FBBC05, #34A853); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .prod-info { flex: 1; }
-        .prod-name { color: #fff; font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
-        .prod-sub { color: #94a3b8; font-size: 0.75rem; }
+        /* --- INPUT --- */
+        .form-area { padding: 0 20px 20px 20px; }
+        .input-label { color: #4285F4; font-size: 0.85rem; margin-bottom: 8px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        .input-wrap {
+            background: #303134; border: 1px solid #5f6368;
+            border-radius: 8px; padding: 12px 15px;
+            display: flex; align-items: center; gap: 10px;
+            transition: 0.3s;
+        }
+        .input-wrap:focus-within {
+            border-color: #4285F4; box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+        }
+        .play-input {
+            width: 100%; background: transparent; border: none; outline: none;
+            color: #fff; font-size: 1.1rem; font-weight: 500;
+        }
+        .info-text { font-size: 0.7rem; color: #9aa0a6; margin-top: 8px; font-style: italic; }
+
+        /* --- GRID NOMINAL --- */
+        .grid-area { padding: 10px 20px 120px 20px; }
+        .grid-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         
-        .prod-price-box { text-align: right; }
-        .price-tag { color: #01875f; font-weight: 700; font-size: 1.1rem; } 
+        .grid-item {
+            background: #303134; border: 1px solid transparent;
+            border-radius: 12px; padding: 15px;
+            cursor: pointer; transition: 0.2s; position: relative; overflow: hidden;
+        }
+        .grid-item:hover { background: #3c4043; }
         
-        .btn-mini-add {
-            background: rgba(1, 135, 95, 0.15); color: #01875f;
-            padding: 5px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: bold;
-            margin-top: 4px; display: inline-block;
+        .grid-item.selected {
+            background: #3c4043; border-color: #34A853; /* Green border on select */
+            box-shadow: 0 4px 15px rgba(52, 168, 83, 0.2);
+        }
+        /* Triangle Corner Badge */
+        .grid-item.selected::after {
+            content: ''; position: absolute; top: 0; right: 0;
+            width: 0; height: 0;
+            border-style: solid; border-width: 0 40px 40px 0;
+            border-color: transparent #34A853 transparent transparent;
+        }
+        .grid-item.selected::before {
+            content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; top: 5px; right: 5px; color: #fff; font-size: 0.7rem; z-index: 2;
         }
 
-        /* Modal Styles */
-        .confirm-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .confirm-box { width: 100%; max-width: 380px; background: #1e293b; border-radius: 24px; padding: 25px; border: 1px solid #334155; text-align: center; }
-        .btn-full { width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; border: none; margin-bottom: 10px; }
-        .btn-google { background: #01875f; color: white; } /* Tombol Teal */
-        .btn-gray { background: #334155; color: #cbd5e1; }
+        .code-val { font-size: 1.1rem; font-weight: 700; color: #fff; display: block; }
+        .code-price { font-size: 0.85rem; color: #4285F4; margin-top: 5px; display: block; }
+        .grid-item.selected .code-price { color: #34A853; }
+
+        /* --- BUTTON BAYAR --- */
+        .btn-container { margin-top: 30px; width: 100%; }
+        .btn-pay {
+            width: 100%; padding: 16px; border: none; border-radius: 8px;
+            background: linear-gradient(90deg, #4285F4, #34A853);
+            color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+            transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-pay:active { transform: scale(0.98); }
+        .btn-pay:disabled {
+            background: #3c4043; color: #5f6368; box-shadow: none; cursor: not-allowed;
+        }
+
     </style>
 </head>
 <body>
 
+    <div class="prism-bg">
+        <div class="triangle t1"></div>
+        <div class="triangle t2"></div>
+        <div class="triangle t3"></div>
+        <div class="triangle t4"></div>
+    </div>
+
     <div class="mobile-container">
-        <header class="main-header" style="position: sticky; top: 0; z-index: 100;">
+        
+        <header class="play-header">
             <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="logo-text">Voucher Google Play</div>
+            <div class="page-title">Google <span>Play</span></div>
+            <i class="fa-brands fa-google-play" style="color: #e8eaed;"></i>
         </header>
 
-        <div class="sticky-input-area">
-            <label style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 8px; display: block;">Masukkan Nomor HP (Untuk Kode)</label>
-            <div class="input-wrapper">
-                <i class="fa-brands fa-google-play"></i>
-                <input type="tel" id="headerPhoneNumber" class="phone-field" placeholder="08xx xxxx xxxx" autocomplete="off">
+        <div class="hero-area">
+            <div class="gift-card">
+                <div class="inner-card">
+                    <div class="card-text">
+                        <h3>Gift Card</h3>
+                        <p>Kode Voucher GooglePlay</p>
+                    </div>
+                    <i class="fa-brands fa-google-play play-logo"></i>
+                </div>
             </div>
         </div>
 
-        <main style="padding-bottom: 50px;">
-            <div id="productsContainer" class="product-list-container"></div>
-        </main>
-    </div>
-
-    <div id="purchaseModal" class="confirm-modal">
-        <div class="confirm-box" style="text-align: left;">
-            <h3 style="color: #01875f; margin-bottom: 20px; text-align: center;">Beli Voucher</h3>
-            
-            <div style="background: #0f172a; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #334155;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="color: #94a3b8; font-size: 0.8rem;">Produk</span>
-                    <span id="detailName" style="color: white; font-weight: 600; font-size: 0.9rem;">-</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #94a3b8; font-size: 0.8rem;">Total Bayar</span>
-                    <span id="detailPrice" style="color: #01875f; font-weight: 700; font-size: 1.2rem;">-</span>
-                </div>
+        <div class="form-area">
+            <div class="input-label"><i class="fa-solid fa-mobile-screen"></i> Nomor Penerima Kode</div>
+            <div class="input-wrap">
+                <input type="tel" class="play-input" placeholder="08xxxxxxxxxx" id="phoneNumber" oninput="validateInput()">
+                <i class="fa-solid fa-address-book" style="color: #5f6368; cursor: pointer;"></i>
             </div>
-
-            <div style="margin-bottom: 20px;">
-                <label style="color: #cbd5e1; font-size: 0.8rem; margin-bottom: 5px; display: block;">Nomor Penerima</label>
-                <div style="background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; color: white; font-weight: bold; font-size: 1.1rem; letter-spacing: 1px;">
-                    <span id="displayNumber">-</span>
-                </div>
-                <input type="hidden" id="customerNumber"> 
-            </div>
-
-            <button onclick="processToPayment()" class="btn-full btn-google">Bayar Sekarang</button>
-            <button onclick="closePurchaseModal()" class="btn-full btn-gray">Batal</button>
+            <div class="info-text">Kode voucher akan dikirim melalui SMS/WhatsApp ke nomor ini.</div>
         </div>
+
+        <div class="grid-area">
+            <div class="input-label" style="margin-bottom: 15px; color:#e8eaed;">Pilih Nominal Voucher</div>
+            <div class="grid-box">
+                <div class="grid-item" onclick="selectCard(this)">
+                    <span class="code-val">IDR 5.000</span>
+                    <span class="code-price">Rp 6.500</span>
+                </div>
+                <div class="grid-item" onclick="selectCard(this)">
+                    <span class="code-val">IDR 10.000</span>
+                    <span class="code-price">Rp 11.500</span>
+                </div>
+                <div class="grid-item" onclick="selectCard(this)">
+                    <span class="code-val">IDR 20.000</span>
+                    <span class="code-price">Rp 21.500</span>
+                </div>
+                <div class="grid-item" onclick="selectCard(this)">
+                    <span class="code-val">IDR 50.000</span>
+                    <span class="code-price">Rp 51.500</span>
+                </div>
+                <div class="grid-item" onclick="selectCard(this)">
+                    <span class="code-val">IDR 100.000</span>
+                    <span class="code-price">Rp 101.500</span>
+                </div>
+                <div class="grid-item" onclick="selectCard(this)">
+                    <span class="code-val">IDR 150.000</span>
+                    <span class="code-price">Rp 151.500</span>
+                </div>
+                <div class="grid-item" onclick="selectCard(this)">
+                    <span class="code-val">IDR 300.000</span>
+                    <span class="code-price">Rp 301.500</span>
+                </div>
+                <div class="grid-item" onclick="selectCard(this)">
+                    <span class="code-val">IDR 500.000</span>
+                    <span class="code-price">Rp 501.500</span>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn-pay" id="btnPay" disabled onclick="window.location.href='../payment.html'">
+                    Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
     </div>
 
-    <script src="../js/ppob.js"></script>
-    <script src="../js/loading.js"></script>
-    
+    <nav class="bottom-nav">
+        <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+        <a href="/ppob.html" class="active"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
+        <a href="/cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span></a>
+        <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+    </nav>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProductsByCategory('GooglePlay'); 
-        });
-
-        function renderProducts(products, categoryName) {
-            const container = document.getElementById('productsContainer');
-            container.innerHTML = '';
-
-            if (products.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:40px; color:#64748b;">
-                    <i class="fa-brands fa-google-play" style="font-size:3rem; margin-bottom:10px;"></i><br>
-                    Belum ada produk
-                </div>`;
-                return;
-            }
-
-            products.forEach(prod => {
-                const harga = new Intl.NumberFormat('id-ID').format(prod.price);
-                const div = document.createElement('div');
-                div.className = 'product-card-modern';
-                div.onclick = () => showPurchaseModalWithNumber(prod);
-                div.innerHTML = `
-                    <div class="prod-info">
-                        <div class="prod-name">${prod.name}</div>
-                        <div class="prod-sub">Kode Voucher ID</div>
-                    </div>
-                    <div class="prod-price-box">
-                        <div class="price-tag">Rp ${harga}</div>
-                        <span class="btn-mini-add">PILIH</span>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+        function selectCard(el) {
+            document.querySelectorAll('.grid-item').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+            validateInput();
         }
 
-        function showPurchaseModalWithNumber(product) {
-            const phoneNumber = document.getElementById('headerPhoneNumber').value;
-            if (!phoneNumber || phoneNumber.length < 10) {
-                alert('Silakan masukkan nomor penerima kode voucher!');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                document.getElementById('headerPhoneNumber').focus();
-                return;
+        function validateInput() {
+            const phone = document.getElementById('phoneNumber').value;
+            const selected = document.querySelector('.grid-item.selected');
+            const btn = document.getElementById('btnPay');
+
+            if (phone.length > 9 && selected) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
             }
-            selectedProduct = product;
-            document.getElementById('detailName').innerText = product.name;
-            document.getElementById('detailPrice').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(product.price);
-            document.getElementById('displayNumber').innerText = phoneNumber;
-            document.getElementById('customerNumber').value = phoneNumber; 
-            document.getElementById('purchaseModal').style.display = 'flex';
         }
     </script>
 </body>

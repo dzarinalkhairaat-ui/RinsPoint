@@ -3,177 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Top Up OVO - RinsPoint</title>
+    <title>Top Up OVO</title>
     
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- STYLE MODERN OVO (UNGU) --- */
-        .sticky-input-area {
-            position: sticky; top: 60px; background: #0f172a; padding: 1rem;
-            z-index: 90; border-bottom: 1px solid #334155;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        /* --- RESET & BASIC --- */
+        html { height: 100%; background: #2e1065; /* Dark Violet Base */ }
+        body { 
+            margin: 0; min-height: 100%; color: #fff; font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; position: relative;
+            background-color: #2e1065;
         }
 
-        .input-wrapper {
-            position: relative; background: #1e293b; border-radius: 12px;
-            border: 1px solid #334155; display: flex; align-items: center;
-            padding: 5px 15px; transition: 0.3s;
+        /* --- ABSTRACT BACKGROUND ANIMATION --- */
+        .abstract-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #2e1065, #0f172a);
         }
+        .orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(60px); opacity: 0.5;
+            animation: moveOrb 8s infinite alternate ease-in-out;
+        }
+        .orb-1 {
+            width: 300px; height: 300px; background: #7c3aed; /* Violet Bright */
+            top: -50px; right: -50px;
+        }
+        .orb-2 {
+            width: 200px; height: 200px; background: #06b6d4; /* Cyan Accent */
+            bottom: 20%; left: -50px; animation-duration: 12s;
+        }
+        @keyframes moveOrb {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(20px) scale(1.1); }
+        }
+
+        .mobile-container {
+            max-width: 480px; margin: 0 auto; min-height: 100vh;
+            display: flex; flex-direction: column; position: relative;
+            background: rgba(46, 16, 101, 0.4); /* Sangat transparan */
+            backdrop-filter: blur(10px);
+            border-left: 1px solid rgba(255,255,255,0.05);
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- HEADER --- */
+        .ovo-header {
+            padding: 20px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(46, 16, 101, 0.8); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .btn-back { color: #e9d5ff; font-size: 1.2rem; text-decoration: none; transition: 0.2s; }
+        .page-title { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; color: #fff; }
+        .header-icon { color: #a78bfa; font-size: 1.2rem; }
+
+        /* --- HERO: FLOATING CARD --- */
+        .hero-section { padding: 30px 20px; text-align: center; }
+        .ovo-card {
+            background: linear-gradient(135deg, #4c1d95, #7c3aed);
+            border-radius: 24px; padding: 25px;
+            box-shadow: 0 15px 35px -5px rgba(76, 29, 149, 0.5);
+            position: relative; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: floatCard 6s ease-in-out infinite;
+        }
+        /* Motif Lingkaran di Kartu */
+        .ovo-card::after {
+            content: ''; position: absolute; top: -50px; right: -50px;
+            width: 150px; height: 150px; border-radius: 50%;
+            border: 20px solid rgba(255,255,255,0.05);
+        }
+        .ovo-card::before {
+            content: ''; position: absolute; bottom: -30px; left: -30px;
+            width: 100px; height: 100px; border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+        }
+
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .ovo-text-logo { font-weight: 800; font-size: 1.5rem; color: #fff; letter-spacing: 2px; }
+        .card-chip { font-size: 1.8rem; color: rgba(255,255,255,0.5); }
         
-        .input-wrapper:focus-within {
-            border-color: #4c3494; /* Warna Ungu OVO */
-            box-shadow: 0 0 0 2px rgba(76, 52, 148, 0.4);
+        .card-body { text-align: left; }
+        .label-bal { font-size: 0.75rem; color: #e9d5ff; text-transform: uppercase; letter-spacing: 1px; }
+        .balance { font-size: 1.6rem; font-weight: 700; margin-top: 5px; text-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+
+        /* --- INPUT AREA --- */
+        .input-container { padding: 0 20px 20px 20px; }
+        .input-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #4c1d95; border-radius: 16px;
+            padding: 5px 15px; display: flex; align-items: center; gap: 12px;
+            transition: 0.3s;
         }
-
-        .input-wrapper i { color: #4c3494; font-size: 1.2rem; margin-right: 10px; }
-
-        .phone-field {
-            flex: 1; background: transparent; border: none; color: white;
-            font-size: 1.1rem; font-weight: 600; padding: 10px 0; outline: none; letter-spacing: 1px;
+        .input-box:focus-within {
+            border-color: #a78bfa; box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+            background: rgba(15, 23, 42, 0.8);
         }
-
-        .product-list-container { padding: 1rem; display: grid; gap: 12px; }
-
-        .product-card-modern {
-            background: linear-gradient(145deg, #1e293b, #172033);
-            border: 1px solid #334155; border-radius: 16px; padding: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            position: relative; overflow: hidden; transition: transform 0.2s, border-color 0.2s;
+        .country-code { font-weight: 600; color: #a78bfa; border-right: 1px solid #4c1d95; padding-right: 12px; }
+        .phone-input {
+            width: 100%; background: transparent; border: none; outline: none;
+            color: #fff; font-size: 1.1rem; font-weight: 500; padding: 12px 0;
         }
+        .contact-icon { color: #a78bfa; cursor: pointer; font-size: 1.1rem; }
 
-        .product-card-modern:active { transform: scale(0.98); }
-
-        .prod-info { flex: 1; }
-        .prod-name { color: #fff; font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
-        .prod-sub { color: #94a3b8; font-size: 0.75rem; }
+        /* --- GRID NOMINAL --- */
+        .grid-container { padding: 10px 20px 120px 20px; } /* Padding bawah besar utk navbar */
+        .section-title { font-size: 0.9rem; color: #d8b4fe; margin-bottom: 15px; font-weight: 500; }
         
-        .prod-price-box { text-align: right; }
-        .price-tag { color: #d6b4ff; font-weight: 700; font-size: 1.1rem; } /* Harga Ungu Muda */
+        .grid-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid-item {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px; padding: 16px;
+            cursor: pointer; transition: 0.2s; position: relative; overflow: hidden;
+        }
+        .grid-item:hover { background: rgba(76, 29, 149, 0.3); border-color: #6d28d9; }
         
-        .btn-mini-add {
-            background: rgba(76, 52, 148, 0.3); color: #d6b4ff;
-            padding: 5px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: bold;
-            margin-top: 4px; display: inline-block;
+        .grid-item.selected {
+            background: rgba(76, 29, 149, 0.6);
+            border: 1px solid #a78bfa;
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.2);
+        }
+        .grid-item.selected::after {
+            content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; top: 0; right: 0;
+            background: #a78bfa; color: #2e1065;
+            padding: 2px 8px; border-radius: 0 0 0 10px; font-size: 0.7rem;
         }
 
-        /* Modal Styles */
-        .confirm-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .confirm-box { width: 100%; max-width: 380px; background: #1e293b; border-radius: 24px; padding: 25px; border: 1px solid #334155; text-align: center; }
-        .btn-full { width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; border: none; margin-bottom: 10px; }
-        .btn-purple { background: #4c3494; color: white; } /* Tombol Ungu */
-        .btn-gray { background: #334155; color: #cbd5e1; }
+        .amount { font-size: 1.15rem; font-weight: 700; color: #fff; display: block; }
+        .price { font-size: 0.85rem; color: #a78bfa; margin-top: 4px; display: block; }
+        .grid-item.selected .price { color: #fff; }
+
+        /* --- BUTTON BAYAR --- */
+        .btn-area { margin-top: 30px; width: 100%; }
+        .btn-pay {
+            width: 100%; padding: 16px; border: none; border-radius: 16px;
+            background: linear-gradient(to right, #7c3aed, #4c1d95);
+            color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer;
+            box-shadow: 0 5px 20px rgba(124, 58, 237, 0.4);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.3s;
+        }
+        .btn-pay:active { transform: scale(0.98); }
+        .btn-pay:disabled {
+            background: #1e293b; color: #64748b; box-shadow: none; cursor: not-allowed;
+        }
+
+        /* --- MODAL KONFIRMASI (Optional Simpel) --- */
+        .loading-text { font-size: 0.8rem; color: #a78bfa; text-align: center; margin-top: 10px; display: none; }
+
     </style>
 </head>
 <body>
 
+    <div class="abstract-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
     <div class="mobile-container">
-        <header class="main-header" style="position: sticky; top: 0; z-index: 100;">
+        
+        <header class="ovo-header">
             <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="logo-text">Saldo OVO</div>
+            <div class="page-title">OVO Top Up</div>
+            <i class="fa-solid fa-bell header-icon"></i>
         </header>
 
-        <div class="sticky-input-area">
-            <label style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 8px; display: block;">Masukkan Nomor OVO</label>
-            <div class="input-wrapper">
-                <i class="fa-solid fa-mobile-screen"></i>
-                <input type="tel" id="headerPhoneNumber" class="phone-field" placeholder="08xx xxxx xxxx" autocomplete="off">
+        <div class="hero-section">
+            <div class="ovo-card">
+                <div class="card-header">
+                    <div class="ovo-text-logo">OVO</div>
+                    <i class="fa-solid fa-wifi card-chip" style="transform: rotate(90deg);"></i>
+                </div>
+                <div class="card-body">
+                    <div class="label-bal">Saldo Anda Kosong?</div>
+                    <div class="balance">Top Up Sekarang!</div>
+                </div>
             </div>
         </div>
 
-        <main style="padding-bottom: 50px;">
-            <div id="productsContainer" class="product-list-container"></div>
-        </main>
-    </div>
-
-    <div id="purchaseModal" class="confirm-modal">
-        <div class="confirm-box" style="text-align: left;">
-            <h3 style="color: #d6b4ff; margin-bottom: 20px; text-align: center;">Konfirmasi OVO</h3>
-            
-            <div style="background: #0f172a; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #334155;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="color: #94a3b8; font-size: 0.8rem;">Produk</span>
-                    <span id="detailName" style="color: white; font-weight: 600; font-size: 0.9rem;">-</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #94a3b8; font-size: 0.8rem;">Total Bayar</span>
-                    <span id="detailPrice" style="color: #d6b4ff; font-weight: 700; font-size: 1.2rem;">-</span>
-                </div>
+        <div class="input-container">
+            <div class="section-title">Nomor OVO Tujuan</div>
+            <div class="input-box">
+                <span class="country-code">+62</span>
+                <input type="tel" class="phone-input" placeholder="8xx-xxxx-xxxx" id="ovoNumber" oninput="validateForm()">
+                <i class="fa-solid fa-address-book contact-icon"></i>
             </div>
-
-            <div style="margin-bottom: 20px;">
-                <label style="color: #cbd5e1; font-size: 0.8rem; margin-bottom: 5px; display: block;">Nomor Tujuan</label>
-                <div style="background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; color: white; font-weight: bold; font-size: 1.1rem; letter-spacing: 1px;">
-                    <span id="displayNumber">-</span>
-                </div>
-                <input type="hidden" id="customerNumber"> 
-            </div>
-
-            <button onclick="processToPayment()" class="btn-full btn-purple">Bayar Sekarang</button>
-            <button onclick="closePurchaseModal()" class="btn-full btn-gray">Batal</button>
         </div>
+
+        <div class="grid-container">
+            <div class="section-title">Pilih Nominal Top Up</div>
+            <div class="grid-wrapper">
+                <div class="grid-item" onclick="selectItem(this, '20.000', 'Rp 21.500')">
+                    <span class="amount">20.000</span>
+                    <span class="price">Rp 21.500</span>
+                </div>
+                <div class="grid-item" onclick="selectItem(this, '25.000', 'Rp 26.500')">
+                    <span class="amount">25.000</span>
+                    <span class="price">Rp 26.500</span>
+                </div>
+                <div class="grid-item" onclick="selectItem(this, '50.000', 'Rp 51.500')">
+                    <span class="amount">50.000</span>
+                    <span class="price">Rp 51.500</span>
+                </div>
+                <div class="grid-item" onclick="selectItem(this, '100.000', 'Rp 101.500')">
+                    <span class="amount">100.000</span>
+                    <span class="price">Rp 101.500</span>
+                </div>
+                <div class="grid-item" onclick="selectItem(this, '200.000', 'Rp 201.500')">
+                    <span class="amount">200.000</span>
+                    <span class="price">Rp 201.500</span>
+                </div>
+                <div class="grid-item" onclick="selectItem(this, '500.000', 'Rp 501.500')">
+                    <span class="amount">500.000</span>
+                    <span class="price">Rp 501.500</span>
+                </div>
+                <div class="grid-item" onclick="selectItem(this, '1.000.000', 'Rp 1.001.500')">
+                    <span class="amount">1 Juta</span>
+                    <span class="price">Rp 1.001.500</span>
+                </div>
+                <div class="grid-item" onclick="selectItem(this, '2.000.000', 'Rp 2.001.500')">
+                    <span class="amount">2 Juta</span>
+                    <span class="price">Rp 2.001.500</span>
+                </div>
+            </div>
+
+            <div class="btn-area">
+                <button class="btn-pay" id="btnPay" disabled onclick="window.location.href='../payment.html'">
+                    Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
     </div>
 
-    <script src="../js/ppob.js"></script>
-    <script src="../js/loading.js"></script>
-    
+    <nav class="bottom-nav">
+        <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+        <a href="/ppob.html" class="active"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
+        <a href="/cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span></a>
+        <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+    </nav>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProductsByCategory('Ovo'); 
-        });
-
-        function renderProducts(products, categoryName) {
-            const container = document.getElementById('productsContainer');
-            container.innerHTML = '';
-
-            if (products.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:40px; color:#64748b;">
-                    <i class="fa-solid fa-wallet" style="font-size:3rem; margin-bottom:10px;"></i><br>
-                    Belum ada produk OVO
-                </div>`;
-                return;
-            }
-
-            products.forEach(prod => {
-                const harga = new Intl.NumberFormat('id-ID').format(prod.price);
-                
-                const div = document.createElement('div');
-                div.className = 'product-card-modern';
-                div.onclick = () => showPurchaseModalWithNumber(prod);
-                
-                div.innerHTML = `
-                    <div class="prod-info">
-                        <div class="prod-name">${prod.name}</div>
-                        <div class="prod-sub">Top Up Saldo</div>
-                    </div>
-                    <div class="prod-price-box">
-                        <div class="price-tag">Rp ${harga}</div>
-                        <span class="btn-mini-add">PILIH</span>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+        function selectItem(el, nominal, price) {
+            // Reset selection
+            document.querySelectorAll('.grid-item').forEach(item => item.classList.remove('selected'));
+            // Set active
+            el.classList.add('selected');
+            validateForm();
         }
 
-        function showPurchaseModalWithNumber(product) {
-            const phoneNumber = document.getElementById('headerPhoneNumber').value;
-            
-            if (!phoneNumber || phoneNumber.length < 10) {
-                alert('Silakan masukkan nomor OVO terlebih dahulu!');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                document.getElementById('headerPhoneNumber').focus();
-                return;
-            }
+        function validateForm() {
+            const phone = document.getElementById('ovoNumber').value;
+            const selected = document.querySelector('.grid-item.selected');
+            const btn = document.getElementById('btnPay');
 
-            selectedProduct = product;
-            document.getElementById('detailName').innerText = product.name;
-            document.getElementById('detailPrice').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(product.price);
-            document.getElementById('displayNumber').innerText = phoneNumber;
-            document.getElementById('customerNumber').value = phoneNumber; 
-            
-            document.getElementById('purchaseModal').style.display = 'flex';
+            // Syarat: Nomor > 9 digit & Ada nominal dipilih
+            if (phone.length > 9 && selected) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
         }
     </script>
 </body>

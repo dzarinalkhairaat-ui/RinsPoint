@@ -3,187 +3,345 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Token Listrik - RinsPoint</title>
+    <title>Token & Tagihan PLN</title>
     
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- STYLE MODERN PLN --- */
+        /* --- RESET & ANIMATED BACKGROUND --- */
+        html { height: 100%; background: #0f172a; }
+        body { 
+            margin: 0; min-height: 100%; color: #fff; font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; position: relative;
+            background-color: #0f172a;
+        }
+
+        /* Motif Abstrak Bergerak */
+        .animated-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(251, 191, 36, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 40%);
+            background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.01) 0px, rgba(255, 255, 255, 0.01) 1px, transparent 1px, transparent 20px);
+            animation: bg-pulse 10s ease-in-out infinite alternate;
+        }
+        @keyframes bg-pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .mobile-container {
+            max-width: 480px; margin: 0 auto; min-height: 100vh;
+            display: flex; flex-direction: column; position: relative;
+            /* Update: Backdrop filter dihapus agar position:fixed navbar berjalan normal */
+            background: rgba(15, 23, 42, 0.85); 
+        }
+
+        /* --- HEADER MEWAH --- */
+        .pln-header {
+            padding: 20px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .btn-back { color: #cbd5e1; font-size: 1.2rem; text-decoration: none; }
+        .header-title h2 { margin: 0; font-size: 1.1rem; color: #fbbf24; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .header-title span { font-size: 0.7rem; color: #94a3b8; font-weight: 400; display: block; }
         
-        .sticky-input-area {
-            position: sticky; top: 60px; background: #0f172a; padding: 1rem;
-            z-index: 90; border-bottom: 1px solid #334155;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        .electric-icon {
+            color: #fbbf24; font-size: 1.2rem;
+            animation: electric-glow 2s infinite;
+        }
+        @keyframes electric-glow {
+            0%, 100% { text-shadow: 0 0 5px rgba(251, 191, 36, 0.5); opacity: 1; }
+            50% { text-shadow: 0 0 20px rgba(251, 191, 36, 1); opacity: 0.7; }
         }
 
-        .input-wrapper {
-            position: relative; background: #1e293b; border-radius: 12px;
-            border: 1px solid #334155; display: flex; align-items: center;
-            padding: 5px 15px; transition: 0.3s;
+        /* --- DIGITAL METER CARD --- */
+        .meter-container { padding: 20px; }
+        .digital-meter {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 2px solid #334155; border-radius: 20px;
+            padding: 15px; position: relative;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+        .digital-meter::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background: #fbbf24; box-shadow: 0 0 15px #fbbf24;
         }
         
-        .input-wrapper:focus-within {
-            border-color: #f59e0b; /* Warna Kuning Petir */
-            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+        .lcd-screen {
+            background: #192a25;
+            border-radius: 8px; border: 1px solid #2d453e;
+            padding: 10px; margin-bottom: 15px;
+            font-family: 'Share Tech Mono', monospace;
+            color: #4ade80;
+            text-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+            position: relative; overflow: hidden;
         }
-
-        .input-wrapper i { color: #f59e0b; font-size: 1.2rem; margin-right: 10px; }
-
-        .phone-field {
-            flex: 1; background: transparent; border: none; color: white;
-            font-size: 1.1rem; font-weight: 600; padding: 10px 0; outline: none; letter-spacing: 1px;
-        }
-
-        .product-list-container { padding: 1rem; display: grid; gap: 12px; }
-
-        /* Card Modern */
-        .product-card-modern {
-            background: linear-gradient(145deg, #1e293b, #172033);
-            border: 1px solid #334155; border-radius: 16px; padding: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            position: relative; overflow: hidden; transition: transform 0.2s, border-color 0.2s;
-        }
-
-        .product-card-modern:active { transform: scale(0.98); }
-
-        /* Aksen Kuning untuk PLN */
-        .product-card-modern.selected::after { background: #f59e0b; opacity: 1; }
+        .lcd-text { font-size: 1.5rem; letter-spacing: 2px; }
         
-        .prod-info { flex: 1; }
-        .prod-name { color: #fff; font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
-        .prod-sub { color: #94a3b8; font-size: 0.75rem; }
-        
-        .prod-price-box { text-align: right; }
-        .price-tag { color: #f59e0b; font-weight: 700; font-size: 1.1rem; }
-        
-        .btn-mini-add {
-            background: rgba(245, 158, 11, 0.1); color: #f59e0b;
-            padding: 5px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: bold;
-            margin-top: 4px; display: inline-block;
+        .meter-info { display: flex; justify-content: space-between; align-items: center; }
+        .pln-logo div { font-weight:800; color:#fbbf24; font-size:1.2rem; letter-spacing:2px; display:flex; align-items:center; gap:5px; }
+        .meter-id { font-size: 0.8rem; color: #94a3b8; text-align: right; }
+
+        /* --- SWITCH BUTTON --- */
+        .switch-container {
+            background: #1e293b; margin: 0 20px 20px 20px;
+            padding: 5px; border-radius: 12px; display: flex;
+            border: 1px solid #334155;
+        }
+        .switch-btn {
+            flex: 1; padding: 12px; border: none; background: transparent;
+            color: #94a3b8; font-weight: 600; border-radius: 8px; cursor: pointer;
+            transition: 0.3s; font-size: 0.9rem;
+        }
+        .switch-btn.active {
+            background: #fbbf24; color: #0f172a;
+            box-shadow: 0 2px 10px rgba(251, 191, 36, 0.3);
         }
 
-        /* Modal Styles */
-        .confirm-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .confirm-box { width: 100%; max-width: 380px; background: #1e293b; border-radius: 24px; padding: 25px; border: 1px solid #334155; text-align: center; }
-        .btn-full { width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; border: none; margin-bottom: 10px; }
-        .btn-yellow { background: #f59e0b; color: #000; } /* Tombol Kuning PLN */
-        .btn-gray { background: #334155; color: #cbd5e1; }
+        /* --- FORM INPUT --- */
+        .form-section { padding: 0 20px; padding-bottom: 100px; /* Jarak agar konten terbawah tidak tertutup navbar */ }
+        .input-group { position: relative; margin-bottom: 25px; }
+        .custom-input {
+            width: 100%; background: #1e293b;
+            border: 1px solid #334155; border-radius: 14px;
+            padding: 16px 16px 16px 50px;
+            color: #fff; font-size: 1.1rem; font-weight: 600; letter-spacing: 1px;
+            outline: none; transition: 0.3s; box-sizing: border-box;
+        }
+        .custom-input:focus { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.1); }
+        .input-icon {
+            position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+            color: #fbbf24; font-size: 1.2rem;
+        }
+
+        /* --- GRID NOMINAL --- */
+        .grid-title { font-size: 0.9rem; color: #cbd5e1; margin-bottom: 12px; font-weight: 500; }
+        .nominal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        .power-card {
+            background: #1e293b; border: 1px solid #334155;
+            border-radius: 16px; padding: 15px; cursor: pointer;
+            position: relative; overflow: hidden; transition: 0.3s;
+        }
+        .power-card:hover, .power-card.selected {
+            border-color: #fbbf24; background: rgba(251, 191, 36, 0.05);
+        }
+        .power-card.selected::before {
+            content: '\f0e7'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; top: -5px; right: -5px; color: rgba(251, 191, 36, 0.2);
+            font-size: 3rem; transform: rotate(15deg);
+        }
+        
+        .chip-value { font-size: 1.2rem; font-weight: 700; color: #fff; display: block; }
+        .chip-price { font-size: 0.85rem; color: #fbbf24; font-weight: 600; margin-top: 4px; display: block; }
+        .chip-icon { 
+            width: 30px; height: 30px; background: rgba(251, 191, 36, 0.2); 
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            color: #fbbf24; margin-bottom: 8px;
+        }
+
+        /* --- BUTTON BAYAR (Posisi Statis di bawah produk) --- */
+        .pay-panel {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        .btn-pay {
+            width: 100%; padding: 16px; border: none; border-radius: 14px;
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer;
+            box-shadow: 0 5px 20px rgba(217, 119, 6, 0.4);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.2s;
+        }
+        .btn-pay:active { transform: scale(0.98); }
+        .btn-pay:disabled { background: #334155; color: #64748b; box-shadow: none; cursor: not-allowed; }
+
+        /* Animation Classes */
+        .fade-in { animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
+    <div class="animated-bg"></div>
+
     <div class="mobile-container">
-        <header class="main-header" style="position: sticky; top: 0; z-index: 100;">
-            <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="logo-text">Token Listrik</div>
+        
+        <header class="pln-header">
+            <div class="header-left">
+                <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+                <div class="header-title">
+                    <h2>PLN Energy</h2>
+                    <span>Listrik Pintar</span>
+                </div>
+            </div>
+            <i class="fa-solid fa-bolt-lightning electric-icon"></i>
         </header>
 
-        <div class="sticky-input-area">
-            <label style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 8px; display: block;">ID Pelanggan / No. Meter</label>
-            <div class="input-wrapper">
-                <i class="fa-solid fa-bolt"></i>
-                <input type="tel" id="headerPhoneNumber" class="phone-field" placeholder="Contoh: 1234567890" autocomplete="off">
+        <div class="meter-container">
+            <div class="digital-meter">
+                <div class="lcd-screen">
+                    <div style="font-size:0.6rem; color:#2d453e;">SISA KWH</div>
+                    <div class="lcd-text">00245.88</div>
+                    <div style="margin-top:5px; height:1px; background:#2d453e; width:100%;"></div>
+                </div>
+                <div class="meter-info">
+                    <div class="pln-logo">
+                        <div style="font-weight:800; color:#fbbf24; font-size:1.2rem; letter-spacing:2px; display:flex; align-items:center; gap:5px;">
+                            <i class="fa-solid fa-bolt"></i> PLN
+                        </div>
+                    </div>
+                    <div class="meter-id">
+                        Prepaid Meter<br>
+                        <span style="color:#fbbf24; font-size:0.7rem;">CLASS 1.0</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <main style="padding-bottom: 50px;">
-            <div id="productsContainer" class="product-list-container">
-                </div>
-        </main>
-    </div>
-
-    <div id="purchaseModal" class="confirm-modal">
-        <div class="confirm-box" style="text-align: left;">
-            <h3 style="color: #f59e0b; margin-bottom: 20px; text-align: center;">Konfirmasi Token</h3>
-            
-            <div style="background: #0f172a; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #334155;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="color: #94a3b8; font-size: 0.8rem;">Produk</span>
-                    <span id="detailName" style="color: white; font-weight: 600; font-size: 0.9rem;">-</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #94a3b8; font-size: 0.8rem;">Total Bayar</span>
-                    <span id="detailPrice" style="color: #f59e0b; font-weight: 700; font-size: 1.2rem;">-</span>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label style="color: #cbd5e1; font-size: 0.8rem; margin-bottom: 5px; display: block;">ID Pelanggan</label>
-                <div style="background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; color: white; font-weight: bold; font-size: 1.1rem; letter-spacing: 1px;">
-                    <span id="displayNumber">-</span>
-                </div>
-                <input type="hidden" id="customerNumber"> 
-            </div>
-
-            <button onclick="processToPayment()" class="btn-full btn-yellow">Bayar Sekarang</button>
-            <button onclick="closePurchaseModal()" class="btn-full btn-gray">Batal</button>
+        <div class="switch-container">
+            <button class="switch-btn active" onclick="setMode('token')">Isi Token</button>
+            <button class="switch-btn" onclick="setMode('tagihan')">Bayar Tagihan</button>
         </div>
+
+        <div class="form-section">
+            <div class="input-group">
+                <i class="fa-solid fa-id-card input-icon"></i>
+                <input type="tel" class="custom-input" id="plnNumber" placeholder="No Meter / ID Pel" oninput="validateInput()">
+            </div>
+
+            <div id="tokenContent" class="fade-in">
+                <div class="grid-title">Pilih Nominal Token</div>
+                <div class="nominal-grid">
+                    <div class="power-card" onclick="selectItem(this, '20.000', 'Rp 21.500')">
+                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <span class="chip-value">20.000</span>
+                        <span class="chip-price">Rp 21.500</span>
+                    </div>
+                    <div class="power-card" onclick="selectItem(this, '50.000', 'Rp 51.500')">
+                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <span class="chip-value">50.000</span>
+                        <span class="chip-price">Rp 51.500</span>
+                    </div>
+                    <div class="power-card" onclick="selectItem(this, '100.000', 'Rp 101.500')">
+                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <span class="chip-value">100.000</span>
+                        <span class="chip-price">Rp 101.500</span>
+                    </div>
+                    <div class="power-card" onclick="selectItem(this, '200.000', 'Rp 201.500')">
+                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <span class="chip-value">200.000</span>
+                        <span class="chip-price">Rp 201.500</span>
+                    </div>
+                    <div class="power-card" onclick="selectItem(this, '500.000', 'Rp 501.500')">
+                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <span class="chip-value">500.000</span>
+                        <span class="chip-price">Rp 501.500</span>
+                    </div>
+                    <div class="power-card" onclick="selectItem(this, '1.000.000', 'Rp 1.001.500')">
+                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <span class="chip-value">1 Juta</span>
+                        <span class="chip-price">Rp 1.001.500</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tagihanContent" class="hidden fade-in">
+                <div style="background:#1e293b; border-radius:16px; padding:30px; text-align:center; border:1px dashed #334155;">
+                    <i class="fa-solid fa-file-invoice-dollar" style="font-size:3rem; color:#fbbf24; margin-bottom:15px;"></i>
+                    <h3 style="margin:0; font-size:1.1rem; color:#fff;">Cek Tagihan</h3>
+                    <p style="font-size:0.85rem; color:#94a3b8; margin:10px 0;">Masukkan ID Pelanggan di atas, lalu klik tombol Cek Tagihan di bawah.</p>
+                </div>
+            </div>
+
+            <div class="pay-panel">
+                <button class="btn-pay" id="btnAction" disabled>
+                    Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+            <a href="/ppob.html" class="active"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
+            <a href="/cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span></a>
+            <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+        </nav>
+
     </div>
 
-    <script src="../js/ppob.js"></script>
-    <script src="../js/loading.js"></script>
-    
     <script>
-        // LOAD KATEGORI 'PLN'
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProductsByCategory('PLN'); 
+        let currentMode = 'token';
+        let selectedPrice = 0;
+
+        function setMode(mode) {
+            currentMode = mode;
+            const btns = document.querySelectorAll('.switch-btn');
+            const tokenDiv = document.getElementById('tokenContent');
+            const tagihanDiv = document.getElementById('tagihanContent');
+            const btnAction = document.getElementById('btnAction');
+
+            btns[0].classList.toggle('active', mode === 'token');
+            btns[1].classList.toggle('active', mode === 'tagihan');
+
+            if (mode === 'token') {
+                tokenDiv.classList.remove('hidden');
+                tagihanDiv.classList.add('hidden');
+                btnAction.innerHTML = 'Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>';
+                validateInput();
+            } else {
+                tokenDiv.classList.add('hidden');
+                tagihanDiv.classList.remove('hidden');
+                btnAction.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Cek Tagihan';
+                const idPel = document.getElementById('plnNumber').value;
+                btnAction.disabled = idPel.length < 10;
+            }
+        }
+
+        function selectItem(el, nominal, price) {
+            document.querySelectorAll('.power-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedPrice = price;
+            validateInput();
+        }
+
+        function validateInput() {
+            const val = document.getElementById('plnNumber').value;
+            const btn = document.getElementById('btnAction');
+            
+            if (currentMode === 'token') {
+                const isItemSelected = document.querySelector('.power-card.selected');
+                if (val.length > 10 && isItemSelected) {
+                    btn.disabled = false;
+                } else {
+                    btn.disabled = true;
+                }
+            } else {
+                if (val.length > 10) {
+                    btn.disabled = false;
+                } else {
+                    btn.disabled = true;
+                }
+            }
+        }
+
+        document.getElementById('btnAction').addEventListener('click', () => {
+            if (currentMode === 'token') {
+                window.location.href = '../payment.html';
+            } else {
+                alert('Fitur Cek Tagihan (Simulasi): Tagihan Anda Rp 0 (Sudah Lunas)');
+            }
         });
-
-        // OVERRIDE RENDER KHUSUS PLN
-        function renderProducts(products, categoryName) {
-            const container = document.getElementById('productsContainer');
-            container.innerHTML = '';
-
-            if (products.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:40px; color:#64748b;">
-                    <i class="fa-solid fa-bolt" style="font-size:3rem; margin-bottom:10px;"></i><br>
-                    Belum ada produk token
-                </div>`;
-                return;
-            }
-
-            products.forEach(prod => {
-                const harga = new Intl.NumberFormat('id-ID').format(prod.price);
-                
-                const div = document.createElement('div');
-                div.className = 'product-card-modern';
-                div.onclick = () => showPurchaseModalWithNumber(prod);
-                
-                div.innerHTML = `
-                    <div class="prod-info">
-                        <div class="prod-name">${prod.name}</div>
-                        <div class="prod-sub">Listrik Prabayar</div>
-                    </div>
-                    <div class="prod-price-box">
-                        <div class="price-tag">Rp ${harga}</div>
-                        <span class="btn-mini-add">PILIH</span>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        // Logic Modal + Auto Fill ID
-        function showPurchaseModalWithNumber(product) {
-            const phoneNumber = document.getElementById('headerPhoneNumber').value;
-            
-            if (!phoneNumber || phoneNumber.length < 5) { // ID Pelanggan biasanya panjang
-                alert('Silakan masukkan ID Pelanggan / No. Meter terlebih dahulu!');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                document.getElementById('headerPhoneNumber').focus();
-                return;
-            }
-
-            selectedProduct = product;
-            document.getElementById('detailName').innerText = product.name;
-            document.getElementById('detailPrice').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(product.price);
-            document.getElementById('displayNumber').innerText = phoneNumber;
-            document.getElementById('customerNumber').value = phoneNumber; 
-            
-            document.getElementById('purchaseModal').style.display = 'flex';
-        }
     </script>
 </body>
 </html>
