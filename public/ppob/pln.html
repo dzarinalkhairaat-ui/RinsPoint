@@ -35,7 +35,6 @@
         .mobile-container {
             max-width: 480px; margin: 0 auto; min-height: 100vh;
             display: flex; flex-direction: column; position: relative;
-            /* Update: Backdrop filter dihapus agar position:fixed navbar berjalan normal */
             background: rgba(15, 23, 42, 0.85); 
         }
 
@@ -105,7 +104,7 @@
         }
 
         /* --- FORM INPUT --- */
-        .form-section { padding: 0 20px; padding-bottom: 100px; /* Jarak agar konten terbawah tidak tertutup navbar */ }
+        .form-section { padding: 0 20px; padding-bottom: 100px; }
         .input-group { position: relative; margin-bottom: 25px; }
         .custom-input {
             width: 100%; background: #1e293b;
@@ -138,7 +137,7 @@
             font-size: 3rem; transform: rotate(15deg);
         }
         
-        .chip-value { font-size: 1.2rem; font-weight: 700; color: #fff; display: block; }
+        .chip-value { font-size: 1.1rem; font-weight: 700; color: #fff; display: block; }
         .chip-price { font-size: 0.85rem; color: #fbbf24; font-weight: 600; margin-top: 4px; display: block; }
         .chip-icon { 
             width: 30px; height: 30px; background: rgba(251, 191, 36, 0.2); 
@@ -146,7 +145,7 @@
             color: #fbbf24; margin-bottom: 8px;
         }
 
-        /* --- BUTTON BAYAR (Posisi Statis di bawah produk) --- */
+        /* --- BUTTON BAYAR --- */
         .pay-panel {
             margin-top: 30px;
             margin-bottom: 20px;
@@ -168,6 +167,15 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         .hidden { display: none; }
+
+        /* Banner Toko Tutup */
+        .store-closed-banner {
+            background: rgba(239, 68, 68, 0.15); border: 1px dashed #ef4444; color: #f87171;
+            padding: 20px; border-radius: 12px; text-align: center; font-weight: 600;
+            grid-column: span 2; display: flex; flex-direction: column; align-items: center;
+        }
+        .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; }
+
     </style>
 </head>
 <body>
@@ -221,36 +229,9 @@
 
             <div id="tokenContent" class="fade-in">
                 <div class="grid-title">Pilih Nominal Token</div>
-                <div class="nominal-grid">
-                    <div class="power-card" onclick="selectItem(this, '20.000', 'Rp 21.500')">
-                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
-                        <span class="chip-value">20.000</span>
-                        <span class="chip-price">Rp 21.500</span>
-                    </div>
-                    <div class="power-card" onclick="selectItem(this, '50.000', 'Rp 51.500')">
-                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
-                        <span class="chip-value">50.000</span>
-                        <span class="chip-price">Rp 51.500</span>
-                    </div>
-                    <div class="power-card" onclick="selectItem(this, '100.000', 'Rp 101.500')">
-                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
-                        <span class="chip-value">100.000</span>
-                        <span class="chip-price">Rp 101.500</span>
-                    </div>
-                    <div class="power-card" onclick="selectItem(this, '200.000', 'Rp 201.500')">
-                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
-                        <span class="chip-value">200.000</span>
-                        <span class="chip-price">Rp 201.500</span>
-                    </div>
-                    <div class="power-card" onclick="selectItem(this, '500.000', 'Rp 501.500')">
-                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
-                        <span class="chip-value">500.000</span>
-                        <span class="chip-price">Rp 501.500</span>
-                    </div>
-                    <div class="power-card" onclick="selectItem(this, '1.000.000', 'Rp 1.001.500')">
-                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
-                        <span class="chip-value">1 Juta</span>
-                        <span class="chip-price">Rp 1.001.500</span>
+                <div class="nominal-grid" id="plnProductContainer">
+                    <div style="grid-column: span 2; text-align: center; color: #94a3b8; padding: 20px;">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat token...
                     </div>
                 </div>
             </div>
@@ -264,7 +245,7 @@
             </div>
 
             <div class="pay-panel">
-                <button class="btn-pay" id="btnAction" disabled>
+                <button class="btn-pay" id="btnAction" disabled onclick="handleAction()">
                     Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
@@ -281,8 +262,79 @@
     </div>
 
     <script>
+        const API_URL = '/api';
+        const TARGET_CATEGORY = 'PLN'; 
+        
         let currentMode = 'token';
-        let selectedPrice = 0;
+        let selectedProduct = null;
+        let globalMargin = 0;
+        let isStoreOpen = true;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadData();
+        });
+
+        async function loadData() {
+            const container = document.getElementById('plnProductContainer');
+            const btnAction = document.getElementById('btnAction');
+
+            try {
+                // 1. CEK STATUS TOKO & MARGIN
+                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                globalMargin = parseInt(config.margin) || 0;
+                isStoreOpen = config.isOpen;
+
+                // 2. JIKA TOKO TUTUP
+                if (!isStoreOpen) {
+                    container.innerHTML = `
+                        <div class="store-closed-banner">
+                            <i class="fa-solid fa-shop-lock"></i>
+                            MAAF, TOKO SEDANG TUTUP
+                        </div>
+                    `;
+                    document.getElementById('plnNumber').disabled = true;
+                    btnAction.disabled = true;
+                    btnAction.innerText = "Toko Tutup";
+                    btnAction.style.background = "#334155";
+                    btnAction.style.cursor = "not-allowed";
+                    return; // Stop loading produk
+                }
+
+                // 3. LOAD PRODUK PLN
+                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                const products = await res.json();
+
+                container.innerHTML = ''; 
+
+                if (products.length === 0) {
+                    container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #ef4444;">Produk Token Kosong</div>`;
+                    return;
+                }
+
+                products.forEach(p => {
+                    const finalPrice = p.price + globalMargin;
+                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
+                    
+                    // Ambil angka dari nama produk (Misal "PLN 20" -> "20")
+                    const displayValue = p.name.replace(/[^0-9]/g, ''); 
+                    
+                    const div = document.createElement('div');
+                    div.className = 'power-card';
+                    div.onclick = () => selectItem(div, p, finalPrice);
+                    
+                    div.innerHTML = `
+                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <span class="chip-value">${p.name}</span>
+                        <span class="chip-price">Rp ${priceFormatted}</span>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #ef4444;">Gagal memuat data.</div>`;
+            }
+        }
 
         function setMode(mode) {
             currentMode = mode;
@@ -297,21 +349,32 @@
             if (mode === 'token') {
                 tokenDiv.classList.remove('hidden');
                 tagihanDiv.classList.add('hidden');
-                btnAction.innerHTML = 'Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>';
-                validateInput();
+                
+                if(!isStoreOpen) {
+                     btnAction.innerText = "Toko Tutup";
+                } else {
+                     btnAction.innerHTML = 'Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>';
+                }
             } else {
                 tokenDiv.classList.add('hidden');
                 tagihanDiv.classList.remove('hidden');
-                btnAction.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Cek Tagihan';
-                const idPel = document.getElementById('plnNumber').value;
-                btnAction.disabled = idPel.length < 10;
+                
+                if(!isStoreOpen) {
+                     btnAction.innerText = "Toko Tutup";
+                } else {
+                     btnAction.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Cek Tagihan';
+                }
             }
+            validateInput();
         }
 
-        function selectItem(el, nominal, price) {
+        function selectItem(el, productData, finalPrice) {
+            if(!isStoreOpen) return;
+
             document.querySelectorAll('.power-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
-            selectedPrice = price;
+            
+            selectedProduct = { ...productData, finalPrice: finalPrice };
             validateInput();
         }
 
@@ -319,15 +382,20 @@
             const val = document.getElementById('plnNumber').value;
             const btn = document.getElementById('btnAction');
             
+            if(!isStoreOpen) {
+                btn.disabled = true;
+                return;
+            }
+
             if (currentMode === 'token') {
-                const isItemSelected = document.querySelector('.power-card.selected');
-                if (val.length > 10 && isItemSelected) {
+                if (val.length > 9 && selectedProduct) {
                     btn.disabled = false;
                 } else {
                     btn.disabled = true;
                 }
             } else {
-                if (val.length > 10) {
+                // Mode Tagihan
+                if (val.length > 9) {
                     btn.disabled = false;
                 } else {
                     btn.disabled = true;
@@ -335,13 +403,30 @@
             }
         }
 
-        document.getElementById('btnAction').addEventListener('click', () => {
+        function handleAction() {
+            if(!isStoreOpen) return;
+
+            const customerNumber = document.getElementById('plnNumber').value;
+
             if (currentMode === 'token') {
+                if (!selectedProduct) return;
+
+                const transactionData = {
+                    productId: selectedProduct._id,
+                    productName: selectedProduct.name,
+                    productPrice: selectedProduct.finalPrice,
+                    customerNumber: customerNumber,
+                    category: TARGET_CATEGORY
+                };
+
+                localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
                 window.location.href = '../payment.html';
+
             } else {
-                alert('Fitur Cek Tagihan (Simulasi): Tagihan Anda Rp 0 (Sudah Lunas)');
+                // Simulasi Cek Tagihan (Belum ada backend khusus tagihan di script ini)
+                alert('Fitur Cek Tagihan Masih Dalam Pengembangan.');
             }
-        });
+        }
     </script>
 </body>
 </html>

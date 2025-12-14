@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Top Up Mobile Legends</title>
     
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Cinzel:wght@700&display=swap" rel="stylesheet">
     
@@ -122,25 +122,22 @@
         
         /* === KARTU PRODUK MEWAH === */
         .diamond-card {
-            /* Background Gradient Gelap */
             background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
             border-radius: 16px;
             border: 1px solid rgba(255, 255, 255, 0.08);
             display: flex; flex-direction: column; justify-content: space-between;
             overflow: hidden; position: relative;
             cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            min-height: 125px; /* Minimal tinggi agar seragam */
+            min-height: 125px; 
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
 
-        /* Hover Effect: Naik & Glow */
         .diamond-card:hover { 
             transform: translateY(-4px); 
             border-color: rgba(251, 191, 36, 0.5); 
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(251, 191, 36, 0.1);
         }
 
-        /* Abstract Circle Decoration (Pojok Kanan Atas) */
         .diamond-card::before {
             content: ''; position: absolute;
             top: -30px; right: -30px; width: 100px; height: 100px;
@@ -148,30 +145,26 @@
             border-radius: 50%; z-index: 0; pointer-events: none;
         }
 
-        /* Selected State */
         .diamond-card.selected {
             background: linear-gradient(160deg, #312e81 0%, #1e1b4b 100%);
             border: 1.5px solid #fbbf24;
             box-shadow: 0 0 20px rgba(251, 191, 36, 0.25);
         }
 
-        /* Layout Isi Kartu */
         .card-body { 
             padding: 15px 15px 10px 15px; 
-            flex-grow: 1; /* Mengisi ruang kosong */
+            flex-grow: 1; 
             display: flex; flex-direction: column;
             position: relative; z-index: 1;
         }
         
-        /* JUDUL PRODUK (Tinggi Dikunci agar Harga Rata) */
         .dm-amount { 
             font-size: 0.85rem; font-weight: 600; color: #f1f5f9; 
             line-height: 1.3;
-            margin-bottom: auto; /* Dorong harga ke bawah */
-            min-height: 2.6em; /* Kunci tinggi min 2 baris teks */
+            margin-bottom: auto; 
+            min-height: 2.6em; 
         }
         
-        /* Baris Harga & Icon */
         .dm-price-row { 
             display: flex; align-items: center; gap: 10px; 
             margin-top: 10px; 
@@ -181,18 +174,16 @@
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
             transition: transform 0.3s;
         }
-        /* Icon membesar saat hover */
         .diamond-card:hover .dm-icon-img { transform: scale(1.1) rotate(5deg); }
         
         .dm-price { 
             font-size: 0.95rem; font-weight: 700; 
-            color: #fbbf24; /* Emas */
+            color: #fbbf24; 
             text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* Footer Kartu */
         .card-footer {
-            background: rgba(0, 0, 0, 0.3); /* Gelap transparan */
+            background: rgba(0, 0, 0, 0.3); 
             padding: 8px 15px;
             border-top: 1px solid rgba(255,255,255,0.05);
             display: flex; justify-content: flex-end;
@@ -201,7 +192,7 @@
         
         .instant-badge {
             background: rgba(16, 185, 129, 0.15); 
-            color: #34d399; /* Hijau Neon */
+            color: #34d399; 
             font-size: 0.6rem; font-weight: 800;
             padding: 4px 8px; border-radius: 6px;
             display: flex; align-items: center; gap: 5px;
@@ -226,6 +217,14 @@
             background: #334155; color: #64748b; box-shadow: none; cursor: not-allowed; animation: none;
         }
 
+        /* Banner Toko Tutup */
+        .store-closed-banner {
+            background: rgba(251, 191, 36, 0.15); border: 1px dashed #fbbf24; color: #fbbf24;
+            padding: 15px; border-radius: 12px; text-align: center; font-weight: 600;
+            margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
+        }
+        .store-closed-banner i { font-size: 1.5rem; margin-bottom: 8px; }
+
     </style>
 </head>
 <body>
@@ -239,18 +238,18 @@
     <div class="mobile-container">
         
         <header class="game-header">
-            <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="../../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <div class="header-title">MOBILE LEGENDS</div>
             <div style="width: 24px;"></div>
         </header>
 
         <div class="banner-section">
-            <img src="../assets/images/ml-banner.jpg" class="banner-img" alt="MLBB Banner" onerror="this.src='https://placehold.co/600x300/1e293b/fbbf24?text=Banner+Game';">
+            <img src="../../assets/images/ml-banner.jpg" class="banner-img" alt="MLBB Banner">
             <div class="banner-overlay"></div>
         </div>
 
         <div class="form-area">
-            <div class="input-card">
+            <div id="closedBannerContainer"></div> <div class="input-card">
                 <div class="input-label"><i class="fa-solid fa-user-ninja"></i> Data Akun</div>
                 <div class="game-input-group">
                     <div class="input-wrapper">
@@ -267,122 +266,23 @@
 
         <div class="grid-area">
             
-            <div class="section-label"><i class="fa-solid fa-crown"></i> Membership & Pass</div>
-            <div class="diamond-grid">
-                
-                <div class="diamond-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="dm-amount">Weekly Diamond Pass</span>
-                        <div class="dm-price-row">
-                            <img src="../assets/icons/mobile-legend/wdp-icon.png" class="dm-icon-img" alt="Icon">
-                            <span class="dm-price">Rp 28.000</span>
-                        </div>
+            <div id="membershipSection" style="display:none;">
+                <div class="section-label"><i class="fa-solid fa-crown"></i> Membership & Pass</div>
+                <div class="diamond-grid" id="membershipContainer">
                     </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="diamond-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="dm-amount">Twilight Pass (Season)</span>
-                        <div class="dm-price-row">
-                            <img src="../assets/icons/mobile-legend/twilight-icon.jpg" class="dm-icon-img" alt="Icon">
-                            <span class="dm-price">Rp 150.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
             </div>
 
-            <div class="section-label"><i class="fa-regular fa-gem"></i> Top Up Diamond</div>
-            <div class="diamond-grid">
-                
-                <div class="diamond-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="dm-amount">5 (5+0) Diamonds</span>
-                        <div class="dm-price-row">
-                            <img src="../assets/icons/mobile-legend/diamond-icon.png" class="dm-icon-img" alt="Icon">
-                            <span class="dm-price">Rp 1.535</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
+            <div id="diamondSection" style="margin-top:20px;">
+                <div class="section-label"><i class="fa-regular fa-gem"></i> Top Up Diamond</div>
+                <div class="diamond-grid" id="diamondContainer">
+                    <div style="grid-column: span 2; text-align: center; color: #94a3b8; padding: 20px;">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat Produk...
                     </div>
                 </div>
-
-                <div class="diamond-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="dm-amount">12 (11+1) Diamonds</span>
-                        <div class="dm-price-row">
-                            <img src="../assets/icons/mobile-legend/diamond-icon.png" class="dm-icon-img" alt="Icon">
-                            <span class="dm-price">Rp 3.579</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="diamond-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="dm-amount">86 (78+8) Diamonds</span>
-                        <div class="dm-price-row">
-                            <img src="../assets/icons/mobile-legend/diamond-icon.png" class="dm-icon-img" alt="Icon">
-                            <span class="dm-price">Rp 20.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="diamond-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="dm-amount">172 (156+16) Diamonds</span>
-                        <div class="dm-price-row">
-                            <img src="../assets/icons/mobile-legend/diamond-icon.png" class="dm-icon-img" alt="Icon">
-                            <span class="dm-price">Rp 40.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="diamond-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="dm-amount">257 (234+23) Diamonds</span>
-                        <div class="dm-price-row">
-                            <img src="../assets/icons/mobile-legend/diamond-icon.png" class="dm-icon-img" alt="Icon">
-                            <span class="dm-price">Rp 60.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="diamond-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="dm-amount">706 (625+81) Diamonds</span>
-                        <div class="dm-price-row">
-                            <img src="../assets/icons/mobile-legend/diamond-icon.png" class="dm-icon-img" alt="Icon">
-                            <span class="dm-price">Rp 160.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
             </div>
 
             <div class="pay-bar">
-                <button class="btn-pay" id="btnPay" disabled onclick="window.location.href='../payment.html'">
+                <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                     Lanjut Pembayaran <i class="fa-solid fa-scroll"></i>
                 </button>
             </div>
@@ -398,23 +298,157 @@
     </nav>
 
     <script>
-        function selectItem(el) {
+        const API_URL = '/api';
+        const TARGET_CATEGORY = 'Mobile Legend'; // Kategori di DB Admin
+        let selectedProduct = null;
+        let globalMargin = 0;
+        let isStoreOpen = true;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadData();
+        });
+
+        // 1. Fetch Data (Margin + Produk)
+        async function loadData() {
+            const membershipContainer = document.getElementById('membershipContainer');
+            const diamondContainer = document.getElementById('diamondContainer');
+            const membershipSection = document.getElementById('membershipSection');
+            const bannerContainer = document.getElementById('closedBannerContainer');
+            const btnPay = document.getElementById('btnPay');
+
+            try {
+                // A. Cek Status Toko & Margin
+                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                globalMargin = parseInt(config.margin) || 0;
+                isStoreOpen = config.isOpen;
+
+                // B. JIKA TOKO TUTUP
+                if (!isStoreOpen) {
+                    bannerContainer.innerHTML = `
+                        <div class="store-closed-banner">
+                            <i class="fa-solid fa-shop-lock"></i>
+                            MAAF, TOKO SEDANG TUTUP
+                        </div>
+                    `;
+                    document.getElementById('userId').disabled = true;
+                    document.getElementById('zoneId').disabled = true;
+                    btnPay.disabled = true;
+                    btnPay.innerText = "Toko Tutup";
+                    btnPay.style.background = "#334155";
+                    btnPay.style.cursor = "not-allowed";
+                    btnPay.style.color = "#64748b";
+                    
+                    diamondContainer.innerHTML = ''; 
+                    return; 
+                }
+
+                // C. Ambil Produk
+                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                const products = await res.json();
+
+                // Clear Loading
+                membershipContainer.innerHTML = '';
+                diamondContainer.innerHTML = '';
+
+                if (products.length === 0) {
+                    diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
+                    return;
+                }
+
+                // D. Filter & Render
+                let hasMembership = false;
+
+                products.forEach(p => {
+                    const finalPrice = p.price + globalMargin;
+                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
+                    
+                    // Deteksi Jenis Produk berdasarkan Nama
+                    const lowerName = p.name.toLowerCase();
+                    const isMembership = lowerName.includes('pass') || lowerName.includes('weekly') || lowerName.includes('twilight') || lowerName.includes('member');
+                    
+                    // Tentukan Icon & Container
+                    let iconImg = '../../assets/icons/mobile-legend/diamond-icon.png';
+                    let targetContainer = diamondContainer;
+
+                    if (isMembership) {
+                        hasMembership = true;
+                        targetContainer = membershipContainer;
+                        if(lowerName.includes('weekly')) iconImg = '../../assets/icons/mobile-legend/wdp-icon.png';
+                        else if(lowerName.includes('twilight')) iconImg = '../../assets/icons/mobile-legend/twilight-icon.jpg';
+                    }
+
+                    const div = document.createElement('div');
+                    div.className = 'diamond-card';
+                    div.onclick = () => selectItem(div, p, finalPrice);
+                    
+                    div.innerHTML = `
+                        <div class="card-body">
+                            <span class="dm-amount">${p.name}</span>
+                            <div class="dm-price-row">
+                                <img src="${iconImg}" class="dm-icon-img" alt="Icon" onerror="this.src='../../assets/icons/mobile-legend/diamond-icon.png'">
+                                <span class="dm-price">Rp ${priceFormatted}</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
+                        </div>
+                    `;
+                    targetContainer.appendChild(div);
+                });
+
+                // Tampilkan Section Membership jika ada isinya
+                if (hasMembership) {
+                    membershipSection.style.display = 'block';
+                }
+
+            } catch (error) {
+                console.error(error);
+                diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+            }
+        }
+
+        // 2. Logic Pilih Produk
+        function selectItem(el, productData, priceWithMargin) {
+            if(!isStoreOpen) return;
+
             document.querySelectorAll('.diamond-card').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
+            
+            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
             checkForm();
         }
 
         function checkForm() {
             const user = document.getElementById('userId').value;
             const zone = document.getElementById('zoneId').value;
-            const selected = document.querySelector('.diamond-card.selected');
             const btn = document.getElementById('btnPay');
 
-            if (user.length > 4 && zone.length > 3 && selected) {
+            if(!isStoreOpen) return;
+
+            if (user.length > 3 && zone.length > 3 && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
             }
+        }
+
+        // 3. Proses ke Halaman Payment
+        function goToPayment() {
+            if (!selectedProduct) return;
+            const user = document.getElementById('userId').value;
+            const zone = document.getElementById('zoneId').value;
+            const fullId = `${user} (${zone})`;
+
+            const transactionData = {
+                productId: selectedProduct._id,
+                productName: selectedProduct.name,
+                productPrice: selectedProduct.finalPrice,
+                customerNumber: fullId,
+                category: TARGET_CATEGORY
+            };
+
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+            window.location.href = '../../payment.html';
         }
     </script>
 </body>

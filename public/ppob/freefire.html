@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Top Up Free Fire</title>
     
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
     
@@ -115,7 +115,7 @@
         
         .ff-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         
-        /* CARD STYLE (Struktur Konsisten) */
+        /* CARD STYLE */
         .ff-card {
             background: #270d0d; /* Dark Red tint */
             border-radius: 12px;
@@ -132,7 +132,6 @@
             border-color: #fbbf24; 
         }
 
-        /* Decoration: Target Circle */
         .ff-card::before {
             content: ''; position: absolute;
             top: -20px; right: -20px; width: 70px; height: 70px;
@@ -146,7 +145,6 @@
             box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
         }
 
-        /* Card Body */
         .card-body { 
             padding: 15px 15px 10px 15px; 
             flex-grow: 1; 
@@ -156,7 +154,7 @@
         
         .ff-amount { 
             font-size: 0.9rem; font-weight: 700; color: #fff; 
-            line-height: 1.3; margin-bottom: auto; min-height: 2.6em; /* KUNCI RATA */
+            line-height: 1.3; margin-bottom: auto; min-height: 2.6em; 
         }
         
         .ff-price-row { 
@@ -175,7 +173,6 @@
             text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* Card Footer */
         .card-footer {
             background: rgba(0, 0, 0, 0.4); 
             padding: 8px 15px;
@@ -198,19 +195,28 @@
         .pay-bar { margin-top: 30px; width: 100%; }
         .btn-pay {
             width: 100%; padding: 16px; border: none; border-radius: 12px;
-            /* Gradasi Api */
             background: linear-gradient(to right, #b91c1c, #ef4444, #fbbf24);
             background-size: 200% auto;
             color: #fff; font-size: 1rem; font-weight: 800; cursor: pointer;
             box-shadow: 0 5px 20px rgba(220, 38, 38, 0.3);
             transition: 0.4s; text-transform: uppercase; letter-spacing: 1px;
             font-family: 'Russo One', sans-serif;
+            animation: shimmer 3s infinite linear;
         }
+        @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
         .btn-pay:hover { background-position: right center; }
         .btn-pay:active { transform: scale(0.98); }
         .btn-pay:disabled {
-            background: #334155; color: #64748b; box-shadow: none; cursor: not-allowed;
+            background: #334155; color: #64748b; box-shadow: none; cursor: not-allowed; animation: none;
         }
+
+        /* Banner Toko Tutup */
+        .store-closed-banner {
+            background: rgba(239, 68, 68, 0.15); border: 1px dashed #ef4444; color: #f87171;
+            padding: 15px; border-radius: 12px; text-align: center; font-weight: 600;
+            margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
+        }
+        .store-closed-banner i { font-size: 1.5rem; margin-bottom: 8px; }
 
     </style>
 </head>
@@ -226,18 +232,18 @@
     <div class="mobile-container">
         
         <header class="game-header">
-            <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="../../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <div class="header-title">FREE FIRE</div>
             <div style="width: 24px;"></div>
         </header>
 
         <div class="banner-section">
-            <img src="../assets/images/ff-banner.jpg" class="banner-img" alt="Free Fire Banner" onerror="this.src='https://placehold.co/600x300/2b0808/fbbf24?text=Free+Fire';">
+            <img src="../../assets/images/ff-banner.jpg" class="banner-img" alt="Free Fire Banner" onerror="this.src='https://placehold.co/600x300/2b0808/fbbf24?text=Free+Fire';">
             <div class="banner-overlay"></div>
         </div>
 
         <div class="form-area">
-            <div class="input-card">
+            <div id="closedBannerContainer"></div> <div class="input-card">
                 <div class="input-label"><i class="fa-solid fa-id-badge"></i> Player ID</div>
                 <div class="input-wrapper">
                     <span class="input-hint">ID Pemain</span>
@@ -248,144 +254,23 @@
 
         <div class="grid-area">
             
-            <div class="section-label">Membership</div>
-            <div class="ff-grid">
-                <div class="ff-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="ff-amount">Weekly Membership</span>
-                        <div class="ff-price-row">
-                            <img src="../assets/icons/freefire/membership.png" class="ff-icon-img" alt="M" onerror="this.style.display='none'">
-                            <span class="ff-price">Rp 28.000</span>
-                        </div>
+            <div id="membershipSection" style="display:none;">
+                <div class="section-label">Membership</div>
+                <div class="ff-grid" id="membershipContainer">
                     </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> BOOYAH</div>
-                    </div>
-                </div>
-                <div class="ff-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="ff-amount">Monthly Membership</span>
-                        <div class="ff-price-row">
-                            <img src="../assets/icons/freefire/membership.png" class="ff-icon-img" alt="M" onerror="this.style.display='none'">
-                            <span class="ff-price">Rp 85.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> BOOYAH</div>
-                    </div>
-                </div>
             </div>
 
-            <div class="section-label">Top Up Diamonds</div>
-            <div class="ff-grid">
-                <div class="ff-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="ff-amount">5 Diamonds</span>
-                        <div class="ff-price-row">
-                            <img src="../assets/icons/freefire/diamond-icon.png" class="ff-icon-img" alt="DM">
-                            <span class="ff-price">Rp 1.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
+            <div id="diamondSection" style="margin-top:20px;">
+                <div class="section-label">Top Up Diamonds</div>
+                <div class="ff-grid" id="diamondContainer">
+                    <div style="grid-column: span 2; text-align: center; color: #94a3b8; padding: 20px;">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat Produk...
                     </div>
                 </div>
-
-                <div class="ff-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="ff-amount">12 Diamonds</span>
-                        <div class="ff-price-row">
-                            <img src="../assets/icons/freefire/diamond-icon.png" class="ff-icon-img" alt="DM">
-                            <span class="ff-price">Rp 2.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="ff-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="ff-amount">70 Diamonds</span>
-                        <div class="ff-price-row">
-                            <img src="../assets/icons/freefire/diamond-icon.png" class="ff-icon-img" alt="DM">
-                            <span class="ff-price">Rp 10.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="ff-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="ff-amount">140 Diamonds</span>
-                        <div class="ff-price-row">
-                            <img src="../assets/icons/freefire/diamond-icon.png" class="ff-icon-img" alt="DM">
-                            <span class="ff-price">Rp 20.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="ff-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="ff-amount">355 Diamonds</span>
-                        <div class="ff-price-row">
-                            <img src="../assets/icons/freefire/diamond-icon.png" class="ff-icon-img" alt="DM">
-                            <span class="ff-price">Rp 50.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="ff-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="ff-amount">720 Diamonds</span>
-                        <div class="ff-price-row">
-                            <img src="../assets/icons/freefire/diamond-icon.png" class="ff-icon-img" alt="DM">
-                            <span class="ff-price">Rp 100.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="ff-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="ff-amount">1450 Diamonds</span>
-                        <div class="ff-price-row">
-                            <img src="../assets/icons/freefire/diamond-icon.png" class="ff-icon-img" alt="DM">
-                            <span class="ff-price">Rp 200.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="ff-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="ff-amount">2180 Diamonds</span>
-                        <div class="ff-price-row">
-                            <img src="../assets/icons/freefire/diamond-icon.png" class="ff-icon-img" alt="DM">
-                            <span class="ff-price">Rp 300.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                    </div>
-                </div>
-
             </div>
 
             <div class="pay-bar">
-                <button class="btn-pay" id="btnPay" disabled onclick="window.location.href='../payment.html'">
+                <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                     BOOYAH! <i class="fa-solid fa-fire"></i>
                 </button>
             </div>
@@ -401,22 +286,152 @@
     </nav>
 
     <script>
-        function selectItem(el) {
+        const API_URL = '/api';
+        const TARGET_CATEGORY = 'Free Fire'; // Kategori di DB Admin
+        let selectedProduct = null;
+        let globalMargin = 0;
+        let isStoreOpen = true;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+        });
+
+        // 1. Fetch Data (Margin + Produk)
+        async function loadData() {
+            const membershipContainer = document.getElementById('membershipContainer');
+            const diamondContainer = document.getElementById('diamondContainer');
+            const membershipSection = document.getElementById('membershipSection');
+            const bannerContainer = document.getElementById('closedBannerContainer');
+            const btnPay = document.getElementById('btnPay');
+
+            try {
+                // A. Cek Status Toko & Margin
+                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                globalMargin = parseInt(config.margin) || 0;
+                isStoreOpen = config.isOpen;
+
+                // B. JIKA TOKO TUTUP
+                if (!isStoreOpen) {
+                    bannerContainer.innerHTML = `
+                        <div class="store-closed-banner">
+                            <i class="fa-solid fa-shop-lock"></i>
+                            MAAF, TOKO SEDANG TUTUP
+                        </div>
+                    `;
+                    document.getElementById('playerId').disabled = true;
+                    btnPay.disabled = true;
+                    btnPay.innerText = "Toko Tutup";
+                    btnPay.style.background = "#334155";
+                    btnPay.style.cursor = "not-allowed";
+                    btnPay.style.color = "#64748b";
+                    
+                    diamondContainer.innerHTML = ''; 
+                    return; 
+                }
+
+                // C. Ambil Produk
+                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                const products = await res.json();
+
+                // Clear Loading
+                membershipContainer.innerHTML = '';
+                diamondContainer.innerHTML = '';
+
+                if (products.length === 0) {
+                    diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
+                    return;
+                }
+
+                // D. Filter & Render
+                let hasMembership = false;
+
+                products.forEach(p => {
+                    const finalPrice = p.price + globalMargin;
+                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
+                    
+                    // Deteksi Jenis Produk
+                    const lowerName = p.name.toLowerCase();
+                    const isMembership = lowerName.includes('member') || lowerName.includes('weekly') || lowerName.includes('monthly');
+                    
+                    // Tentukan Icon & Container
+                    let iconImg = '../../assets/icons/freefire/diamond-icon.png';
+                    let targetContainer = diamondContainer;
+
+                    if (isMembership) {
+                        hasMembership = true;
+                        targetContainer = membershipContainer;
+                        iconImg = '../../assets/icons/mobile-legend/wdp-icon.png'; // Bisa pakai icon membership universal
+                    }
+
+                    const div = document.createElement('div');
+                    div.className = 'ff-card';
+                    div.onclick = () => selectItem(div, p, finalPrice);
+                    
+                    div.innerHTML = `
+                        <div class="card-body">
+                            <span class="ff-amount">${p.name}</span>
+                            <div class="ff-price-row">
+                                <img src="${iconImg}" class="ff-icon-img" alt="Icon" onerror="this.src='../../assets/icons/freefire/diamond-icon.png'">
+                                <span class="ff-price">Rp ${priceFormatted}</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="instant-badge"><i class="fa-solid fa-bolt"></i> BOOYAH</div>
+                        </div>
+                    `;
+                    targetContainer.appendChild(div);
+                });
+
+                // Tampilkan Section Membership jika ada isinya
+                if (hasMembership) {
+                    membershipSection.style.display = 'block';
+                }
+
+            } catch (error) {
+                console.error(error);
+                diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+            }
+        }
+
+        // 2. Logic Pilih Produk
+        function selectItem(el, productData, priceWithMargin) {
+            if(!isStoreOpen) return;
+
             document.querySelectorAll('.ff-card').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
+            
+            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
             checkForm();
         }
 
         function checkForm() {
             const player = document.getElementById('playerId').value;
-            const selected = document.querySelector('.ff-card.selected');
             const btn = document.getElementById('btnPay');
 
-            if (player.length > 5 && selected) {
+            if(!isStoreOpen) return;
+
+            if (player.length > 5 && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
             }
+        }
+
+        // 3. Proses ke Halaman Payment
+        function goToPayment() {
+            if (!selectedProduct) return;
+            const player = document.getElementById('playerId').value;
+
+            const transactionData = {
+                productId: selectedProduct._id,
+                productName: selectedProduct.name,
+                productPrice: selectedProduct.finalPrice,
+                customerNumber: player, // Player ID
+                category: TARGET_CATEGORY
+            };
+
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+            window.location.href = '../../payment.html';
         }
     </script>
 </body>

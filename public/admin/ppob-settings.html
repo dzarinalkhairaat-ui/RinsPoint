@@ -14,7 +14,7 @@
     <script>checkAuth();</script>
 
     <style>
-        body { background-color: #0f172a; padding-bottom: 80px; }
+        body { background-color: #0f172a; padding-bottom: 80px; font-family: 'Poppins', sans-serif; color: #fff; }
         
         .dashboard-header {
             background: #1e293b; padding: 1rem; position: sticky; top: 0; z-index: 100;
@@ -44,6 +44,7 @@
         .input-dark {
             width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155;
             border-radius: 10px; color: white; outline: none; transition: 0.3s;
+            box-sizing: border-box; /* Agar padding tidak merusak lebar */
         }
         .input-dark:focus { border-color: #4ade80; }
 
@@ -56,25 +57,41 @@
         input:checked + .slider { background-color: #4ade80; }
         input:checked + .slider:before { transform: translateX(24px); }
 
+        /* Status Label */
+        .status-label { font-weight: bold; font-size: 0.9rem; }
+        .status-open { color: #4ade80; }
+        .status-closed { color: #ef4444; }
+
         /* Logo Grid */
         .logo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .logo-item { background: #0f172a; padding: 10px; border-radius: 10px; border: 1px solid #334155; text-align: center; }
         .logo-preview { width: 100%; height: 40px; object-fit: contain; margin-bottom: 5px; background: rgba(255,255,255,0.05); border-radius: 6px; }
         .btn-upload-mini {
             background: #334155; color: white; border: none; padding: 5px 10px;
-            border-radius: 6px; font-size: 0.7rem; cursor: pointer; width: 100%;
+            border-radius: 6px; font-size: 0.7rem; cursor: pointer; width: 100%; display: block;
         }
 
         .btn-save {
             width: 100%; background: #4ade80; color: #064e3b; padding: 14px;
             border: none; border-radius: 12px; font-weight: bold; font-size: 1rem;
-            cursor: pointer; box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3);
+            cursor: pointer; box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3); transition: 0.2s;
         }
+        .btn-save:active { transform: scale(0.98); }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; max-width: 480px;
+            background: #1e293b; border-top: 1px solid #334155;
+            display: flex; justify-content: space-around; padding: 15px 0; z-index: 90;
+        }
+        .nav-item { color: #64748b; text-decoration: none; text-align: center; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-item.active { color: #4ade80; }
+        .nav-item i { font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-    <div class="mobile-container">
+    <div class="mobile-container" style="max-width: 480px; margin: 0 auto;">
         
         <header class="dashboard-header">
             <a href="dashboard.html" style="color:white; font-size: 1.2rem;">
@@ -85,24 +102,27 @@
 
         <main class="dashboard-content" style="padding: 20px;">
             
-            <form id="ppobSettingsForm" enctype="multipart/form-data">
+            <form id="ppobSettingsForm">
                 
                 <div class="setting-card">
                     <div class="card-header">
-                        <i class="fa-solid fa-clock"></i>
-                        <h3>Jam Operasional</h3>
+                        <i class="fa-solid fa-store"></i>
+                        <h3>Status Toko</h3>
                     </div>
                     
                     <div class="form-group">
                         <div class="switch-wrapper">
-                            <span style="color: white; font-weight: 500;">Status Toko PPOB</span>
+                            <div>
+                                <span style="color: white; font-weight: 500; display: block;">Buka / Tutup Toko</span>
+                                <span id="statusText" class="status-label status-open">BUKA</span>
+                            </div>
                             <label class="switch">
-                                <input type="checkbox" id="ppobStatus">
+                                <input type="checkbox" id="ppobStatus" onchange="updateStatusText()">
                                 <span class="slider"></span>
                             </label>
                         </div>
                         <small style="color:#64748b; font-size:0.75rem; display:block; margin-top:5px;">
-                            Jika dimatikan, semua produk PPOB tidak bisa dibeli.
+                            Jika dimatikan, pelanggan tidak bisa melakukan transaksi (Toko Tutup).
                         </small>
                     </div>
 
@@ -126,7 +146,7 @@
                     <div class="form-group">
                         <label>Margin Global (Rupiah)</label>
                         <input type="number" id="ppobMargin" class="input-dark" placeholder="Contoh: 500">
-                        <small style="color:#64748b;">Keuntungan yang ditambahkan otomatis ke harga asli.</small>
+                        <small style="color:#64748b;">Nominal ini akan ditambahkan otomatis ke harga modal di halaman pelanggan.</small>
                     </div>
                 </div>
 
@@ -135,40 +155,18 @@
                         <i class="fa-solid fa-images"></i>
                         <h3>Logo Provider</h3>
                     </div>
-                    <p style="color:#94a3b8; font-size:0.8rem; margin-bottom:15px;">Upload logo (PNG/SVG) untuk mengganti logo default.</p>
+                    <p style="color:#94a3b8; font-size:0.8rem; margin-bottom:15px;">Fitur upload logo akan tersedia pada update backend berikutnya.</p>
                     
                     <div class="logo-grid">
                         <div class="logo-item">
-                            <img id="prev_telkomsel" src="" class="logo-preview" alt="Tsel">
-                            <label for="up_telkomsel" class="btn-upload-mini">Ubah Telkomsel</label>
-                            <input type="file" id="up_telkomsel" name="logo_telkomsel" accept="image/*" hidden onchange="previewLogo(this, 'prev_telkomsel')">
+                            <img src="../../assets/images/pulsa/picture/telkomsel-logo.jpeg" class="logo-preview" alt="Tsel">
+                            <span style="font-size:0.7rem; color:#cbd5e1;">Telkomsel</span>
                         </div>
                         <div class="logo-item">
-                            <img id="prev_indosat" src="" class="logo-preview" alt="Isat">
-                            <label for="up_indosat" class="btn-upload-mini">Ubah Indosat</label>
-                            <input type="file" id="up_indosat" name="logo_indosat" accept="image/*" hidden onchange="previewLogo(this, 'prev_indosat')">
+                            <img src="../../assets/images/pulsa/picture/indosat-logo.jpeg" class="logo-preview" alt="Isat">
+                            <span style="font-size:0.7rem; color:#cbd5e1;">Indosat</span>
                         </div>
-                        <div class="logo-item">
-                            <img id="prev_xl" src="" class="logo-preview" alt="XL">
-                            <label for="up_xl" class="btn-upload-mini">Ubah XL</label>
-                            <input type="file" id="up_xl" name="logo_xl" accept="image/*" hidden onchange="previewLogo(this, 'prev_xl')">
                         </div>
-                        <div class="logo-item">
-                            <img id="prev_axis" src="" class="logo-preview" alt="Axis">
-                            <label for="up_axis" class="btn-upload-mini">Ubah Axis</label>
-                            <input type="file" id="up_axis" name="logo_axis" accept="image/*" hidden onchange="previewLogo(this, 'prev_axis')">
-                        </div>
-                        <div class="logo-item">
-                            <img id="prev_tri" src="" class="logo-preview" alt="Tri">
-                            <label for="up_tri" class="btn-upload-mini">Ubah Tri</label>
-                            <input type="file" id="up_tri" name="logo_tri" accept="image/*" hidden onchange="previewLogo(this, 'prev_tri')">
-                        </div>
-                        <div class="logo-item">
-                            <img id="prev_smartfren" src="" class="logo-preview" alt="Smart">
-                            <label for="up_smartfren" class="btn-upload-mini">Ubah Smartfren</label>
-                            <input type="file" id="up_smartfren" name="logo_smartfren" accept="image/*" hidden onchange="previewLogo(this, 'prev_smartfren')">
-                        </div>
-                    </div>
                 </div>
 
                 <button type="submit" id="btnSave" class="btn-save">SIMPAN PENGATURAN</button>
@@ -177,106 +175,87 @@
         </main>
 
         <nav class="bottom-nav">
-            <a href="/"><i class="fa-solid fa-store"></i><span>Toko</span></a>
-            <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
-            <a href="#" class="active"><i class="fa-solid fa-sliders"></i><span>PPOB</span></a>
-            <a href="#" onclick="logout()"><i class="fa-solid fa-power-off"></i><span>LogOut</span></a>
+            <a href="/" class="nav-item"><i class="fa-solid fa-store"></i><span>Toko</span></a>
+            <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+            <a href="ppob-settings.html" class="nav-item active"><i class="fa-solid fa-sliders"></i><span>Setting</span></a>
+            <a href="#" onclick="logout()" class="nav-item"><i class="fa-solid fa-power-off"></i><span>LogOut</span></a>
         </nav>
 
     </div>
 
     <script>
-        const API_URL = '/api';
-        const token = localStorage.getItem('adminToken');
+        // --- LOGIC INTEGRASI LOCALSTORAGE ---
 
-        // 1. LOAD DATA SAAT BUKA
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const res = await fetch(`${API_URL}/settings`);
-                const data = await res.json();
+        // 1. Load Data Saat Halaman Dibuka
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ambil data dari localStorage, jika tidak ada pakai default
+            const config = JSON.parse(localStorage.getItem('ppobConfig')) || { 
+                isOpen: true, 
+                margin: 0,
+                openTime: "08:00",
+                closeTime: "22:00"
+            };
 
-                // Isi Form Jam Operasional
-                document.getElementById('ppobStatus').checked = data.ppobStatus !== false; // Default true
-                document.getElementById('openTime').value = data.ppobOpenTime || "06:00";
-                document.getElementById('closeTime').value = data.ppobCloseTime || "23:30";
-                
-                // Isi Margin
-                document.getElementById('ppobMargin').value = data.ppobMargin || 500;
+            // Isi Form dengan data
+            document.getElementById('ppobStatus').checked = config.isOpen;
+            document.getElementById('ppobMargin').value = config.margin;
+            document.getElementById('openTime').value = config.openTime;
+            document.getElementById('closeTime').value = config.closeTime;
 
-                // Isi Preview Logo (Jika ada di DB)
-                const logos = data.providerLogos || {};
-                if(logos.telkomsel) document.getElementById('prev_telkomsel').src = logos.telkomsel;
-                if(logos.indosat) document.getElementById('prev_indosat').src = logos.indosat;
-                if(logos.xl) document.getElementById('prev_xl').src = logos.xl;
-                if(logos.axis) document.getElementById('prev_axis').src = logos.axis;
-                if(logos.tri) document.getElementById('prev_tri').src = logos.tri;
-                if(logos.smartfren) document.getElementById('prev_smartfren').src = logos.smartfren;
-
-            } catch (error) {
-                console.error("Gagal load setting", error);
-            }
+            updateStatusText(); // Update label BUKA/TUTUP
         });
 
-        // 2. PREVIEW GAMBAR
-        window.previewLogo = function(input, imgId) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById(imgId).src = e.target.result;
-                }
-                reader.readAsDataURL(input.files[0]);
+        // 2. Fungsi Update Teks Status (Visual)
+        function updateStatusText() {
+            const isOpen = document.getElementById('ppobStatus').checked;
+            const label = document.getElementById('statusText');
+            
+            if(isOpen) {
+                label.innerText = "BUKA";
+                label.className = "status-label status-open";
+            } else {
+                label.innerText = "TUTUP";
+                label.className = "status-label status-closed";
             }
         }
 
-        // 3. SIMPAN PENGATURAN
-        document.getElementById('ppobSettingsForm').addEventListener('submit', async (e) => {
+        // 3. Simpan Data ke LocalStorage
+        document.getElementById('ppobSettingsForm').addEventListener('submit', (e) => {
             e.preventDefault();
+            
             const btn = document.getElementById('btnSave');
+            const originalText = btn.innerText;
             btn.innerText = 'Menyimpan...';
             btn.disabled = true;
 
-            try {
-                const formData = new FormData();
-                
-                // Masukkan Data Text
-                formData.append('ppobStatus', document.getElementById('ppobStatus').checked);
-                formData.append('ppobOpenTime', document.getElementById('openTime').value);
-                formData.append('ppobCloseTime', document.getElementById('closeTime').value);
-                formData.append('ppobMargin', document.getElementById('ppobMargin').value);
+            // Ambil value dari form
+            const isOpen = document.getElementById('ppobStatus').checked;
+            const margin = parseInt(document.getElementById('ppobMargin').value) || 0;
+            const openTime = document.getElementById('openTime').value;
+            const closeTime = document.getElementById('closeTime').value;
 
-                // Masukkan File Gambar (Jika ada yg diupload)
-                const fileInputs = document.querySelectorAll('input[type="file"]');
-                fileInputs.forEach(input => {
-                    if(input.files[0]) {
-                        formData.append(input.name, input.files[0]);
-                    }
-                });
+            // Buat object config
+            const config = {
+                isOpen: isOpen,
+                margin: margin,
+                openTime: openTime,
+                closeTime: closeTime
+            };
 
-                // Kirim ke Backend
-                const res = await fetch(`${API_URL}/settings`, { // Gunakan endpoint setting yg sudah ada
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    body: formData // Kirim sebagai FormData agar bisa upload gambar
-                });
+            // Simpan ke LocalStorage
+            localStorage.setItem('ppobConfig', JSON.stringify(config));
 
-                if (res.ok) {
-                    alert('Pengaturan PPOB Berhasil Disimpan!');
-                    window.location.reload();
-                } else {
-                    throw new Error('Gagal menyimpan');
-                }
-
-            } catch (error) {
-                console.error(error);
-                alert('Terjadi kesalahan saat menyimpan.');
-            } finally {
-                btn.innerText = 'SIMPAN PENGATURAN';
+            // Simulasi loading sebentar
+            setTimeout(() => {
+                alert('Pengaturan PPOB Berhasil Disimpan!');
+                btn.innerText = originalText;
                 btn.disabled = false;
-            }
+            }, 800);
         });
 
+        // 4. Logout
         function logout() {
-            if(confirm('Yakin ingin keluar?')) {
+            if(confirm('Yakin ingin keluar dari Admin?')) {
                 localStorage.removeItem('adminToken');
                 window.location.href = '/login.html';
             }

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Top Up Roblox</title>
     
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Kanit:wght@600;800&display=swap" rel="stylesheet">
     
@@ -208,6 +208,14 @@
             background: #374151; color: #6b7280; box-shadow: none; cursor: not-allowed;
         }
 
+        /* Banner Toko Tutup */
+        .store-closed-banner {
+            background: rgba(239, 68, 68, 0.15); border: 1px dashed #ef4444; color: #f87171;
+            padding: 15px; border-radius: 12px; text-align: center; font-weight: 600;
+            margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
+        }
+        .store-closed-banner i { font-size: 1.5rem; margin-bottom: 8px; }
+
     </style>
 </head>
 <body>
@@ -222,18 +230,18 @@
     <div class="mobile-container">
         
         <header class="game-header">
-            <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="../../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <div class="header-title">ROBLOX</div>
             <div style="width: 24px;"></div>
         </header>
 
         <div class="banner-section">
-            <img src="../assets/images/roblox-banner.jpg" class="banner-img" alt="Roblox Banner" onerror="this.src='https://placehold.co/600x300/1f2937/ef4444?text=ROBLOX';">
+            <img src="../../assets/images/roblox-banner.jpg" class="banner-img" alt="Roblox Banner" onerror="this.src='https://placehold.co/600x300/1f2937/ef4444?text=ROBLOX';">
             <div class="banner-overlay"></div>
         </div>
 
         <div class="form-area">
-            <div class="input-card">
+            <div id="closedBannerContainer"></div> <div class="input-card">
                 <div class="input-label"><i class="fa-solid fa-cube"></i> Roblox Username</div>
                 <div class="input-wrapper">
                     <span class="input-hint">Username / ID</span>
@@ -245,90 +253,14 @@
         <div class="grid-area">
             
             <div class="section-label">Top Up Robux</div>
-            <div class="rb-grid">
-                
-                <div class="rb-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="rb-amount">80 Robux</span>
-                        <div class="rb-price-row">
-                            <img src="../assets/icons/roblox/robux.png" class="rb-icon-img" alt="R$">
-                            <span class="rb-price">Rp 16.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-check"></i> INSTAN</div>
-                    </div>
+            <div class="rb-grid" id="nominalContainer">
+                <div style="grid-column: span 2; text-align: center; color: #9ca3af; padding: 20px;">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat Robux...
                 </div>
-
-                <div class="rb-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="rb-amount">400 Robux</span>
-                        <div class="rb-price-row">
-                            <img src="../assets/icons/roblox/robux.png" class="rb-icon-img" alt="R$">
-                            <span class="rb-price">Rp 80.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-check"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="rb-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="rb-amount">800 Robux</span>
-                        <div class="rb-price-row">
-                            <img src="../assets/icons/roblox/robux.png" class="rb-icon-img" alt="R$">
-                            <span class="rb-price">Rp 160.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-check"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="rb-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="rb-amount">1.700 Robux</span>
-                        <div class="rb-price-row">
-                            <img src="../assets/icons/roblox/robux.png" class="rb-icon-img" alt="R$">
-                            <span class="rb-price">Rp 340.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-check"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="rb-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="rb-amount">4.500 Robux</span>
-                        <div class="rb-price-row">
-                            <img src="../assets/icons/roblox/robux.png" class="rb-icon-img" alt="R$">
-                            <span class="rb-price">Rp 900.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-check"></i> INSTAN</div>
-                    </div>
-                </div>
-
-                <div class="rb-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="rb-amount">10.000 Robux</span>
-                        <div class="rb-price-row">
-                            <img src="../assets/icons/roblox/robux.png" class="rb-icon-img" alt="R$">
-                            <span class="rb-price">Rp 2.000.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-check"></i> INSTAN</div>
-                    </div>
-                </div>
-
             </div>
 
             <div class="pay-bar">
-                <button class="btn-pay" id="btnPay" disabled onclick="window.location.href='../payment.html'">
+                <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                     BUY ROBUX <i class="fa-solid fa-cart-shopping"></i>
                 </button>
             </div>
@@ -344,22 +276,127 @@
     </nav>
 
     <script>
-        function selectItem(el) {
+        const API_URL = '/api';
+        const TARGET_CATEGORY = 'Roblox'; // Kategori di DB Admin
+        let selectedProduct = null;
+        let globalMargin = 0;
+        let isStoreOpen = true;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+        });
+
+        // 1. Fetch Data
+        async function loadData() {
+            const container = document.getElementById('nominalContainer');
+            const bannerContainer = document.getElementById('closedBannerContainer');
+            const btnPay = document.getElementById('btnPay');
+
+            try {
+                // A. Cek Status Toko & Margin
+                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                globalMargin = parseInt(config.margin) || 0;
+                isStoreOpen = config.isOpen;
+
+                // B. JIKA TOKO TUTUP
+                if (!isStoreOpen) {
+                    bannerContainer.innerHTML = `
+                        <div class="store-closed-banner">
+                            <i class="fa-solid fa-shop-lock"></i>
+                            MAAF, TOKO SEDANG TUTUP
+                        </div>
+                    `;
+                    document.getElementById('playerId').disabled = true;
+                    btnPay.disabled = true;
+                    btnPay.innerText = "Toko Tutup";
+                    btnPay.style.background = "#374151";
+                    btnPay.style.cursor = "not-allowed";
+                    btnPay.style.color = "#6b7280";
+                    
+                    container.innerHTML = ''; 
+                    return; 
+                }
+
+                // C. Ambil Produk
+                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                const products = await res.json();
+
+                container.innerHTML = ''; // Hapus loading
+
+                if (products.length === 0) {
+                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
+                    return;
+                }
+
+                // D. Render Produk
+                products.forEach(p => {
+                    const finalPrice = p.price + globalMargin;
+                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
+                    
+                    const div = document.createElement('div');
+                    div.className = 'rb-card';
+                    div.onclick = () => selectItem(div, p, finalPrice);
+                    
+                    div.innerHTML = `
+                        <div class="card-body">
+                            <span class="rb-amount">${p.name}</span>
+                            <div class="rb-price-row">
+                                <img src="../../assets/icons/roblox/robux.png" class="rb-icon-img" alt="R$">
+                                <span class="rb-price">Rp ${priceFormatted}</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="instant-badge"><i class="fa-solid fa-check"></i> INSTAN</div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+            }
+        }
+
+        // 2. Logic Pilih Produk
+        function selectItem(el, productData, priceWithMargin) {
+            if(!isStoreOpen) return;
+
             document.querySelectorAll('.rb-card').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
+            
+            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
             checkForm();
         }
 
         function checkForm() {
             const player = document.getElementById('playerId').value;
-            const selected = document.querySelector('.rb-card.selected');
             const btn = document.getElementById('btnPay');
 
-            if (player.length > 2 && selected) {
+            if(!isStoreOpen) return;
+
+            if (player.length > 2 && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
             }
+        }
+
+        // 3. Proses ke Halaman Payment
+        function goToPayment() {
+            if (!selectedProduct) return;
+            const player = document.getElementById('playerId').value;
+
+            const transactionData = {
+                productId: selectedProduct._id,
+                productName: selectedProduct.name,
+                productPrice: selectedProduct.finalPrice,
+                customerNumber: player, // Username Roblox
+                category: TARGET_CATEGORY
+            };
+
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+            window.location.href = '../../payment.html';
         }
     </script>
 </body>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Top Up PUBG Mobile</title>
     
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Black+Ops+One&display=swap" rel="stylesheet">
     
@@ -106,7 +106,7 @@
         }
         .input-hint { font-size: 0.7rem; color: #a8a29e; position: absolute; top: -10px; left: 10px; background: #1c1917; padding: 0 5px; border-radius: 4px; }
 
-        /* --- GRID UC (ADAPTASI STRUKTUR MLBB) --- */
+        /* --- GRID UC (PREMIUM STYLE) --- */
         .grid-area { padding: 0 20px 120px 20px; }
         .section-label { 
             color: #e2e8f0; font-size: 0.9rem; margin-bottom: 15px; font-weight: 600; 
@@ -116,24 +116,23 @@
         
         .uc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         
-        /* CARD STYLE (Struktur sama persis dengan MLBB) */
+        /* CARD STYLE */
         .uc-card {
-            background: #292524; /* Stone 800 - Gelap Tactical */
+            background: #292524; /* Stone 800 */
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex; flex-direction: column; justify-content: space-between;
             overflow: hidden; position: relative;
             cursor: pointer; transition: 0.2s;
-            min-height: 125px; /* Sama dengan MLBB */
+            min-height: 125px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
         }
 
         .uc-card:hover { 
             transform: translateY(-4px); 
-            border-color: #f97316; /* Hover Orange */
+            border-color: #f97316; 
         }
 
-        /* Abstract Camo Pattern (Dekorasi) */
         .uc-card::before {
             content: ''; position: absolute;
             top: -20px; right: -20px; width: 80px; height: 80px;
@@ -147,7 +146,6 @@
             box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
         }
 
-        /* 1. Body Kartu (Judul & Harga) */
         .card-body { 
             padding: 15px 15px 10px 15px; 
             flex-grow: 1; 
@@ -155,11 +153,10 @@
             position: relative; z-index: 1;
         }
         
-        /* Judul: Tinggi dikunci (min-height) agar harga rata */
         .uc-amount { 
             font-size: 0.9rem; font-weight: 700; color: #f1f5f9; 
             line-height: 1.3; margin-bottom: auto; 
-            min-height: 2.6em; /* KUNCI RATA */
+            min-height: 2.6em; 
         }
         
         .uc-price-row { 
@@ -178,7 +175,6 @@
             text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* 2. Footer Kartu (Badge) */
         .card-footer {
             background: rgba(0, 0, 0, 0.4); 
             padding: 8px 15px;
@@ -206,13 +202,20 @@
             box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3);
             transition: 0.4s; text-transform: uppercase; letter-spacing: 2px;
             font-family: 'Black Ops One', cursive;
-            /* Clip path untuk bentuk tactical */
             clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
         }
         .btn-pay:active { transform: scale(0.98); }
         .btn-pay:disabled {
             background: #44403c; color: #78716c; box-shadow: none; cursor: not-allowed;
         }
+
+        /* Banner Toko Tutup */
+        .store-closed-banner {
+            background: rgba(249, 115, 22, 0.15); border: 1px dashed #f97316; color: #fb923c;
+            padding: 15px; border-radius: 12px; text-align: center; font-weight: 600;
+            margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
+        }
+        .store-closed-banner i { font-size: 1.5rem; margin-bottom: 8px; }
 
     </style>
 </head>
@@ -228,18 +231,18 @@
     <div class="mobile-container">
         
         <header class="game-header">
-            <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="../../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <div class="header-title">PUBG MOBILE</div>
             <div style="width: 24px;"></div>
         </header>
 
         <div class="banner-section">
-            <img src="../assets/images/pubg-banner.jpg" class="banner-img" alt="PUBG Banner" onerror="this.src='https://placehold.co/600x300/1c1917/fbbf24?text=PUBG+Mobile';">
+            <img src="../../assets/images/pubg-banner.jpg" class="banner-img" alt="PUBG Banner" onerror="this.src='https://placehold.co/600x300/1c1917/fbbf24?text=PUBG+Mobile';">
             <div class="banner-overlay"></div>
         </div>
 
         <div class="form-area">
-            <div class="input-card">
+            <div id="closedBannerContainer"></div> <div class="input-card">
                 <div class="input-label"><i class="fa-solid fa-crosshairs"></i> Player ID</div>
                 <div class="input-wrapper">
                     <span class="input-hint">ID Karakter</span>
@@ -251,90 +254,14 @@
         <div class="grid-area">
             
             <div class="section-label">Unknown Cash (UC)</div>
-            <div class="uc-grid">
-                
-                <div class="uc-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="uc-amount">60 UC</span>
-                        <div class="uc-price-row">
-                            <img src="../assets/icons/pubg/uc.png" class="uc-icon-img" alt="UC">
-                            <span class="uc-price">Rp 14.500</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> FAST</div>
-                    </div>
+            <div class="uc-grid" id="nominalContainer">
+                <div style="grid-column: span 2; text-align: center; color: #a8a29e; padding: 20px;">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat UC...
                 </div>
-
-                <div class="uc-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="uc-amount">300 + 25 UC</span>
-                        <div class="uc-price-row">
-                            <img src="../assets/icons/pubg/uc.png" class="uc-icon-img" alt="UC">
-                            <span class="uc-price">Rp 72.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> FAST</div>
-                    </div>
-                </div>
-
-                <div class="uc-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="uc-amount">600 + 60 UC</span>
-                        <div class="uc-price-row">
-                            <img src="../assets/icons/pubg/uc.png" class="uc-icon-img" alt="UC">
-                            <span class="uc-price">Rp 145.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> FAST</div>
-                    </div>
-                </div>
-
-                <div class="uc-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="uc-amount">1500 + 300 UC</span>
-                        <div class="uc-price-row">
-                            <img src="../assets/icons/pubg/uc.png" class="uc-icon-img" alt="UC">
-                            <span class="uc-price">Rp 360.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> FAST</div>
-                    </div>
-                </div>
-
-                <div class="uc-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="uc-amount">3000 + 850 UC</span>
-                        <div class="uc-price-row">
-                            <img src="../assets/icons/pubg/uc.png" class="uc-icon-img" alt="UC">
-                            <span class="uc-price">Rp 720.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> FAST</div>
-                    </div>
-                </div>
-
-                <div class="uc-card" onclick="selectItem(this)">
-                    <div class="card-body">
-                        <span class="uc-amount">6000 + 2100 UC</span>
-                        <div class="uc-price-row">
-                            <img src="../assets/icons/pubg/uc.png" class="uc-icon-img" alt="UC">
-                            <span class="uc-price">Rp 1.450.000</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> FAST</div>
-                    </div>
-                </div>
-
             </div>
 
             <div class="pay-bar">
-                <button class="btn-pay" id="btnPay" disabled onclick="window.location.href='../payment.html'">
+                <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                     BUY NOW <i class="fa-solid fa-crosshairs"></i>
                 </button>
             </div>
@@ -350,22 +277,127 @@
     </nav>
 
     <script>
-        function selectItem(el) {
+        const API_URL = '/api';
+        const TARGET_CATEGORY = 'PUBG'; // Kategori di DB Admin
+        let selectedProduct = null;
+        let globalMargin = 0;
+        let isStoreOpen = true;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+        });
+
+        // 1. Fetch Data
+        async function loadData() {
+            const container = document.getElementById('nominalContainer');
+            const bannerContainer = document.getElementById('closedBannerContainer');
+            const btnPay = document.getElementById('btnPay');
+
+            try {
+                // A. Cek Status Toko & Margin
+                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                globalMargin = parseInt(config.margin) || 0;
+                isStoreOpen = config.isOpen;
+
+                // B. JIKA TOKO TUTUP
+                if (!isStoreOpen) {
+                    bannerContainer.innerHTML = `
+                        <div class="store-closed-banner">
+                            <i class="fa-solid fa-shop-lock"></i>
+                            MAAF, TOKO SEDANG TUTUP
+                        </div>
+                    `;
+                    document.getElementById('playerId').disabled = true;
+                    btnPay.disabled = true;
+                    btnPay.innerText = "Toko Tutup";
+                    btnPay.style.background = "#44403c";
+                    btnPay.style.cursor = "not-allowed";
+                    btnPay.style.color = "#78716c";
+                    
+                    container.innerHTML = ''; 
+                    return; 
+                }
+
+                // C. Ambil Produk
+                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                const products = await res.json();
+
+                container.innerHTML = ''; // Hapus loading
+
+                if (products.length === 0) {
+                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
+                    return;
+                }
+
+                // D. Render Produk
+                products.forEach(p => {
+                    const finalPrice = p.price + globalMargin;
+                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
+                    
+                    const div = document.createElement('div');
+                    div.className = 'uc-card';
+                    div.onclick = () => selectItem(div, p, finalPrice);
+                    
+                    div.innerHTML = `
+                        <div class="card-body">
+                            <span class="uc-amount">${p.name}</span>
+                            <div class="uc-price-row">
+                                <img src="../../assets/icons/pubg/uc.png" class="uc-icon-img" alt="UC">
+                                <span class="uc-price">Rp ${priceFormatted}</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="instant-badge"><i class="fa-solid fa-bolt"></i> FAST</div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+            }
+        }
+
+        // 2. Logic Pilih Produk
+        function selectItem(el, productData, priceWithMargin) {
+            if(!isStoreOpen) return;
+
             document.querySelectorAll('.uc-card').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
+            
+            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
             checkForm();
         }
 
         function checkForm() {
             const player = document.getElementById('playerId').value;
-            const selected = document.querySelector('.uc-card.selected');
             const btn = document.getElementById('btnPay');
 
-            if (player.length > 5 && selected) {
+            if(!isStoreOpen) return;
+
+            if (player.length > 5 && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
             }
+        }
+
+        // 3. Proses ke Halaman Payment
+        function goToPayment() {
+            if (!selectedProduct) return;
+            const player = document.getElementById('playerId').value;
+
+            const transactionData = {
+                productId: selectedProduct._id,
+                productName: selectedProduct.name,
+                productPrice: selectedProduct.finalPrice,
+                customerNumber: player, // Player ID
+                category: TARGET_CATEGORY
+            };
+
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+            window.location.href = '../../payment.html';
         }
     </script>
 </body>

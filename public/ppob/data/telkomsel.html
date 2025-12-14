@@ -25,7 +25,6 @@
             display: flex; align-items: center; gap: 15px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        /* JUDUL MERAH */
         .ppob-header h2 { margin: 0; color: #f87171; font-size: 1.1rem; font-weight: 600; }
         .btn-back { color: #cbd5e1; font-size: 1.2rem; text-decoration: none; }
 
@@ -58,19 +57,17 @@
             margin-top: -70px; position: relative; z-index: 20; 
             margin-bottom: 20px; padding-left: 5px; 
         }
-        /* LOGO BORDER MERAH */
         .profile-logo {
             width: 110px; height: 110px; border-radius: 18px;
             box-shadow: 5px 8px 15px rgba(0,0,0,0.6); flex-shrink: 0;
             transform: rotate(-8deg); 
-            border: 4px solid #1e293b; /* Border luar tetap gelap */
+            border: 4px solid #1e293b; 
             position: relative; z-index: 21; overflow: hidden;
         }
         .profile-logo img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 14px; }
         
         .profile-info { padding-bottom: 12px; position: relative; z-index: 21; }
         .profile-info h1 { margin: 0; font-size: 1.3rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
-        /* SUBTITLE MERAH */
         .profile-info p { margin: 5px 0 0 0; font-size: 0.8rem; color: #f87171; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
         
         .features-bar {
@@ -80,10 +77,9 @@
             margin: 0; 
         }
         .feature-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: #e2e8f0; position: relative; z-index: 1; font-weight: 500; }
-        /* ICON FITUR MERAH */
         .feature-item i { color: #f87171; font-size: 0.9rem; }
 
-        /* --- TAB MENU (TEMA MERAH) --- */
+        /* --- TAB MENU --- */
         .tab-container {
             display: flex; justify-content: center; gap: 20px;
             background: #1e293b; padding: 0 20px; 
@@ -96,7 +92,6 @@
             font-size: 0.95rem; font-weight: 600; cursor: pointer;
             position: relative; transition: 0.3s;
         }
-        /* GARIS BAWAH MERAH */
         .tab-btn::after {
             content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 3px;
             background: #ef4444; transition: width 0.3s; border-radius: 3px 3px 0 0;
@@ -120,7 +115,6 @@
             display: flex; align-items: center; gap: 10px;
             font-weight: 600; font-size: 0.95rem; color: #fff;
         }
-        /* NOMOR LANGKAH MERAH */
         .step-num {
             background: #ef4444; color: #fff; width: 24px; height: 24px;
             border-radius: 6px; display: flex; align-items: center; justify-content: center;
@@ -133,7 +127,6 @@
             display: flex; align-items: center; justify-content: space-between;
             transition: border-color 0.3s;
         }
-        /* FOCUS MERAH */
         .input-box-wrapper:focus-within { border-color: #ef4444; }
         .phone-input {
             width: 100%; background: transparent; border: none; outline: none;
@@ -142,23 +135,19 @@
         .phone-input::placeholder { color: #64748b; font-weight: 400; letter-spacing: 0; }
         .info-text { font-size: 0.75rem; color: #94a3b8; margin-top: 8px; font-style: italic; }
 
-        /* Grid Nominal */
         .nominal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .product-item {
             background: #253346; padding: 12px; border-radius: 10px;
             border: 1px solid transparent; cursor: pointer; transition: 0.2s;
             position: relative; overflow: hidden;
         }
-        /* SELECTED MERAH */
         .product-item:hover, .product-item.selected {
-            border-color: #ef4444; background: #450a0a; /* Merah Sangat Gelap */
+            border-color: #ef4444; background: #450a0a;
         }
         .prod-name { font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 5px; }
-        /* HARGA MERAH */
         .prod-price { font-size: 0.95rem; font-weight: 700; color: #f87171; display: flex; align-items: center; gap: 5px; }
         
         .btn-pay-container { margin-top: 25px; }
-        /* TOMBOL GRADASI MERAH */
         .btn-pay {
             width: 100%; background: linear-gradient(to right, #ef4444, #b91c1c);
             color: white; padding: 15px; border: none; border-radius: 12px;
@@ -175,7 +164,6 @@
             background: #1e293b; padding: 20px; border-radius: 12px;
             border: 1px solid #334155; color: #cbd5e1; font-size: 0.9rem; line-height: 1.6;
         }
-        /* Style Keterangan Merah */
         .info-section { margin-bottom: 20px; }
         .info-label { font-size: 0.9rem; color: #f87171; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
@@ -201,6 +189,20 @@
             color: #fca5a5; font-size: 0.8rem; line-height: 1.5;
             display: flex; gap: 10px; align-items: flex-start;
         }
+
+        /* Banner Toko Tutup */
+        .store-closed-banner {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px dashed #ef4444;
+            color: #f87171;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 20px;
+            grid-column: span 2;
+        }
+        .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; display: block; }
 
     </style>
 </head>
@@ -259,14 +261,14 @@
                         <div class="step-body">
                             <div class="nominal-grid" id="nominalContainer">
                                 <div style="grid-column: span 2; text-align:center; padding: 20px; color:#64748b; font-size:0.85rem; border: 1px dashed #334155; border-radius: 10px;">
-                                    Masukkan nomor HP diatas untuk melihat paket.
+                                    <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat paket data...
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="btn-pay-container">
-                        <button class="btn-pay" id="btnPay" disabled onclick="window.location.href='../../payment.html'">
+                        <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                             Beli Sekarang <i class="fa-solid fa-arrow-right"></i>
                         </button>
                     </div>
@@ -328,7 +330,15 @@
     </div>
 
     <script>
+        const API_URL = '/api';
+        const TARGET_CATEGORY = 'Data Telkomsel'; 
         let selectedProduct = null;
+        let globalMargin = 0;
+        let isStoreOpen = true;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+        });
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -342,47 +352,99 @@
             }
         }
 
+        async function loadData() {
+            const container = document.getElementById('nominalContainer');
+            const btnPay = document.getElementById('btnPay');
+            
+            try {
+                // 1. CEK STATUS TOKO & MARGIN DARI LOCALSTORAGE
+                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                globalMargin = parseInt(config.margin) || 0;
+                isStoreOpen = config.isOpen;
+
+                // 2. JIKA TOKO TUTUP
+                if (!isStoreOpen) {
+                    container.innerHTML = `
+                        <div class="store-closed-banner">
+                            <i class="fa-solid fa-shop-lock"></i>
+                            MAAF, TOKO SEDANG TUTUP
+                        </div>
+                    `;
+                    document.getElementById('phoneNumber').disabled = true;
+                    btnPay.disabled = true;
+                    btnPay.innerText = "Toko Tutup";
+                    btnPay.style.background = "#334155";
+                    btnPay.style.cursor = "not-allowed";
+                    return; // Stop loading produk
+                }
+
+                // 3. LOAD DATA PRODUK
+                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                const products = await res.json();
+
+                container.innerHTML = ''; 
+
+                if (products.length === 0) {
+                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Paket Sedang Kosong</div>`;
+                    return;
+                }
+
+                products.forEach(p => {
+                    const finalPrice = p.price + globalMargin;
+                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
+                    
+                    const div = document.createElement('div');
+                    div.className = 'product-item';
+                    
+                    div.onclick = () => selectProduct(div, p, finalPrice);
+                    
+                    div.innerHTML = `
+                        <div class="prod-name">${p.name}</div>
+                        <div class="prod-price"><i class="fa-solid fa-tag"></i> Rp ${priceFormatted}</div>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+            }
+        }
+
+        function selectProduct(el, productData, priceWithMargin) {
+            if(!isStoreOpen) return;
+
+            document.querySelectorAll('.product-item').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+            
+            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
+            checkValidation();
+        }
+
         function checkValidation() {
             const phone = document.getElementById('phoneNumber').value;
             const btn = document.getElementById('btnPay');
-            if (phone.length > 9 && selectedProduct !== null) {
+            if (phone.length > 9 && selectedProduct !== null && isStoreOpen) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
             }
-            if(phone.length > 3) renderDummyProducts();
         }
 
-        let isProductsLoaded = false;
-        function renderDummyProducts() {
-            if(isProductsLoaded) return;
-            isProductsLoaded = true;
-            const container = document.getElementById('nominalContainer');
-            const products = [
-                { name: '1.5 GB + 1GB OMG', price: 'Rp 15.000' },
-                { name: '3 GB + 2GB OMG', price: 'Rp 27.000' },
-                { name: '8 GB + 2GB OMG', price: 'Rp 45.000' },
-                { name: '15 GB Combo', price: 'Rp 75.000' },
-                { name: '25 GB Disney+', price: 'Rp 105.000' },
-                { name: '50 GB Sultan', price: 'Rp 150.000' }
-            ];
+        function goToPayment() {
+            if (!selectedProduct) return;
+            const phone = document.getElementById('phoneNumber').value;
 
-            let html = '';
-            products.forEach(p => {
-                html += `
-                <div class="product-item" onclick="selectProduct(this, '${p.name}')">
-                    <div class="prod-name">${p.name}</div>
-                    <div class="prod-price"><i class="fa-solid fa-tag"></i> ${p.price}</div>
-                </div>`;
-            });
-            container.innerHTML = html;
-        }
+            const transactionData = {
+                productId: selectedProduct._id,
+                productName: selectedProduct.name,
+                productPrice: selectedProduct.finalPrice, 
+                customerNumber: phone,
+                category: TARGET_CATEGORY
+            };
 
-        function selectProduct(el, name) {
-            document.querySelectorAll('.product-item').forEach(item => item.classList.remove('selected'));
-            el.classList.add('selected');
-            selectedProduct = name;
-            checkValidation();
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+            window.location.href = '../../payment.html';
         }
     </script>
 </body>

@@ -160,8 +160,13 @@
             background: #1e293b; color: #64748b; box-shadow: none; cursor: not-allowed;
         }
 
-        /* --- MODAL KONFIRMASI (Optional Simpel) --- */
-        .loading-text { font-size: 0.8rem; color: #a78bfa; text-align: center; margin-top: 10px; display: none; }
+        /* Banner Toko Tutup */
+        .store-closed-banner {
+            background: rgba(124, 58, 237, 0.15); border: 1px dashed #a78bfa; color: #a78bfa;
+            padding: 20px; border-radius: 12px; text-align: center; font-weight: 600;
+            margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
+        }
+        .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; display: block; }
 
     </style>
 </head>
@@ -194,7 +199,7 @@
         </div>
 
         <div class="input-container">
-            <div class="section-title">Nomor OVO Tujuan</div>
+            <div id="closedBannerContainer"></div> <div class="section-title">Nomor OVO Tujuan</div>
             <div class="input-box">
                 <span class="country-code">+62</span>
                 <input type="tel" class="phone-input" placeholder="8xx-xxxx-xxxx" id="ovoNumber" oninput="validateForm()">
@@ -204,43 +209,14 @@
 
         <div class="grid-container">
             <div class="section-title">Pilih Nominal Top Up</div>
-            <div class="grid-wrapper">
-                <div class="grid-item" onclick="selectItem(this, '20.000', 'Rp 21.500')">
-                    <span class="amount">20.000</span>
-                    <span class="price">Rp 21.500</span>
-                </div>
-                <div class="grid-item" onclick="selectItem(this, '25.000', 'Rp 26.500')">
-                    <span class="amount">25.000</span>
-                    <span class="price">Rp 26.500</span>
-                </div>
-                <div class="grid-item" onclick="selectItem(this, '50.000', 'Rp 51.500')">
-                    <span class="amount">50.000</span>
-                    <span class="price">Rp 51.500</span>
-                </div>
-                <div class="grid-item" onclick="selectItem(this, '100.000', 'Rp 101.500')">
-                    <span class="amount">100.000</span>
-                    <span class="price">Rp 101.500</span>
-                </div>
-                <div class="grid-item" onclick="selectItem(this, '200.000', 'Rp 201.500')">
-                    <span class="amount">200.000</span>
-                    <span class="price">Rp 201.500</span>
-                </div>
-                <div class="grid-item" onclick="selectItem(this, '500.000', 'Rp 501.500')">
-                    <span class="amount">500.000</span>
-                    <span class="price">Rp 501.500</span>
-                </div>
-                <div class="grid-item" onclick="selectItem(this, '1.000.000', 'Rp 1.001.500')">
-                    <span class="amount">1 Juta</span>
-                    <span class="price">Rp 1.001.500</span>
-                </div>
-                <div class="grid-item" onclick="selectItem(this, '2.000.000', 'Rp 2.001.500')">
-                    <span class="amount">2 Juta</span>
-                    <span class="price">Rp 2.001.500</span>
+            <div class="grid-wrapper" id="nominalContainer">
+                <div style="grid-column: span 2; text-align: center; padding: 20px; color: #a78bfa;">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat produk...
                 </div>
             </div>
 
             <div class="btn-area">
-                <button class="btn-pay" id="btnPay" disabled onclick="window.location.href='../payment.html'">
+                <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                     Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
@@ -256,25 +232,120 @@
     </nav>
 
     <script>
-        function selectItem(el, nominal, price) {
-            // Reset selection
+        const API_URL = '/api';
+        const TARGET_CATEGORY = 'Ovo'; // Kategori Database
+        let selectedProduct = null;
+        let globalMargin = 0;
+        let isStoreOpen = true;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadData();
+        });
+
+        async function loadData() {
+            const container = document.getElementById('nominalContainer');
+            const bannerContainer = document.getElementById('closedBannerContainer');
+            const btnPay = document.getElementById('btnPay');
+
+            try {
+                // 1. CEK STATUS TOKO & MARGIN
+                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                globalMargin = parseInt(config.margin) || 0;
+                isStoreOpen = config.isOpen;
+
+                // 2. JIKA TOKO TUTUP
+                if (!isStoreOpen) {
+                    bannerContainer.innerHTML = `
+                        <div class="store-closed-banner">
+                            <i class="fa-solid fa-shop-lock"></i>
+                            MAAF, TOKO SEDANG TUTUP
+                        </div>
+                    `;
+                    document.getElementById('ovoNumber').disabled = true;
+                    btnPay.disabled = true;
+                    btnPay.innerText = "Toko Tutup";
+                    btnPay.style.background = "#1e293b"; 
+                    btnPay.style.cursor = "not-allowed";
+                    btnPay.style.color = "#64748b";
+                    
+                    container.innerHTML = ''; 
+                    return; 
+                }
+
+                // 3. LOAD PRODUK DARI DATABASE
+                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                const products = await res.json();
+
+                container.innerHTML = ''; 
+
+                if (products.length === 0) {
+                    container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #a78bfa;">Produk Kosong</div>`;
+                    return;
+                }
+
+                // 4. RENDER PRODUK
+                products.forEach(p => {
+                    const finalPrice = p.price + globalMargin;
+                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
+                    
+                    // Ambil angka dari nama produk (Misal "Ovo 20000" -> "20000")
+                    const nominalText = p.name.replace(/[^0-9]/g, ''); 
+                    
+                    const div = document.createElement('div');
+                    div.className = 'grid-item';
+                    div.onclick = () => selectItem(div, p, finalPrice);
+                    
+                    // TAMPILKAN NAMA PRODUK APA ADANYA (p.name)
+                    div.innerHTML = `
+                        <span class="amount">${p.name}</span>
+                        <span class="price">Rp ${priceFormatted}</span>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #a78bfa;">Gagal memuat data.</div>`;
+            }
+        }
+
+        function selectItem(el, productData, finalPrice) {
+            if(!isStoreOpen) return;
+
             document.querySelectorAll('.grid-item').forEach(item => item.classList.remove('selected'));
-            // Set active
             el.classList.add('selected');
+            
+            selectedProduct = { ...productData, finalPrice: finalPrice };
             validateForm();
         }
 
         function validateForm() {
             const phone = document.getElementById('ovoNumber').value;
-            const selected = document.querySelector('.grid-item.selected');
             const btn = document.getElementById('btnPay');
 
-            // Syarat: Nomor > 9 digit & Ada nominal dipilih
-            if (phone.length > 9 && selected) {
+            if(!isStoreOpen) return;
+
+            if (phone.length > 9 && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
             }
+        }
+
+        function goToPayment() {
+            if (!selectedProduct) return;
+            const phone = document.getElementById('ovoNumber').value;
+
+            const transactionData = {
+                productId: selectedProduct._id,
+                productName: selectedProduct.name,
+                productPrice: selectedProduct.finalPrice, 
+                customerNumber: phone,
+                category: TARGET_CATEGORY
+            };
+
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+            window.location.href = '../payment.html';
         }
     </script>
 </body>

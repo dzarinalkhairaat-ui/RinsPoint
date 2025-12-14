@@ -147,8 +147,16 @@
         }
         .btn-pay:active { transform: scale(0.98); }
         .btn-pay:disabled {
-            background: #3c4043; color: #5f6368; box-shadow: none; cursor: not-allowed;
+            background: #3c4043; color: #5f6368; box-shadow: none; cursor: not-allowed; opacity: 0.7;
         }
+
+        /* Banner Toko Tutup */
+        .store-closed-banner {
+            background: rgba(234, 67, 53, 0.15); border: 1px dashed #EA4335; color: #EA4335;
+            padding: 20px; border-radius: 12px; text-align: center; font-weight: 600;
+            margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
+        }
+        .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; display: block; }
 
     </style>
 </head>
@@ -182,7 +190,7 @@
         </div>
 
         <div class="form-area">
-            <div class="input-label"><i class="fa-solid fa-mobile-screen"></i> Nomor Penerima Kode</div>
+            <div id="closedBannerContainer"></div> <div class="input-label"><i class="fa-solid fa-mobile-screen"></i> Nomor Penerima Kode</div>
             <div class="input-wrap">
                 <input type="tel" class="play-input" placeholder="08xxxxxxxxxx" id="phoneNumber" oninput="validateInput()">
                 <i class="fa-solid fa-address-book" style="color: #5f6368; cursor: pointer;"></i>
@@ -192,43 +200,14 @@
 
         <div class="grid-area">
             <div class="input-label" style="margin-bottom: 15px; color:#e8eaed;">Pilih Nominal Voucher</div>
-            <div class="grid-box">
-                <div class="grid-item" onclick="selectCard(this)">
-                    <span class="code-val">IDR 5.000</span>
-                    <span class="code-price">Rp 6.500</span>
-                </div>
-                <div class="grid-item" onclick="selectCard(this)">
-                    <span class="code-val">IDR 10.000</span>
-                    <span class="code-price">Rp 11.500</span>
-                </div>
-                <div class="grid-item" onclick="selectCard(this)">
-                    <span class="code-val">IDR 20.000</span>
-                    <span class="code-price">Rp 21.500</span>
-                </div>
-                <div class="grid-item" onclick="selectCard(this)">
-                    <span class="code-val">IDR 50.000</span>
-                    <span class="code-price">Rp 51.500</span>
-                </div>
-                <div class="grid-item" onclick="selectCard(this)">
-                    <span class="code-val">IDR 100.000</span>
-                    <span class="code-price">Rp 101.500</span>
-                </div>
-                <div class="grid-item" onclick="selectCard(this)">
-                    <span class="code-val">IDR 150.000</span>
-                    <span class="code-price">Rp 151.500</span>
-                </div>
-                <div class="grid-item" onclick="selectCard(this)">
-                    <span class="code-val">IDR 300.000</span>
-                    <span class="code-price">Rp 301.500</span>
-                </div>
-                <div class="grid-item" onclick="selectCard(this)">
-                    <span class="code-val">IDR 500.000</span>
-                    <span class="code-price">Rp 501.500</span>
+            <div class="grid-box" id="nominalContainer">
+                <div style="grid-column: span 2; text-align: center; color: #9aa0a6;">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat...
                 </div>
             </div>
 
             <div class="btn-container">
-                <button class="btn-pay" id="btnPay" disabled onclick="window.location.href='../payment.html'">
+                <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                     Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
@@ -244,22 +223,123 @@
     </nav>
 
     <script>
-        function selectCard(el) {
+        const API_URL = '/api';
+        const TARGET_CATEGORY = 'GooglePlay'; // Pastikan di Admin kategori produknya "GooglePlay"
+        let selectedProduct = null;
+        let globalMargin = 0;
+        let isStoreOpen = true;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadData();
+        });
+
+        // 1. Fetch Data dari Database Admin (Dengan Margin)
+        async function loadData() {
+            const container = document.getElementById('nominalContainer');
+            const bannerContainer = document.getElementById('closedBannerContainer');
+            const btnPay = document.getElementById('btnPay');
+
+            try {
+                // A. Cek Status Toko & Margin
+                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                globalMargin = parseInt(config.margin) || 0;
+                isStoreOpen = config.isOpen;
+
+                // B. Jika Toko Tutup, Blokir Tampilan
+                if (!isStoreOpen) {
+                    bannerContainer.innerHTML = `
+                        <div class="store-closed-banner">
+                            <i class="fa-solid fa-shop-lock"></i>
+                            MAAF, TOKO SEDANG TUTUP
+                        </div>
+                    `;
+                    document.getElementById('phoneNumber').disabled = true;
+                    btnPay.disabled = true;
+                    btnPay.innerText = "Toko Tutup";
+                    btnPay.style.background = "#3c4043";
+                    btnPay.style.cursor = "not-allowed";
+                    btnPay.style.opacity = "0.7";
+                    
+                    container.innerHTML = ''; 
+                    return; 
+                }
+
+                // C. Load Produk
+                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                const products = await res.json();
+
+                container.innerHTML = ''; // Hapus loading
+
+                if (products.length === 0) {
+                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Voucher Kosong</div>`;
+                    return;
+                }
+
+                // D. Render Produk dengan Harga + Margin
+                products.forEach(p => {
+                    const finalPrice = p.price + globalMargin;
+                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
+                    
+                    const div = document.createElement('div');
+                    div.className = 'grid-item';
+                    div.onclick = () => selectCard(div, p, finalPrice);
+                    
+                    // TAMPILKAN NAMA PRODUK APA ADANYA
+                    div.innerHTML = `
+                        <span class="code-val">${p.name}</span>
+                        <span class="code-price">Rp ${priceFormatted}</span>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+            }
+        }
+
+        // 2. Logic Pilih Produk
+        function selectCard(el, productData, priceWithMargin) {
+            if(!isStoreOpen) return;
+
             document.querySelectorAll('.grid-item').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
+            
+            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
             validateInput();
         }
 
         function validateInput() {
             const phone = document.getElementById('phoneNumber').value;
-            const selected = document.querySelector('.grid-item.selected');
             const btn = document.getElementById('btnPay');
 
-            if (phone.length > 9 && selected) {
+            if(!isStoreOpen) return;
+
+            if (phone.length > 9 && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
             }
+        }
+
+        // 3. Proses ke Halaman Payment
+        function goToPayment() {
+            if (!selectedProduct) return;
+            const phone = document.getElementById('phoneNumber').value;
+
+            // Simpan data transaksi ke LocalStorage
+            const transactionData = {
+                productId: selectedProduct._id,
+                productName: selectedProduct.name,
+                productPrice: selectedProduct.finalPrice, // Pakai harga margin
+                customerNumber: phone,
+                category: TARGET_CATEGORY
+            };
+
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+            
+            // Redirect ke halaman checkout
+            window.location.href = '../payment.html';
         }
     </script>
 </body>

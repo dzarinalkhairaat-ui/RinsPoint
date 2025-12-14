@@ -1,4 +1,4 @@
-// PATH: Mundur 2 langkah ke root folder models
+// PATH: Mundur 2 langkah ke root folder models (sesuai struktur folder bapak)
 const Product = require('../../models/Product');
 const mongoose = require('mongoose');
 
@@ -10,41 +10,42 @@ const createSlug = (text) => {
         .replace(/-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
 };
 
-// @desc    Ambil produk (Logic Filter Platform & Subkategori Diperbaiki)
+// @desc    Ambil produk (Support Filter Kategori String untuk PPOB)
 // @route   GET /api/products
 const getProducts = async (req, res) => {
     try {
         let query = {};
         
-        // 1. FILTER PLATFORM (PPOB vs Affiliate)
-        // Jika ada request khusus ?platform=PPOB, tampilkan PPOB.
-        // Jika tidak, defaultnya sembunyikan PPOB (Tampilkan Affiliate saja).
+        // 1. FILTER PLATFORM
+        // Jika param ?platform=PPOB ada, tampilkan PPOB. Jika tidak, tampilkan Affiliate.
         if (req.query.platform) {
             query.platform = req.query.platform;
         } else {
             query.platform = { $ne: 'PPOB' }; 
         }
 
-        // 2. FILTER KATEGORI
-        // Menggunakan IF biasa (bukan else if) agar bisa jalan bareng subkategori
+        // 2. FILTER KATEGORI (Hybrid: ID atau String)
         if (req.query.category) {
             const cat = req.query.category;
             
-            // Cek apakah input berupa ID (Affiliate) atau String (PPOB)
             if (mongoose.Types.ObjectId.isValid(cat)) {
-                // Cari ID murni atau Object ID
+                // Jika inputnya ID (Untuk Affiliate/Toko)
                 query.category = { $in: [cat, new mongoose.Types.ObjectId(cat)] };
             } else {
-                // Cari String
-                query.category = cat;
+                // Jika inputnya String (Untuk PPOB: "Dana", "Pulsa", "MLBB")
+                // Menggunakan Regex agar case-insensitive (dana == Dana)
+                query.category = { $regex: new RegExp(`^${cat}$`, 'i') };
             }
         } 
 
-        // 3. FILTER SUBKATEGORI (PERBAIKAN UTAMA)
-        // Dulu pakai "else if", sekarang pakai "if" terpisah.
-        // Jadi filter ini akan MENAMBAHKAN kondisi, bukan menggantikan kategori.
+        // 3. FILTER SUBKATEGORI
         if (req.query.subcategory) {
             query.subcategory = req.query.subcategory;
+        }
+
+        // 4. SEARCH KEYWORD
+        if (req.query.keyword) {
+            query.name = { $regex: req.query.keyword, $options: 'i' };
         }
 
         // Sorting
@@ -60,7 +61,7 @@ const getProducts = async (req, res) => {
     }
 };
 
-// @desc    Tambah produk (Support Hybrid)
+// @desc    Tambah produk (Auto Platform PPOB)
 const createProduct = async (req, res) => {
     try {
         const { name, description, price, originalPrice, category, subcategory, affiliateLink, platform } = req.body;
@@ -83,20 +84,17 @@ const createProduct = async (req, res) => {
              imageUrls = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
         }
 
-        // Tentukan Platform
+        // Logika Penentuan Platform
         let finalPlatform = platform || 'Affiliate';
+        
+        // Jika tidak ada link affiliate, otomatis jadi PPOB
         if (!affiliateLink || affiliateLink.trim() === "") {
             finalPlatform = 'PPOB';
         }
 
-        // Validasi Affiliate
+        // Validasi khusus Affiliate
         if (finalPlatform !== 'PPOB') {
             if (!affiliateLink) return res.status(400).json({ message: 'Link Affiliate wajib diisi.' });
-            
-            const validPatterns = [/shopee/, /tokopedia/, /tiktok/, /lazada/];
-            if (!validPatterns.some(pattern => pattern.test(affiliateLink))) {
-                return res.status(400).json({ message: 'Link Affiliate tidak valid.' });
-            }
         }
 
         const product = new Product({
@@ -122,13 +120,12 @@ const createProduct = async (req, res) => {
     }
 };
 
-// @desc    Cari produk
+// @desc    Cari produk (Umum)
 const searchProducts = async (req, res) => {
     const keyword = req.query.keyword;
     try {
         const products = await Product.find({
-            name: { $regex: keyword, $options: 'i' },
-            platform: { $ne: 'PPOB' } 
+            name: { $regex: keyword, $options: 'i' }
         });
         res.json(products);
     } catch (error) {

@@ -11,14 +11,13 @@
     
     <style>
         /* --- RESET & BASIC --- */
-        html { background-color: #0f172a; }
+        html { background-color: #0f172a; height: 100%; }
         body { 
-            background-color: #0f172a; min-height: 100vh; margin: 0; 
-            padding-bottom: 0; /* Padding diatur di content-area */
-            color: #f8fafc; font-family: 'Poppins', sans-serif; 
+            background-color: #0f172a; min-height: 100%; margin: 0; 
+            padding-bottom: 0; color: #f8fafc; font-family: 'Poppins', sans-serif; 
         }
 
-        /* --- HEADER --- */
+        /* --- HEADER (TEMA UNGU AXIS) --- */
         .ppob-header {
             background: #1e293b; padding: 15px 20px;
             position: sticky; top: 0; z-index: 50;
@@ -26,7 +25,8 @@
             display: flex; align-items: center; gap: 15px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .ppob-header h2 { margin: 0; color: #4ade80; font-size: 1.1rem; font-weight: 600; }
+        /* JUDUL UNGU */
+        .ppob-header h2 { margin: 0; color: #d946ef; font-size: 1.1rem; font-weight: 600; }
         .btn-back { color: #cbd5e1; font-size: 1.2rem; text-decoration: none; }
 
         .container { max-width: 600px; margin: 0 auto; }
@@ -67,7 +67,8 @@
         
         .profile-info { padding-bottom: 12px; position: relative; z-index: 21; }
         .profile-info h1 { margin: 0; font-size: 1.3rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
-        .profile-info p { margin: 5px 0 0 0; font-size: 0.8rem; color: #4ade80; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+        /* SUBTITLE UNGU */
+        .profile-info p { margin: 5px 0 0 0; font-size: 0.8rem; color: #d946ef; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
         
         .features-bar {
             display: flex; justify-content: space-between; position: relative;
@@ -76,9 +77,10 @@
             margin: 0; 
         }
         .feature-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: #e2e8f0; position: relative; z-index: 1; font-weight: 500; }
-        .feature-item i { color: #4ade80; font-size: 0.9rem; }
+        /* ICON FITUR UNGU */
+        .feature-item i { color: #d946ef; font-size: 0.9rem; }
 
-        /* --- TAB MENU --- */
+        /* --- TAB MENU (UNGU) --- */
         .tab-container {
             display: flex; justify-content: center; gap: 20px;
             background: #1e293b; padding: 0 20px; 
@@ -93,9 +95,9 @@
         }
         .tab-btn::after {
             content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 3px;
-            background: #4ade80; transition: width 0.3s; border-radius: 3px 3px 0 0;
+            background: #c026d3; transition: width 0.3s; border-radius: 3px 3px 0 0;
         }
-        .tab-btn.active { color: #4ade80; }
+        .tab-btn.active { color: #d946ef; }
         .tab-btn.active::after { width: 100%; }
 
         /* --- KONTEN AREA --- */
@@ -115,8 +117,9 @@
             display: flex; align-items: center; gap: 10px;
             font-weight: 600; font-size: 0.95rem; color: #fff;
         }
+        /* NOMOR LANGKAH UNGU */
         .step-num {
-            background: #4ade80; color: #064e3b; width: 24px; height: 24px;
+            background: #d946ef; color: #fff; width: 24px; height: 24px;
             border-radius: 6px; display: flex; align-items: center; justify-content: center;
             font-size: 0.85rem; font-weight: 800;
         }
@@ -127,7 +130,7 @@
             display: flex; align-items: center; justify-content: space-between;
             transition: border-color 0.3s;
         }
-        .input-box-wrapper:focus-within { border-color: #4ade80; }
+        .input-box-wrapper:focus-within { border-color: #d946ef; }
         .phone-input {
             width: 100%; background: transparent; border: none; outline: none;
             color: white; font-size: 1.1rem; font-weight: 600; letter-spacing: 1px;
@@ -141,30 +144,30 @@
             border: 1px solid transparent; cursor: pointer; transition: 0.2s;
             position: relative; overflow: hidden;
         }
+        /* SELECTED UNGU */
         .product-item:hover, .product-item.selected {
-            border-color: #4ade80; background: #1e3a35;
+            border-color: #d946ef; background: #4a044e; /* Ungu Gelap */
         }
         .prod-name { font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 5px; }
-        .prod-price { font-size: 0.95rem; font-weight: 700; color: #4ade80; display: flex; align-items: center; gap: 5px; }
+        .prod-price { font-size: 0.95rem; font-weight: 700; color: #d946ef; display: flex; align-items: center; gap: 5px; }
         
         .btn-pay-container { margin-top: 25px; }
+        /* TOMBOL GRADASI UNGU */
         .btn-pay {
-            width: 100%; background: linear-gradient(to right, #22c55e, #16a34a);
+            width: 100%; background: linear-gradient(to right, #d946ef, #c026d3);
             color: white; padding: 15px; border: none; border-radius: 12px;
             font-weight: 700; font-size: 1rem; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(217, 70, 239, 0.3); transition: all 0.3s;
         }
         .btn-pay:active { transform: scale(0.98); }
         .btn-pay:disabled {
             background: #334155; color: #94a3b8; cursor: not-allowed; box-shadow: none; opacity: 0.7;
         }
 
-        /* --- STYLE KETERANGAN BARU (MODERN) --- */
+        /* --- STYLE TAB KETERANGAN (UNGU) --- */
         .info-section { margin-bottom: 20px; }
-        .info-label { font-size: 0.9rem; color: #4ade80; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        
-        /* Grid Informasi Cepat */
+        .info-label { font-size: 0.9rem; color: #d946ef; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .info-box {
             background: #1e293b; padding: 15px; border-radius: 10px;
@@ -173,25 +176,29 @@
         .info-box i { font-size: 1.2rem; color: #cbd5e1; }
         .info-title { font-size: 0.75rem; color: #94a3b8; }
         .info-value { font-size: 0.9rem; font-weight: 600; color: #fff; }
-
-        /* List Cara Transaksi */
         .guide-box { background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 15px; }
         .guide-item { display: flex; gap: 12px; margin-bottom: 15px; }
         .guide-item:last-child { margin-bottom: 0; }
         .guide-num { 
             width: 24px; height: 24px; background: #334155; border: 1px solid #475569;
-            color: #4ade80; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: #d946ef; border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
         }
         .guide-text { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
-
-        /* Catatan Penting */
         .note-box {
-            margin-top: 20px; background: rgba(239, 68, 68, 0.1); 
-            border: 1px dashed #ef4444; padding: 15px; border-radius: 10px;
-            color: #fca5a5; font-size: 0.8rem; line-height: 1.5;
+            margin-top: 20px; background: rgba(217, 70, 239, 0.1); 
+            border: 1px dashed #d946ef; padding: 15px; border-radius: 10px;
+            color: #f0abfc; font-size: 0.8rem; line-height: 1.5;
             display: flex; gap: 10px; align-items: flex-start;
         }
+
+        /* Banner Toko Tutup (Ungu) */
+        .store-closed-banner {
+            background: rgba(217, 70, 239, 0.15); border: 1px dashed #d946ef; color: #d946ef;
+            padding: 20px; border-radius: 12px; text-align: center; font-weight: 600;
+            grid-column: span 2; display: flex; flex-direction: column; align-items: center;
+        }
+        .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; display: block; }
 
     </style>
 </head>
@@ -199,8 +206,8 @@
 
     <div class="mobile-container">
         <header class="ppob-header">
-            <a href="../pulsa.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-            <h2>Axis</h2>
+            <a href="../../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2>Isi Pulsa Axis</h2>
         </header>
 
         <main class="container">
@@ -215,7 +222,7 @@
                     </div>
                     <div class="profile-info">
                         <h1>AXIS</h1>
-                        <p>PT Axis Tbk</p>
+                        <p>PT Axis Tbk</p> 
                     </div>
                 </div>
                 <div class="features-bar">
@@ -236,10 +243,10 @@
                     <div class="step-card">
                         <div class="step-header"><span class="step-num">1</span> Masukkan Data Akun</div>
                         <div class="step-body">
-                            <label class="label-input">No HP / Tujuan</label>
+                            <label class="label-input" style="color:#94a3b8; font-size:0.85rem; margin-bottom:5px; display:block;">No HP / Tujuan</label>
                             <div class="input-box-wrapper">
                                 <input type="tel" class="phone-input" placeholder="08xxxxxxxxxx" id="phoneNumber" oninput="checkValidation()">
-                                <i class="fa-solid fa-address-book" style="color:#4ade80; cursor:pointer;"></i>
+                                <i class="fa-solid fa-address-book contact-icon" style="color:#d946ef; cursor:pointer;"></i>
                             </div>
                             <div class="info-text">Pastikan nomor tujuan benar.</div>
                         </div>
@@ -250,21 +257,20 @@
                         <div class="step-body">
                             <div class="nominal-grid" id="nominalContainer">
                                 <div style="grid-column: span 2; text-align:center; padding: 20px; color:#64748b; font-size:0.85rem; border: 1px dashed #334155; border-radius: 10px;">
-                                    Masukkan nomor HP diatas untuk melihat produk.
+                                    <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat Produk...
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="btn-pay-container">
-                        <button class="btn-pay" id="btnPay" disabled onclick="window.location.href='../../payment.html'">
+                        <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                             Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>
                         </button>
                     </div>
                 </div>
 
                 <div id="keterangan-content" class="tab-content">
-                    
                     <div class="info-section">
                         <div class="info-label"><i class="fa-solid fa-circle-info"></i> Detail Layanan</div>
                         <div class="info-grid">
@@ -280,7 +286,7 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <div class="info-section">
                         <div class="info-label"><i class="fa-solid fa-list-check"></i> Cara Transaksi</div>
                         <div class="guide-box">
@@ -302,7 +308,7 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <div class="note-box">
                         <i class="fa-solid fa-triangle-exclamation"></i>
                         <div>
@@ -310,8 +316,8 @@
                             Kesalahan penulisan nomor HP adalah tanggung jawab pembeli. Pastikan nomor dalam masa aktif. Hubungi CS jika pulsa belum masuk > 10 menit.
                         </div>
                     </div>
-
                 </div>
+
             </div>
         </main>
 
@@ -324,7 +330,15 @@
     </div>
 
     <script>
+        const API_URL = '/api';
+        const TARGET_CATEGORY = 'Pulsa Axis'; 
         let selectedProduct = null;
+        let globalMargin = 0;
+        let isStoreOpen = true;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+        });
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -338,44 +352,96 @@
             }
         }
 
+        async function loadData() {
+            const container = document.getElementById('nominalContainer');
+            const btnPay = document.getElementById('btnPay');
+            
+            try {
+                // 1. CEK STATUS & MARGIN
+                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                globalMargin = parseInt(config.margin) || 0;
+                isStoreOpen = config.isOpen;
+
+                // 2. BLOKIR JIKA TUTUP
+                if (!isStoreOpen) {
+                    container.innerHTML = `
+                        <div class="store-closed-banner">
+                            <i class="fa-solid fa-shop-lock"></i>
+                            MAAF, TOKO SEDANG TUTUP
+                        </div>
+                    `;
+                    document.getElementById('phoneNumber').disabled = true;
+                    btnPay.disabled = true;
+                    btnPay.innerText = "Toko Tutup";
+                    btnPay.style.background = "#334155";
+                    btnPay.style.cursor = "not-allowed";
+                    btnPay.style.opacity = "0.7";
+                    return; 
+                }
+
+                // 3. LOAD PRODUK
+                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                const products = await res.json();
+
+                container.innerHTML = ''; 
+
+                if (products.length === 0) {
+                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
+                    return;
+                }
+
+                // 4. RENDER PRODUK
+                products.forEach(p => {
+                    const finalPrice = p.price + globalMargin;
+                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
+                    
+                    const div = document.createElement('div');
+                    div.className = 'product-item';
+                    div.onclick = () => selectProduct(div, p, finalPrice);
+                    
+                    div.innerHTML = `
+                        <div class="prod-name">${p.name}</div>
+                        <div class="prod-price"><i class="fa-solid fa-tag"></i> Rp ${priceFormatted}</div>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+            }
+        }
+
+        function selectProduct(el, productData, priceWithMargin) {
+            if(!isStoreOpen) return;
+            document.querySelectorAll('.product-item').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
+            checkValidation();
+        }
+
         function checkValidation() {
             const phone = document.getElementById('phoneNumber').value;
             const btn = document.getElementById('btnPay');
-            if (phone.length > 9 && selectedProduct !== null) {
+            if (phone.length > 9 && selectedProduct !== null && isStoreOpen) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
             }
-            if(phone.length > 3) renderDummyProducts();
         }
 
-        let isProductsLoaded = false;
-        function renderDummyProducts() {
-            if(isProductsLoaded) return;
-            isProductsLoaded = true;
-            const container = document.getElementById('nominalContainer');
-            const products = [
-                { name: 'TELKOMSEL 5.000', price: 'Rp 6.500' },
-                { name: 'TELKOMSEL 10.000', price: 'Rp 11.500' },
-                { name: 'TELKOMSEL 20.000', price: 'Rp 21.000' },
-                { name: 'TELKOMSEL 50.000', price: 'Rp 51.000' }
-            ];
-            let html = '';
-            products.forEach(p => {
-                html += `
-                <div class="product-item" onclick="selectProduct(this, '${p.name}')">
-                    <div class="prod-name">${p.name}</div>
-                    <div class="prod-price"><i class="fa-solid fa-tag"></i> ${p.price}</div>
-                </div>`;
-            });
-            container.innerHTML = html;
-        }
-
-        function selectProduct(el, name) {
-            document.querySelectorAll('.product-item').forEach(item => item.classList.remove('selected'));
-            el.classList.add('selected');
-            selectedProduct = name;
-            checkValidation();
+        function goToPayment() {
+            if (!selectedProduct) return;
+            const phone = document.getElementById('phoneNumber').value;
+            const transactionData = {
+                productId: selectedProduct._id,
+                productName: selectedProduct.name,
+                productPrice: selectedProduct.finalPrice, 
+                customerNumber: phone,
+                category: TARGET_CATEGORY
+            };
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+            window.location.href = '../../payment.html';
         }
     </script>
 </body>

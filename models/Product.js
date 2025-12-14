@@ -17,7 +17,7 @@ const productSchema = mongoose.Schema({
     },
     images: [String], 
     
-    // UBAH: Tipe Mixed agar bisa menerima ObjectId (Affiliate) ATAU String (PPOB)
+    // Tipe Mixed agar bisa menerima ObjectId (Affiliate) ATAU String (PPOB)
     category: {
         type: mongoose.Schema.Types.Mixed, 
         required: true
@@ -41,14 +41,13 @@ const productSchema = mongoose.Schema({
         default: 0,
     },
     
-    // UBAH: Tidak wajib, agar PPOB bisa masuk tanpa error
+    // Tidak wajib, agar PPOB bisa masuk tanpa error link affiliate
     affiliateLink: {
         type: String,
         required: false 
     },
     
-    // Penanda jenis produk (PPOB atau Affiliate/Umum)
-    // Default 'Affiliate' agar produk lama tetap aman
+    // Penanda jenis produk: 'PPOB' atau 'Affiliate'
     platform: {
         type: String,
         required: false,

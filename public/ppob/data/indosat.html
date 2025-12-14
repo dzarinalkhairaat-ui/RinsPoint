@@ -25,6 +25,7 @@
             display: flex; align-items: center; gap: 15px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
+        /* JUDUL KUNING */
         .ppob-header h2 { margin: 0; color: #facc15; font-size: 1.1rem; font-weight: 600; }
         .btn-back { color: #cbd5e1; font-size: 1.2rem; text-decoration: none; }
 
@@ -54,8 +55,7 @@
 
         .profile-flex {
             display: flex; 
-            /* Ubah align-items jadi flex-start agar kita bisa atur margin manual */
-            align-items: flex-start; 
+            align-items: flex-start; /* Penting agar margin-top teks berfungsi */
             gap: 15px;
             margin-top: -70px; position: relative; z-index: 20; 
             margin-bottom: 20px; padding-left: 5px; 
@@ -69,12 +69,10 @@
         }
         .profile-logo img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 14px; }
         
-        /* --- PERBAIKAN TOTAL POSISI TEKS --- */
+        /* --- POSISI TEKS (TURUN JAUH) --- */
         .profile-info { 
-            position: relative; 
-            z-index: 21; 
-            /* INI KUNCINYA: Margin Top Besar untuk memaksa teks turun menjauh dari banner */
-            margin-top: 45px; 
+            position: relative; z-index: 21; 
+            margin-top: 45px; /* Jarak aman dari background abstrak */
             padding-bottom: 0;
         }
         .profile-info h1 { 
@@ -85,6 +83,7 @@
             line-height: 1.2;
             text-shadow: 0 2px 8px rgba(0,0,0,0.8); 
         }
+        /* SUBTITLE KUNING */
         .profile-info p { margin: 5px 0 0 0; font-size: 0.8rem; color: #facc15; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
         
         .features-bar {
@@ -94,6 +93,7 @@
             margin: 0; 
         }
         .feature-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: #e2e8f0; position: relative; z-index: 1; font-weight: 500; }
+        /* ICON FITUR KUNING */
         .feature-item i { color: #facc15; font-size: 0.9rem; }
 
         /* --- TAB MENU (KUNING) --- */
@@ -132,6 +132,7 @@
             display: flex; align-items: center; gap: 10px;
             font-weight: 600; font-size: 0.95rem; color: #fff;
         }
+        /* NOMOR LANGKAH KUNING (TEXT HITAM) */
         .step-num {
             background: #eab308; color: #000; width: 24px; height: 24px;
             border-radius: 6px; display: flex; align-items: center; justify-content: center;
@@ -158,13 +159,15 @@
             border: 1px solid transparent; cursor: pointer; transition: 0.2s;
             position: relative; overflow: hidden;
         }
+        /* SELECTED KUNING */
         .product-item:hover, .product-item.selected {
-            border-color: #eab308; background: #422006;
+            border-color: #eab308; background: #422006; /* Coklat Gelap */
         }
         .prod-name { font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 5px; }
         .prod-price { font-size: 0.95rem; font-weight: 700; color: #facc15; display: flex; align-items: center; gap: 5px; }
         
         .btn-pay-container { margin-top: 25px; }
+        /* TOMBOL GRADASI KUNING */
         .btn-pay {
             width: 100%; background: linear-gradient(to right, #eab308, #ca8a04);
             color: #fff; padding: 15px; border: none; border-radius: 12px;
@@ -181,6 +184,7 @@
             background: #1e293b; padding: 20px; border-radius: 12px;
             border: 1px solid #334155; color: #cbd5e1; font-size: 0.9rem; line-height: 1.6;
         }
+        /* Style Keterangan Kuning */
         .info-section { margin-bottom: 20px; }
         .info-label { font-size: 0.9rem; color: #facc15; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
@@ -207,6 +211,19 @@
             display: flex; gap: 10px; align-items: flex-start;
         }
 
+        /* Banner Toko Tutup (Kuning Style) */
+        .store-closed-banner {
+            background: rgba(234, 179, 8, 0.15);
+            border: 1px dashed #eab308;
+            color: #eab308;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 20px;
+            grid-column: span 2;
+        }
+        .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; display: block; }
     </style>
 </head>
 <body>
@@ -264,14 +281,14 @@
                         <div class="step-body">
                             <div class="nominal-grid" id="nominalContainer">
                                 <div style="grid-column: span 2; text-align:center; padding: 20px; color:#64748b; font-size:0.85rem; border: 1px dashed #334155; border-radius: 10px;">
-                                    Masukkan nomor HP diatas untuk melihat paket.
+                                    <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat paket data...
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="btn-pay-container">
-                        <button class="btn-pay" id="btnPay" disabled onclick="window.location.href='../../payment.html'">
+                        <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                             Beli Sekarang <i class="fa-solid fa-arrow-right"></i>
                         </button>
                     </div>
@@ -333,8 +350,17 @@
     </div>
 
     <script>
+        const API_URL = '/api';
+        const TARGET_CATEGORY = 'Data Indosat'; // Kategori di DB Admin
         let selectedProduct = null;
+        let globalMargin = 0;
+        let isStoreOpen = true;
 
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+        });
+
+        // 1. Switch Tab Logic
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -347,47 +373,107 @@
             }
         }
 
+        // 2. Fetch Data dari Database Admin (Dengan Margin)
+        async function loadData() {
+            const container = document.getElementById('nominalContainer');
+            const btnPay = document.getElementById('btnPay');
+            
+            try {
+                // A. Ambil Konfigurasi Toko (Status & Margin)
+                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                globalMargin = parseInt(config.margin) || 0;
+                isStoreOpen = config.isOpen;
+
+                // B. Cek Status Toko
+                if (!isStoreOpen) {
+                    container.innerHTML = `
+                        <div class="store-closed-banner">
+                            <i class="fa-solid fa-shop-lock"></i>
+                            MAAF, TOKO SEDANG TUTUP
+                        </div>
+                    `;
+                    document.getElementById('phoneNumber').disabled = true;
+                    btnPay.disabled = true;
+                    btnPay.innerText = "Toko Tutup";
+                    btnPay.style.background = "#334155";
+                    btnPay.style.cursor = "not-allowed";
+                    return; // Stop loading produk
+                }
+
+                // C. Panggil API Backend
+                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                const products = await res.json();
+
+                container.innerHTML = ''; // Hapus loading
+
+                if (products.length === 0) {
+                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Paket Sedang Kosong</div>`;
+                    return;
+                }
+
+                // D. Render Produk dengan Harga + Margin
+                products.forEach(p => {
+                    const finalPrice = p.price + globalMargin;
+                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
+                    
+                    const div = document.createElement('div');
+                    div.className = 'product-item';
+                    
+                    div.onclick = () => selectProduct(div, p, finalPrice);
+                    
+                    div.innerHTML = `
+                        <div class="prod-name">${p.name}</div>
+                        <div class="prod-price"><i class="fa-solid fa-tag"></i> Rp ${priceFormatted}</div>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+            }
+        }
+
+        // 3. Logic Pilih Produk & Validasi
+        function selectProduct(el, productData, priceWithMargin) {
+            if(!isStoreOpen) return;
+
+            document.querySelectorAll('.product-item').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+            
+            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
+            checkValidation();
+        }
+
         function checkValidation() {
             const phone = document.getElementById('phoneNumber').value;
             const btn = document.getElementById('btnPay');
-            if (phone.length > 9 && selectedProduct !== null) {
+            // Validasi: No HP > 9 digit & Produk sudah dipilih
+            if (phone.length > 9 && selectedProduct !== null && isStoreOpen) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
             }
-            if(phone.length > 3) renderDummyProducts();
         }
 
-        let isProductsLoaded = false;
-        function renderDummyProducts() {
-            if(isProductsLoaded) return;
-            isProductsLoaded = true;
-            const container = document.getElementById('nominalContainer');
-            const products = [
-                { name: 'Freedom Internet 3GB', price: 'Rp 16.500' },
-                { name: 'Freedom U 5.5GB + 1GB', price: 'Rp 28.000' },
-                { name: 'Freedom Internet 10GB', price: 'Rp 48.000' },
-                { name: 'Freedom Combo 20GB', price: 'Rp 78.000' },
-                { name: 'Freedom Internet 50GB', price: 'Rp 145.000' },
-                { name: 'Freedom 100GB Sultan', price: 'Rp 240.000' }
-            ];
+        // 4. Proses ke Halaman Payment
+        function goToPayment() {
+            if (!selectedProduct) return;
+            const phone = document.getElementById('phoneNumber').value;
 
-            let html = '';
-            products.forEach(p => {
-                html += `
-                <div class="product-item" onclick="selectProduct(this, '${p.name}')">
-                    <div class="prod-name">${p.name}</div>
-                    <div class="prod-price"><i class="fa-solid fa-tag"></i> ${p.price}</div>
-                </div>`;
-            });
-            container.innerHTML = html;
-        }
+            // Simpan data transaksi ke LocalStorage
+            const transactionData = {
+                productId: selectedProduct._id,
+                productName: selectedProduct.name,
+                productPrice: selectedProduct.finalPrice, // Pakai harga margin
+                customerNumber: phone,
+                category: TARGET_CATEGORY
+            };
 
-        function selectProduct(el, name) {
-            document.querySelectorAll('.product-item').forEach(item => item.classList.remove('selected'));
-            el.classList.add('selected');
-            selectedProduct = name;
-            checkValidation();
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+            
+            // Redirect ke halaman checkout
+            window.location.href = '../../payment.html';
         }
     </script>
 </body>

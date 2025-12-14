@@ -69,7 +69,7 @@
         }
         .profile-logo img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 14px; }
         
-        /* --- POSISI TEKS (TURUN JAUH) --- */
+        /* --- POSISI TEKS --- */
         .profile-info { 
             position: relative; z-index: 21; 
             margin-top: 45px; /* Jarak aman dari background abstrak */
@@ -211,6 +211,19 @@
             display: flex; gap: 10px; align-items: flex-start;
         }
 
+        /* Banner Toko Tutup (Oranye Style) */
+        .store-closed-banner {
+            background: rgba(249, 115, 22, 0.15);
+            border: 1px dashed #f97316;
+            color: #f97316;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 20px;
+            grid-column: span 2;
+        }
+        .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; display: block; }
     </style>
 </head>
 <body>
@@ -268,14 +281,14 @@
                         <div class="step-body">
                             <div class="nominal-grid" id="nominalContainer">
                                 <div style="grid-column: span 2; text-align:center; padding: 20px; color:#64748b; font-size:0.85rem; border: 1px dashed #334155; border-radius: 10px;">
-                                    Masukkan nomor HP diatas untuk melihat paket.
+                                    <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat paket data...
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="btn-pay-container">
-                        <button class="btn-pay" id="btnPay" disabled onclick="window.location.href='../../payment.html'">
+                        <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                             Beli Sekarang <i class="fa-solid fa-arrow-right"></i>
                         </button>
                     </div>
@@ -337,7 +350,15 @@
     </div>
 
     <script>
+        const API_URL = '/api';
+        const TARGET_CATEGORY = 'Data Tri'; 
         let selectedProduct = null;
+        let globalMargin = 0;
+        let isStoreOpen = true;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+        });
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -351,48 +372,99 @@
             }
         }
 
+        async function loadData() {
+            const container = document.getElementById('nominalContainer');
+            const btnPay = document.getElementById('btnPay');
+            
+            try {
+                // 1. CEK STATUS TOKO & MARGIN
+                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                globalMargin = parseInt(config.margin) || 0;
+                isStoreOpen = config.isOpen;
+
+                // 2. JIKA TOKO TUTUP
+                if (!isStoreOpen) {
+                    container.innerHTML = `
+                        <div class="store-closed-banner">
+                            <i class="fa-solid fa-shop-lock"></i>
+                            MAAF, TOKO SEDANG TUTUP
+                        </div>
+                    `;
+                    document.getElementById('phoneNumber').disabled = true;
+                    btnPay.disabled = true;
+                    btnPay.innerText = "Toko Tutup";
+                    btnPay.style.background = "#334155";
+                    btnPay.style.cursor = "not-allowed";
+                    return;
+                }
+
+                // 3. LOAD DATA PRODUK
+                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                const products = await res.json();
+
+                container.innerHTML = ''; 
+
+                if (products.length === 0) {
+                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Paket Sedang Kosong</div>`;
+                    return;
+                }
+
+                // 4. RENDER PRODUK
+                products.forEach(p => {
+                    const finalPrice = p.price + globalMargin;
+                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
+                    
+                    const div = document.createElement('div');
+                    div.className = 'product-item';
+                    div.onclick = () => selectProduct(div, p, finalPrice);
+                    
+                    div.innerHTML = `
+                        <div class="prod-name">${p.name}</div>
+                        <div class="prod-price"><i class="fa-solid fa-tag"></i> Rp ${priceFormatted}</div>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+            }
+        }
+
+        function selectProduct(el, productData, priceWithMargin) {
+            if(!isStoreOpen) return;
+
+            document.querySelectorAll('.product-item').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+            
+            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
+            checkValidation();
+        }
+
         function checkValidation() {
             const phone = document.getElementById('phoneNumber').value;
             const btn = document.getElementById('btnPay');
-            if (phone.length > 9 && selectedProduct !== null) {
+            if (phone.length > 9 && selectedProduct !== null && isStoreOpen) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
             }
-            if(phone.length > 3) renderDummyProducts();
         }
 
-        let isProductsLoaded = false;
-        function renderDummyProducts() {
-            if(isProductsLoaded) return;
-            isProductsLoaded = true;
-            const container = document.getElementById('nominalContainer');
-            // DUMMY DATA UNTUK TRI
-            const products = [
-                { name: 'Happy 1GB 30 Hari', price: 'Rp 6.000' },
-                { name: 'AON 1.5GB (Masa Aktif Kartu)', price: 'Rp 15.000' },
-                { name: 'Happy 9GB 30 Hari', price: 'Rp 30.000' },
-                { name: 'AON 6GB (Masa Aktif Kartu)', price: 'Rp 38.000' },
-                { name: 'Happy 18GB 30 Hari', price: 'Rp 50.000' },
-                { name: 'Mix 30GB (24Jam)', price: 'Rp 75.000' }
-            ];
+        function goToPayment() {
+            if (!selectedProduct) return;
+            const phone = document.getElementById('phoneNumber').value;
 
-            let html = '';
-            products.forEach(p => {
-                html += `
-                <div class="product-item" onclick="selectProduct(this, '${p.name}')">
-                    <div class="prod-name">${p.name}</div>
-                    <div class="prod-price"><i class="fa-solid fa-tag"></i> ${p.price}</div>
-                </div>`;
-            });
-            container.innerHTML = html;
-        }
+            const transactionData = {
+                productId: selectedProduct._id,
+                productName: selectedProduct.name,
+                productPrice: selectedProduct.finalPrice, 
+                customerNumber: phone,
+                category: TARGET_CATEGORY
+            };
 
-        function selectProduct(el, name) {
-            document.querySelectorAll('.product-item').forEach(item => item.classList.remove('selected'));
-            el.classList.add('selected');
-            selectedProduct = name;
-            checkValidation();
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+            window.location.href = '../../payment.html';
         }
     </script>
 </body>
