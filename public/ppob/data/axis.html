@@ -16,7 +16,6 @@
             background-color: #0f172a; min-height: 100%; margin: 0; 
             padding-bottom: 0; color: #f8fafc; font-family: 'Poppins', sans-serif; 
         }
-
         /* --- HEADER (TEMA UNGU AXIS) --- */
         .ppob-header {
             background: #1e293b; padding: 15px 20px;
@@ -28,9 +27,7 @@
         /* JUDUL UNGU NEON */
         .ppob-header h2 { margin: 0; color: #d946ef; font-size: 1.1rem; font-weight: 600; }
         .btn-back { color: #cbd5e1; font-size: 1.2rem; text-decoration: none; }
-
         .container { max-width: 600px; margin: 0 auto; }
-
         /* --- BANNER --- */
         .provider-banner-box {
             width: 100%; height: 38vh; overflow: hidden;
@@ -39,7 +36,6 @@
         .provider-banner-img { 
             width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; 
         }
-
         /* --- PROFIL OPERATOR --- */
         .provider-profile-section {
             background-color: #1e293b; padding: 30px 20px 20px 20px; 
@@ -52,10 +48,9 @@
             background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 2px, transparent 2px, transparent 12px);
             z-index: 0; pointer-events: none; border-radius: 25px 25px 0 0; 
         }
-
         .profile-flex {
             display: flex; 
-            align-items: flex-start; /* Penting agar margin-top teks berfungsi */
+            align-items: flex-start; 
             gap: 15px;
             margin-top: -70px; position: relative; z-index: 20; 
             margin-bottom: 20px; padding-left: 5px; 
@@ -69,10 +64,9 @@
         }
         .profile-logo img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 14px; }
         
-        /* --- POSISI TEKS (TURUN JAUH) --- */
         .profile-info { 
             position: relative; z-index: 21; 
-            margin-top: 45px; /* Jarak aman dari background abstrak */
+            margin-top: 45px; 
             padding-bottom: 0;
         }
         .profile-info h1 { 
@@ -83,7 +77,6 @@
             line-height: 1.2;
             text-shadow: 0 2px 8px rgba(0,0,0,0.8); 
         }
-        /* SUBTITLE UNGU */
         .profile-info p { margin: 5px 0 0 0; font-size: 0.8rem; color: #d946ef; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
         
         .features-bar {
@@ -93,9 +86,7 @@
             margin: 0; 
         }
         .feature-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: #e2e8f0; position: relative; z-index: 1; font-weight: 500; }
-        /* ICON FITUR UNGU */
         .feature-item i { color: #d946ef; font-size: 0.9rem; }
-
         /* --- TAB MENU (UNGU) --- */
         .tab-container {
             display: flex; justify-content: center; gap: 20px;
@@ -115,13 +106,11 @@
         }
         .tab-btn.active { color: #d946ef; }
         .tab-btn.active::after { width: 100%; }
-
         /* --- KONTEN --- */
         .content-area { padding: 20px; padding-bottom: 100px; }
         .tab-content { display: none; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         .step-card {
             background: #1e293b; border-radius: 12px;
             overflow: hidden; margin-bottom: 20px;
@@ -132,14 +121,12 @@
             display: flex; align-items: center; gap: 10px;
             font-weight: 600; font-size: 0.95rem; color: #fff;
         }
-        /* NOMOR LANGKAH UNGU */
         .step-num {
             background: #d946ef; color: #fff; width: 24px; height: 24px;
             border-radius: 6px; display: flex; align-items: center; justify-content: center;
             font-size: 0.85rem; font-weight: 800;
         }
         .step-body { padding: 15px; }
-
         .input-box-wrapper {
             background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px 15px;
             display: flex; align-items: center; justify-content: space-between;
@@ -152,14 +139,12 @@
         }
         .phone-input::placeholder { color: #64748b; font-weight: 400; letter-spacing: 0; }
         .info-text { font-size: 0.75rem; color: #94a3b8; margin-top: 8px; font-style: italic; }
-
         .nominal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .product-item {
             background: #253346; padding: 12px; border-radius: 10px;
             border: 1px solid transparent; cursor: pointer; transition: 0.2s;
             position: relative; overflow: hidden;
         }
-        /* SELECTED UNGU */
         .product-item:hover, .product-item.selected {
             border-color: #d946ef; background: #4a044e; /* Ungu Gelap */
         }
@@ -167,7 +152,6 @@
         .prod-price { font-size: 0.95rem; font-weight: 700; color: #d946ef; display: flex; align-items: center; gap: 5px; }
         
         .btn-pay-container { margin-top: 25px; }
-        /* TOMBOL GRADASI UNGU */
         .btn-pay {
             width: 100%; background: linear-gradient(to right, #d946ef, #c026d3);
             color: white; padding: 15px; border: none; border-radius: 12px;
@@ -179,12 +163,10 @@
         .btn-pay:disabled {
             background: #334155; color: #94a3b8; cursor: not-allowed; box-shadow: none; opacity: 0.7;
         }
-
         .info-card {
             background: #1e293b; padding: 20px; border-radius: 12px;
             border: 1px solid #334155; color: #cbd5e1; font-size: 0.9rem; line-height: 1.6;
         }
-        /* Style Keterangan Ungu */
         .info-section { margin-bottom: 20px; }
         .info-label { font-size: 0.9rem; color: #d946ef; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
@@ -210,7 +192,6 @@
             color: #f0abfc; font-size: 0.8rem; line-height: 1.5;
             display: flex; gap: 10px; align-items: flex-start;
         }
-
         /* Banner Toko Tutup */
         .store-closed-banner {
             background: rgba(239, 68, 68, 0.15);
@@ -224,22 +205,18 @@
             grid-column: span 2;
         }
         .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; display: block; }
-
     </style>
 </head>
 <body>
-
     <div class="mobile-container">
         <header class="ppob-header">
             <a href="../../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <h2>Paket Data</h2> 
         </header>
-
         <main class="container">
             <div class="provider-banner-box">
                 <img src="../../assets/images/pulsa/picture/axis-banner.jpg" class="provider-banner-img" alt="Banner">
             </div>
-
             <div class="provider-profile-section">
                 <div class="profile-flex">
                     <div class="profile-logo">
@@ -256,12 +233,10 @@
                     <div class="feature-item"><i class="fa-solid fa-shield-halved"></i> Aman</div>
                 </div>
             </div>
-
             <div class="tab-container">
                 <button class="tab-btn active" onclick="switchTab('transaksi')">Produk</button>
                 <button class="tab-btn" onclick="switchTab('keterangan')">Keterangan</button>
             </div>
-
             <div class="content-area">
                 
                 <div id="transaksi-content" class="tab-content active">
@@ -276,7 +251,6 @@
                             <div class="info-text">Pastikan nomor tujuan benar.</div>
                         </div>
                     </div>
-
                     <div class="step-card">
                         <div class="step-header"><span class="step-num">2</span> Pilih Paket</div>
                         <div class="step-body">
@@ -287,14 +261,12 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="btn-pay-container">
                         <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                             Beli Sekarang <i class="fa-solid fa-arrow-right"></i>
                         </button>
                     </div>
                 </div>
-
                 <div id="keterangan-content" class="tab-content">
                     <div class="info-section">
                         <div class="info-label"><i class="fa-solid fa-circle-info"></i> Detail Layanan</div>
@@ -338,10 +310,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </main>
-
         <nav class="bottom-nav">
             <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
             <a href="/ppob.html" class="active"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
@@ -352,7 +322,8 @@
 
     <script>
         const API_URL = '/api';
-        const TARGET_CATEGORY = 'Data Axis'; // Pastikan di Admin kategori produknya "Data Axis"
+        const TARGET_CATEGORY = 'Data Axis'; // Kategori di DB Admin
+        
         let selectedProduct = null;
         let globalMargin = 0;
         let isStoreOpen = true;
@@ -361,7 +332,6 @@
             loadData();
         });
 
-        // 1. Switch Tab Logic
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -374,52 +344,67 @@
             }
         }
 
-        // 2. Fetch Data dari Database Admin (Dengan Margin)
         async function loadData() {
             const container = document.getElementById('nominalContainer');
             const btnPay = document.getElementById('btnPay');
             
             try {
-                // A. Ambil Konfigurasi Toko (Status & Margin)
-                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
-                globalMargin = parseInt(config.margin) || 0;
-                isStoreOpen = config.isOpen;
+                // 1. AMBIL STATUS & MARGIN DARI SERVER
+                container.innerHTML = `
+                    <div style="grid-column: span 2; text-align:center; padding: 20px; color:#64748b; font-size:0.85rem;">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i> Menghubungkan ke Server...
+                    </div>`;
 
-                // B. Cek Status Toko
+                let configResponse;
+                try {
+                     configResponse = await fetch(`${API_URL}/settings/ppob`);
+                } catch(e) { /* fallback silent */ }
+                
+                const config = configResponse && configResponse.ok 
+                               ? await configResponse.json() 
+                               : { isOpen: true, margin: 0 };
+
+                globalMargin = parseInt(config.margin) || 0;
+                isStoreOpen = config.isOpen === true || config.isOpen === 'true';
+
+                // 2. CEK TOKO TUTUP
                 if (!isStoreOpen) {
                     container.innerHTML = `
                         <div class="store-closed-banner">
                             <i class="fa-solid fa-shop-lock"></i>
-                            MAAF, TOKO SEDANG TUTUP
+                            MAAF, TOKO SEDANG TUTUP<br>
+                            <span style="font-size:0.7rem; font-weight:400; color:#fca5a5; margin-top:5px;">
+                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                            </span>
                         </div>
                     `;
                     document.getElementById('phoneNumber').disabled = true;
                     btnPay.disabled = true;
-                    btnPay.innerText = "Toko Tutup";
+                    btnPay.innerHTML = '<i class="fa-solid fa-ban"></i> Toko Tutup';
                     btnPay.style.background = "#334155";
                     btnPay.style.cursor = "not-allowed";
-                    return; // Stop loading produk
+                    btnPay.style.opacity = "0.7";
+                    return; 
                 }
 
-                // C. Panggil API Backend
+                // 3. AMBIL PRODUK
                 const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
                 const products = await res.json();
-
-                container.innerHTML = ''; // Hapus loading
-
+                
+                container.innerHTML = ''; 
+                
                 if (products.length === 0) {
                     container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Paket Sedang Kosong</div>`;
                     return;
                 }
 
-                // D. Render Produk dengan Harga + Margin
+                // 4. RENDER PRODUK + MARGIN
                 products.forEach(p => {
                     const finalPrice = p.price + globalMargin;
                     const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
                     
                     const div = document.createElement('div');
                     div.className = 'product-item';
-                    
                     div.onclick = () => selectProduct(div, p, finalPrice);
                     
                     div.innerHTML = `
@@ -435,10 +420,9 @@
             }
         }
 
-        // 3. Logic Pilih Produk & Validasi
         function selectProduct(el, productData, priceWithMargin) {
             if(!isStoreOpen) return;
-
+            
             document.querySelectorAll('.product-item').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
             
@@ -449,7 +433,7 @@
         function checkValidation() {
             const phone = document.getElementById('phoneNumber').value;
             const btn = document.getElementById('btnPay');
-            // Validasi: No HP > 9 digit & Produk sudah dipilih
+            
             if (phone.length > 9 && selectedProduct !== null && isStoreOpen) {
                 btn.disabled = false;
             } else {
@@ -457,23 +441,19 @@
             }
         }
 
-        // 4. Proses ke Halaman Payment
         function goToPayment() {
             if (!selectedProduct) return;
             const phone = document.getElementById('phoneNumber').value;
-
-            // Simpan data transaksi ke LocalStorage
+            
             const transactionData = {
                 productId: selectedProduct._id,
                 productName: selectedProduct.name,
-                productPrice: selectedProduct.finalPrice, // Pakai harga margin
+                productPrice: selectedProduct.finalPrice, 
                 customerNumber: phone,
                 category: TARGET_CATEGORY
             };
-
-            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
             
-            // Redirect ke halaman checkout
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
             window.location.href = '../../payment.html';
         }
     </script>

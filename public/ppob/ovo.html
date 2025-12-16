@@ -17,7 +17,6 @@
             overflow-x: hidden; position: relative;
             background-color: #2e1065;
         }
-
         /* --- ABSTRACT BACKGROUND ANIMATION --- */
         .abstract-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
@@ -41,7 +40,6 @@
             0% { transform: translateY(0) scale(1); }
             100% { transform: translateY(20px) scale(1.1); }
         }
-
         .mobile-container {
             max-width: 480px; margin: 0 auto; min-height: 100vh;
             display: flex; flex-direction: column; position: relative;
@@ -50,7 +48,6 @@
             border-left: 1px solid rgba(255,255,255,0.05);
             border-right: 1px solid rgba(255,255,255,0.05);
         }
-
         /* --- HEADER --- */
         .ovo-header {
             padding: 20px; display: flex; align-items: center; justify-content: space-between;
@@ -61,7 +58,6 @@
         .btn-back { color: #e9d5ff; font-size: 1.2rem; text-decoration: none; transition: 0.2s; }
         .page-title { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; color: #fff; }
         .header-icon { color: #a78bfa; font-size: 1.2rem; }
-
         /* --- HERO: FLOATING CARD --- */
         .hero-section { padding: 30px 20px; text-align: center; }
         .ovo-card {
@@ -83,12 +79,10 @@
             width: 100px; height: 100px; border-radius: 50%;
             background: rgba(255,255,255,0.05);
         }
-
         @keyframes floatCard {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
-
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .ovo-text-logo { font-weight: 800; font-size: 1.5rem; color: #fff; letter-spacing: 2px; }
         .card-chip { font-size: 1.8rem; color: rgba(255,255,255,0.5); }
@@ -96,7 +90,6 @@
         .card-body { text-align: left; }
         .label-bal { font-size: 0.75rem; color: #e9d5ff; text-transform: uppercase; letter-spacing: 1px; }
         .balance { font-size: 1.6rem; font-weight: 700; margin-top: 5px; text-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-
         /* --- INPUT AREA --- */
         .input-container { padding: 0 20px 20px 20px; }
         .input-box {
@@ -115,7 +108,6 @@
             color: #fff; font-size: 1.1rem; font-weight: 500; padding: 12px 0;
         }
         .contact-icon { color: #a78bfa; cursor: pointer; font-size: 1.1rem; }
-
         /* --- GRID NOMINAL --- */
         .grid-container { padding: 10px 20px 120px 20px; } /* Padding bawah besar utk navbar */
         .section-title { font-size: 0.9rem; color: #d8b4fe; margin-bottom: 15px; font-weight: 500; }
@@ -140,11 +132,9 @@
             background: #a78bfa; color: #2e1065;
             padding: 2px 8px; border-radius: 0 0 0 10px; font-size: 0.7rem;
         }
-
         .amount { font-size: 1.15rem; font-weight: 700; color: #fff; display: block; }
         .price { font-size: 0.85rem; color: #a78bfa; margin-top: 4px; display: block; }
         .grid-item.selected .price { color: #fff; }
-
         /* --- BUTTON BAYAR --- */
         .btn-area { margin-top: 30px; width: 100%; }
         .btn-pay {
@@ -159,7 +149,6 @@
         .btn-pay:disabled {
             background: #1e293b; color: #64748b; box-shadow: none; cursor: not-allowed;
         }
-
         /* Banner Toko Tutup */
         .store-closed-banner {
             background: rgba(124, 58, 237, 0.15); border: 1px dashed #a78bfa; color: #a78bfa;
@@ -167,16 +156,13 @@
             margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
         }
         .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; display: block; }
-
     </style>
 </head>
 <body>
-
     <div class="abstract-bg">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
     </div>
-
     <div class="mobile-container">
         
         <header class="ovo-header">
@@ -184,7 +170,6 @@
             <div class="page-title">OVO Top Up</div>
             <i class="fa-solid fa-bell header-icon"></i>
         </header>
-
         <div class="hero-section">
             <div class="ovo-card">
                 <div class="card-header">
@@ -197,16 +182,15 @@
                 </div>
             </div>
         </div>
-
         <div class="input-container">
-            <div id="closedBannerContainer"></div> <div class="section-title">Nomor OVO Tujuan</div>
+            <div id="closedBannerContainer"></div> 
+            <div class="section-title">Nomor OVO Tujuan</div>
             <div class="input-box">
                 <span class="country-code">+62</span>
                 <input type="tel" class="phone-input" placeholder="8xx-xxxx-xxxx" id="ovoNumber" oninput="validateForm()">
                 <i class="fa-solid fa-address-book contact-icon"></i>
             </div>
         </div>
-
         <div class="grid-container">
             <div class="section-title">Pilih Nominal Top Up</div>
             <div class="grid-wrapper" id="nominalContainer">
@@ -214,16 +198,13 @@
                     <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat produk...
                 </div>
             </div>
-
             <div class="btn-area">
                 <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                     Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
         </div>
-
     </div>
-
     <nav class="bottom-nav">
         <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
         <a href="/ppob.html" class="active"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
@@ -233,7 +214,8 @@
 
     <script>
         const API_URL = '/api';
-        const TARGET_CATEGORY = 'Ovo'; // Kategori Database
+        const TARGET_CATEGORY = 'Ovo'; // Pastikan sesuai di Database
+        
         let selectedProduct = null;
         let globalMargin = 0;
         let isStoreOpen = true;
@@ -246,19 +228,30 @@
             const container = document.getElementById('nominalContainer');
             const bannerContainer = document.getElementById('closedBannerContainer');
             const btnPay = document.getElementById('btnPay');
-
+            
             try {
-                // 1. CEK STATUS TOKO & MARGIN
-                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                // 1. CEK STATUS TOKO & MARGIN DARI SERVER
+                let configResponse;
+                try {
+                     configResponse = await fetch(`${API_URL}/settings/ppob`);
+                } catch(e) { /* fallback */ }
+                
+                const config = configResponse && configResponse.ok 
+                               ? await configResponse.json() 
+                               : { isOpen: true, margin: 0 };
+
                 globalMargin = parseInt(config.margin) || 0;
-                isStoreOpen = config.isOpen;
+                isStoreOpen = config.isOpen === true || config.isOpen === 'true';
 
                 // 2. JIKA TOKO TUTUP
                 if (!isStoreOpen) {
                     bannerContainer.innerHTML = `
                         <div class="store-closed-banner">
                             <i class="fa-solid fa-shop-lock"></i>
-                            MAAF, TOKO SEDANG TUTUP
+                            MAAF, TOKO SEDANG TUTUP<br>
+                            <span style="font-size:0.7rem; font-weight:400; color:#a78bfa; margin-top:5px;">
+                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                            </span>
                         </div>
                     `;
                     document.getElementById('ovoNumber').disabled = true;
@@ -267,6 +260,7 @@
                     btnPay.style.background = "#1e293b"; 
                     btnPay.style.cursor = "not-allowed";
                     btnPay.style.color = "#64748b";
+                    btnPay.style.boxShadow = "none";
                     
                     container.innerHTML = ''; 
                     return; 
@@ -275,11 +269,11 @@
                 // 3. LOAD PRODUK DARI DATABASE
                 const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
                 const products = await res.json();
-
+                
                 container.innerHTML = ''; 
-
+                
                 if (products.length === 0) {
-                    container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #a78bfa;">Produk Kosong</div>`;
+                    container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #a78bfa;">Produk Sedang Kosong</div>`;
                     return;
                 }
 
@@ -288,14 +282,10 @@
                     const finalPrice = p.price + globalMargin;
                     const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
                     
-                    // Ambil angka dari nama produk (Misal "Ovo 20000" -> "20000")
-                    const nominalText = p.name.replace(/[^0-9]/g, ''); 
-                    
                     const div = document.createElement('div');
                     div.className = 'grid-item';
                     div.onclick = () => selectItem(div, p, finalPrice);
                     
-                    // TAMPILKAN NAMA PRODUK APA ADANYA (p.name)
                     div.innerHTML = `
                         <span class="amount">${p.name}</span>
                         <span class="price">Rp ${priceFormatted}</span>
@@ -305,13 +295,13 @@
 
             } catch (error) {
                 console.error('Error:', error);
-                container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #a78bfa;">Gagal memuat data.</div>`;
+                container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #ef4444;">Gagal memuat data.</div>`;
             }
         }
 
         function selectItem(el, productData, finalPrice) {
             if(!isStoreOpen) return;
-
+            
             document.querySelectorAll('.grid-item').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
             
@@ -322,9 +312,9 @@
         function validateForm() {
             const phone = document.getElementById('ovoNumber').value;
             const btn = document.getElementById('btnPay');
-
+            
             if(!isStoreOpen) return;
-
+            
             if (phone.length > 9 && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
@@ -335,7 +325,7 @@
         function goToPayment() {
             if (!selectedProduct) return;
             const phone = document.getElementById('ovoNumber').value;
-
+            
             const transactionData = {
                 productId: selectedProduct._id,
                 productName: selectedProduct.name,
@@ -343,7 +333,7 @@
                 customerNumber: phone,
                 category: TARGET_CATEGORY
             };
-
+            
             localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
             window.location.href = '../payment.html';
         }

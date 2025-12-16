@@ -10,14 +10,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- RESET & BACKGROUND --- */
+        /* --- RESET & BACKGROUND (TIDAK DIUBAH) --- */
         html { height: 100%; background: #020617; }
         body { 
             margin: 0; min-height: 100%; color: #fff; font-family: 'Poppins', sans-serif;
             overflow-x: hidden; position: relative;
             background-color: #020617;
         }
-
         /* Animasi Background "Speed Lines" */
         .cyber-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
@@ -42,10 +41,8 @@
             top: -100px; left: 50%; transform: translateX(-50%);
             animation: pulseGlow 5s infinite alternate;
         }
-
         @keyframes moveLines { 0% { background-position: 0 0; } 100% { background-position: -100% 0; } }
         @keyframes pulseGlow { 0% { opacity: 0.2; } 100% { opacity: 0.4; } }
-
         .mobile-container {
             max-width: 480px; margin: 0 auto; min-height: 100vh;
             display: flex; flex-direction: column; position: relative;
@@ -54,7 +51,6 @@
             border-left: 1px solid rgba(0, 170, 19, 0.1);
             border-right: 1px solid rgba(0, 170, 19, 0.1);
         }
-
         /* --- HEADER --- */
         .gopay-header {
             padding: 20px; display: flex; align-items: center; justify-content: space-between;
@@ -64,7 +60,6 @@
         .btn-back { color: #fff; font-size: 1.2rem; text-decoration: none; }
         .page-title { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; color: #fff; }
         .header-logo { color: #00AA13; font-size: 1.4rem; }
-
         /* --- HERO: HOLOGRAPHIC CARD --- */
         .hero-section { padding: 30px 20px; }
         .gopay-card {
@@ -88,7 +83,6 @@
         .card-info { margin-top: 30px; position: relative; z-index: 2; }
         .info-label { font-size: 0.8rem; opacity: 0.9; }
         .info-value { font-size: 1.4rem; font-weight: 700; margin-top: 5px; }
-
         /* --- INPUT --- */
         .input-area { padding: 0 20px 20px 20px; }
         .input-label { color: #4ade80; font-size: 0.85rem; margin-bottom: 8px; font-weight: 600; }
@@ -106,7 +100,6 @@
             color: #fff; font-size: 1.1rem; font-weight: 600;
         }
         .book-icon { color: #00AA13; cursor: pointer; }
-
         /* --- GRID NOMINAL --- */
         .grid-area { padding: 10px 20px 120px 20px; /* Padding bawah besar */ }
         .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -127,10 +120,8 @@
             content: '\f058'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
             position: absolute; top: 10px; right: 10px; color: #00AA13;
         }
-
         .nom-title { font-size: 1.1rem; font-weight: 700; color: #fff; display: block; }
         .nom-price { font-size: 0.85rem; color: #4ade80; margin-top: 5px; display: block; }
-
         /* --- BUTTON BAYAR --- */
         .btn-wrapper { margin-top: 30px; width: 100%; }
         .btn-pay {
@@ -144,7 +135,6 @@
         .btn-pay:disabled {
             background: #334155; color: #94a3b8; box-shadow: none; cursor: not-allowed; opacity: 0.7;
         }
-
         /* Banner Toko Tutup */
         .store-closed-banner {
             background: rgba(34, 197, 94, 0.15); border: 1px dashed #22c55e; color: #22c55e;
@@ -152,16 +142,13 @@
             margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
         }
         .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; display: block; }
-
     </style>
 </head>
 <body>
-
     <div class="cyber-bg">
         <div class="speed-lines"></div>
         <div class="glow-orb"></div>
     </div>
-
     <div class="mobile-container">
         
         <header class="gopay-header">
@@ -169,7 +156,6 @@
             <div class="page-title">GoPay Top Up</div>
             <i class="fa-solid fa-wallet header-logo"></i>
         </header>
-
         <div class="hero-section">
             <div class="gopay-card">
                 <div class="card-flex">
@@ -182,7 +168,6 @@
                 </div>
             </div>
         </div>
-
         <div class="input-area">
             <div id="closedBannerContainer"></div> <div class="input-label">Nomor HP Terdaftar</div>
             <div class="input-box">
@@ -190,7 +175,6 @@
                 <i class="fa-solid fa-address-book book-icon"></i>
             </div>
         </div>
-
         <div class="grid-area">
             <div class="input-label" style="margin-bottom: 15px;">Pilih Nominal</div>
             <div class="grid-container" id="nominalContainer">
@@ -198,16 +182,13 @@
                     <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat produk...
                 </div>
             </div>
-
             <div class="btn-wrapper">
                 <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                     Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
         </div>
-
     </div>
-
     <nav class="bottom-nav">
         <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
         <a href="/ppob.html" class="active"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
@@ -218,6 +199,7 @@
     <script>
         const API_URL = '/api';
         const TARGET_CATEGORY = 'Gopay'; // Kategori Database
+        
         let selectedProduct = null;
         let globalMargin = 0;
         let isStoreOpen = true;
@@ -230,19 +212,30 @@
             const container = document.getElementById('nominalContainer');
             const bannerContainer = document.getElementById('closedBannerContainer');
             const btnPay = document.getElementById('btnPay');
-
+            
             try {
-                // 1. CEK STATUS TOKO & MARGIN
-                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                // 1. CEK STATUS TOKO & MARGIN DARI SERVER
+                let configResponse;
+                try {
+                     configResponse = await fetch(`${API_URL}/settings/ppob`);
+                } catch(e) { /* fallback */ }
+                
+                const config = configResponse && configResponse.ok 
+                               ? await configResponse.json() 
+                               : { isOpen: true, margin: 0 };
+
                 globalMargin = parseInt(config.margin) || 0;
-                isStoreOpen = config.isOpen;
+                isStoreOpen = config.isOpen === true || config.isOpen === 'true';
 
                 // 2. JIKA TOKO TUTUP
                 if (!isStoreOpen) {
                     bannerContainer.innerHTML = `
                         <div class="store-closed-banner">
                             <i class="fa-solid fa-shop-lock"></i>
-                            MAAF, TOKO SEDANG TUTUP
+                            MAAF, TOKO SEDANG TUTUP<br>
+                            <span style="font-size:0.7rem; font-weight:400; color:#4ade80; margin-top:5px;">
+                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                            </span>
                         </div>
                     `;
                     document.getElementById('gopayNumber').disabled = true;
@@ -251,19 +244,20 @@
                     btnPay.style.background = "#334155";
                     btnPay.style.cursor = "not-allowed";
                     btnPay.style.opacity = "0.7";
+                    btnPay.style.boxShadow = "none";
                     
                     container.innerHTML = ''; 
                     return; 
                 }
 
-                // 3. LOAD PRODUK GOPAY
+                // 3. LOAD PRODUK
                 const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
                 const products = await res.json();
-
+                
                 container.innerHTML = ''; 
-
+                
                 if (products.length === 0) {
-                    container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #ef4444;">Produk Kosong</div>`;
+                    container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #ef4444;">Produk Sedang Kosong</div>`;
                     return;
                 }
 
@@ -276,7 +270,6 @@
                     div.className = 'grid-card';
                     div.onclick = () => selectCard(div, p, finalPrice);
                     
-                    // NAMA PRODUK TAMPIL APA ADANYA (p.name)
                     div.innerHTML = `
                         <span class="nom-title">${p.name}</span>
                         <span class="nom-price">Rp ${priceFormatted}</span>
@@ -292,7 +285,7 @@
 
         function selectCard(el, productData, finalPrice) {
             if(!isStoreOpen) return;
-
+            
             document.querySelectorAll('.grid-card').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
             
@@ -303,9 +296,9 @@
         function checkForm() {
             const phone = document.getElementById('gopayNumber').value;
             const btn = document.getElementById('btnPay');
-
+            
             if(!isStoreOpen) return;
-
+            
             if (phone.length > 9 && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
@@ -316,7 +309,7 @@
         function goToPayment() {
             if (!selectedProduct) return;
             const phone = document.getElementById('gopayNumber').value;
-
+            
             const transactionData = {
                 productId: selectedProduct._id,
                 productName: selectedProduct.name,
@@ -324,7 +317,7 @@
                 customerNumber: phone,
                 category: TARGET_CATEGORY
             };
-
+            
             localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
             window.location.href = '../payment.html';
         }

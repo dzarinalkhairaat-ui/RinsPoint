@@ -17,7 +17,6 @@
             overflow-x: hidden; position: relative;
             background-color: #202124;
         }
-
         /* Animasi Background Prism */
         .prism-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
@@ -36,13 +35,11 @@
         .t2 { bottom: 20%; right: 10%; border-bottom-color: rgba(234, 67, 53, 0.2); animation-duration: 18s; transform: rotate(45deg); } /* Red */
         .t3 { top: 40%; right: 30%; border-bottom-color: rgba(251, 188, 5, 0.2); animation-duration: 20s; transform: rotate(180deg); } /* Yellow */
         .t4 { bottom: 10%; left: 20%; border-bottom-color: rgba(52, 168, 83, 0.2); animation-duration: 12s; transform: rotate(-45deg); } /* Green */
-
         @keyframes floatTri {
             0% { transform: translateY(0) rotate(0deg) scale(1); }
             50% { transform: translateY(-40px) rotate(10deg) scale(1.1); }
             100% { transform: translateY(0) rotate(0deg) scale(1); }
         }
-
         .mobile-container {
             max-width: 480px; margin: 0 auto; min-height: 100vh;
             display: flex; flex-direction: column; position: relative;
@@ -51,7 +48,6 @@
             border-left: 1px solid rgba(255,255,255,0.05);
             border-right: 1px solid rgba(255,255,255,0.05);
         }
-
         /* --- HEADER --- */
         .play-header {
             padding: 20px; display: flex; align-items: center; justify-content: space-between;
@@ -61,7 +57,6 @@
         .btn-back { color: #e8eaed; font-size: 1.2rem; text-decoration: none; }
         .page-title { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.5px; }
         .page-title span { color: #4285F4; } /* Blue Accent */
-
         /* --- HERO: GIFT CARD --- */
         .hero-area { padding: 30px 20px; }
         .gift-card {
@@ -82,11 +77,9 @@
             position: absolute; right: -20px; bottom: -20px;
             font-size: 8rem; color: rgba(255,255,255,0.03); transform: rotate(-15deg);
         }
-
         .card-text h3 { margin: 0; font-size: 1.2rem; color: #fff; font-weight: 700; text-transform: uppercase; }
         .card-text p { margin: 5px 0 0 0; font-size: 0.75rem; color: #9aa0a6; }
         .play-logo { font-size: 2.5rem; background: linear-gradient(45deg, #4285F4, #EA4335, #FBBC05, #34A853); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
         /* --- INPUT --- */
         .form-area { padding: 0 20px 20px 20px; }
         .input-label { color: #4285F4; font-size: 0.85rem; margin-bottom: 8px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
@@ -103,8 +96,8 @@
             width: 100%; background: transparent; border: none; outline: none;
             color: #fff; font-size: 1.1rem; font-weight: 500;
         }
+        .play-input:disabled { color: #5f6368; cursor: not-allowed; }
         .info-text { font-size: 0.7rem; color: #9aa0a6; margin-top: 8px; font-style: italic; }
-
         /* --- GRID NOMINAL --- */
         .grid-area { padding: 10px 20px 120px 20px; }
         .grid-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -131,11 +124,9 @@
             content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
             position: absolute; top: 5px; right: 5px; color: #fff; font-size: 0.7rem; z-index: 2;
         }
-
         .code-val { font-size: 1.1rem; font-weight: 700; color: #fff; display: block; }
         .code-price { font-size: 0.85rem; color: #4285F4; margin-top: 5px; display: block; }
         .grid-item.selected .code-price { color: #34A853; }
-
         /* --- BUTTON BAYAR --- */
         .btn-container { margin-top: 30px; width: 100%; }
         .btn-pay {
@@ -147,9 +138,8 @@
         }
         .btn-pay:active { transform: scale(0.98); }
         .btn-pay:disabled {
-            background: #3c4043; color: #5f6368; box-shadow: none; cursor: not-allowed; opacity: 0.7;
+            background: #3c4043 !important; color: #5f6368 !important; box-shadow: none !important; cursor: not-allowed; opacity: 0.7;
         }
-
         /* Banner Toko Tutup */
         .store-closed-banner {
             background: rgba(234, 67, 53, 0.15); border: 1px dashed #EA4335; color: #EA4335;
@@ -157,18 +147,15 @@
             margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
         }
         .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; display: block; }
-
     </style>
 </head>
 <body>
-
     <div class="prism-bg">
         <div class="triangle t1"></div>
         <div class="triangle t2"></div>
         <div class="triangle t3"></div>
         <div class="triangle t4"></div>
     </div>
-
     <div class="mobile-container">
         
         <header class="play-header">
@@ -190,16 +177,17 @@
         </div>
 
         <div class="form-area">
-            <div id="closedBannerContainer"></div> <div class="input-label"><i class="fa-solid fa-mobile-screen"></i> Nomor Penerima Kode</div>
+            <div id="closedBannerContainer"></div> 
+            <div class="input-label"><i class="fa-solid fa-mobile-screen"></i> Nomor Penerima Kode</div>
             <div class="input-wrap">
-                <input type="tel" class="play-input" placeholder="08xxxxxxxxxx" id="phoneNumber" oninput="validateInput()">
+                <input type="tel" class="play-input" placeholder="08xxxxxxxxxx" id="phoneNumber" oninput="validateInput()" maxlength="15">
                 <i class="fa-solid fa-address-book" style="color: #5f6368; cursor: pointer;"></i>
             </div>
-            <div class="info-text">Kode voucher akan dikirim melalui SMS/WhatsApp ke nomor ini.</div>
+            <div class="info-text">Kode voucher akan dikirim via nomor Whatsapp ini, Harap isi nomor dengan benar.</div>
         </div>
 
         <div class="grid-area">
-            <div class="input-label" style="margin-bottom: 15px; color:#e8eaed;">Pilih Nominal Voucher</div>
+            <div class="input-label" id="labelNominal" style="margin-bottom: 15px; color:#e8eaed;">Pilih Nominal Voucher</div>
             <div class="grid-box" id="nominalContainer">
                 <div style="grid-column: span 2; text-align: center; color: #9aa0a6;">
                     <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat...
@@ -212,7 +200,6 @@
                 </button>
             </div>
         </div>
-
     </div>
 
     <nav class="bottom-nav">
@@ -224,67 +211,84 @@
 
     <script>
         const API_URL = '/api';
-        const TARGET_CATEGORY = 'GooglePlay'; // Pastikan di Admin kategori produknya "GooglePlay"
+        const TARGET_CATEGORY = 'GooglePlay'; // Filter Kategori Produk
         let selectedProduct = null;
         let globalMargin = 0;
         let isStoreOpen = true;
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadData();
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
         });
 
-        // 1. Fetch Data dari Database Admin (Dengan Margin)
         async function loadData() {
             const container = document.getElementById('nominalContainer');
             const bannerContainer = document.getElementById('closedBannerContainer');
             const btnPay = document.getElementById('btnPay');
+            const inputPhone = document.getElementById('phoneNumber');
+            const labelNominal = document.getElementById('labelNominal');
 
             try {
-                // A. Cek Status Toko & Margin
-                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                // 1. CEK CONFIG TOKO (Manual)
+                // Admin manual pun butuh istirahat, jadi fitur ini tetap berguna.
+                const configRaw = localStorage.getItem('ppobConfig');
+                const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
+                
                 globalMargin = parseInt(config.margin) || 0;
-                isStoreOpen = config.isOpen;
+                
+                isStoreOpen = config.isOpen === true || config.isOpen === "true";
+                if (config.isOpen === false || config.isOpen === "false") {
+                    isStoreOpen = false;
+                }
 
-                // B. Jika Toko Tutup, Blokir Tampilan
+                // 2. LOGIKA JIKA TOKO TUTUP
                 if (!isStoreOpen) {
                     bannerContainer.innerHTML = `
                         <div class="store-closed-banner">
                             <i class="fa-solid fa-shop-lock"></i>
                             MAAF, TOKO SEDANG TUTUP
+                            <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
+                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                            </span>
                         </div>
                     `;
-                    document.getElementById('phoneNumber').disabled = true;
+                    inputPhone.disabled = true;
+                    inputPhone.value = "";
+                    inputPhone.placeholder = "Toko Tutup";
+                    
                     btnPay.disabled = true;
                     btnPay.innerText = "Toko Tutup";
-                    btnPay.style.background = "#3c4043";
-                    btnPay.style.cursor = "not-allowed";
-                    btnPay.style.opacity = "0.7";
                     
+                    // Bersihkan produk
                     container.innerHTML = ''; 
-                    return; 
+                    if(labelNominal) labelNominal.style.display = 'none';
+                    
+                    return; // STOP EXECUTION
                 }
 
-                // C. Load Produk
+                // 3. LOAD DATA PRODUK DARI DATABASE
+                if(labelNominal) labelNominal.style.display = 'block';
+
                 const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                if (!res.ok) throw new Error('Gagal mengambil data produk');
+
                 const products = await res.json();
+                container.innerHTML = ''; 
 
-                container.innerHTML = ''; // Hapus loading
-
-                if (products.length === 0) {
+                if (!Array.isArray(products) || products.length === 0) {
                     container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Voucher Kosong</div>`;
                     return;
                 }
 
-                // D. Render Produk dengan Harga + Margin
+                // 4. RENDER PRODUK
                 products.forEach(p => {
-                    const finalPrice = p.price + globalMargin;
+                    const basePrice = parseInt(p.price) || 0;
+                    const finalPrice = basePrice + globalMargin;
                     const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
                     
                     const div = document.createElement('div');
                     div.className = 'grid-item';
                     div.onclick = () => selectCard(div, p, finalPrice);
                     
-                    // TAMPILKAN NAMA PRODUK APA ADANYA
                     div.innerHTML = `
                         <span class="code-val">${p.name}</span>
                         <span class="code-price">Rp ${priceFormatted}</span>
@@ -293,12 +297,13 @@
                 });
 
             } catch (error) {
-                console.error(error);
-                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+                console.error('Error:', error);
+                if(isStoreOpen) {
+                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+                }
             }
         }
 
-        // 2. Logic Pilih Produk
         function selectCard(el, productData, priceWithMargin) {
             if(!isStoreOpen) return;
 
@@ -310,35 +315,39 @@
         }
 
         function validateInput() {
-            const phone = document.getElementById('phoneNumber').value;
-            const btn = document.getElementById('btnPay');
-
             if(!isStoreOpen) return;
 
-            if (phone.length > 9 && selectedProduct !== null) {
+            const phone = document.getElementById('phoneNumber').value;
+            const btn = document.getElementById('btnPay');
+            
+            // Validasi manual: pastikan nomor bisa dihubungi
+            const isValidPhone = phone.length >= 10;
+
+            if (isValidPhone && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
             }
         }
 
-        // 3. Proses ke Halaman Payment
         function goToPayment() {
-            if (!selectedProduct) return;
+            if (!selectedProduct || !isStoreOpen) return;
+            
             const phone = document.getElementById('phoneNumber').value;
-
-            // Simpan data transaksi ke LocalStorage
+            
+            // Data Transaksi Manual
+            // Kita tetap kirim detail lengkap agar Admin mudah mengecek di Dashboard
             const transactionData = {
                 productId: selectedProduct._id,
-                productName: selectedProduct.name,
-                productPrice: selectedProduct.finalPrice, // Pakai harga margin
+                productName: selectedProduct.name, // Nama Produk (Penting untuk Manual)
+                productPrice: selectedProduct.finalPrice, 
                 customerNumber: phone,
-                category: TARGET_CATEGORY
+                category: TARGET_CATEGORY,
+                brand: 'GOOGLE PLAY', 
+                type: 'MANUAL_PROCESS' // Penanda untuk backend (opsional)
             };
-
-            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
             
-            // Redirect ke halaman checkout
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
             window.location.href = '../payment.html';
         }
     </script>

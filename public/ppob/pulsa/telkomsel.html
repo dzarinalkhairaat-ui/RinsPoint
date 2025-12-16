@@ -303,6 +303,7 @@
     <script>
         const API_URL = '/api';
         const TARGET_CATEGORY = 'Pulsa Telkomsel'; // Kategori di DB Admin
+        
         let selectedProduct = null;
         let globalMargin = 0;
         let isStoreOpen = true;
@@ -324,47 +325,73 @@
             }
         }
 
-        // 2. Load Data (Cek Status Toko & Margin)
+        // 2. Load Data (REVISI: Ambil Config dari Server)
         async function loadData() {
             const container = document.getElementById('nominalContainer');
             const btnPay = document.getElementById('btnPay');
             
             try {
-                // A. Ambil Config dari LocalStorage (Yang diset di Admin)
-                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
-                globalMargin = parseInt(config.margin) || 0;
-                isStoreOpen = config.isOpen;
+                // A. Tampilkan Loading
+                container.innerHTML = `
+                    <div style="grid-column: span 2; text-align:center; padding: 20px; color:#64748b; font-size:0.85rem;">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i> Menghubungkan ke Server...
+                    </div>`;
 
-                // B. Jika Toko Tutup, Blokir Tampilan
+                // B. Ambil CONFIG dari SERVER (Bukan LocalStorage)
+                let configResponse;
+                try {
+                    configResponse = await fetch(`${API_URL}/settings/ppob`); // Panggil API Publik (tanpa token)
+                    if (!configResponse.ok) throw new Error("Gagal ambil config");
+                } catch (e) {
+                    console.warn("Config Server Error, pakai default:", e);
+                    // Fallback darurat jika server error, baru pakai default
+                }
+                
+                const config = configResponse && configResponse.ok 
+                               ? await configResponse.json() 
+                               : { isOpen: true, margin: 0 };
+
+                // C. Set Variabel Global
+                // Pastikan ambil properti yang benar dari respons server
+                globalMargin = parseInt(config.margin) || 0;
+                
+                // Cek status isOpen (bisa berupa boolean true/false atau string "true"/"false")
+                isStoreOpen = config.isOpen === true || config.isOpen === 'true';
+
+                // D. LOGIKA TOKO TUTUP
                 if (!isStoreOpen) {
                     container.innerHTML = `
                         <div class="store-closed-banner">
                             <i class="fa-solid fa-shop-lock"></i>
-                            MAAF, TOKO SEDANG TUTUP
+                            MAAF, TOKO SEDANG TUTUP<br>
+                            <span style="font-size:0.7rem; font-weight:400; color:#fca5a5; margin-top:5px;">
+                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                            </span>
                         </div>
                     `;
                     document.getElementById('phoneNumber').disabled = true;
                     btnPay.disabled = true;
-                    btnPay.innerText = "Toko Tutup";
+                    btnPay.innerHTML = '<i class="fa-solid fa-ban"></i> Toko Tutup';
                     btnPay.style.background = "#334155";
                     btnPay.style.cursor = "not-allowed";
                     btnPay.style.opacity = "0.7";
-                    return; // Stop disini
+                    return; // Stop disini, jangan load produk
                 }
 
-                // C. Jika Buka, Ambil Data Produk
+                // E. Jika Buka, Ambil Data Produk
                 const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
                 const products = await res.json();
-
+                
                 container.innerHTML = ''; 
-
+                
                 if (products.length === 0) {
-                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
+                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Sedang Tidak Tersedia</div>`;
                     return;
                 }
 
-                // D. Render Produk + Hitung Margin
+                // F. Render Produk + HITUNG MARGIN
                 products.forEach(p => {
+                    // RUMUS: Harga Modal (Database) + Global Margin (Server)
                     const finalPrice = p.price + globalMargin;
                     const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
                     
@@ -381,17 +408,18 @@
 
             } catch (error) {
                 console.error(error);
-                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data server.</div>`;
             }
         }
 
         // 3. Logic Pilih Produk
         function selectProduct(el, productData, priceWithMargin) {
             if(!isStoreOpen) return; // Cegah klik jika tutup
-
+            
             document.querySelectorAll('.product-item').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
             
+            // Simpan harga final (yang sudah dimargin) ke data transaksi
             selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
             checkValidation();
         }
@@ -411,15 +439,16 @@
         function goToPayment() {
             if (!selectedProduct) return;
             const phone = document.getElementById('phoneNumber').value;
-
+            
             const transactionData = {
                 productId: selectedProduct._id,
                 productName: selectedProduct.name,
+                // PENTING: Kirim harga final (Margin) ke halaman pembayaran
                 productPrice: selectedProduct.finalPrice, 
                 customerNumber: phone,
                 category: TARGET_CATEGORY
             };
-
+            
             localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
             window.location.href = '../../payment.html';
         }

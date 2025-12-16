@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Top Up Free Fire</title>
     
-    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
     
@@ -17,7 +17,6 @@
             overflow-x: hidden; position: relative;
             background-color: #1a0505;
         }
-
         /* Background Animasi: Flying Sparks */
         .fire-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
@@ -35,12 +34,10 @@
         .s2 { left: 40%; animation-duration: 7s; animation-delay: 1s; }
         .s3 { left: 60%; animation-duration: 4s; animation-delay: 2s; }
         .s4 { left: 80%; animation-duration: 6s; animation-delay: 0.5s; }
-
         @keyframes fly {
             0% { transform: translateY(0) scale(1); opacity: 1; }
             100% { transform: translateY(-100vh) scale(0); opacity: 0; }
         }
-
         .mobile-container {
             max-width: 480px; margin: 0 auto; min-height: 100vh;
             display: flex; flex-direction: column; position: relative;
@@ -49,7 +46,6 @@
             border-left: 1px solid rgba(239, 68, 68, 0.1);
             border-right: 1px solid rgba(239, 68, 68, 0.1);
         }
-
         /* --- HEADER --- */
         .game-header {
             padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
@@ -62,7 +58,6 @@
             font-size: 1.2rem; color: #fbbf24; letter-spacing: 1px;
             text-shadow: 2px 2px 0px #b91c1c; /* Shadow Merah */
         }
-
         /* --- BANNER HERO --- */
         .banner-section {
             width: 100%; height: 220px;
@@ -79,7 +74,6 @@
             position: absolute; bottom: 0; left: 0; width: 100%;
             background: linear-gradient(to top, #1a0505, transparent); height: 80px;
         }
-
         /* --- INPUT ID --- */
         .form-area { padding: 20px; margin-top: -30px; position: relative; z-index: 10; }
         .input-card {
@@ -103,8 +97,8 @@
             width: 100%; background: transparent; border: none; outline: none;
             color: #fff; font-size: 1.1rem; font-weight: 600; letter-spacing: 1px;
         }
+        .game-input:disabled { color: #64748b; cursor: not-allowed; }
         .input-hint { font-size: 0.7rem; color: #fca5a5; position: absolute; top: -10px; left: 10px; background: #2b0808; padding: 0 5px; border-radius: 4px; }
-
         /* --- GRID DIAMONDS (FF STYLE) --- */
         .grid-area { padding: 0 20px 120px 20px; }
         .section-label { 
@@ -126,25 +120,21 @@
             min-height: 125px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
         }
-
         .ff-card:hover { 
             transform: translateY(-4px); 
             border-color: #fbbf24; 
         }
-
         .ff-card::before {
             content: ''; position: absolute;
             top: -20px; right: -20px; width: 70px; height: 70px;
             border: 2px dashed rgba(251, 191, 36, 0.1);
             border-radius: 50%; pointer-events: none;
         }
-
         .ff-card.selected {
             background: #450a0a;
             border: 2px solid #ef4444; /* Red Border */
             box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
         }
-
         .card-body { 
             padding: 15px 15px 10px 15px; 
             flex-grow: 1; 
@@ -172,7 +162,6 @@
             color: #fbbf24; /* Yellow/Gold Price */
             text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
-
         .card-footer {
             background: rgba(0, 0, 0, 0.4); 
             padding: 8px 15px;
@@ -190,7 +179,6 @@
             text-transform: uppercase; letter-spacing: 0.5px;
             border: 1px solid rgba(220, 38, 38, 0.3);
         }
-
         /* --- BUTTON BAYAR --- */
         .pay-bar { margin-top: 30px; width: 100%; }
         .btn-pay {
@@ -209,7 +197,6 @@
         .btn-pay:disabled {
             background: #334155; color: #64748b; box-shadow: none; cursor: not-allowed; animation: none;
         }
-
         /* Banner Toko Tutup */
         .store-closed-banner {
             background: rgba(239, 68, 68, 0.15); border: 1px dashed #ef4444; color: #f87171;
@@ -217,33 +204,33 @@
             margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
         }
         .store-closed-banner i { font-size: 1.5rem; margin-bottom: 8px; }
-
+        .store-closed-banner p { margin: 5px 0 0; font-size: 0.75rem; color: #fbbf24; opacity: 0.8; }
     </style>
 </head>
 <body>
-
     <div class="fire-bg">
         <div class="spark s1"></div>
         <div class="spark s2"></div>
         <div class="spark s3"></div>
         <div class="spark s4"></div>
     </div>
-
     <div class="mobile-container">
         
         <header class="game-header">
-            <a href="../../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <div class="header-title">FREE FIRE</div>
             <div style="width: 24px;"></div>
         </header>
 
         <div class="banner-section">
-            <img src="../../assets/images/ff-banner.jpg" class="banner-img" alt="Free Fire Banner" onerror="this.src='https://placehold.co/600x300/2b0808/fbbf24?text=Free+Fire';">
+            <img src="../assets/images/ff-banner.jpg" class="banner-img" alt="Free Fire Banner" onerror="this.src='https://placehold.co/600x300/2b0808/fbbf24?text=Free+Fire';">
             <div class="banner-overlay"></div>
         </div>
 
         <div class="form-area">
-            <div id="closedBannerContainer"></div> <div class="input-card">
+            <div id="closedBannerContainer"></div> 
+            
+            <div class="input-card">
                 <div class="input-label"><i class="fa-solid fa-id-badge"></i> Player ID</div>
                 <div class="input-wrapper">
                     <span class="input-hint">ID Pemain</span>
@@ -261,7 +248,7 @@
             </div>
 
             <div id="diamondSection" style="margin-top:20px;">
-                <div class="section-label">Top Up Diamonds</div>
+                <div class="section-label" id="labelDiamond">Top Up Diamonds</div>
                 <div class="ff-grid" id="diamondContainer">
                     <div style="grid-column: span 2; text-align: center; color: #94a3b8; padding: 20px;">
                         <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat Produk...
@@ -275,7 +262,6 @@
                 </button>
             </div>
         </div>
-
     </div>
 
     <nav class="bottom-nav">
@@ -287,7 +273,7 @@
 
     <script>
         const API_URL = '/api';
-        const TARGET_CATEGORY = 'Free Fire'; // Kategori di DB Admin
+        const TARGET_CATEGORY = 'Free Fire'; // Pastikan kategori di DB Admin
         let selectedProduct = null;
         let globalMargin = 0;
         let isStoreOpen = true;
@@ -303,50 +289,70 @@
             const membershipSection = document.getElementById('membershipSection');
             const bannerContainer = document.getElementById('closedBannerContainer');
             const btnPay = document.getElementById('btnPay');
+            const playerId = document.getElementById('playerId');
+            const labelDiamond = document.getElementById('labelDiamond');
 
             try {
                 // A. Cek Status Toko & Margin
-                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                const configRaw = localStorage.getItem('ppobConfig');
+                const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
+                
                 globalMargin = parseInt(config.margin) || 0;
-                isStoreOpen = config.isOpen;
+                
+                isStoreOpen = config.isOpen === true || config.isOpen === "true";
+                if (config.isOpen === false || config.isOpen === "false") {
+                    isStoreOpen = false;
+                }
 
-                // B. JIKA TOKO TUTUP
+                // B. JIKA TOKO TUTUP -> STOP PROSES
                 if (!isStoreOpen) {
                     bannerContainer.innerHTML = `
                         <div class="store-closed-banner">
                             <i class="fa-solid fa-shop-lock"></i>
                             MAAF, TOKO SEDANG TUTUP
+                            <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
+                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                            </span>
                         </div>
                     `;
-                    document.getElementById('playerId').disabled = true;
+                    playerId.disabled = true;
+                    playerId.placeholder = "Toko Tutup";
+                    
                     btnPay.disabled = true;
                     btnPay.innerText = "Toko Tutup";
                     btnPay.style.background = "#334155";
                     btnPay.style.cursor = "not-allowed";
                     btnPay.style.color = "#64748b";
                     
-                    diamondContainer.innerHTML = ''; 
-                    return; 
+                    // Bersihkan container
+                    diamondContainer.innerHTML = '';
+                    membershipContainer.innerHTML = '';
+                    if(labelDiamond) labelDiamond.style.display = 'none';
+
+                    return; // STOP EXECUTION
                 }
 
                 // C. Ambil Produk
                 const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
-                const products = await res.json();
+                if (!res.ok) throw new Error("Gagal mengambil data");
 
+                const products = await res.json();
+                
                 // Clear Loading
                 membershipContainer.innerHTML = '';
                 diamondContainer.innerHTML = '';
 
-                if (products.length === 0) {
+                if (!Array.isArray(products) || products.length === 0) {
                     diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
                     return;
                 }
 
                 // D. Filter & Render
                 let hasMembership = false;
-
+                
                 products.forEach(p => {
-                    const finalPrice = p.price + globalMargin;
+                    const basePrice = parseInt(p.price) || 0;
+                    const finalPrice = basePrice + globalMargin;
                     const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
                     
                     // Deteksi Jenis Produk
@@ -354,13 +360,14 @@
                     const isMembership = lowerName.includes('member') || lowerName.includes('weekly') || lowerName.includes('monthly');
                     
                     // Tentukan Icon & Container
-                    let iconImg = '../../assets/icons/freefire/diamond-icon.png';
+                    // Path aset diperbaiki ke ../assets/
+                    let iconImg = '../assets/icons/freefire/diamond-icon.png';
                     let targetContainer = diamondContainer;
-
+                    
                     if (isMembership) {
                         hasMembership = true;
                         targetContainer = membershipContainer;
-                        iconImg = '../../assets/icons/mobile-legend/wdp-icon.png'; // Bisa pakai icon membership universal
+                        iconImg = '../assets/icons/mobile-legend/wdp-icon.png'; 
                     }
 
                     const div = document.createElement('div');
@@ -371,7 +378,7 @@
                         <div class="card-body">
                             <span class="ff-amount">${p.name}</span>
                             <div class="ff-price-row">
-                                <img src="${iconImg}" class="ff-icon-img" alt="Icon" onerror="this.src='../../assets/icons/freefire/diamond-icon.png'">
+                                <img src="${iconImg}" class="ff-icon-img" alt="Icon" onerror="this.src='../assets/icons/freefire/diamond-icon.png'">
                                 <span class="ff-price">Rp ${priceFormatted}</span>
                             </div>
                         </div>
@@ -389,7 +396,9 @@
 
             } catch (error) {
                 console.error(error);
-                diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+                if(isStoreOpen) {
+                    diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+                }
             }
         }
 
@@ -400,17 +409,18 @@
             document.querySelectorAll('.ff-card').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
             
-            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
+            selectedProduct = { ...productData, finalPrice: priceWithMargin };
             checkForm();
         }
 
         function checkForm() {
-            const player = document.getElementById('playerId').value;
-            const btn = document.getElementById('btnPay');
-
             if(!isStoreOpen) return;
 
-            if (player.length > 5 && selectedProduct !== null) {
+            const player = document.getElementById('playerId').value;
+            const btn = document.getElementById('btnPay');
+            
+            // Validasi ID FF (biasanya angka, min 5 digit)
+            if (player.length >= 5 && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
@@ -419,19 +429,23 @@
 
         // 3. Proses ke Halaman Payment
         function goToPayment() {
-            if (!selectedProduct) return;
+            if (!selectedProduct || !isStoreOpen) return;
+            
             const player = document.getElementById('playerId').value;
-
+            
             const transactionData = {
                 productId: selectedProduct._id,
+                productSku: selectedProduct.buyer_sku_code, // SKU untuk Admin
                 productName: selectedProduct.name,
                 productPrice: selectedProduct.finalPrice,
-                customerNumber: player, // Player ID
-                category: TARGET_CATEGORY
+                customerNumber: player,
+                category: TARGET_CATEGORY,
+                brand: 'FREE FIRE',
+                type: 'MANUAL_PROCESS'
             };
-
+            
             localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
-            window.location.href = '../../payment.html';
+            window.location.href = '../payment.html';
         }
     </script>
 </body>

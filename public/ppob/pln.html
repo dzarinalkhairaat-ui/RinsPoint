@@ -17,7 +17,6 @@
             overflow-x: hidden; position: relative;
             background-color: #0f172a;
         }
-
         /* Motif Abstrak Bergerak */
         .animated-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
@@ -31,13 +30,11 @@
             0% { transform: scale(1); opacity: 0.8; }
             100% { transform: scale(1.1); opacity: 1; }
         }
-
         .mobile-container {
             max-width: 480px; margin: 0 auto; min-height: 100vh;
             display: flex; flex-direction: column; position: relative;
             background: rgba(15, 23, 42, 0.85); 
         }
-
         /* --- HEADER MEWAH --- */
         .pln-header {
             padding: 20px; display: flex; align-items: center; justify-content: space-between;
@@ -57,7 +54,6 @@
             0%, 100% { text-shadow: 0 0 5px rgba(251, 191, 36, 0.5); opacity: 1; }
             50% { text-shadow: 0 0 20px rgba(251, 191, 36, 1); opacity: 0.7; }
         }
-
         /* --- DIGITAL METER CARD --- */
         .meter-container { padding: 20px; }
         .digital-meter {
@@ -86,7 +82,6 @@
         .meter-info { display: flex; justify-content: space-between; align-items: center; }
         .pln-logo div { font-weight:800; color:#fbbf24; font-size:1.2rem; letter-spacing:2px; display:flex; align-items:center; gap:5px; }
         .meter-id { font-size: 0.8rem; color: #94a3b8; text-align: right; }
-
         /* --- SWITCH BUTTON --- */
         .switch-container {
             background: #1e293b; margin: 0 20px 20px 20px;
@@ -102,7 +97,6 @@
             background: #fbbf24; color: #0f172a;
             box-shadow: 0 2px 10px rgba(251, 191, 36, 0.3);
         }
-
         /* --- FORM INPUT --- */
         .form-section { padding: 0 20px; padding-bottom: 100px; }
         .input-group { position: relative; margin-bottom: 25px; }
@@ -114,11 +108,11 @@
             outline: none; transition: 0.3s; box-sizing: border-box;
         }
         .custom-input:focus { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.1); }
+        .custom-input:disabled { background: #0f172a; color: #64748b; cursor: not-allowed; }
         .input-icon {
             position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
             color: #fbbf24; font-size: 1.2rem;
         }
-
         /* --- GRID NOMINAL --- */
         .grid-title { font-size: 0.9rem; color: #cbd5e1; margin-bottom: 12px; font-weight: 500; }
         .nominal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -144,7 +138,6 @@
             border-radius: 8px; display: flex; align-items: center; justify-content: center;
             color: #fbbf24; margin-bottom: 8px;
         }
-
         /* --- BUTTON BAYAR --- */
         .pay-panel {
             margin-top: 30px;
@@ -161,13 +154,11 @@
         }
         .btn-pay:active { transform: scale(0.98); }
         .btn-pay:disabled { background: #334155; color: #64748b; box-shadow: none; cursor: not-allowed; }
-
         /* Animation Classes */
         .fade-in { animation: fadeIn 0.4s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         .hidden { display: none; }
-
         /* Banner Toko Tutup */
         .store-closed-banner {
             background: rgba(239, 68, 68, 0.15); border: 1px dashed #ef4444; color: #f87171;
@@ -175,13 +166,11 @@
             grid-column: span 2; display: flex; flex-direction: column; align-items: center;
         }
         .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; }
-
+        .store-closed-banner p { margin: 5px 0 0; font-size: 0.75rem; color: #fbbf24; opacity: 0.8; }
     </style>
 </head>
 <body>
-
     <div class="animated-bg"></div>
-
     <div class="mobile-container">
         
         <header class="pln-header">
@@ -222,6 +211,8 @@
         </div>
 
         <div class="form-section">
+            <div id="closedBannerContainer"></div>
+
             <div class="input-group">
                 <i class="fa-solid fa-id-card input-icon"></i>
                 <input type="tel" class="custom-input" id="plnNumber" placeholder="No Meter / ID Pel" oninput="validateInput()">
@@ -249,16 +240,14 @@
                     Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
-
         </div>
-
+        
         <nav class="bottom-nav">
             <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
             <a href="/ppob.html" class="active"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
             <a href="/cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span></a>
             <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
         </nav>
-
     </div>
 
     <script>
@@ -276,43 +265,61 @@
 
         async function loadData() {
             const container = document.getElementById('plnProductContainer');
+            const bannerContainer = document.getElementById('closedBannerContainer');
             const btnAction = document.getElementById('btnAction');
+            const inputPln = document.getElementById('plnNumber');
 
             try {
                 // 1. CEK STATUS TOKO & MARGIN
-                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                const configRaw = localStorage.getItem('ppobConfig');
+                const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
+                
                 globalMargin = parseInt(config.margin) || 0;
-                isStoreOpen = config.isOpen;
+                
+                isStoreOpen = config.isOpen === true || config.isOpen === "true";
+                if (config.isOpen === false || config.isOpen === "false") {
+                    isStoreOpen = false;
+                }
 
                 // 2. JIKA TOKO TUTUP
                 if (!isStoreOpen) {
-                    container.innerHTML = `
-                        <div class="store-closed-banner">
+                    bannerContainer.innerHTML = `
+                        <div class="store-closed-banner" style="margin-bottom:20px;">
                             <i class="fa-solid fa-shop-lock"></i>
                             MAAF, TOKO SEDANG TUTUP
+                            <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
+                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                            </span>
                         </div>
                     `;
-                    document.getElementById('plnNumber').disabled = true;
+                    inputPln.disabled = true;
+                    inputPln.placeholder = "Toko Tutup";
+                    
                     btnAction.disabled = true;
                     btnAction.innerText = "Toko Tutup";
                     btnAction.style.background = "#334155";
                     btnAction.style.cursor = "not-allowed";
+                    
+                    container.innerHTML = ''; 
                     return; // Stop loading produk
                 }
 
                 // 3. LOAD PRODUK PLN
                 const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                
+                if (!res.ok) throw new Error("Gagal mengambil data");
+                
                 const products = await res.json();
-
                 container.innerHTML = ''; 
-
-                if (products.length === 0) {
+                
+                if (!Array.isArray(products) || products.length === 0) {
                     container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #ef4444;">Produk Token Kosong</div>`;
                     return;
                 }
 
                 products.forEach(p => {
-                    const finalPrice = p.price + globalMargin;
+                    const basePrice = parseInt(p.price) || 0;
+                    const finalPrice = basePrice + globalMargin;
                     const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
                     
                     // Ambil angka dari nama produk (Misal "PLN 20" -> "20")
@@ -332,7 +339,9 @@
 
             } catch (error) {
                 console.error('Error:', error);
-                container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #ef4444;">Gagal memuat data.</div>`;
+                if(isStoreOpen) {
+                    container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #ef4444;">Gagal memuat data.</div>`;
+                }
             }
         }
 
@@ -342,10 +351,10 @@
             const tokenDiv = document.getElementById('tokenContent');
             const tagihanDiv = document.getElementById('tagihanContent');
             const btnAction = document.getElementById('btnAction');
-
+            
             btns[0].classList.toggle('active', mode === 'token');
             btns[1].classList.toggle('active', mode === 'tagihan');
-
+            
             if (mode === 'token') {
                 tokenDiv.classList.remove('hidden');
                 tagihanDiv.classList.add('hidden');
@@ -379,23 +388,23 @@
         }
 
         function validateInput() {
+            if(!isStoreOpen) return;
+
             const val = document.getElementById('plnNumber').value;
             const btn = document.getElementById('btnAction');
             
-            if(!isStoreOpen) {
-                btn.disabled = true;
-                return;
-            }
+            // Validasi: ID Pelanggan min 10 digit
+            const isValidId = val.length >= 10;
 
             if (currentMode === 'token') {
-                if (val.length > 9 && selectedProduct) {
+                if (isValidId && selectedProduct) {
                     btn.disabled = false;
                 } else {
                     btn.disabled = true;
                 }
             } else {
-                // Mode Tagihan
-                if (val.length > 9) {
+                // Mode Tagihan (hanya butuh ID Pel)
+                if (isValidId) {
                     btn.disabled = false;
                 } else {
                     btn.disabled = true;
@@ -405,27 +414,40 @@
 
         function handleAction() {
             if(!isStoreOpen) return;
-
+            
             const customerNumber = document.getElementById('plnNumber').value;
+            
+            let transactionData = {};
 
             if (currentMode === 'token') {
                 if (!selectedProduct) return;
-
-                const transactionData = {
+                
+                transactionData = {
                     productId: selectedProduct._id,
+                    productSku: selectedProduct.buyer_sku_code,
                     productName: selectedProduct.name,
                     productPrice: selectedProduct.finalPrice,
                     customerNumber: customerNumber,
-                    category: TARGET_CATEGORY
+                    category: TARGET_CATEGORY,
+                    brand: 'PLN',
+                    type: 'MANUAL_PROCESS'
                 };
-
-                localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
-                window.location.href = '../payment.html';
-
             } else {
-                // Simulasi Cek Tagihan (Belum ada backend khusus tagihan di script ini)
-                alert('Fitur Cek Tagihan Masih Dalam Pengembangan.');
+                // Mode Tagihan (Pascabayar Manual)
+                // Kita kirim data dummy agar Admin tahu ini permintaan Cek Tagihan
+                transactionData = {
+                    productId: 'PLN_POSTPAID_CHECK', 
+                    productName: 'CEK TAGIHAN PLN',
+                    productPrice: 0, // Harga 0 dulu, admin update nanti
+                    customerNumber: customerNumber,
+                    category: 'PLN PASCABAYAR',
+                    brand: 'PLN',
+                    type: 'CHECK_BILL'
+                };
             }
+
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+            window.location.href = '../payment.html';
         }
     </script>
 </body>

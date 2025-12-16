@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Top Up Mobile Legends</title>
     
-    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Cinzel:wght@700&display=swap" rel="stylesheet">
     
@@ -17,7 +17,6 @@
             overflow-x: hidden; position: relative;
             background-color: #0b0f19;
         }
-
         /* Background Abstrak */
         .mystic-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
@@ -43,7 +42,6 @@
             50% { opacity: 1; }
             100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
         }
-
         .mobile-container {
             max-width: 480px; margin: 0 auto; min-height: 100vh;
             display: flex; flex-direction: column; position: relative;
@@ -52,7 +50,6 @@
             border-left: 1px solid rgba(251, 191, 36, 0.1);
             border-right: 1px solid rgba(251, 191, 36, 0.1);
         }
-
         /* --- HEADER --- */
         .game-header {
             padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
@@ -65,7 +62,6 @@
             font-size: 1.1rem; color: #fbbf24; font-weight: 700; letter-spacing: 1px;
             text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
         }
-
         /* --- BANNER HERO --- */
         .banner-section {
             width: 100%; height: 220px;
@@ -82,7 +78,6 @@
             position: absolute; bottom: 0; left: 0; width: 100%;
             background: linear-gradient(to top, #0b0f19, transparent); height: 80px;
         }
-
         /* --- INPUT ID --- */
         .form-area { padding: 20px; margin-top: -30px; position: relative; z-index: 10; }
         .input-card {
@@ -108,8 +103,9 @@
             width: 100%; background: transparent; border: none; outline: none;
             color: #fff; font-size: 1rem; font-weight: 600; letter-spacing: 1px;
         }
+        .game-input:disabled { color: #64748b; cursor: not-allowed; }
         .input-hint { font-size: 0.65rem; color: #64748b; position: absolute; top: -8px; left: 10px; background: #1e293b; padding: 0 5px; }
-
+        
         /* --- GRID DIAMONDS (PREMIUM STYLE) --- */
         .grid-area { padding: 0 20px 120px 20px; }
         .section-label { 
@@ -131,26 +127,22 @@
             min-height: 125px; 
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
-
         .diamond-card:hover { 
             transform: translateY(-4px); 
             border-color: rgba(251, 191, 36, 0.5); 
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(251, 191, 36, 0.1);
         }
-
         .diamond-card::before {
             content: ''; position: absolute;
             top: -30px; right: -30px; width: 100px; height: 100px;
             background: radial-gradient(circle, rgba(251, 191, 36, 0.08) 0%, transparent 70%);
             border-radius: 50%; z-index: 0; pointer-events: none;
         }
-
         .diamond-card.selected {
             background: linear-gradient(160deg, #312e81 0%, #1e1b4b 100%);
             border: 1.5px solid #fbbf24;
             box-shadow: 0 0 20px rgba(251, 191, 36, 0.25);
         }
-
         .card-body { 
             padding: 15px 15px 10px 15px; 
             flex-grow: 1; 
@@ -181,7 +173,6 @@
             color: #fbbf24; 
             text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
-
         .card-footer {
             background: rgba(0, 0, 0, 0.3); 
             padding: 8px 15px;
@@ -199,7 +190,6 @@
             text-transform: uppercase; letter-spacing: 0.5px;
             border: 1px solid rgba(52, 211, 153, 0.3);
         }
-
         /* --- BUTTON BAYAR --- */
         .pay-bar { margin-top: 30px; width: 100%; }
         .btn-pay {
@@ -216,40 +206,39 @@
         .btn-pay:disabled {
             background: #334155; color: #64748b; box-shadow: none; cursor: not-allowed; animation: none;
         }
-
         /* Banner Toko Tutup */
         .store-closed-banner {
             background: rgba(251, 191, 36, 0.15); border: 1px dashed #fbbf24; color: #fbbf24;
-            padding: 15px; border-radius: 12px; text-align: center; font-weight: 600;
+            padding: 20px; border-radius: 12px; text-align: center; font-weight: 600;
             margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
         }
-        .store-closed-banner i { font-size: 1.5rem; margin-bottom: 8px; }
-
+        .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; }
+        .store-closed-banner p { margin: 5px 0 0; font-size: 0.75rem; color: #fbbf24; opacity: 0.8; }
     </style>
 </head>
 <body>
-
     <div class="mystic-bg">
         <div class="gold-glow"></div>
         <div class="particle p1"></div>
         <div class="particle p2"></div>
     </div>
-
     <div class="mobile-container">
         
         <header class="game-header">
-            <a href="../../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <div class="header-title">MOBILE LEGENDS</div>
             <div style="width: 24px;"></div>
         </header>
 
         <div class="banner-section">
-            <img src="../../assets/images/ml-banner.jpg" class="banner-img" alt="MLBB Banner">
+            <img src="../assets/images/ml-banner.jpg" class="banner-img" alt="MLBB Banner" onerror="this.style.backgroundColor='#1e1b4b'">
             <div class="banner-overlay"></div>
         </div>
 
         <div class="form-area">
-            <div id="closedBannerContainer"></div> <div class="input-card">
+            <div id="closedBannerContainer"></div> 
+            
+            <div class="input-card">
                 <div class="input-label"><i class="fa-solid fa-user-ninja"></i> Data Akun</div>
                 <div class="game-input-group">
                     <div class="input-wrapper">
@@ -273,7 +262,7 @@
             </div>
 
             <div id="diamondSection" style="margin-top:20px;">
-                <div class="section-label"><i class="fa-regular fa-gem"></i> Top Up Diamond</div>
+                <div class="section-label" id="labelDiamond"><i class="fa-regular fa-gem"></i> Top Up Diamond</div>
                 <div class="diamond-grid" id="diamondContainer">
                     <div style="grid-column: span 2; text-align: center; color: #94a3b8; padding: 20px;">
                         <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat Produk...
@@ -287,7 +276,6 @@
                 </button>
             </div>
         </div>
-
     </div>
 
     <nav class="bottom-nav">
@@ -299,13 +287,13 @@
 
     <script>
         const API_URL = '/api';
-        const TARGET_CATEGORY = 'Mobile Legend'; // Kategori di DB Admin
+        const TARGET_CATEGORY = 'Mobile Legend'; // Pastikan di DB kategori persis ini
         let selectedProduct = null;
         let globalMargin = 0;
         let isStoreOpen = true;
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadData();
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
         });
 
         // 1. Fetch Data (Margin + Produk)
@@ -315,66 +303,89 @@
             const membershipSection = document.getElementById('membershipSection');
             const bannerContainer = document.getElementById('closedBannerContainer');
             const btnPay = document.getElementById('btnPay');
+            const userId = document.getElementById('userId');
+            const zoneId = document.getElementById('zoneId');
+            const labelDiamond = document.getElementById('labelDiamond');
 
             try {
-                // A. Cek Status Toko & Margin
-                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                // A. Cek Status Toko & Margin dari LocalStorage
+                const configRaw = localStorage.getItem('ppobConfig');
+                const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
+                
                 globalMargin = parseInt(config.margin) || 0;
-                isStoreOpen = config.isOpen;
+                
+                isStoreOpen = config.isOpen === true || config.isOpen === "true";
+                if (config.isOpen === false || config.isOpen === "false") {
+                    isStoreOpen = false;
+                }
 
-                // B. JIKA TOKO TUTUP
+                // B. JIKA TOKO TUTUP -> STOP PROSES
                 if (!isStoreOpen) {
                     bannerContainer.innerHTML = `
                         <div class="store-closed-banner">
                             <i class="fa-solid fa-shop-lock"></i>
                             MAAF, TOKO SEDANG TUTUP
+                            <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
+                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                            </span>
                         </div>
                     `;
-                    document.getElementById('userId').disabled = true;
-                    document.getElementById('zoneId').disabled = true;
+                    userId.disabled = true;
+                    userId.placeholder = "Tutup";
+                    zoneId.disabled = true;
+                    zoneId.placeholder = "-";
+                    
                     btnPay.disabled = true;
                     btnPay.innerText = "Toko Tutup";
                     btnPay.style.background = "#334155";
                     btnPay.style.cursor = "not-allowed";
                     btnPay.style.color = "#64748b";
                     
-                    diamondContainer.innerHTML = ''; 
-                    return; 
+                    // Bersihkan container
+                    diamondContainer.innerHTML = '';
+                    membershipContainer.innerHTML = '';
+                    if(labelDiamond) labelDiamond.style.display = 'none';
+                    
+                    return; // STOP DI SINI
                 }
 
-                // C. Ambil Produk
+                // C. Jika Buka -> Load Produk
                 const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                if (!res.ok) throw new Error("Gagal mengambil data");
+                
                 const products = await res.json();
-
+                
                 // Clear Loading
                 membershipContainer.innerHTML = '';
                 diamondContainer.innerHTML = '';
 
-                if (products.length === 0) {
+                if (!Array.isArray(products) || products.length === 0) {
                     diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
                     return;
                 }
 
                 // D. Filter & Render
                 let hasMembership = false;
-
+                
                 products.forEach(p => {
-                    const finalPrice = p.price + globalMargin;
+                    const basePrice = parseInt(p.price) || 0;
+                    const finalPrice = basePrice + globalMargin;
                     const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
                     
                     // Deteksi Jenis Produk berdasarkan Nama
                     const lowerName = p.name.toLowerCase();
-                    const isMembership = lowerName.includes('pass') || lowerName.includes('weekly') || lowerName.includes('twilight') || lowerName.includes('member');
+                    const isMembership = lowerName.includes('pass') || lowerName.includes('weekly') || lowerName.includes('twilight') || lowerName.includes('member') || lowerName.includes('starlight');
                     
                     // Tentukan Icon & Container
-                    let iconImg = '../../assets/icons/mobile-legend/diamond-icon.png';
+                    // Gunakan path ../assets agar konsisten
+                    let iconImg = '../assets/icons/mobile-legend/diamond-icon.png';
                     let targetContainer = diamondContainer;
-
+                    
                     if (isMembership) {
                         hasMembership = true;
                         targetContainer = membershipContainer;
-                        if(lowerName.includes('weekly')) iconImg = '../../assets/icons/mobile-legend/wdp-icon.png';
-                        else if(lowerName.includes('twilight')) iconImg = '../../assets/icons/mobile-legend/twilight-icon.jpg';
+                        if(lowerName.includes('weekly')) iconImg = '../assets/icons/mobile-legend/wdp-icon.png';
+                        else if(lowerName.includes('twilight')) iconImg = '../assets/icons/mobile-legend/twilight-icon.jpg';
                     }
 
                     const div = document.createElement('div');
@@ -385,7 +396,7 @@
                         <div class="card-body">
                             <span class="dm-amount">${p.name}</span>
                             <div class="dm-price-row">
-                                <img src="${iconImg}" class="dm-icon-img" alt="Icon" onerror="this.src='../../assets/icons/mobile-legend/diamond-icon.png'">
+                                <img src="${iconImg}" class="dm-icon-img" alt="Icon" onerror="this.src='../assets/icons/mobile-legend/diamond-icon.png'">
                                 <span class="dm-price">Rp ${priceFormatted}</span>
                             </div>
                         </div>
@@ -403,7 +414,9 @@
 
             } catch (error) {
                 console.error(error);
-                diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+                if(isStoreOpen) {
+                    diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+                }
             }
         }
 
@@ -419,13 +432,14 @@
         }
 
         function checkForm() {
+            if(!isStoreOpen) return;
+
             const user = document.getElementById('userId').value;
             const zone = document.getElementById('zoneId').value;
             const btn = document.getElementById('btnPay');
-
-            if(!isStoreOpen) return;
-
-            if (user.length > 3 && zone.length > 3 && selectedProduct !== null) {
+            
+            // Validasi: User ID min 4 digit, Zone ID min 4 digit
+            if (user.length >= 4 && zone.length >= 4 && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
@@ -434,21 +448,25 @@
 
         // 3. Proses ke Halaman Payment
         function goToPayment() {
-            if (!selectedProduct) return;
+            if (!selectedProduct || !isStoreOpen) return;
+            
             const user = document.getElementById('userId').value;
             const zone = document.getElementById('zoneId').value;
-            const fullId = `${user} (${zone})`;
-
+            const fullId = `${user} (${zone})`; // Gabungkan ID untuk Admin Manual
+            
             const transactionData = {
                 productId: selectedProduct._id,
+                productSku: selectedProduct.buyer_sku_code, // Kode SKU Digiflazz (meski manual, tetap disimpan)
                 productName: selectedProduct.name,
                 productPrice: selectedProduct.finalPrice,
                 customerNumber: fullId,
-                category: TARGET_CATEGORY
+                category: TARGET_CATEGORY,
+                brand: 'MOBILE LEGENDS',
+                type: 'MANUAL_PROCESS'
             };
-
+            
             localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
-            window.location.href = '../../payment.html';
+            window.location.href = '../payment.html';
         }
     </script>
 </body>

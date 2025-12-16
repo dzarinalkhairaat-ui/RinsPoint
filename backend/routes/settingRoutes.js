@@ -17,7 +17,7 @@ router.put('/digiflazz', protect, updateDigiflazz);
 
 // --- RUTE KHUSUS PPOB (BARU) ---
 // Endpoint: /api/settings/ppob
-router.get('/ppob', protect, getPPOBConfig);   // Mengambil data margin/status untuk halaman admin
-router.post('/ppob', protect, updatePPOBConfig); // Menyimpan data dari halaman admin
+router.get('/ppob', getPPOBConfig);            // BUKA GEMBOK (Hapus 'protect') agar HP pelanggan bisa baca
+router.post('/ppob', protect, updatePPOBConfig); // TETAP KUNCI (Hanya admin yg boleh ubah)
 
 module.exports = router;

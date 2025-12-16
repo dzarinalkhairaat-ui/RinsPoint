@@ -16,7 +16,6 @@
             background-color: #0f172a; min-height: 100%; margin: 0; 
             padding-bottom: 0; color: #f8fafc; font-family: 'Poppins', sans-serif; 
         }
-
         /* --- HEADER (TEMA LIME by.u) --- */
         .ppob-header {
             background: #1e293b; padding: 15px 20px;
@@ -28,9 +27,7 @@
         /* JUDUL LIME */
         .ppob-header h2 { margin: 0; color: #bef264; font-size: 1.1rem; font-weight: 600; }
         .btn-back { color: #cbd5e1; font-size: 1.2rem; text-decoration: none; }
-
         .container { max-width: 600px; margin: 0 auto; }
-
         /* --- BANNER --- */
         .provider-banner-box {
             width: 100%; height: 38vh; overflow: hidden;
@@ -39,7 +36,6 @@
         .provider-banner-img { 
             width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; 
         }
-
         /* --- PROFIL OPERATOR --- */
         .provider-profile-section {
             background-color: #1e293b; padding: 30px 20px 20px 20px; 
@@ -52,7 +48,6 @@
             background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 2px, transparent 2px, transparent 12px);
             z-index: 0; pointer-events: none; border-radius: 25px 25px 0 0; 
         }
-
         .profile-flex {
             display: flex; 
             align-items: flex-start; 
@@ -95,7 +90,6 @@
         .feature-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: #e2e8f0; position: relative; z-index: 1; font-weight: 500; }
         /* ICON FITUR LIME */
         .feature-item i { color: #bef264; font-size: 0.9rem; }
-
         /* --- TAB MENU (LIME) --- */
         .tab-container {
             display: flex; justify-content: center; gap: 20px;
@@ -115,13 +109,11 @@
         }
         .tab-btn.active { color: #bef264; }
         .tab-btn.active::after { width: 100%; }
-
         /* --- KONTEN --- */
         .content-area { padding: 20px; padding-bottom: 100px; }
         .tab-content { display: none; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         .step-card {
             background: #1e293b; border-radius: 12px;
             overflow: hidden; margin-bottom: 20px;
@@ -139,7 +131,6 @@
             font-size: 0.85rem; font-weight: 800;
         }
         .step-body { padding: 15px; }
-
         .input-box-wrapper {
             background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px 15px;
             display: flex; align-items: center; justify-content: space-between;
@@ -152,7 +143,6 @@
         }
         .phone-input::placeholder { color: #64748b; font-weight: 400; letter-spacing: 0; }
         .info-text { font-size: 0.75rem; color: #94a3b8; margin-top: 8px; font-style: italic; }
-
         .nominal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .product-item {
             background: #253346; padding: 12px; border-radius: 10px;
@@ -180,7 +170,6 @@
         .btn-pay:disabled {
             background: #334155; color: #94a3b8; cursor: not-allowed; box-shadow: none; opacity: 0.7;
         }
-
         .info-card {
             background: #1e293b; padding: 20px; border-radius: 12px;
             border: 1px solid #334155; color: #cbd5e1; font-size: 0.9rem; line-height: 1.6;
@@ -211,7 +200,6 @@
             color: #d9f99d; font-size: 0.8rem; line-height: 1.5;
             display: flex; gap: 10px; align-items: flex-start;
         }
-
         /* Banner Toko Tutup (Lime Style) */
         .store-closed-banner {
             background: rgba(190, 242, 100, 0.15);
@@ -228,18 +216,15 @@
     </style>
 </head>
 <body>
-
     <div class="mobile-container">
         <header class="ppob-header">
             <a href="../../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <h2>Paket Data</h2> 
         </header>
-
         <main class="container">
             <div class="provider-banner-box">
                 <img src="../../assets/images/pulsa/picture/by.u-banner.jpg" class="provider-banner-img" alt="Banner">
             </div>
-
             <div class="provider-profile-section">
                 <div class="profile-flex">
                     <div class="profile-logo">
@@ -256,12 +241,10 @@
                     <div class="feature-item"><i class="fa-solid fa-shield-halved"></i> Aman</div>
                 </div>
             </div>
-
             <div class="tab-container">
                 <button class="tab-btn active" onclick="switchTab('transaksi')">Produk</button>
                 <button class="tab-btn" onclick="switchTab('keterangan')">Keterangan</button>
             </div>
-
             <div class="content-area">
                 
                 <div id="transaksi-content" class="tab-content active">
@@ -276,7 +259,6 @@
                             <div class="info-text">Pastikan nomor tujuan benar.</div>
                         </div>
                     </div>
-
                     <div class="step-card">
                         <div class="step-header"><span class="step-num">2</span> Pilih Paket</div>
                         <div class="step-body">
@@ -287,14 +269,12 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="btn-pay-container">
                         <button class="btn-pay" id="btnPay" disabled onclick="goToPayment()">
                             Beli Sekarang <i class="fa-solid fa-arrow-right"></i>
                         </button>
                     </div>
                 </div>
-
                 <div id="keterangan-content" class="tab-content">
                     <div class="info-section">
                         <div class="info-label"><i class="fa-solid fa-circle-info"></i> Detail Layanan</div>
@@ -338,10 +318,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </main>
-
         <nav class="bottom-nav">
             <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
             <a href="/ppob.html" class="active"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
@@ -352,7 +330,8 @@
 
     <script>
         const API_URL = '/api';
-        const TARGET_CATEGORY = 'Data Byu'; 
+        const TARGET_CATEGORY = 'Data Byu'; // Pastikan sesuai di Database
+        
         let selectedProduct = null;
         let globalMargin = 0;
         let isStoreOpen = true;
@@ -378,39 +357,56 @@
             const btnPay = document.getElementById('btnPay');
             
             try {
-                // 1. CEK STATUS TOKO & MARGIN
-                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
-                globalMargin = parseInt(config.margin) || 0;
-                isStoreOpen = config.isOpen;
+                // 1. AMBIL STATUS & MARGIN DARI SERVER
+                container.innerHTML = `
+                    <div style="grid-column: span 2; text-align:center; padding: 20px; color:#64748b; font-size:0.85rem;">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i> Menghubungkan ke Server...
+                    </div>`;
 
-                // 2. JIKA TOKO TUTUP
+                let configResponse;
+                try {
+                     configResponse = await fetch(`${API_URL}/settings/ppob`);
+                } catch(e) { /* fallback silent */ }
+                
+                const config = configResponse && configResponse.ok 
+                               ? await configResponse.json() 
+                               : { isOpen: true, margin: 0 };
+
+                globalMargin = parseInt(config.margin) || 0;
+                isStoreOpen = config.isOpen === true || config.isOpen === 'true';
+
+                // 2. CEK TOKO TUTUP
                 if (!isStoreOpen) {
                     container.innerHTML = `
                         <div class="store-closed-banner">
                             <i class="fa-solid fa-shop-lock"></i>
-                            MAAF, TOKO SEDANG TUTUP
+                            MAAF, TOKO SEDANG TUTUP<br>
+                            <span style="font-size:0.7rem; font-weight:400; color:#d9f99d; margin-top:5px;">
+                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                            </span>
                         </div>
                     `;
                     document.getElementById('phoneNumber').disabled = true;
                     btnPay.disabled = true;
-                    btnPay.innerText = "Toko Tutup";
+                    btnPay.innerHTML = '<i class="fa-solid fa-ban"></i> Toko Tutup';
                     btnPay.style.background = "#334155";
                     btnPay.style.cursor = "not-allowed";
-                    return;
+                    btnPay.style.opacity = "0.7";
+                    return; 
                 }
 
-                // 3. LOAD DATA PRODUK
+                // 3. AMBIL PRODUK
                 const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
                 const products = await res.json();
-
+                
                 container.innerHTML = ''; 
-
+                
                 if (products.length === 0) {
                     container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Paket Sedang Kosong</div>`;
                     return;
                 }
 
-                // 4. RENDER PRODUK
+                // 4. RENDER PRODUK + MARGIN
                 products.forEach(p => {
                     const finalPrice = p.price + globalMargin;
                     const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
@@ -434,7 +430,7 @@
 
         function selectProduct(el, productData, priceWithMargin) {
             if(!isStoreOpen) return;
-
+            
             document.querySelectorAll('.product-item').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
             
@@ -445,6 +441,7 @@
         function checkValidation() {
             const phone = document.getElementById('phoneNumber').value;
             const btn = document.getElementById('btnPay');
+            
             if (phone.length > 9 && selectedProduct !== null && isStoreOpen) {
                 btn.disabled = false;
             } else {
@@ -455,7 +452,7 @@
         function goToPayment() {
             if (!selectedProduct) return;
             const phone = document.getElementById('phoneNumber').value;
-
+            
             const transactionData = {
                 productId: selectedProduct._id,
                 productName: selectedProduct.name,
@@ -463,7 +460,7 @@
                 customerNumber: phone,
                 category: TARGET_CATEGORY
             };
-
+            
             localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
             window.location.href = '../../payment.html';
         }

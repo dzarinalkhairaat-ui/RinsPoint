@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Top Up Roblox</title>
     
-    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Kanit:wght@600;800&display=swap" rel="stylesheet">
     
@@ -17,7 +17,6 @@
             overflow-x: hidden; position: relative;
             background-color: #111827;
         }
-
         /* Background Animasi: Floating Cubes */
         .block-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
@@ -34,13 +33,11 @@
         .c2 { top: 50%; right: 10%; width: 30px; height: 30px; animation-duration: 12s; animation-delay: 2s; }
         .c3 { bottom: 20%; left: 20%; width: 80px; height: 80px; animation-duration: 25s; animation-delay: 1s; }
         .c4 { top: 20%; right: 30%; width: 40px; height: 40px; animation-duration: 18s; animation-delay: 5s; }
-
         @keyframes floatRotate {
             0% { transform: translateY(0) rotate(0deg); opacity: 0; }
             50% { opacity: 1; }
             100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
         }
-
         .mobile-container {
             max-width: 480px; margin: 0 auto; min-height: 100vh;
             display: flex; flex-direction: column; position: relative;
@@ -49,7 +46,6 @@
             border-left: 1px solid rgba(255, 255, 255, 0.05);
             border-right: 1px solid rgba(255, 255, 255, 0.05);
         }
-
         /* --- HEADER --- */
         .game-header {
             padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
@@ -61,7 +57,6 @@
             font-family: 'Kanit', sans-serif;
             font-size: 1.4rem; color: #fff; letter-spacing: 1px; font-weight: 800;
         }
-
         /* --- BANNER HERO --- */
         .banner-section {
             width: 100%; height: 220px;
@@ -78,7 +73,6 @@
             position: absolute; bottom: 0; left: 0; width: 100%;
             background: linear-gradient(to top, #111827, transparent); height: 80px;
         }
-
         /* --- INPUT ID --- */
         .form-area { padding: 20px; margin-top: -30px; position: relative; z-index: 10; }
         .input-card {
@@ -102,8 +96,8 @@
             width: 100%; background: transparent; border: none; outline: none;
             color: #fff; font-size: 1rem; font-weight: 600; letter-spacing: 0.5px;
         }
+        .game-input:disabled { color: #6b7280; cursor: not-allowed; }
         .input-hint { font-size: 0.7rem; color: #9ca3af; position: absolute; top: -10px; left: 10px; background: #1f2937; padding: 0 5px; border-radius: 4px; }
-
         /* --- GRID ROBUX (STRUKTUR SAMA) --- */
         .grid-area { padding: 0 20px 120px 20px; }
         .section-label { 
@@ -125,12 +119,10 @@
             min-height: 125px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
-
         .rb-card:hover { 
             transform: translateY(-4px); 
             border-color: #ef4444; /* Roblox Red */
         }
-
         /* Decoration: Square Pattern */
         .rb-card::before {
             content: ''; position: absolute;
@@ -138,13 +130,11 @@
             background: rgba(255, 255, 255, 0.03);
             transform: rotate(45deg); pointer-events: none;
         }
-
         .rb-card.selected {
             background: #111827;
             border: 2px solid #ef4444;
             box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
         }
-
         /* Card Body */
         .card-body { 
             padding: 15px 15px 10px 15px; 
@@ -173,7 +163,6 @@
             font-size: 0.95rem; font-weight: 700; 
             color: #e5e7eb; /* Silver/White Price */
         }
-
         /* Card Footer */
         .card-footer {
             background: rgba(0, 0, 0, 0.4); 
@@ -191,7 +180,6 @@
             display: flex; align-items: center; gap: 5px;
             text-transform: uppercase; letter-spacing: 0.5px;
         }
-
         /* --- BUTTON BAYAR --- */
         .pay-bar { margin-top: 30px; width: 100%; }
         .btn-pay {
@@ -207,7 +195,6 @@
         .btn-pay:disabled {
             background: #374151; color: #6b7280; box-shadow: none; cursor: not-allowed;
         }
-
         /* Banner Toko Tutup */
         .store-closed-banner {
             background: rgba(239, 68, 68, 0.15); border: 1px dashed #ef4444; color: #f87171;
@@ -215,33 +202,33 @@
             margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
         }
         .store-closed-banner i { font-size: 1.5rem; margin-bottom: 8px; }
-
+        .store-closed-banner p { margin: 5px 0 0; font-size: 0.75rem; color: #fca5a5; opacity: 0.8; }
     </style>
 </head>
 <body>
-
     <div class="block-bg">
         <div class="cube c1"></div>
         <div class="cube c2"></div>
         <div class="cube c3"></div>
         <div class="cube c4"></div>
     </div>
-
     <div class="mobile-container">
         
         <header class="game-header">
-            <a href="../../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <div class="header-title">ROBLOX</div>
             <div style="width: 24px;"></div>
         </header>
 
         <div class="banner-section">
-            <img src="../../assets/images/roblox-banner.jpg" class="banner-img" alt="Roblox Banner" onerror="this.src='https://placehold.co/600x300/1f2937/ef4444?text=ROBLOX';">
+            <img src="../assets/images/roblox-banner.jpg" class="banner-img" alt="Roblox Banner" onerror="this.src='https://placehold.co/600x300/1f2937/ef4444?text=ROBLOX';">
             <div class="banner-overlay"></div>
         </div>
 
         <div class="form-area">
-            <div id="closedBannerContainer"></div> <div class="input-card">
+            <div id="closedBannerContainer"></div> 
+            
+            <div class="input-card">
                 <div class="input-label"><i class="fa-solid fa-cube"></i> Roblox Username</div>
                 <div class="input-wrapper">
                     <span class="input-hint">Username / ID</span>
@@ -265,7 +252,6 @@
                 </button>
             </div>
         </div>
-
     </div>
 
     <nav class="bottom-nav">
@@ -277,7 +263,7 @@
 
     <script>
         const API_URL = '/api';
-        const TARGET_CATEGORY = 'Roblox'; // Kategori di DB Admin
+        const TARGET_CATEGORY = 'Roblox'; // Pastikan di DB kategori = Roblox
         let selectedProduct = null;
         let globalMargin = 0;
         let isStoreOpen = true;
@@ -291,22 +277,34 @@
             const container = document.getElementById('nominalContainer');
             const bannerContainer = document.getElementById('closedBannerContainer');
             const btnPay = document.getElementById('btnPay');
+            const playerId = document.getElementById('playerId');
 
             try {
                 // A. Cek Status Toko & Margin
-                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                const configRaw = localStorage.getItem('ppobConfig');
+                const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
+                
                 globalMargin = parseInt(config.margin) || 0;
-                isStoreOpen = config.isOpen;
+                
+                isStoreOpen = config.isOpen === true || config.isOpen === "true";
+                if (config.isOpen === false || config.isOpen === "false") {
+                    isStoreOpen = false;
+                }
 
-                // B. JIKA TOKO TUTUP
+                // B. JIKA TOKO TUTUP -> STOP PROSES
                 if (!isStoreOpen) {
                     bannerContainer.innerHTML = `
                         <div class="store-closed-banner">
                             <i class="fa-solid fa-shop-lock"></i>
                             MAAF, TOKO SEDANG TUTUP
+                            <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
+                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                            </span>
                         </div>
                     `;
-                    document.getElementById('playerId').disabled = true;
+                    playerId.disabled = true;
+                    playerId.placeholder = "Toko Tutup";
+                    
                     btnPay.disabled = true;
                     btnPay.innerText = "Toko Tutup";
                     btnPay.style.background = "#374151";
@@ -314,34 +312,38 @@
                     btnPay.style.color = "#6b7280";
                     
                     container.innerHTML = ''; 
-                    return; 
+                    return; // Stop execution
                 }
 
                 // C. Ambil Produk
                 const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                if (!res.ok) throw new Error("Gagal mengambil data");
+
                 const products = await res.json();
-
-                container.innerHTML = ''; // Hapus loading
-
-                if (products.length === 0) {
+                
+                container.innerHTML = ''; 
+                
+                if (!Array.isArray(products) || products.length === 0) {
                     container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
                     return;
                 }
 
                 // D. Render Produk
                 products.forEach(p => {
-                    const finalPrice = p.price + globalMargin;
+                    const basePrice = parseInt(p.price) || 0;
+                    const finalPrice = basePrice + globalMargin;
                     const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
                     
                     const div = document.createElement('div');
                     div.className = 'rb-card';
                     div.onclick = () => selectItem(div, p, finalPrice);
                     
+                    // Path aset diperbaiki ke ../
                     div.innerHTML = `
                         <div class="card-body">
                             <span class="rb-amount">${p.name}</span>
                             <div class="rb-price-row">
-                                <img src="../../assets/icons/roblox/robux.png" class="rb-icon-img" alt="R$">
+                                <img src="../assets/icons/roblox/robux.png" class="rb-icon-img" alt="R$" onerror="this.src='https://placehold.co/24x24/1f2937/ef4444?text=R$'">
                                 <span class="rb-price">Rp ${priceFormatted}</span>
                             </div>
                         </div>
@@ -354,7 +356,9 @@
 
             } catch (error) {
                 console.error(error);
-                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+                if(isStoreOpen) {
+                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+                }
             }
         }
 
@@ -365,17 +369,18 @@
             document.querySelectorAll('.rb-card').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
             
-            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
+            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
             checkForm();
         }
 
         function checkForm() {
-            const player = document.getElementById('playerId').value;
-            const btn = document.getElementById('btnPay');
-
             if(!isStoreOpen) return;
 
-            if (player.length > 2 && selectedProduct !== null) {
+            const player = document.getElementById('playerId').value;
+            const btn = document.getElementById('btnPay');
+            
+            // Validasi Username Roblox (min 3 karakter)
+            if (player.length >= 3 && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
@@ -384,19 +389,23 @@
 
         // 3. Proses ke Halaman Payment
         function goToPayment() {
-            if (!selectedProduct) return;
+            if (!selectedProduct || !isStoreOpen) return;
+            
             const player = document.getElementById('playerId').value;
-
+            
             const transactionData = {
                 productId: selectedProduct._id,
+                productSku: selectedProduct.buyer_sku_code, // SKU Admin
                 productName: selectedProduct.name,
                 productPrice: selectedProduct.finalPrice,
-                customerNumber: player, // Username Roblox
-                category: TARGET_CATEGORY
+                customerNumber: player, 
+                category: TARGET_CATEGORY,
+                brand: 'ROBLOX',
+                type: 'MANUAL_PROCESS'
             };
-
+            
             localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
-            window.location.href = '../../payment.html';
+            window.location.href = '../payment.html';
         }
     </script>
 </body>

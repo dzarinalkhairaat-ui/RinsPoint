@@ -17,8 +17,7 @@
             overflow-x: hidden; position: relative;
             background-color: #0f172a;
         }
-
-        /* Animasi Background Abstrak (Shopee Elements) */
+        /* Animasi Background Abstrak */
         .bg-animation {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             overflow: hidden;
@@ -32,12 +31,10 @@
         .f1 { width: 300px; height: 300px; top: -100px; left: -50px; }
         .f2 { width: 200px; height: 200px; bottom: 20%; right: -50px; animation-duration: 15s; background: radial-gradient(circle, rgba(255, 115, 0, 0.3) 0%, transparent 70%); }
         .f3 { width: 150px; height: 150px; top: 40%; left: 40%; animation-duration: 12s; opacity: 0.3; }
-
         @keyframes floatObj {
             0% { transform: translateY(0) scale(1); }
             100% { transform: translateY(30px) scale(1.1); }
         }
-
         .mobile-container {
             max-width: 480px; margin: 0 auto; min-height: 100vh;
             display: flex; flex-direction: column; position: relative;
@@ -46,7 +43,6 @@
             border-left: 1px solid rgba(238, 77, 45, 0.1);
             border-right: 1px solid rgba(238, 77, 45, 0.1);
         }
-
         /* --- HEADER --- */
         .sp-header {
             padding: 20px; display: flex; align-items: center; justify-content: space-between;
@@ -56,7 +52,6 @@
         .btn-back { color: #fff; font-size: 1.2rem; text-decoration: none; }
         .page-title { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; color: #ee4d2d; }
         .header-icon { color: #ee4d2d; font-size: 1.2rem; }
-
         /* --- HERO: SHOPEE CARD --- */
         .hero-box { padding: 30px 20px; }
         .sp-card {
@@ -66,7 +61,6 @@
             position: relative; overflow: hidden;
             border: 1px solid rgba(255,255,255,0.2);
         }
-        /* Pattern Belanja */
         .sp-card::after {
             content: '\f290'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
             position: absolute; bottom: -20px; right: -20px;
@@ -80,7 +74,7 @@
         .card-bal { position: relative; z-index: 2; }
         .bal-label { font-size: 0.8rem; color: rgba(255,255,255,0.9); }
         .bal-amount { font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 5px; }
-
+        
         /* --- INPUT --- */
         .form-area { padding: 0 20px 20px 20px; }
         .input-label { color: #ee4d2d; font-size: 0.85rem; margin-bottom: 8px; font-weight: 600; }
@@ -97,8 +91,9 @@
             width: 100%; background: transparent; border: none; outline: none;
             color: #fff; font-size: 1.1rem; font-weight: 600;
         }
+        .sp-input:disabled { color: #64748b; cursor: not-allowed; }
         .contact-btn { color: #ee4d2d; cursor: pointer; }
-
+        
         /* --- GRID NOMINAL --- */
         .grid-area { padding: 10px 20px 120px 20px; }
         .grid-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -109,7 +104,6 @@
             cursor: pointer; transition: 0.2s; position: relative;
         }
         .grid-item:hover { border-color: #ee4d2d; background: rgba(238, 77, 45, 0.1); }
-        
         .grid-item.selected {
             background: rgba(238, 77, 45, 0.15); border-color: #ee4d2d;
             box-shadow: 0 4px 15px rgba(238, 77, 45, 0.2);
@@ -118,9 +112,8 @@
             content: '\f058'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
             position: absolute; top: 8px; right: 8px; color: #ee4d2d; font-size: 0.9rem;
         }
-
         .item-nom { font-size: 1.1rem; font-weight: 700; color: #fff; display: block; }
-        .item-price { font-size: 0.85rem; color: #fb923c; margin-top: 5px; display: block; } /* Orange muda */
+        .item-price { font-size: 0.85rem; color: #fb923c; margin-top: 5px; display: block; }
 
         /* --- BUTTON BAYAR --- */
         .btn-container { margin-top: 30px; width: 100%; }
@@ -133,27 +126,36 @@
         }
         .btn-pay:active { transform: scale(0.98); }
         .btn-pay:disabled {
-            background: #334155; color: #94a3b8; box-shadow: none; cursor: not-allowed; opacity: 0.7;
+            background: #334155 !important; color: #94a3b8 !important; 
+            box-shadow: none !important; cursor: not-allowed; opacity: 0.7;
         }
 
-        /* Banner Toko Tutup */
+        /* Banner Toko Tutup Style - Sesuai GoPay */
         .store-closed-banner {
-            background: rgba(238, 77, 45, 0.15); border: 1px dashed #ee4d2d; color: #ee4d2d;
-            padding: 20px; border-radius: 12px; text-align: center; font-weight: 600;
-            margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
+            background: rgba(238, 77, 45, 0.1); 
+            border: 1px dashed #ee4d2d; 
+            color: #ee4d2d;
+            padding: 25px 20px; 
+            border-radius: 16px; 
+            text-align: center; 
+            margin-bottom: 25px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .store-closed-banner i { font-size: 2rem; margin-bottom: 10px; display: block; }
-
+        .store-closed-banner i { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.8; }
+        .store-closed-banner h3 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+        .store-closed-banner p { margin: 5px 0 0; font-size: 0.85rem; opacity: 0.8; }
     </style>
 </head>
 <body>
-
     <div class="bg-animation">
         <div class="floater f1"></div>
         <div class="floater f2"></div>
         <div class="floater f3"></div>
     </div>
-
     <div class="mobile-container">
         
         <header class="sp-header">
@@ -176,15 +178,18 @@
         </div>
 
         <div class="form-area">
-            <div id="closedBannerContainer"></div> <div class="input-label">No. Handphone</div>
+            <div id="closedBannerContainer"></div> 
+
+            <div class="input-label">No. Handphone</div>
             <div class="input-wrap">
-                <input type="tel" class="sp-input" placeholder="08xxxxxxxxxx" id="spNumber" oninput="validateInput()">
+                <input type="tel" class="sp-input" placeholder="08xxxxxxxxxx" id="spNumber" oninput="validateInput()" maxlength="15">
                 <i class="fa-solid fa-address-book contact-btn"></i>
             </div>
         </div>
 
         <div class="grid-area">
-            <div class="input-label" style="margin-bottom: 15px;">Pilih Nominal Top Up</div>
+            <div class="input-label" id="labelNominal" style="margin-bottom: 15px;">Pilih Nominal Top Up</div>
+            
             <div class="grid-box" id="nominalContainer">
                 <div style="grid-column: span 2; text-align: center; padding: 20px; color: #fb923c;">
                     <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat produk...
@@ -197,7 +202,6 @@
                 </button>
             </div>
         </div>
-
     </div>
 
     <nav class="bottom-nav">
@@ -209,66 +213,93 @@
 
     <script>
         const API_URL = '/api';
-        const TARGET_CATEGORY = 'ShopeePay'; // Pastikan di Admin kategori produknya "ShopeePay"
+        const TARGET_CATEGORY = 'ShopeePay';
         let selectedProduct = null;
         let globalMargin = 0;
         let isStoreOpen = true;
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadData();
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
         });
 
         async function loadData() {
             const container = document.getElementById('nominalContainer');
             const bannerContainer = document.getElementById('closedBannerContainer');
             const btnPay = document.getElementById('btnPay');
+            const inputPhone = document.getElementById('spNumber');
+            const labelNominal = document.getElementById('labelNominal');
 
             try {
-                // 1. CEK STATUS TOKO & MARGIN
-                const config = JSON.parse(localStorage.getItem('ppobConfig')) || { isOpen: true, margin: 0 };
+                // 1. CEK KONFIGURASI TOKO TERLEBIH DAHULU
+                const configRaw = localStorage.getItem('ppobConfig');
+                // Jika configRaw null, defaultnya open. Jika ada, parse.
+                const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
+                
                 globalMargin = parseInt(config.margin) || 0;
-                isStoreOpen = config.isOpen;
+                
+                // Pastikan tipe data boolean
+                isStoreOpen = config.isOpen === true || config.isOpen === "true";
 
-                // 2. JIKA TOKO TUTUP
+                // LOGIKA PENTING: Jika di localStorage isOpen = false, maka paksa isStoreOpen = false
+                if (config.isOpen === false || config.isOpen === "false") {
+                    isStoreOpen = false;
+                }
+
+                // 2. JIKA TOKO TUTUP -> STOP PROSES, JANGAN LOAD PRODUK
                 if (!isStoreOpen) {
+                    // Tampilkan Banner
                     bannerContainer.innerHTML = `
                         <div class="store-closed-banner">
                             <i class="fa-solid fa-shop-lock"></i>
-                            MAAF, TOKO SEDANG TUTUP
+                            <h3>MAAF, TOKO SEDANG TUTUP</h3>
+                            <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
+                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                            </span>
                         </div>
                     `;
-                    document.getElementById('spNumber').disabled = true;
-                    btnPay.disabled = true;
-                    btnPay.innerText = "Toko Tutup";
-                    btnPay.style.background = "#334155";
-                    btnPay.style.cursor = "not-allowed";
-                    btnPay.style.opacity = "0.7";
                     
+                    // Matikan Input & Tombol
+                    inputPhone.disabled = true;
+                    inputPhone.value = ""; // Kosongkan input
+                    inputPhone.placeholder = "Toko Sedang Tutup";
+                    
+                    btnPay.disabled = true;
+                    btnPay.innerHTML = "Toko Tutup <i class='fa-solid fa-lock'></i>";
+                    btnPay.style.background = "#334155";
+                    
+                    // Kosongkan Container Produk & Sembunyikan Label
                     container.innerHTML = ''; 
+                    if(labelNominal) labelNominal.style.display = 'none';
+
+                    // --- BERHENTI DI SINI ---
                     return; 
                 }
 
-                // 3. LOAD PRODUK
-                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
-                const products = await res.json();
+                // 3. JIKA TOKO BUKA -> LANJUT LOAD PRODUK
+                // Bersihkan banner jika sebelumnya ada
+                bannerContainer.innerHTML = '';
+                if(labelNominal) labelNominal.style.display = 'block';
 
+                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+                if (!res.ok) throw new Error('Gagal ambil data');
+                
+                const products = await res.json();
                 container.innerHTML = ''; 
 
-                if (products.length === 0) {
-                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
+                if (!Array.isArray(products) || products.length === 0) {
+                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk ShopeePay Kosong</div>`;
                     return;
                 }
 
-                // 4. RENDER PRODUK
                 products.forEach(p => {
-                    const finalPrice = p.price + globalMargin;
+                    const basePrice = parseInt(p.price) || 0;
+                    const finalPrice = basePrice + globalMargin;
                     const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
                     
                     const div = document.createElement('div');
                     div.className = 'grid-item';
                     div.onclick = () => selectCard(div, p, finalPrice);
                     
-                    // NAMA PRODUK TAMPIL APA ADANYA
                     div.innerHTML = `
                         <span class="item-nom">${p.name}</span>
                         <span class="item-price">Rp ${priceFormatted}</span>
@@ -278,11 +309,15 @@
 
             } catch (error) {
                 console.error('Error:', error);
-                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+                // Jika error pun, jangan tampilkan produk
+                if(isStoreOpen) {
+                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
+                }
             }
         }
 
         function selectCard(el, productData, finalPrice) {
+            // Double check saat klik
             if(!isStoreOpen) return;
 
             document.querySelectorAll('.grid-item').forEach(item => item.classList.remove('selected'));
@@ -293,12 +328,15 @@
         }
 
         function validateInput() {
+            if(!isStoreOpen) return; // Kunci validasi jika tutup
+
             const phone = document.getElementById('spNumber').value;
             const btn = document.getElementById('btnPay');
+            
+            // Validasi sederhana: minimal 10 digit, awalan 08
+            const isValid = phone.length >= 10 && phone.startsWith('08');
 
-            if(!isStoreOpen) return;
-
-            if (phone.length > 9 && selectedProduct !== null) {
+            if (isValid && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
@@ -306,17 +344,19 @@
         }
 
         function goToPayment() {
-            if (!selectedProduct) return;
+            if (!selectedProduct || !isStoreOpen) return;
+            
             const phone = document.getElementById('spNumber').value;
-
             const transactionData = {
                 productId: selectedProduct._id,
+                productSku: selectedProduct.buyer_sku_code,
                 productName: selectedProduct.name,
                 productPrice: selectedProduct.finalPrice, 
                 customerNumber: phone,
-                category: TARGET_CATEGORY
+                category: TARGET_CATEGORY,
+                brand: 'SHOPEE'
             };
-
+            
             localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
             window.location.href = '../payment.html';
         }
