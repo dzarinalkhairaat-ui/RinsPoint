@@ -264,6 +264,7 @@
     <script>
         const API_URL = '/api';
         const TARGET_CATEGORY = 'Roblox'; // Pastikan di DB kategori = Roblox
+        
         let selectedProduct = null;
         let globalMargin = 0;
         let isStoreOpen = true;
@@ -271,6 +272,24 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
         });
+
+        // --- FUNGSI BARU: SINKRONISASI STATUS TOKO ---
+        async function getStoreConfig() {
+            try {
+                // Fetch ke server dengan timestamp agar tidak dicache oleh browser HP
+                const res = await fetch(`${API_URL}/config?t=${new Date().getTime()}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('ppobConfig', JSON.stringify(data)); // Update data di HP
+                    return data;
+                }
+            } catch (error) {
+                console.warn("Gagal koneksi ke server config, menggunakan data lokal.");
+            }
+            // Jika gagal (offline), pakai data lama
+            const cached = localStorage.getItem('ppobConfig');
+            return cached ? JSON.parse(cached) : { isOpen: true, margin: 0 };
+        }
 
         // 1. Fetch Data
         async function loadData() {
@@ -280,9 +299,8 @@
             const playerId = document.getElementById('playerId');
 
             try {
-                // A. Cek Status Toko & Margin
-                const configRaw = localStorage.getItem('ppobConfig');
-                const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
+                // A. Cek Status Toko & Margin (UPDATED: Real-time Server Check)
+                const config = await getStoreConfig();
                 
                 globalMargin = parseInt(config.margin) || 0;
                 

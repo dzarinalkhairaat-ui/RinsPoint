@@ -274,6 +274,7 @@
     <script>
         const API_URL = '/api';
         const TARGET_CATEGORY = 'Free Fire'; // Pastikan kategori di DB Admin
+        
         let selectedProduct = null;
         let globalMargin = 0;
         let isStoreOpen = true;
@@ -281,6 +282,24 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
         });
+
+        // --- FUNGSI BARU: SINKRONISASI STATUS TOKO ---
+        async function getStoreConfig() {
+            try {
+                // Fetch ke server dengan timestamp agar tidak dicache oleh browser HP
+                const res = await fetch(`${API_URL}/config?t=${new Date().getTime()}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('ppobConfig', JSON.stringify(data)); // Update data di HP
+                    return data;
+                }
+            } catch (error) {
+                console.warn("Gagal koneksi ke server config, menggunakan data lokal.");
+            }
+            // Jika gagal (offline), pakai data lama
+            const cached = localStorage.getItem('ppobConfig');
+            return cached ? JSON.parse(cached) : { isOpen: true, margin: 0 };
+        }
 
         // 1. Fetch Data (Margin + Produk)
         async function loadData() {
@@ -293,9 +312,8 @@
             const labelDiamond = document.getElementById('labelDiamond');
 
             try {
-                // A. Cek Status Toko & Margin
-                const configRaw = localStorage.getItem('ppobConfig');
-                const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
+                // A. Cek Status Toko (UPDATED: Menggunakan Data Real-time Server)
+                const config = await getStoreConfig();
                 
                 globalMargin = parseInt(config.margin) || 0;
                 
@@ -328,6 +346,7 @@
                     diamondContainer.innerHTML = '';
                     membershipContainer.innerHTML = '';
                     if(labelDiamond) labelDiamond.style.display = 'none';
+                    if(membershipSection) membershipSection.style.display = 'none';
 
                     return; // STOP EXECUTION
                 }
@@ -360,7 +379,6 @@
                     const isMembership = lowerName.includes('member') || lowerName.includes('weekly') || lowerName.includes('monthly');
                     
                     // Tentukan Icon & Container
-                    // Path aset diperbaiki ke ../assets/
                     let iconImg = '../assets/icons/freefire/diamond-icon.png';
                     let targetContainer = diamondContainer;
                     
@@ -405,7 +423,6 @@
         // 2. Logic Pilih Produk
         function selectItem(el, productData, priceWithMargin) {
             if(!isStoreOpen) return;
-
             document.querySelectorAll('.ff-card').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
             
@@ -415,7 +432,6 @@
 
         function checkForm() {
             if(!isStoreOpen) return;
-
             const player = document.getElementById('playerId').value;
             const btn = document.getElementById('btnPay');
             
@@ -435,7 +451,7 @@
             
             const transactionData = {
                 productId: selectedProduct._id,
-                productSku: selectedProduct.buyer_sku_code, // SKU untuk Admin
+                productSku: selectedProduct.buyer_sku_code,
                 productName: selectedProduct.name,
                 productPrice: selectedProduct.finalPrice,
                 customerNumber: player,

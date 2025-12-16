@@ -212,154 +212,150 @@
     </nav>
 
     <script>
-        const API_URL = '/api';
-        const TARGET_CATEGORY = 'ShopeePay';
-        let selectedProduct = null;
-        let globalMargin = 0;
-        let isStoreOpen = true;
+    const API_URL = '/api';
+    const TARGET_CATEGORY = 'ShopeePay';
+    let selectedProduct = null;
+    let globalMargin = 0;
+    let isStoreOpen = true;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-        });
+    document.addEventListener('DOMContentLoaded', () => {
+        loadData();
+    });
 
-        async function loadData() {
-            const container = document.getElementById('nominalContainer');
-            const bannerContainer = document.getElementById('closedBannerContainer');
-            const btnPay = document.getElementById('btnPay');
-            const inputPhone = document.getElementById('spNumber');
-            const labelNominal = document.getElementById('labelNominal');
+    async function loadData() {
+        const container = document.getElementById('nominalContainer');
+        const bannerContainer = document.getElementById('closedBannerContainer');
+        const btnPay = document.getElementById('btnPay');
+        const inputPhone = document.getElementById('spNumber');
+        const labelNominal = document.getElementById('labelNominal');
 
-            try {
-                // 1. CEK KONFIGURASI TOKO TERLEBIH DAHULU
-                const configRaw = localStorage.getItem('ppobConfig');
-                // Jika configRaw null, defaultnya open. Jika ada, parse.
-                const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
+        try {
+            // 1. CEK KONFIGURASI TOKO TERLEBIH DAHULU
+            const configRaw = localStorage.getItem('ppobConfig');
+            // Jika configRaw null, defaultnya open. Jika ada, parse.
+            const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
+            
+            globalMargin = parseInt(config.margin) || 0;
+            
+            // Pastikan tipe data boolean
+            isStoreOpen = config.isOpen === true || config.isOpen === "true";
+            if (config.isOpen === false || config.isOpen === "false") {
+                isStoreOpen = false;
+            }
+
+            // 2. JIKA TOKO TUTUP -> STOP PROSES, JANGAN LOAD PRODUK
+            if (!isStoreOpen) {
+                // Tampilkan Banner
+                bannerContainer.innerHTML = `
+                    <div class="store-closed-banner">
+                        <i class="fa-solid fa-shop-lock"></i>
+                        <h3>MAAF, TOKO SEDANG TUTUP</h3>
+                        <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
+                            Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                        </span>
+                    </div>
+                `;
                 
-                globalMargin = parseInt(config.margin) || 0;
+                // Matikan Input & Tombol
+                inputPhone.disabled = true;
+                inputPhone.value = ""; // Kosongkan input
+                inputPhone.placeholder = "Toko Sedang Tutup";
                 
-                // Pastikan tipe data boolean
-                isStoreOpen = config.isOpen === true || config.isOpen === "true";
-
-                // LOGIKA PENTING: Jika di localStorage isOpen = false, maka paksa isStoreOpen = false
-                if (config.isOpen === false || config.isOpen === "false") {
-                    isStoreOpen = false;
-                }
-
-                // 2. JIKA TOKO TUTUP -> STOP PROSES, JANGAN LOAD PRODUK
-                if (!isStoreOpen) {
-                    // Tampilkan Banner
-                    bannerContainer.innerHTML = `
-                        <div class="store-closed-banner">
-                            <i class="fa-solid fa-shop-lock"></i>
-                            <h3>MAAF, TOKO SEDANG TUTUP</h3>
-                            <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
-                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
-                            </span>
-                        </div>
-                    `;
-                    
-                    // Matikan Input & Tombol
-                    inputPhone.disabled = true;
-                    inputPhone.value = ""; // Kosongkan input
-                    inputPhone.placeholder = "Toko Sedang Tutup";
-                    
-                    btnPay.disabled = true;
-                    btnPay.innerHTML = "Toko Tutup <i class='fa-solid fa-lock'></i>";
-                    btnPay.style.background = "#334155";
-                    
-                    // Kosongkan Container Produk & Sembunyikan Label
-                    container.innerHTML = ''; 
-                    if(labelNominal) labelNominal.style.display = 'none';
-
-                    // --- BERHENTI DI SINI ---
-                    return; 
-                }
-
-                // 3. JIKA TOKO BUKA -> LANJUT LOAD PRODUK
-                // Bersihkan banner jika sebelumnya ada
-                bannerContainer.innerHTML = '';
-                if(labelNominal) labelNominal.style.display = 'block';
-
-                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
-                if (!res.ok) throw new Error('Gagal ambil data');
+                btnPay.disabled = true;
+                btnPay.innerHTML = "Toko Tutup <i class='fa-solid fa-lock'></i>";
+                btnPay.style.background = "#334155";
                 
-                const products = await res.json();
+                // Kosongkan Container Produk & Sembunyikan Label
                 container.innerHTML = ''; 
+                if(labelNominal) labelNominal.style.display = 'none';
+                
+                // --- BERHENTI DI SINI ---
+                return; 
+            }
 
-                if (!Array.isArray(products) || products.length === 0) {
-                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk ShopeePay Kosong</div>`;
-                    return;
-                }
+            // 3. JIKA TOKO BUKA -> LANJUT LOAD PRODUK
+            // Bersihkan banner jika sebelumnya ada
+            bannerContainer.innerHTML = '';
+            if(labelNominal) labelNominal.style.display = 'block';
 
-                products.forEach(p => {
-                    const basePrice = parseInt(p.price) || 0;
-                    const finalPrice = basePrice + globalMargin;
-                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
-                    
-                    const div = document.createElement('div');
-                    div.className = 'grid-item';
-                    div.onclick = () => selectCard(div, p, finalPrice);
-                    
-                    div.innerHTML = `
-                        <span class="item-nom">${p.name}</span>
-                        <span class="item-price">Rp ${priceFormatted}</span>
-                    `;
-                    container.appendChild(div);
-                });
+            const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+            if (!res.ok) throw new Error('Gagal ambil data');
+            
+            const products = await res.json();
+            container.innerHTML = ''; 
 
-            } catch (error) {
-                console.error('Error:', error);
-                // Jika error pun, jangan tampilkan produk
-                if(isStoreOpen) {
-                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
-                }
+            if (!Array.isArray(products) || products.length === 0) {
+                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk ShopeePay Kosong</div>`;
+                return;
+            }
+
+            products.forEach(p => {
+                const basePrice = parseInt(p.price) || 0;
+                const finalPrice = basePrice + globalMargin;
+                const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
+                
+                const div = document.createElement('div');
+                div.className = 'grid-item';
+                div.onclick = () => selectCard(div, p, finalPrice);
+                
+                div.innerHTML = `
+                    <span class="item-nom">${p.name}</span>
+                    <span class="item-price">Rp ${priceFormatted}</span>
+                `;
+                container.appendChild(div);
+            });
+
+        } catch (error) {
+            console.error('Error:', error);
+            // Jika error pun, jangan tampilkan produk
+            if(isStoreOpen) {
+                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
             }
         }
+    }
 
-        function selectCard(el, productData, finalPrice) {
-            // Double check saat klik
-            if(!isStoreOpen) return;
+    function selectCard(el, productData, finalPrice) {
+        // Double check saat klik
+        if(!isStoreOpen) return;
+        document.querySelectorAll('.grid-item').forEach(item => item.classList.remove('selected'));
+        el.classList.add('selected');
+        
+        selectedProduct = { ...productData, finalPrice: finalPrice };
+        validateInput();
+    }
 
-            document.querySelectorAll('.grid-item').forEach(item => item.classList.remove('selected'));
-            el.classList.add('selected');
-            
-            selectedProduct = { ...productData, finalPrice: finalPrice };
-            validateInput();
+    function validateInput() {
+        if(!isStoreOpen) return; // Kunci validasi jika tutup
+        const phone = document.getElementById('spNumber').value;
+        const btn = document.getElementById('btnPay');
+        
+        // Validasi sederhana: minimal 10 digit, awalan 08
+        const isValid = phone.length >= 10 && phone.startsWith('08');
+        
+        if (isValid && selectedProduct !== null) {
+            btn.disabled = false;
+        } else {
+            btn.disabled = true;
         }
+    }
 
-        function validateInput() {
-            if(!isStoreOpen) return; // Kunci validasi jika tutup
-
-            const phone = document.getElementById('spNumber').value;
-            const btn = document.getElementById('btnPay');
-            
-            // Validasi sederhana: minimal 10 digit, awalan 08
-            const isValid = phone.length >= 10 && phone.startsWith('08');
-
-            if (isValid && selectedProduct !== null) {
-                btn.disabled = false;
-            } else {
-                btn.disabled = true;
-            }
-        }
-
-        function goToPayment() {
-            if (!selectedProduct || !isStoreOpen) return;
-            
-            const phone = document.getElementById('spNumber').value;
-            const transactionData = {
-                productId: selectedProduct._id,
-                productSku: selectedProduct.buyer_sku_code,
-                productName: selectedProduct.name,
-                productPrice: selectedProduct.finalPrice, 
-                customerNumber: phone,
-                category: TARGET_CATEGORY,
-                brand: 'SHOPEE'
-            };
-            
-            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
-            window.location.href = '../payment.html';
-        }
-    </script>
+    function goToPayment() {
+        if (!selectedProduct || !isStoreOpen) return;
+        
+        const phone = document.getElementById('spNumber').value;
+        const transactionData = {
+            productId: selectedProduct._id,
+            productSku: selectedProduct.buyer_sku_code,
+            productName: selectedProduct.name,
+            productPrice: selectedProduct.finalPrice, 
+            customerNumber: phone,
+            category: TARGET_CATEGORY,
+            brand: 'SHOPEE'
+        };
+        
+        localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+        window.location.href = '../payment.html';
+    }
+</script>
 </body>
 </html>

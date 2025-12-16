@@ -288,6 +288,7 @@
     <script>
         const API_URL = '/api';
         const TARGET_CATEGORY = 'Mobile Legend'; // Pastikan di DB kategori persis ini
+        
         let selectedProduct = null;
         let globalMargin = 0;
         let isStoreOpen = true;
@@ -295,6 +296,24 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
         });
+
+        // --- FUNGSI BARU: SINKRONISASI STATUS TOKO ---
+        async function getStoreConfig() {
+            try {
+                // Fetch ke server dengan timestamp agar tidak dicache oleh browser HP
+                const res = await fetch(`${API_URL}/config?t=${new Date().getTime()}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('ppobConfig', JSON.stringify(data)); // Update data di HP
+                    return data;
+                }
+            } catch (error) {
+                console.warn("Gagal koneksi ke server config, menggunakan data lokal.");
+            }
+            // Jika gagal (offline), pakai data lama
+            const cached = localStorage.getItem('ppobConfig');
+            return cached ? JSON.parse(cached) : { isOpen: true, margin: 0 };
+        }
 
         // 1. Fetch Data (Margin + Produk)
         async function loadData() {
@@ -308,12 +327,12 @@
             const labelDiamond = document.getElementById('labelDiamond');
 
             try {
-                // A. Cek Status Toko & Margin dari LocalStorage
-                const configRaw = localStorage.getItem('ppobConfig');
-                const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
+                // A. Cek Status Toko (UPDATED: Menggunakan Data Real-time Server)
+                const config = await getStoreConfig();
                 
                 globalMargin = parseInt(config.margin) || 0;
                 
+                // Pastikan tipe data boolean
                 isStoreOpen = config.isOpen === true || config.isOpen === "true";
                 if (config.isOpen === false || config.isOpen === "false") {
                     isStoreOpen = false;
@@ -345,6 +364,7 @@
                     diamondContainer.innerHTML = '';
                     membershipContainer.innerHTML = '';
                     if(labelDiamond) labelDiamond.style.display = 'none';
+                    if(membershipSection) membershipSection.style.display = 'none';
                     
                     return; // STOP DI SINI
                 }
@@ -377,7 +397,6 @@
                     const isMembership = lowerName.includes('pass') || lowerName.includes('weekly') || lowerName.includes('twilight') || lowerName.includes('member') || lowerName.includes('starlight');
                     
                     // Tentukan Icon & Container
-                    // Gunakan path ../assets agar konsisten
                     let iconImg = '../assets/icons/mobile-legend/diamond-icon.png';
                     let targetContainer = diamondContainer;
                     
@@ -423,7 +442,6 @@
         // 2. Logic Pilih Produk
         function selectItem(el, productData, priceWithMargin) {
             if(!isStoreOpen) return;
-
             document.querySelectorAll('.diamond-card').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
             
@@ -433,13 +451,12 @@
 
         function checkForm() {
             if(!isStoreOpen) return;
-
             const user = document.getElementById('userId').value;
             const zone = document.getElementById('zoneId').value;
             const btn = document.getElementById('btnPay');
             
             // Validasi: User ID min 4 digit, Zone ID min 4 digit
-            if (user.length >= 4 && zone.length >= 4 && selectedProduct !== null) {
+            if (user.length >= 4 && zone.length >= 3 && selectedProduct !== null) {
                 btn.disabled = false;
             } else {
                 btn.disabled = true;
@@ -452,11 +469,11 @@
             
             const user = document.getElementById('userId').value;
             const zone = document.getElementById('zoneId').value;
-            const fullId = `${user} (${zone})`; // Gabungkan ID untuk Admin Manual
+            const fullId = `${user} (${zone})`; 
             
             const transactionData = {
                 productId: selectedProduct._id,
-                productSku: selectedProduct.buyer_sku_code, // Kode SKU Digiflazz (meski manual, tetap disimpan)
+                productSku: selectedProduct.buyer_sku_code,
                 productName: selectedProduct.name,
                 productPrice: selectedProduct.finalPrice,
                 customerNumber: fullId,

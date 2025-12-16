@@ -251,204 +251,201 @@
     </div>
 
     <script>
-        const API_URL = '/api';
-        const TARGET_CATEGORY = 'PLN'; 
-        
-        let currentMode = 'token';
-        let selectedProduct = null;
-        let globalMargin = 0;
-        let isStoreOpen = true;
+    const API_URL = '/api';
+    const TARGET_CATEGORY = 'PLN'; 
+    
+    let currentMode = 'token';
+    let selectedProduct = null;
+    let globalMargin = 0;
+    let isStoreOpen = true;
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadData();
-        });
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadData();
+    });
 
-        async function loadData() {
-            const container = document.getElementById('plnProductContainer');
-            const bannerContainer = document.getElementById('closedBannerContainer');
-            const btnAction = document.getElementById('btnAction');
-            const inputPln = document.getElementById('plnNumber');
+    async function loadData() {
+        const container = document.getElementById('plnProductContainer');
+        const bannerContainer = document.getElementById('closedBannerContainer');
+        const btnAction = document.getElementById('btnAction');
+        const inputPln = document.getElementById('plnNumber');
 
-            try {
-                // 1. CEK STATUS TOKO & MARGIN
-                const configRaw = localStorage.getItem('ppobConfig');
-                const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
+        try {
+            // 1. CEK STATUS TOKO & MARGIN DARI LOCALSTORAGE
+            const configRaw = localStorage.getItem('ppobConfig');
+            const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
+            
+            globalMargin = parseInt(config.margin) || 0;
+            
+            isStoreOpen = config.isOpen === true || config.isOpen === "true";
+            if (config.isOpen === false || config.isOpen === "false") {
+                isStoreOpen = false;
+            }
+
+            // 2. JIKA TOKO TUTUP
+            if (!isStoreOpen) {
+                bannerContainer.innerHTML = `
+                    <div class="store-closed-banner" style="margin-bottom:20px;">
+                        <i class="fa-solid fa-shop-lock"></i>
+                        MAAF, TOKO SEDANG TUTUP
+                        <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
+                            Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                        </span>
+                    </div>
+                `;
+                inputPln.disabled = true;
+                inputPln.placeholder = "Toko Tutup";
                 
-                globalMargin = parseInt(config.margin) || 0;
+                btnAction.disabled = true;
+                btnAction.innerText = "Toko Tutup";
+                btnAction.style.background = "#334155";
+                btnAction.style.cursor = "not-allowed";
                 
-                isStoreOpen = config.isOpen === true || config.isOpen === "true";
-                if (config.isOpen === false || config.isOpen === "false") {
-                    isStoreOpen = false;
-                }
-
-                // 2. JIKA TOKO TUTUP
-                if (!isStoreOpen) {
-                    bannerContainer.innerHTML = `
-                        <div class="store-closed-banner" style="margin-bottom:20px;">
-                            <i class="fa-solid fa-shop-lock"></i>
-                            MAAF, TOKO SEDANG TUTUP
-                            <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
-                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
-                            </span>
-                        </div>
-                    `;
-                    inputPln.disabled = true;
-                    inputPln.placeholder = "Toko Tutup";
-                    
-                    btnAction.disabled = true;
-                    btnAction.innerText = "Toko Tutup";
-                    btnAction.style.background = "#334155";
-                    btnAction.style.cursor = "not-allowed";
-                    
-                    container.innerHTML = ''; 
-                    return; // Stop loading produk
-                }
-
-                // 3. LOAD PRODUK PLN
-                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
-                
-                if (!res.ok) throw new Error("Gagal mengambil data");
-                
-                const products = await res.json();
                 container.innerHTML = ''; 
+                return; // Stop loading produk jika tutup
+            }
+
+            // 3. LOAD PRODUK PLN JIKA TOKO BUKA
+            const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+            
+            if (!res.ok) throw new Error("Gagal mengambil data");
+            
+            const products = await res.json();
+            container.innerHTML = ''; 
+            
+            if (!Array.isArray(products) || products.length === 0) {
+                container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #ef4444;">Produk Token Kosong</div>`;
+                return;
+            }
+
+            products.forEach(p => {
+                const basePrice = parseInt(p.price) || 0;
+                const finalPrice = basePrice + globalMargin;
+                const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
                 
-                if (!Array.isArray(products) || products.length === 0) {
-                    container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #ef4444;">Produk Token Kosong</div>`;
-                    return;
-                }
+                // Opsional: Ambil angka dari nama produk untuk tampilan (Misal "PLN 20" -> "20")
+                // const displayValue = p.name.replace(/[^0-9]/g, ''); 
+                
+                const div = document.createElement('div');
+                div.className = 'power-card';
+                div.onclick = () => selectItem(div, p, finalPrice);
+                
+                div.innerHTML = `
+                    <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <span class="chip-value">${p.name}</span>
+                    <span class="chip-price">Rp ${priceFormatted}</span>
+                `;
+                container.appendChild(div);
+            });
 
-                products.forEach(p => {
-                    const basePrice = parseInt(p.price) || 0;
-                    const finalPrice = basePrice + globalMargin;
-                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
-                    
-                    // Ambil angka dari nama produk (Misal "PLN 20" -> "20")
-                    const displayValue = p.name.replace(/[^0-9]/g, ''); 
-                    
-                    const div = document.createElement('div');
-                    div.className = 'power-card';
-                    div.onclick = () => selectItem(div, p, finalPrice);
-                    
-                    div.innerHTML = `
-                        <div class="chip-icon"><i class="fa-solid fa-bolt"></i></div>
-                        <span class="chip-value">${p.name}</span>
-                        <span class="chip-price">Rp ${priceFormatted}</span>
-                    `;
-                    container.appendChild(div);
-                });
-
-            } catch (error) {
-                console.error('Error:', error);
-                if(isStoreOpen) {
-                    container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #ef4444;">Gagal memuat data.</div>`;
-                }
+        } catch (error) {
+            console.error('Error:', error);
+            if(isStoreOpen) {
+                container.innerHTML = `<div style="grid-column: span 2; text-align: center; color: #ef4444;">Gagal memuat data.</div>`;
             }
         }
+    }
 
-        function setMode(mode) {
-            currentMode = mode;
-            const btns = document.querySelectorAll('.switch-btn');
-            const tokenDiv = document.getElementById('tokenContent');
-            const tagihanDiv = document.getElementById('tagihanContent');
-            const btnAction = document.getElementById('btnAction');
+    function setMode(mode) {
+        currentMode = mode;
+        const btns = document.querySelectorAll('.switch-btn');
+        const tokenDiv = document.getElementById('tokenContent');
+        const tagihanDiv = document.getElementById('tagihanContent');
+        const btnAction = document.getElementById('btnAction');
+        
+        btns[0].classList.toggle('active', mode === 'token');
+        btns[1].classList.toggle('active', mode === 'tagihan');
+        
+        if (mode === 'token') {
+            tokenDiv.classList.remove('hidden');
+            tagihanDiv.classList.add('hidden');
             
-            btns[0].classList.toggle('active', mode === 'token');
-            btns[1].classList.toggle('active', mode === 'tagihan');
-            
-            if (mode === 'token') {
-                tokenDiv.classList.remove('hidden');
-                tagihanDiv.classList.add('hidden');
-                
-                if(!isStoreOpen) {
-                     btnAction.innerText = "Toko Tutup";
-                } else {
-                     btnAction.innerHTML = 'Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>';
-                }
+            if(!isStoreOpen) {
+                 btnAction.innerText = "Toko Tutup";
             } else {
-                tokenDiv.classList.add('hidden');
-                tagihanDiv.classList.remove('hidden');
-                
-                if(!isStoreOpen) {
-                     btnAction.innerText = "Toko Tutup";
-                } else {
-                     btnAction.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Cek Tagihan';
-                }
+                 btnAction.innerHTML = 'Lanjut ke Pembayaran <i class="fa-solid fa-arrow-right"></i>';
             }
-            validateInput();
-        }
-
-        function selectItem(el, productData, finalPrice) {
-            if(!isStoreOpen) return;
-
-            document.querySelectorAll('.power-card').forEach(c => c.classList.remove('selected'));
-            el.classList.add('selected');
+        } else {
+            tokenDiv.classList.add('hidden');
+            tagihanDiv.classList.remove('hidden');
             
-            selectedProduct = { ...productData, finalPrice: finalPrice };
-            validateInput();
-        }
-
-        function validateInput() {
-            if(!isStoreOpen) return;
-
-            const val = document.getElementById('plnNumber').value;
-            const btn = document.getElementById('btnAction');
-            
-            // Validasi: ID Pelanggan min 10 digit
-            const isValidId = val.length >= 10;
-
-            if (currentMode === 'token') {
-                if (isValidId && selectedProduct) {
-                    btn.disabled = false;
-                } else {
-                    btn.disabled = true;
-                }
+            if(!isStoreOpen) {
+                 btnAction.innerText = "Toko Tutup";
             } else {
-                // Mode Tagihan (hanya butuh ID Pel)
-                if (isValidId) {
-                    btn.disabled = false;
-                } else {
-                    btn.disabled = true;
-                }
+                 btnAction.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Cek Tagihan';
             }
         }
+        validateInput();
+    }
 
-        function handleAction() {
-            if(!isStoreOpen) return;
-            
-            const customerNumber = document.getElementById('plnNumber').value;
-            
-            let transactionData = {};
+    function selectItem(el, productData, finalPrice) {
+        if(!isStoreOpen) return;
+        document.querySelectorAll('.power-card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        
+        selectedProduct = { ...productData, finalPrice: finalPrice };
+        validateInput();
+    }
 
-            if (currentMode === 'token') {
-                if (!selectedProduct) return;
-                
-                transactionData = {
-                    productId: selectedProduct._id,
-                    productSku: selectedProduct.buyer_sku_code,
-                    productName: selectedProduct.name,
-                    productPrice: selectedProduct.finalPrice,
-                    customerNumber: customerNumber,
-                    category: TARGET_CATEGORY,
-                    brand: 'PLN',
-                    type: 'MANUAL_PROCESS'
-                };
+    function validateInput() {
+        if(!isStoreOpen) return;
+        const val = document.getElementById('plnNumber').value;
+        const btn = document.getElementById('btnAction');
+        
+        // Validasi: ID Pelanggan min 10 digit
+        const isValidId = val.length >= 10;
+
+        if (currentMode === 'token') {
+            if (isValidId && selectedProduct) {
+                btn.disabled = false;
             } else {
-                // Mode Tagihan (Pascabayar Manual)
-                // Kita kirim data dummy agar Admin tahu ini permintaan Cek Tagihan
-                transactionData = {
-                    productId: 'PLN_POSTPAID_CHECK', 
-                    productName: 'CEK TAGIHAN PLN',
-                    productPrice: 0, // Harga 0 dulu, admin update nanti
-                    customerNumber: customerNumber,
-                    category: 'PLN PASCABAYAR',
-                    brand: 'PLN',
-                    type: 'CHECK_BILL'
-                };
+                btn.disabled = true;
             }
-
-            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
-            window.location.href = '../payment.html';
+        } else {
+            // Mode Tagihan (hanya butuh ID Pelanggan valid)
+            if (isValidId) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
         }
-    </script>
+    }
+
+    function handleAction() {
+        if(!isStoreOpen) return;
+        
+        const customerNumber = document.getElementById('plnNumber').value;
+        
+        let transactionData = {};
+        if (currentMode === 'token') {
+            if (!selectedProduct) return;
+            
+            transactionData = {
+                productId: selectedProduct._id,
+                productSku: selectedProduct.buyer_sku_code,
+                productName: selectedProduct.name,
+                productPrice: selectedProduct.finalPrice,
+                customerNumber: customerNumber,
+                category: TARGET_CATEGORY,
+                brand: 'PLN',
+                type: 'MANUAL_PROCESS'
+            };
+        } else {
+            // Mode Tagihan (Pascabayar Manual)
+            // Kita kirim data dummy agar Admin tahu ini permintaan Cek Tagihan
+            transactionData = {
+                productId: 'PLN_POSTPAID_CHECK', 
+                productName: 'CEK TAGIHAN PLN',
+                productPrice: 0, // Harga 0 dulu, admin update nanti setelah cek
+                customerNumber: customerNumber,
+                category: 'PLN PASCABAYAR',
+                brand: 'PLN',
+                type: 'CHECK_BILL'
+            };
+        }
+        
+        localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+        window.location.href = '../payment.html';
+    }
+</script>
 </body>
 </html>
