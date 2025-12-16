@@ -3,21 +3,21 @@ const router = express.Router();
 const { 
     getSettings, 
     updateSettings, 
-    updateDigiflazz 
+    updateDigiflazz,
+    getPPOBConfig,    // <-- Import fungsi baru
+    updatePPOBConfig  // <-- Import fungsi baru
 } = require('../controllers/settingController');
 
-// --- RUTE PENGATURAN BERSIH ---
+const { protect } = require('../middleware/authMiddleware'); // Pastikan ini ada agar aman
 
-// Ambil Data Setting
+// --- RUTE PENGATURAN UMUM ---
 router.get('/', getSettings);
+router.put('/', protect, updateSettings); // Tambahkan protect jika ingin aman
+router.put('/digiflazz', protect, updateDigiflazz);
 
-// Update Teks (Nama Toko, Kontak, dll)
-router.put('/', updateSettings);
-
-// Update Konfigurasi Digiflazz
-router.put('/digiflazz', updateDigiflazz);
-
-// FITUR UPLOAD BANNER SUDAH DIHAPUS TOTAL DARI SINI
-// SEHINGGA TIDAK AKAN ADA ERROR "CALLBACK UNDEFINED" LAGI
+// --- RUTE KHUSUS PPOB (BARU) ---
+// Endpoint: /api/settings/ppob
+router.get('/ppob', protect, getPPOBConfig);   // Mengambil data margin/status untuk halaman admin
+router.post('/ppob', protect, updatePPOBConfig); // Menyimpan data dari halaman admin
 
 module.exports = router;

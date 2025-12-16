@@ -9,21 +9,22 @@ const protect = async (req, res, next) => {
         try {
             token = req.headers.authorization.split(' ')[1];
             
-            // Decode Token
+            // 1. Decode Token menggunakan Kunci Rahasia Server
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             
-            // Cari User di Database
+            // 2. Cari User di Database
+            // Kita select '-password' agar data password tidak ikut terbawa (security)
             req.user = await User.findById(decoded.id).select('-password');
             
             if (!req.user) {
-                // Jika user tidak ditemukan di DB (mungkin terhapus)
+                // Jika user tidak ditemukan di DB (mungkin terhapus saat sesi aktif)
                 return res.status(401).json({ message: 'User tidak valid/ditemukan.' });
             }
 
-            next();
+            next(); // Lanjut ke proses berikutnya
         } catch (error) {
             console.error("Token Error:", error);
-            // Jangan kirim res jika sudah terkirim di blok lain (pencegahan)
+            // Mencegah error "Headers already sent"
             if (!res.headersSent) {
                 res.status(401).json({ message: 'Token tidak valid / Kadaluarsa' });
             }
@@ -36,24 +37,15 @@ const protect = async (req, res, next) => {
 };
 
 const admin = (req, res, next) => {
-    // --- MODE BYPASS SEMENTARA ---
-    // Selama 'req.user' ada (artinya sudah login & lolos dari 'protect'),
-    // kita izinkan masuk, TIDAK PEDULI status isAdmin di database.
-    
-    if (req.user) {
-        console.log(`[BYPASS ADMIN] User: ${req.user.name} diizinkan mengakses menu Admin.`);
-        next();
-    } else {
-        res.status(401).json({ message: 'Not authorized as an admin' });
-    }
-    
-    /* // KODE ASLI (KITA MATIKAN DULU)
+    // --- KEAMANAN KETAT (STRICT MODE) ---
+    // Cek apakah user ada DAN apakah status isAdmin = true
     if (req.user && req.user.isAdmin) {
-        next();
+        next(); // Lolos, silakan masuk Yang Mulia Admin
     } else {
-        res.status(401).json({ message: 'Not authorized as an admin' });
+        // Jika user biasa mencoba masuk, tolak mentah-mentah
+        console.warn(`[SECURITY ALERT] User ${req.user.name} mencoba akses Admin tanpa izin!`);
+        res.status(403).json({ message: 'Akses Ditolak: Anda bukan Admin!' }); 
     }
-    */
 };
 
 module.exports = { protect, admin };

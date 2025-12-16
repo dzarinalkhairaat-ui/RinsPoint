@@ -353,265 +353,318 @@
     </div>
 
     <script>
-        const API_URL = '/api';
-        const token = localStorage.getItem('adminToken');
-        let allProducts = [];
-        let globalMargin = 0;
+    const API_URL = '/api';
+    const token = localStorage.getItem('adminToken');
+    let allProducts = [];
+    let globalMargin = 0;
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Load setting margin awal
-            loadGlobalSettings(); 
-            // Load list produk
-            await loadPPOBProducts();   
-        });
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Cek Auth sederhana sebelum load
+        if(!token) window.location.href = '/login.html';
 
-        // 1. FILTER TABS LOGIC
-        function setFilter(el, category) {
-            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            document.getElementById('currentFilter').value = category;
-            filterProducts();
-        }
+        // 1. Load Setting Margin (Server -> Fallback Local)
+        await loadGlobalSettings(); 
+        // 2. Load List Produk
+        await loadPPOBProducts();   
+    });
 
-        // 2. LOAD MARGIN (Ambil dari LocalStorage agar sinkron INSTAN)
-        function loadGlobalSettings() {
-            try {
-                // Ambil data PPOB config dari localStorage
-                const localConfig = localStorage.getItem('ppobConfig');
-                
-                if (localConfig) {
-                    const config = JSON.parse(localConfig);
-                    // Pastikan mengambil key 'margin'
-                    globalMargin = parseInt(config.margin) || 0;
+    // --- 1. FILTER & SEARCH LOGIC (DIPERBARUI) ---
+    function setFilter(el, category) {
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('currentFilter').value = category;
+        filterProducts();
+    }
+
+    function filterProducts() {
+        const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+        const categoryQuery = document.getElementById('currentFilter').value;
+        
+        const filtered = allProducts.filter(p => {
+            // Safety check: pastikan property ada sebelum toLowerCase
+            const pName = p.name ? p.name.toLowerCase() : '';
+            const catName = p.category ? (p.category.name || p.category).toLowerCase() : '';
+            
+            const nameMatch = pName.includes(searchQuery);
+            
+            let catMatch = true;
+            if(categoryQuery) {
+                const q = categoryQuery.toLowerCase();
+                if (q === 'e-wallet') { 
+                    catMatch = ['dana','ovo','gopay','shopeepay'].some(c => catName.includes(c)); 
+                } else if (q === 'game') { 
+                    catMatch = ['mobile legend','pubg','free fire','roblox'].some(c => catName.includes(c)); 
                 } else {
-                    globalMargin = 0;
+                    catMatch = catName.includes(q); 
                 }
-                
-                // Update tampilan text margin
-                updateMarginDisplay();
-            } catch (error) { 
-                console.error("Gagal load margin dari LocalStorage:", error); 
-                globalMargin = 0; 
             }
-        }
+            return nameMatch && catMatch;
+        });
+        renderList(filtered);
+    }
 
-        function updateMarginDisplay() {
-            const marginEl = document.getElementById('displayMargin');
-            if (marginEl) {
-                marginEl.innerText = new Intl.NumberFormat('id-ID').format(globalMargin);
-            }
-            
-            // Trigger ulang perhitungan harga jual jika input harga modal sudah terisi
-            const basePriceInput = document.getElementById('pBasePrice');
-            if (basePriceInput && basePriceInput.value) {
-                basePriceInput.dispatchEvent(new Event('input'));
-            }
-        }
+    // --- 2. GLOBAL SETTINGS LOGIC (SMART LOAD) ---
+    async function loadGlobalSettings() {
+        try {
+            // Prioritas 1: Coba ambil dari Server (Pastikan ada endpoint /api/settings atau sesuaikan)
+            // Jika belum ada endpoint ini, dia akan otomatis lari ke 'catch' (Fallback)
+            const res = await fetch(`${API_URL}/settings/ppob`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
 
-        async function loadPPOBProducts() {
-            const container = document.getElementById('ppobListContainer');
-            try {
-                const res = await fetch(`${API_URL}/products?platform=PPOB`);
+            if (res.ok) {
                 const data = await res.json();
-                allProducts = data;
-                filterProducts();
-            } catch (error) { console.error(error); container.innerHTML = '<p style="text-align:center; color:#ef4444;">Gagal memuat data.</p>'; }
+                globalMargin = parseInt(data.margin) || 0;
+                // Update local storage agar sinkron untuk sesi berikutnya
+                localStorage.setItem('ppobConfig', JSON.stringify({ margin: globalMargin }));
+            } else {
+                throw new Error("Server settings not reachable");
+            }
+        } catch (error) {
+            // Prioritas 2: Fallback ke LocalStorage jika server gagal/offline
+            // console.warn("Menggunakan margin lokal/default."); 
+            const localConfig = localStorage.getItem('ppobConfig');
+            if (localConfig) {
+                try {
+                    const config = JSON.parse(localConfig);
+                    globalMargin = parseInt(config.margin) || 0;
+                } catch(e) { globalMargin = 0; }
+            } else {
+                globalMargin = 0;
+            }
         }
+        updateMarginDisplay();
+    }
 
-        function renderList(products) {
-            const container = document.getElementById('ppobListContainer');
-            container.innerHTML = '';
+    function updateMarginDisplay() {
+        const marginEl = document.getElementById('displayMargin');
+        if (marginEl) {
+            marginEl.innerText = new Intl.NumberFormat('id-ID').format(globalMargin);
+        }
+        // Trigger ulang perhitungan harga jual di form jika sedang terbuka
+        const basePriceInput = document.getElementById('pBasePrice');
+        if (basePriceInput && basePriceInput.value) {
+            basePriceInput.dispatchEvent(new Event('input'));
+        }
+    }
+
+    // --- 3. CRUD PRODUK ---
+    async function loadPPOBProducts() {
+        const container = document.getElementById('ppobListContainer');
+        try {
+            const res = await fetch(`${API_URL}/products?platform=PPOB`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             
-            if (products.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align:center; color:#64748b; padding:50px 20px;">
-                        <i class="fa-solid fa-box-open" style="font-size:3rem; margin-bottom:15px; opacity:0.5;"></i><br>
-                        Tidak ada produk ditemukan.<br>Klik tombol <b>+</b> untuk menambah.
-                    </div>`;
+            // Handle Token Expired
+            if (res.status === 401 || res.status === 403) {
+                logout(); 
                 return;
             }
 
-            products.forEach((p, index) => {
-                const catName = p.category ? (p.category.name || p.category) : '-';
-                const hargaModal = new Intl.NumberFormat('id-ID').format(p.price); 
-                
-                let thumbHTML = '';
-                if (p.images && p.images.length > 0) {
-                    thumbHTML = `<img src="${p.images[0]}" class="item-thumb" alt="img">`;
-                } else {
-                    thumbHTML = `<div class="item-thumb-placeholder"><i class="fa-solid fa-cube"></i></div>`;
-                }
+            const data = await res.json();
+            // Simpan ke variabel global untuk filtering
+            allProducts = Array.isArray(data) ? data : [];
+            filterProducts(); // Render via filter agar konsisten
+        } catch (error) { 
+            console.error(error); 
+            container.innerHTML = '<p style="text-align:center; color:#ef4444;">Gagal memuat data. Periksa koneksi.</p>'; 
+        }
+    }
 
-                const div = document.createElement('div');
-                div.className = 'ppob-item';
-                // Animasi delay per item
-                div.style.animationDelay = `${index * 0.05}s`;
-                
-                div.innerHTML = `
-                    ${thumbHTML}
-                    <div class="item-info">
-                        <span class="item-cat-badge">${catName}</span>
-                        <div class="item-name">${p.name}</div>
-                        <div class="item-price">Rp ${hargaModal} <span style="font-size:0.7rem; color:#64748b; font-weight:400;">(Modal)</span></div>
-                    </div>
-                    <div class="item-actions">
-                        <button class="btn-icon btn-edit" onclick='editProduct(${JSON.stringify(p)})'><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="btn-icon btn-delete" onclick="deleteProduct('${p._id}')"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+    function renderList(products) {
+        const container = document.getElementById('ppobListContainer');
+        container.innerHTML = '';
+        
+        if (products.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center; color:#64748b; padding:50px 20px;">
+                    <i class="fa-solid fa-box-open" style="font-size:3rem; margin-bottom:15px; opacity:0.5;"></i><br>
+                    Tidak ada produk ditemukan.<br>Klik tombol <b>+</b> untuk menambah.
+                </div>`;
+            return;
         }
 
-        function filterProducts() {
-            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-            const categoryQuery = document.getElementById('currentFilter').value;
+        products.forEach((p, index) => {
+            const catName = p.category ? (p.category.name || p.category) : '-';
+            const hargaModal = new Intl.NumberFormat('id-ID').format(p.price); 
             
-            const filtered = allProducts.filter(p => {
-                const nameMatch = p.name.toLowerCase().includes(searchQuery);
-                const catName = p.category ? (p.category.name || p.category) : '';
-                
-                let catMatch = true;
-                if(categoryQuery) {
-                    if (categoryQuery === 'E-Wallet') { 
-                        catMatch = ['Dana','Ovo','Gopay','ShopeePay'].some(c => catName.includes(c)); 
-                    } else if (categoryQuery === 'Game') { 
-                        catMatch = ['Mobile Legend','PUBG','Free Fire','Roblox'].some(c => catName.includes(c)); 
-                    } else {
-                        catMatch = catName.includes(categoryQuery); 
-                    }
-                }
-                return nameMatch && catMatch;
-            });
-            renderList(filtered);
-        }
-
-        // --- FORM & MODAL LOGIC ---
-        function previewImage(input) {
-            const box = document.getElementById('imagePreviewBox');
-            const img = document.getElementById('imgPreview');
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    img.src = e.target.result;
-                    box.classList.add('active');
-                }
-                reader.readAsDataURL(input.files[0]);
+            let thumbHTML = '';
+            if (p.images && p.images.length > 0) {
+                thumbHTML = `<img src="${p.images[0]}" class="item-thumb" alt="img">`;
             } else {
-                box.classList.remove('active');
+                thumbHTML = `<div class="item-thumb-placeholder"><i class="fa-solid fa-cube"></i></div>`;
             }
+
+            const div = document.createElement('div');
+            div.className = 'ppob-item';
+            div.style.animationDelay = `${index * 0.05}s`;
+            
+            // PERUBAHAN PENTING: onclick='prepareEdit(...)' menggunakan ID, bukan JSON string
+            // Ini mencegah error syntax jika nama produk mengandung tanda kutip (')
+            div.innerHTML = `
+                ${thumbHTML}
+                <div class="item-info">
+                    <span class="item-cat-badge">${catName}</span>
+                    <div class="item-name">${p.name}</div>
+                    <div class="item-price">Rp ${hargaModal} <span style="font-size:0.7rem; color:#64748b; font-weight:400;">(Modal)</span></div>
+                </div>
+                <div class="item-actions">
+                    <button class="btn-icon btn-edit" onclick="prepareEdit('${p._id}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button class="btn-icon btn-delete" onclick="deleteProduct('${p._id}')"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // --- 4. FORM & MODAL LOGIC ---
+    function previewImage(input) {
+        const box = document.getElementById('imagePreviewBox');
+        const img = document.getElementById('imgPreview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+                box.classList.add('active');
+            }
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            box.classList.remove('active');
         }
+    }
 
-        function openModal(mode) {
-            // PENTING: Reload margin setiap kali modal dibuka agar update terbaru masuk
-            loadGlobalSettings();
+    function openModal(mode) {
+        loadGlobalSettings(); // Refresh margin
+        document.getElementById('productModal').classList.add('show');
+        document.getElementById('imagePreviewBox').classList.remove('active');
+        
+        if (mode === 'add') {
+            document.getElementById('modalTitle').innerText = 'Tambah Produk';
+            document.getElementById('ppobForm').reset();
+            document.getElementById('productId').value = '';
+            document.getElementById('displayFinalPrice').innerText = '0';
+        }
+    }
 
-            document.getElementById('productModal').classList.add('show');
+    // Fungsi baru untuk mencari data produk berdasarkan ID (Lebih Aman)
+    function prepareEdit(id) {
+        const p = allProducts.find(item => item._id === id);
+        if (p) editProduct(p);
+    }
+
+    function editProduct(p) {
+        loadGlobalSettings();
+        
+        document.getElementById('productModal').classList.add('show');
+        document.getElementById('modalTitle').innerText = 'Edit Produk';
+        document.getElementById('productId').value = p._id;
+        document.getElementById('pName').value = p.name;
+        document.getElementById('pBasePrice').value = p.price;
+        
+        const catName = p.category ? (p.category.name || p.category) : '';
+        document.getElementById('pCategory').value = catName;
+        
+        if(p.images && p.images.length > 0) {
+            document.getElementById('imgPreview').src = p.images[0];
+            document.getElementById('imagePreviewBox').classList.add('active');
+        } else {
             document.getElementById('imagePreviewBox').classList.remove('active');
-            
-            if (mode === 'add') {
-                document.getElementById('modalTitle').innerText = 'Tambah Produk';
-                document.getElementById('ppobForm').reset();
-                document.getElementById('productId').value = '';
-                
-                // Reset harga jual text
-                document.getElementById('displayFinalPrice').innerText = '0';
+        }
+        
+        // Trigger manual agar harga jual terhitung
+        document.getElementById('pBasePrice').dispatchEvent(new Event('input'));
+    }
+
+    function closeModal() { 
+        document.getElementById('productModal').classList.remove('show'); 
+    }
+
+    // Event Listener Real-time Calculation
+    document.getElementById('pBasePrice').addEventListener('input', function() {
+        const modal = parseInt(this.value) || 0;
+        const final = modal + parseInt(globalMargin);
+        document.getElementById('displayFinalPrice').innerText = new Intl.NumberFormat('id-ID').format(final);
+    });
+
+    // Submit Form (Add/Edit)
+    document.getElementById('ppobForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btnSave');
+        const originalText = btn.innerText;
+        
+        btn.innerText = 'Menyimpan...';
+        btn.disabled = true;
+
+        const id = document.getElementById('productId').value;
+        const name = document.getElementById('pName').value;
+        const category = document.getElementById('pCategory').value;
+        const basePrice = parseInt(document.getElementById('pBasePrice').value) || 0;
+
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('category', category);
+        formData.append('price', basePrice); 
+        formData.append('description', 'Produk PPOB Manual'); 
+        formData.append('platform', 'PPOB'); 
+        
+        const imageFile = document.getElementById('pImage').files[0];
+        if(imageFile) formData.append('image', imageFile);
+
+        try {
+            let url = `${API_URL}/products`;
+            let method = 'POST';
+            if (id) { url += `/${id}`; method = 'PUT'; }
+
+            const res = await fetch(url, {
+                method: method,
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+
+            const result = await res.json();
+
+            if (res.ok) {
+                closeModal();
+                loadPPOBProducts(); // Reload data
+                alert('Berhasil menyimpan produk!');
+            } else {
+                throw new Error(result.message || 'Gagal menyimpan');
             }
+        } catch (error) { 
+            console.error(error); 
+            alert('Error: ' + error.message); 
+        } finally { 
+            btn.innerText = originalText; 
+            btn.disabled = false; 
         }
+    });
 
-        function editProduct(p) {
-            // Load settings dulu agar margin akurat
-            loadGlobalSettings();
-            
-            document.getElementById('productModal').classList.add('show');
-            document.getElementById('modalTitle').innerText = 'Edit Produk';
-            document.getElementById('productId').value = p._id;
-            document.getElementById('pName').value = p.name;
-            document.getElementById('pBasePrice').value = p.price;
-            
-            const catName = p.category ? (p.category.name || p.category) : '';
-            document.getElementById('pCategory').value = catName;
-            
-            if(p.images && p.images.length > 0) {
-                document.getElementById('imgPreview').src = p.images[0];
-                document.getElementById('imagePreviewBox').classList.add('active');
+    async function deleteProduct(id) {
+        if(!confirm('Yakin ingin menghapus produk ini? Tindakan tidak bisa dibatalkan.')) return;
+        try {
+            const res = await fetch(`${API_URL}/products/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if(res.ok) {
+                loadPPOBProducts();
+            } else {
+                alert('Gagal menghapus produk.');
             }
-
-            // Trigger manual agar harga jual terhitung
-            document.getElementById('pBasePrice').dispatchEvent(new Event('input'));
+        } catch (error) { 
+            console.error(error);
+            alert('Terjadi kesalahan koneksi.'); 
         }
+    }
 
-        function closeModal() { document.getElementById('productModal').classList.remove('show'); }
-
-        // Event Listener untuk menghitung harga jual real-time (Modal + Margin)
-        document.getElementById('pBasePrice').addEventListener('input', function() {
-            const modal = parseInt(this.value) || 0;
-            const final = modal + parseInt(globalMargin);
-            document.getElementById('displayFinalPrice').innerText = new Intl.NumberFormat('id-ID').format(final);
-        });
-
-        // Submit Form
-        document.getElementById('ppobForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btnSave');
-            btn.innerText = 'Menyimpan...';
-            btn.disabled = true;
-
-            const id = document.getElementById('productId').value;
-            const name = document.getElementById('pName').value;
-            const category = document.getElementById('pCategory').value;
-            const basePrice = parseInt(document.getElementById('pBasePrice').value) || 0;
-
-            const formData = new FormData();
-            formData.append('name', name);
-            formData.append('category', category);
-            formData.append('price', basePrice); 
-            formData.append('description', 'Produk PPOB Manual'); 
-            formData.append('platform', 'PPOB'); 
-            
-            const imageFile = document.getElementById('pImage').files[0];
-            if(imageFile) formData.append('image', imageFile);
-
-            try {
-                let url = `${API_URL}/products`;
-                let method = 'POST';
-                if (id) { url += `/${id}`; method = 'PUT'; }
-
-                const res = await fetch(url, {
-                    method: method,
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    body: formData
-                });
-
-                if (res.ok) {
-                    closeModal();
-                    loadPPOBProducts();
-                    alert('Produk berhasil disimpan!');
-                } else {
-                    const err = await res.json();
-                    alert('Gagal: ' + (err.message || 'Error server'));
-                }
-            } catch (error) { console.error(error); alert('Terjadi kesalahan.'); } 
-            finally { btn.innerText = 'Simpan'; btn.disabled = false; }
-        });
-
-        async function deleteProduct(id) {
-            if(!confirm('Yakin ingin menghapus produk ini?')) return;
-            try {
-                const res = await fetch(`${API_URL}/products/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if(res.ok) loadPPOBProducts();
-            } catch (error) { alert('Error server.'); }
+    function logout() {
+        if(confirm('Keluar dari Admin?')) {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/login.html';
         }
+    }
+</script>
 
-        function logout() {
-            if(confirm('Keluar dari Admin?')) {
-                localStorage.removeItem('adminToken');
-                window.location.href = '/login.html';
-            }
-        }
-    </script>
 </body>
 </html>

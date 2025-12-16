@@ -14,6 +14,12 @@ const userSchema = new mongoose.Schema({
         minlength: 6,
         select: false // Password tidak akan muncul saat kita mengambil data user (keamanan)
     },
+    // KOLOM PENTING UNTUK MIDDLEWARE BARU
+    isAdmin: {
+        type: Boolean,
+        required: true,
+        default: true // Default true karena ini tabel khusus Admin
+    },
     role: {
         type: String,
         enum: ['admin', 'superadmin'],
@@ -25,12 +31,16 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// Enkripsi password sebelum disimpan
+// Enkripsi password sebelum disimpan (Hashing)
+// INI ADALAH JANTUNG KEAMANAN PASSWORD ANDA
 userSchema.pre('save', async function(next) {
+    // Cek apakah password diubah? Jika tidak (cuma update email/profil), skip hashing
     if (!this.isModified('password')) {
         next();
     }
+    // Buat "bumbu" (salt) acak 10 putaran
     const salt = await bcrypt.genSalt(10);
+    // Acak password dengan bumbu tersebut
     this.password = await bcrypt.hash(this.password, salt);
 });
 

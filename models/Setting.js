@@ -12,8 +12,10 @@ const settingSchema = new mongoose.Schema({
     }],
     
     // --- PENGATURAN PPOB (MARGIN & JAM KERJA) ---
-    ppobMargin: { type: Number, default: 500 },
-    ppobStatus: { type: Boolean, default: true }, // Toko Buka (true) / Tutup (false)
+    // FOKUS KITA DI SINI:
+    ppobMargin: { type: Number, default: 500 },      // Margin Keuntungan Global
+    ppobStatus: { type: Boolean, default: true },     // Status Toko: Buka (true) / Tutup (false)
+    
     ppobOpenTime: { type: String, default: "06:00" }, 
     ppobCloseTime: { type: String, default: "23:30" },
 
@@ -38,7 +40,7 @@ const settingSchema = new mongoose.Schema({
         apiKey: { type: String, select: false },
         mode: { type: String, default: 'development' }
     },
-
+    
     // Array Banners
     banners: [{
         title: String,      
