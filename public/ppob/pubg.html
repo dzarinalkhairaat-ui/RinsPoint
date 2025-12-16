@@ -264,169 +264,152 @@
     </nav>
 
     <script>
-        const API_URL = '/api';
-        const TARGET_CATEGORY = 'PUBG'; // Pastikan di DB Admin kategori = PUBG
-        
-        let selectedProduct = null;
-        let globalMargin = 0;
-        let isStoreOpen = true;
+    const API_URL = '/api';
+    const TARGET_CATEGORY = 'PUBG'; // Pastikan di DB Admin kategori = PUBG
+    
+    let selectedProduct = null;
+    let globalMargin = 0;
+    let isStoreOpen = true;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-        });
+    document.addEventListener('DOMContentLoaded', () => {
+        loadData();
+    });
 
-        // --- FUNGSI BARU: SINKRONISASI STATUS TOKO ---
-        async function getStoreConfig() {
+    async function loadData() {
+        const container = document.getElementById('nominalContainer');
+        const bannerContainer = document.getElementById('closedBannerContainer');
+        const btnPay = document.getElementById('btnPay');
+        const playerId = document.getElementById('playerId');
+
+        try {
+            // --- PERBAIKAN: SINKRONISASI REAL-TIME (Fetch ke /settings/ppob) ---
+            let configResponse;
             try {
-                // Fetch ke server dengan timestamp agar tidak dicache oleh browser HP
-                const res = await fetch(`${API_URL}/config?t=${new Date().getTime()}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    localStorage.setItem('ppobConfig', JSON.stringify(data)); // Update data di HP
-                    return data;
-                }
-            } catch (error) {
-                console.warn("Gagal koneksi ke server config, menggunakan data lokal.");
+                // Tambahkan timestamp agar browser HP tidak menyimpan cache lama
+                configResponse = await fetch(`${API_URL}/settings/ppob?t=${new Date().getTime()}`);
+            } catch (e) {
+                console.warn("Gagal koneksi server config", e);
             }
-            // Jika gagal (offline), pakai data lama
-            const cached = localStorage.getItem('ppobConfig');
-            return cached ? JSON.parse(cached) : { isOpen: true, margin: 0 };
-        }
 
-        // 1. Fetch Data
-        async function loadData() {
-            const container = document.getElementById('nominalContainer');
-            const bannerContainer = document.getElementById('closedBannerContainer');
-            const btnPay = document.getElementById('btnPay');
-            const playerId = document.getElementById('playerId');
+            const config = configResponse && configResponse.ok 
+                           ? await configResponse.json() 
+                           : { isOpen: true, margin: 0 };
+            
+            globalMargin = parseInt(config.margin) || 0;
+            isStoreOpen = config.isOpen === true || config.isOpen === "true";
 
-            try {
-                // A. Cek Status Toko & Margin (UPDATED: Real-time Server Check)
-                const config = await getStoreConfig();
+            // B. JIKA TOKO TUTUP -> STOP PROSES
+            if (!isStoreOpen) {
+                bannerContainer.innerHTML = `
+                    <div class="store-closed-banner">
+                        <i class="fa-solid fa-shop-lock"></i>
+                        MAAF, TOKO SEDANG TUTUP
+                        <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
+                            Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                        </span>
+                    </div>
+                `;
+                playerId.disabled = true;
+                playerId.placeholder = "Toko Tutup";
                 
-                globalMargin = parseInt(config.margin) || 0;
-                
-                isStoreOpen = config.isOpen === true || config.isOpen === "true";
-                if (config.isOpen === false || config.isOpen === "false") {
-                    isStoreOpen = false;
-                }
-
-                // B. JIKA TOKO TUTUP -> STOP PROSES
-                if (!isStoreOpen) {
-                    bannerContainer.innerHTML = `
-                        <div class="store-closed-banner">
-                            <i class="fa-solid fa-shop-lock"></i>
-                            MAAF, TOKO SEDANG TUTUP
-                            <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
-                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
-                            </span>
-                        </div>
-                    `;
-                    playerId.disabled = true;
-                    playerId.placeholder = "Toko Tutup";
-                    
-                    btnPay.disabled = true;
-                    btnPay.innerText = "Toko Tutup";
-                    btnPay.style.background = "#44403c";
-                    btnPay.style.cursor = "not-allowed";
-                    btnPay.style.color = "#78716c";
-                    
-                    container.innerHTML = ''; 
-                    return; // Stop execution
-                }
-
-                // C. Ambil Produk
-                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
-                if (!res.ok) throw new Error("Gagal mengambil data");
-
-                const products = await res.json();
+                btnPay.disabled = true;
+                btnPay.innerText = "Toko Tutup";
+                btnPay.style.background = "#44403c";
+                btnPay.style.cursor = "not-allowed";
+                btnPay.style.color = "#78716c";
                 
                 container.innerHTML = ''; 
+                return; // Stop execution
+            }
+
+            // C. JIKA BUKA -> Ambil Produk
+            const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+            if (!res.ok) throw new Error("Gagal mengambil data");
+            
+            const products = await res.json();
+            
+            container.innerHTML = ''; 
+            
+            if (!Array.isArray(products) || products.length === 0) {
+                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
+                return;
+            }
+
+            // D. Render Produk
+            products.forEach(p => {
+                const basePrice = parseInt(p.price) || 0;
+                // Margin Server Real-time
+                const finalPrice = basePrice + globalMargin;
+                const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
                 
-                if (!Array.isArray(products) || products.length === 0) {
-                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
-                    return;
-                }
-
-                // D. Render Produk
-                products.forEach(p => {
-                    const basePrice = parseInt(p.price) || 0;
-                    const finalPrice = basePrice + globalMargin;
-                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
-                    
-                    // Path gambar icon disesuaikan ke ../
-                    const div = document.createElement('div');
-                    div.className = 'uc-card';
-                    div.onclick = () => selectItem(div, p, finalPrice);
-                    
-                    div.innerHTML = `
-                        <div class="card-body">
-                            <span class="uc-amount">${p.name}</span>
-                            <div class="uc-price-row">
-                                <img src="../assets/icons/pubg/uc.png" class="uc-icon-img" alt="UC" onerror="this.src='https://placehold.co/24x24/1c1917/fbbf24?text=UC'">
-                                <span class="uc-price">Rp ${priceFormatted}</span>
-                            </div>
+                const div = document.createElement('div');
+                div.className = 'uc-card';
+                div.onclick = () => selectItem(div, p, finalPrice);
+                
+                div.innerHTML = `
+                    <div class="card-body">
+                        <span class="uc-amount">${p.name}</span>
+                        <div class="uc-price-row">
+                            <img src="../assets/icons/pubg/uc.png" class="uc-icon-img" alt="UC" onerror="this.src='https://placehold.co/24x24/1c1917/fbbf24?text=UC'">
+                            <span class="uc-price">Rp ${priceFormatted}</span>
                         </div>
-                        <div class="card-footer">
-                            <div class="instant-badge"><i class="fa-solid fa-bolt"></i> FAST</div>
-                        </div>
-                    `;
-                    container.appendChild(div);
-                });
+                    </div>
+                    <div class="card-footer">
+                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> FAST</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
 
-            } catch (error) {
-                console.error(error);
-                if(isStoreOpen) {
-                    container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
-                }
+        } catch (error) {
+            console.error(error);
+            if(isStoreOpen) {
+                container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
             }
         }
+    }
 
-        // 2. Logic Pilih Produk
-        function selectItem(el, productData, priceWithMargin) {
-            if(!isStoreOpen) return;
+    function selectItem(el, productData, priceWithMargin) {
+        if(!isStoreOpen) return;
+        document.querySelectorAll('.uc-card').forEach(item => item.classList.remove('selected'));
+        el.classList.add('selected');
+        
+        selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
+        checkForm();
+    }
 
-            document.querySelectorAll('.uc-card').forEach(item => item.classList.remove('selected'));
-            el.classList.add('selected');
-            
-            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
-            checkForm();
+    function checkForm() {
+        if(!isStoreOpen) return;
+        const player = document.getElementById('playerId').value;
+        const btn = document.getElementById('btnPay');
+        
+        // Validasi ID PUBG (biasanya angka, 8-12 digit)
+        if (player.length >= 8 && selectedProduct !== null) {
+            btn.disabled = false;
+        } else {
+            btn.disabled = true;
         }
+    }
 
-        function checkForm() {
-            if(!isStoreOpen) return;
-
-            const player = document.getElementById('playerId').value;
-            const btn = document.getElementById('btnPay');
-            
-            // Validasi ID PUBG (biasanya angka, 8-12 digit)
-            if (player.length >= 8 && selectedProduct !== null) {
-                btn.disabled = false;
-            } else {
-                btn.disabled = true;
-            }
-        }
-
-        // 3. Proses ke Halaman Payment
-        function goToPayment() {
-            if (!selectedProduct || !isStoreOpen) return;
-            
-            const player = document.getElementById('playerId').value;
-            
-            const transactionData = {
-                productId: selectedProduct._id,
-                productSku: selectedProduct.buyer_sku_code, // Penting untuk Admin cek kode
-                productName: selectedProduct.name,
-                productPrice: selectedProduct.finalPrice,
-                customerNumber: player, 
-                category: TARGET_CATEGORY,
-                brand: 'PUBG MOBILE',
-                type: 'MANUAL_PROCESS'
-            };
-            
-            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
-            window.location.href = '../payment.html';
-        }
-    </script>
+    function goToPayment() {
+        if (!selectedProduct || !isStoreOpen) return;
+        
+        const player = document.getElementById('playerId').value;
+        
+        const transactionData = {
+            productId: selectedProduct._id,
+            productSku: selectedProduct.buyer_sku_code,
+            productName: selectedProduct.name,
+            productPrice: selectedProduct.finalPrice,
+            customerNumber: player, 
+            category: TARGET_CATEGORY,
+            brand: 'PUBG MOBILE',
+            type: 'MANUAL_PROCESS'
+        };
+        
+        localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+        window.location.href = '../payment.html';
+    }
+</script>
 </body>
 </html>

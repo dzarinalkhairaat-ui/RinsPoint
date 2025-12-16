@@ -286,205 +286,189 @@
     </nav>
 
     <script>
-        const API_URL = '/api';
-        const TARGET_CATEGORY = 'Mobile Legend'; // Pastikan di DB kategori persis ini
-        
-        let selectedProduct = null;
-        let globalMargin = 0;
-        let isStoreOpen = true;
+    const API_URL = '/api';
+    const TARGET_CATEGORY = 'Mobile Legend'; // Pastikan di DB kategori persis ini
+    
+    let selectedProduct = null;
+    let globalMargin = 0;
+    let isStoreOpen = true;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-        });
+    document.addEventListener('DOMContentLoaded', () => {
+        loadData();
+    });
 
-        // --- FUNGSI BARU: SINKRONISASI STATUS TOKO ---
-        async function getStoreConfig() {
+    async function loadData() {
+        const membershipContainer = document.getElementById('membershipContainer');
+        const diamondContainer = document.getElementById('diamondContainer');
+        const membershipSection = document.getElementById('membershipSection');
+        const bannerContainer = document.getElementById('closedBannerContainer');
+        const btnPay = document.getElementById('btnPay');
+        const userId = document.getElementById('userId');
+        const zoneId = document.getElementById('zoneId');
+        const labelDiamond = document.getElementById('labelDiamond');
+
+        try {
+            // --- PERBAIKAN: SINKRONISASI REAL-TIME DENGAN SERVER ---
+            let configResponse;
             try {
-                // Fetch ke server dengan timestamp agar tidak dicache oleh browser HP
-                const res = await fetch(`${API_URL}/config?t=${new Date().getTime()}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    localStorage.setItem('ppobConfig', JSON.stringify(data)); // Update data di HP
-                    return data;
-                }
-            } catch (error) {
-                console.warn("Gagal koneksi ke server config, menggunakan data lokal.");
+                // Fetch ke /settings/ppob dengan timestamp
+                configResponse = await fetch(`${API_URL}/settings/ppob?t=${new Date().getTime()}`);
+            } catch (e) {
+                console.warn("Gagal koneksi server config", e);
             }
-            // Jika gagal (offline), pakai data lama
-            const cached = localStorage.getItem('ppobConfig');
-            return cached ? JSON.parse(cached) : { isOpen: true, margin: 0 };
-        }
 
-        // 1. Fetch Data (Margin + Produk)
-        async function loadData() {
-            const membershipContainer = document.getElementById('membershipContainer');
-            const diamondContainer = document.getElementById('diamondContainer');
-            const membershipSection = document.getElementById('membershipSection');
-            const bannerContainer = document.getElementById('closedBannerContainer');
-            const btnPay = document.getElementById('btnPay');
-            const userId = document.getElementById('userId');
-            const zoneId = document.getElementById('zoneId');
-            const labelDiamond = document.getElementById('labelDiamond');
+            const config = configResponse && configResponse.ok 
+                           ? await configResponse.json() 
+                           : { isOpen: true, margin: 0 };
+            
+            globalMargin = parseInt(config.margin) || 0;
+            isStoreOpen = config.isOpen === true || config.isOpen === "true";
 
-            try {
-                // A. Cek Status Toko (UPDATED: Menggunakan Data Real-time Server)
-                const config = await getStoreConfig();
+            // B. JIKA TOKO TUTUP -> STOP PROSES
+            if (!isStoreOpen) {
+                bannerContainer.innerHTML = `
+                    <div class="store-closed-banner">
+                        <i class="fa-solid fa-shop-lock"></i>
+                        MAAF, TOKO SEDANG TUTUP
+                        <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
+                            Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
+                        </span>
+                    </div>
+                `;
+                userId.disabled = true;
+                userId.placeholder = "Tutup";
+                zoneId.disabled = true;
+                zoneId.placeholder = "-";
                 
-                globalMargin = parseInt(config.margin) || 0;
+                btnPay.disabled = true;
+                btnPay.innerText = "Toko Tutup";
+                btnPay.style.background = "#334155";
+                btnPay.style.cursor = "not-allowed";
+                btnPay.style.color = "#64748b";
                 
-                // Pastikan tipe data boolean
-                isStoreOpen = config.isOpen === true || config.isOpen === "true";
-                if (config.isOpen === false || config.isOpen === "false") {
-                    isStoreOpen = false;
-                }
-
-                // B. JIKA TOKO TUTUP -> STOP PROSES
-                if (!isStoreOpen) {
-                    bannerContainer.innerHTML = `
-                        <div class="store-closed-banner">
-                            <i class="fa-solid fa-shop-lock"></i>
-                            MAAF, TOKO SEDANG TUTUP
-                            <span style="font-size:0.7rem; font-weight:400; color:#93c5fd; margin-top:5px;">
-                                Jam Operasional: ${config.openTime || '08:00'} - ${config.closeTime || '22:00'}
-                            </span>
-                        </div>
-                    `;
-                    userId.disabled = true;
-                    userId.placeholder = "Tutup";
-                    zoneId.disabled = true;
-                    zoneId.placeholder = "-";
-                    
-                    btnPay.disabled = true;
-                    btnPay.innerText = "Toko Tutup";
-                    btnPay.style.background = "#334155";
-                    btnPay.style.cursor = "not-allowed";
-                    btnPay.style.color = "#64748b";
-                    
-                    // Bersihkan container
-                    diamondContainer.innerHTML = '';
-                    membershipContainer.innerHTML = '';
-                    if(labelDiamond) labelDiamond.style.display = 'none';
-                    if(membershipSection) membershipSection.style.display = 'none';
-                    
-                    return; // STOP DI SINI
-                }
-
-                // C. Jika Buka -> Load Produk
-                const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
-                if (!res.ok) throw new Error("Gagal mengambil data");
-                
-                const products = await res.json();
-                
-                // Clear Loading
-                membershipContainer.innerHTML = '';
+                // Bersihkan container
                 diamondContainer.innerHTML = '';
-
-                if (!Array.isArray(products) || products.length === 0) {
-                    diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
-                    return;
-                }
-
-                // D. Filter & Render
-                let hasMembership = false;
+                membershipContainer.innerHTML = '';
+                if(labelDiamond) labelDiamond.style.display = 'none';
+                if(membershipSection) membershipSection.style.display = 'none';
                 
-                products.forEach(p => {
-                    const basePrice = parseInt(p.price) || 0;
-                    const finalPrice = basePrice + globalMargin;
-                    const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
-                    
-                    // Deteksi Jenis Produk berdasarkan Nama
-                    const lowerName = p.name.toLowerCase();
-                    const isMembership = lowerName.includes('pass') || lowerName.includes('weekly') || lowerName.includes('twilight') || lowerName.includes('member') || lowerName.includes('starlight');
-                    
-                    // Tentukan Icon & Container
-                    let iconImg = '../assets/icons/mobile-legend/diamond-icon.png';
-                    let targetContainer = diamondContainer;
-                    
-                    if (isMembership) {
-                        hasMembership = true;
-                        targetContainer = membershipContainer;
-                        if(lowerName.includes('weekly')) iconImg = '../assets/icons/mobile-legend/wdp-icon.png';
-                        else if(lowerName.includes('twilight')) iconImg = '../assets/icons/mobile-legend/twilight-icon.jpg';
-                    }
+                return; // STOP DI SINI
+            }
 
-                    const div = document.createElement('div');
-                    div.className = 'diamond-card';
-                    div.onclick = () => selectItem(div, p, finalPrice);
-                    
-                    div.innerHTML = `
-                        <div class="card-body">
-                            <span class="dm-amount">${p.name}</span>
-                            <div class="dm-price-row">
-                                <img src="${iconImg}" class="dm-icon-img" alt="Icon" onerror="this.src='../assets/icons/mobile-legend/diamond-icon.png'">
-                                <span class="dm-price">Rp ${priceFormatted}</span>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
-                        </div>
-                    `;
-                    targetContainer.appendChild(div);
-                });
+            // C. Jika Buka -> Load Produk
+            const res = await fetch(`${API_URL}/products?platform=PPOB&category=${encodeURIComponent(TARGET_CATEGORY)}&sort=lowest`);
+            if (!res.ok) throw new Error("Gagal mengambil data");
+            
+            const products = await res.json();
+            
+            // Clear Loading
+            membershipContainer.innerHTML = '';
+            diamondContainer.innerHTML = '';
+            if (!Array.isArray(products) || products.length === 0) {
+                diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444; padding:20px;">Produk Kosong</div>`;
+                return;
+            }
 
-                // Tampilkan Section Membership jika ada isinya
-                if (hasMembership) {
-                    membershipSection.style.display = 'block';
+            // D. Filter & Render
+            let hasMembership = false;
+            
+            products.forEach(p => {
+                const basePrice = parseInt(p.price) || 0;
+                // Margin Server Real-time
+                const finalPrice = basePrice + globalMargin;
+                const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
+                
+                // Deteksi Jenis Produk berdasarkan Nama
+                const lowerName = p.name.toLowerCase();
+                const isMembership = lowerName.includes('pass') || lowerName.includes('weekly') || lowerName.includes('twilight') || lowerName.includes('member') || lowerName.includes('starlight');
+                
+                // Tentukan Icon & Container
+                let iconImg = '../assets/icons/mobile-legend/diamond-icon.png';
+                let targetContainer = diamondContainer;
+                
+                if (isMembership) {
+                    hasMembership = true;
+                    targetContainer = membershipContainer;
+                    if(lowerName.includes('weekly')) iconImg = '../assets/icons/mobile-legend/wdp-icon.png';
+                    else if(lowerName.includes('twilight')) iconImg = '../assets/icons/mobile-legend/twilight-icon.jpg';
                 }
 
-            } catch (error) {
-                console.error(error);
-                if(isStoreOpen) {
-                    diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
-                }
+                const div = document.createElement('div');
+                div.className = 'diamond-card';
+                div.onclick = () => selectItem(div, p, finalPrice);
+                
+                div.innerHTML = `
+                    <div class="card-body">
+                        <span class="dm-amount">${p.name}</span>
+                        <div class="dm-price-row">
+                            <img src="${iconImg}" class="dm-icon-img" alt="Icon" onerror="this.src='../assets/icons/mobile-legend/diamond-icon.png'">
+                            <span class="dm-price">Rp ${priceFormatted}</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="instant-badge"><i class="fa-solid fa-bolt"></i> INSTAN</div>
+                    </div>
+                `;
+                targetContainer.appendChild(div);
+            });
+
+            // Tampilkan Section Membership jika ada isinya
+            if (hasMembership) {
+                membershipSection.style.display = 'block';
+            }
+
+        } catch (error) {
+            console.error(error);
+            if(isStoreOpen) {
+                diamondContainer.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
             }
         }
+    }
 
-        // 2. Logic Pilih Produk
-        function selectItem(el, productData, priceWithMargin) {
-            if(!isStoreOpen) return;
-            document.querySelectorAll('.diamond-card').forEach(item => item.classList.remove('selected'));
-            el.classList.add('selected');
-            
-            selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
-            checkForm();
-        }
+    function selectItem(el, productData, priceWithMargin) {
+        if(!isStoreOpen) return;
+        document.querySelectorAll('.diamond-card').forEach(item => item.classList.remove('selected'));
+        el.classList.add('selected');
+        
+        selectedProduct = { ...productData, finalPrice: priceWithMargin }; 
+        checkForm();
+    }
 
-        function checkForm() {
-            if(!isStoreOpen) return;
-            const user = document.getElementById('userId').value;
-            const zone = document.getElementById('zoneId').value;
-            const btn = document.getElementById('btnPay');
-            
-            // Validasi: User ID min 4 digit, Zone ID min 4 digit
-            if (user.length >= 4 && zone.length >= 3 && selectedProduct !== null) {
-                btn.disabled = false;
-            } else {
-                btn.disabled = true;
-            }
+    function checkForm() {
+        if(!isStoreOpen) return;
+        const user = document.getElementById('userId').value;
+        const zone = document.getElementById('zoneId').value;
+        const btn = document.getElementById('btnPay');
+        
+        // Validasi: User ID min 4 digit, Zone ID min 4 digit
+        if (user.length >= 4 && zone.length >= 3 && selectedProduct !== null) {
+            btn.disabled = false;
+        } else {
+            btn.disabled = true;
         }
+    }
 
-        // 3. Proses ke Halaman Payment
-        function goToPayment() {
-            if (!selectedProduct || !isStoreOpen) return;
-            
-            const user = document.getElementById('userId').value;
-            const zone = document.getElementById('zoneId').value;
-            const fullId = `${user} (${zone})`; 
-            
-            const transactionData = {
-                productId: selectedProduct._id,
-                productSku: selectedProduct.buyer_sku_code,
-                productName: selectedProduct.name,
-                productPrice: selectedProduct.finalPrice,
-                customerNumber: fullId,
-                category: TARGET_CATEGORY,
-                brand: 'MOBILE LEGENDS',
-                type: 'MANUAL_PROCESS'
-            };
-            
-            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
-            window.location.href = '../payment.html';
-        }
-    </script>
+    function goToPayment() {
+        if (!selectedProduct || !isStoreOpen) return;
+        
+        const user = document.getElementById('userId').value;
+        const zone = document.getElementById('zoneId').value;
+        const fullId = `${user} (${zone})`; 
+        
+        const transactionData = {
+            productId: selectedProduct._id,
+            productSku: selectedProduct.buyer_sku_code,
+            productName: selectedProduct.name,
+            productPrice: selectedProduct.finalPrice,
+            customerNumber: fullId,
+            category: TARGET_CATEGORY,
+            brand: 'MOBILE LEGENDS',
+            type: 'MANUAL_PROCESS'
+        };
+        
+        localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+        window.location.href = '../payment.html';
+    }
+</script>
 </body>
 </html>

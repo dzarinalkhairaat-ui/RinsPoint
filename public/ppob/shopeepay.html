@@ -230,18 +230,22 @@
         const labelNominal = document.getElementById('labelNominal');
 
         try {
-            // 1. CEK KONFIGURASI TOKO TERLEBIH DAHULU
-            const configRaw = localStorage.getItem('ppobConfig');
-            // Jika configRaw null, defaultnya open. Jika ada, parse.
-            const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
-            
-            globalMargin = parseInt(config.margin) || 0;
-            
-            // Pastikan tipe data boolean
-            isStoreOpen = config.isOpen === true || config.isOpen === "true";
-            if (config.isOpen === false || config.isOpen === "false") {
-                isStoreOpen = false;
+            // --- PERBAIKAN: AMBIL CONFIG DARI SERVER (Bukan LocalStorage) ---
+            let configResponse;
+            try {
+                // Tambahkan timestamp agar selalu fresh data
+                configResponse = await fetch(`${API_URL}/settings/ppob?t=${new Date().getTime()}`);
+            } catch (e) {
+                console.warn("Gagal connect config server", e);
             }
+
+            const config = configResponse && configResponse.ok 
+                           ? await configResponse.json() 
+                           : { isOpen: true, margin: 0 };
+            
+            // Set Variabel Global dari Server
+            globalMargin = parseInt(config.margin) || 0;
+            isStoreOpen = config.isOpen === true || config.isOpen === "true";
 
             // 2. JIKA TOKO TUTUP -> STOP PROSES, JANGAN LOAD PRODUK
             if (!isStoreOpen) {
@@ -258,7 +262,7 @@
                 
                 // Matikan Input & Tombol
                 inputPhone.disabled = true;
-                inputPhone.value = ""; // Kosongkan input
+                inputPhone.value = ""; 
                 inputPhone.placeholder = "Toko Sedang Tutup";
                 
                 btnPay.disabled = true;
@@ -269,12 +273,10 @@
                 container.innerHTML = ''; 
                 if(labelNominal) labelNominal.style.display = 'none';
                 
-                // --- BERHENTI DI SINI ---
-                return; 
+                return; // Stop
             }
 
             // 3. JIKA TOKO BUKA -> LANJUT LOAD PRODUK
-            // Bersihkan banner jika sebelumnya ada
             bannerContainer.innerHTML = '';
             if(labelNominal) labelNominal.style.display = 'block';
 
@@ -291,6 +293,7 @@
 
             products.forEach(p => {
                 const basePrice = parseInt(p.price) || 0;
+                // Margin Server
                 const finalPrice = basePrice + globalMargin;
                 const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
                 
@@ -307,7 +310,6 @@
 
         } catch (error) {
             console.error('Error:', error);
-            // Jika error pun, jangan tampilkan produk
             if(isStoreOpen) {
                 container.innerHTML = `<div style="grid-column:span 2; text-align:center; color:#ef4444;">Gagal memuat data.</div>`;
             }
@@ -315,7 +317,6 @@
     }
 
     function selectCard(el, productData, finalPrice) {
-        // Double check saat klik
         if(!isStoreOpen) return;
         document.querySelectorAll('.grid-item').forEach(item => item.classList.remove('selected'));
         el.classList.add('selected');
@@ -325,11 +326,10 @@
     }
 
     function validateInput() {
-        if(!isStoreOpen) return; // Kunci validasi jika tutup
+        if(!isStoreOpen) return; 
         const phone = document.getElementById('spNumber').value;
         const btn = document.getElementById('btnPay');
         
-        // Validasi sederhana: minimal 10 digit, awalan 08
         const isValid = phone.length >= 10 && phone.startsWith('08');
         
         if (isValid && selectedProduct !== null) {

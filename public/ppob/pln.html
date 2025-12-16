@@ -270,16 +270,23 @@
         const inputPln = document.getElementById('plnNumber');
 
         try {
-            // 1. CEK STATUS TOKO & MARGIN DARI LOCALSTORAGE
-            const configRaw = localStorage.getItem('ppobConfig');
-            const config = configRaw ? JSON.parse(configRaw) : { isOpen: true, margin: 0 };
-            
-            globalMargin = parseInt(config.margin) || 0;
-            
-            isStoreOpen = config.isOpen === true || config.isOpen === "true";
-            if (config.isOpen === false || config.isOpen === "false") {
-                isStoreOpen = false;
+            // --- PERBAIKAN: AMBIL CONFIG DARI SERVER (Bukan LocalStorage) ---
+            // Ini memastikan status toko sinkron Real-Time di semua perangkat
+            let configResponse;
+            try {
+                // Tambahkan timestamp agar browser tidak cache hasil lama
+                configResponse = await fetch(`${API_URL}/settings/ppob?t=${new Date().getTime()}`); 
+            } catch (e) {
+                console.warn("Gagal connect config server, pakai default", e);
             }
+
+            const config = configResponse && configResponse.ok 
+                           ? await configResponse.json() 
+                           : { isOpen: true, margin: 0 };
+            
+            // Set Variabel Global dari Data Server
+            globalMargin = parseInt(config.margin) || 0;
+            isStoreOpen = config.isOpen === true || config.isOpen === "true";
 
             // 2. JIKA TOKO TUTUP
             if (!isStoreOpen) {
@@ -319,11 +326,9 @@
 
             products.forEach(p => {
                 const basePrice = parseInt(p.price) || 0;
+                // Tambahkan Margin Global dari Server
                 const finalPrice = basePrice + globalMargin;
                 const priceFormatted = new Intl.NumberFormat('id-ID').format(finalPrice);
-                
-                // Opsional: Ambil angka dari nama produk untuk tampilan (Misal "PLN 20" -> "20")
-                // const displayValue = p.name.replace(/[^0-9]/g, ''); 
                 
                 const div = document.createElement('div');
                 div.className = 'power-card';
@@ -393,7 +398,6 @@
         
         // Validasi: ID Pelanggan min 10 digit
         const isValidId = val.length >= 10;
-
         if (currentMode === 'token') {
             if (isValidId && selectedProduct) {
                 btn.disabled = false;
@@ -431,11 +435,10 @@
             };
         } else {
             // Mode Tagihan (Pascabayar Manual)
-            // Kita kirim data dummy agar Admin tahu ini permintaan Cek Tagihan
             transactionData = {
                 productId: 'PLN_POSTPAID_CHECK', 
                 productName: 'CEK TAGIHAN PLN',
-                productPrice: 0, // Harga 0 dulu, admin update nanti setelah cek
+                productPrice: 0, 
                 customerNumber: customerNumber,
                 category: 'PLN PASCABAYAR',
                 brand: 'PLN',
