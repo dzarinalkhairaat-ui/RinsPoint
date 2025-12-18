@@ -11,7 +11,6 @@
     
     <script src="../js/auth.js"></script>
     <script>checkAuth();</script>
-
     <style>
         /* --- GLOBAL & ANIMATED BACKGROUND --- */
         html { height: 100%; background: #0f172a; }
@@ -21,7 +20,6 @@
             background-color: #0f172a;
             padding-bottom: 90px; 
         }
-
         /* Aurora Effect */
         .aurora-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
@@ -37,14 +35,12 @@
             0% { transform: translate(0, 0); }
             100% { transform: translate(40px, 60px); }
         }
-
         .mobile-container {
             max-width: 480px; margin: 0 auto; min-height: 100vh;
             display: flex; flex-direction: column; position: relative;
             background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(20px);
             z-index: 1; 
         }
-
         /* --- HEADER --- */
         .dashboard-header {
             position: sticky; top: 0; z-index: 50;
@@ -69,7 +65,6 @@
             color: #fff; width: 100%; font-size: 0.9rem; 
         }
         .search-icon { color: #94a3b8; }
-
         .filter-scroll {
             display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;
             scrollbar-width: none; 
@@ -85,7 +80,6 @@
             background: #4ade80; color: #064e3b; border-color: #4ade80; font-weight: 600;
             box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
         }
-
         /* --- PRODUCT LIST --- */
         .ppob-list { padding: 10px 20px; display: grid; gap: 12px; }
         
@@ -99,8 +93,8 @@
         }
         
         .item-thumb { 
-            width: 50px; height: 50px; border-radius: 12px; object-fit: cover; 
-            background: #0f172a; border: 1px solid rgba(255,255,255,0.1); 
+            width: 50px; height: 50px; border-radius: 12px; object-fit: contain; 
+            background: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 2px;
         }
         .item-thumb-placeholder {
             width: 50px; height: 50px; border-radius: 12px; 
@@ -108,7 +102,6 @@
             display: flex; align-items: center; justify-content: center; 
             font-size: 1.2rem; border: 1px solid rgba(74, 222, 128, 0.2);
         }
-
         .item-info { flex: 1; display: flex; flex-direction: column; gap: 3px; }
         .item-cat-badge {
             font-size: 0.65rem; background: rgba(59, 130, 246, 0.15); color: #60a5fa;
@@ -116,7 +109,6 @@
         }
         .item-name { color: #fff; font-weight: 600; font-size: 0.9rem; line-height: 1.2; }
         .item-price { color: #fbbf24; font-weight: 700; font-size: 0.85rem; }
-
         .item-actions { display: flex; gap: 5px; }
         .btn-icon {
             width: 32px; height: 32px; border-radius: 8px; border: none;
@@ -126,7 +118,6 @@
         .btn-edit { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
         .btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
         .btn-icon:active { transform: scale(0.9); }
-
         /* --- FLOATING ADD BUTTON --- */
         .fab-container {
             position: fixed; bottom: 85px; right: 20px; z-index: 100;
@@ -144,7 +135,6 @@
             pointer-events: auto;
         }
         .fab-add:active { transform: scale(0.9) rotate(90deg); }
-
         /* --- MODAL --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -161,7 +151,6 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
             animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
         .form-group { margin-bottom: 18px; }
         .form-label { display: block; color: #94a3b8; margin-bottom: 8px; font-size: 0.85rem; font-weight: 500; }
         .form-input, .form-select {
@@ -170,7 +159,6 @@
             color: #fff; outline: none; transition: 0.3s; font-family: inherit;
         }
         .form-input:focus, .form-select:focus { border-color: #4ade80; background: rgba(15, 23, 42, 0.8); }
-
         .img-preview-box {
             width: 100%; height: 120px; background: rgba(15, 23, 42, 0.5);
             border: 2px dashed rgba(255,255,255,0.1); border-radius: 12px;
@@ -179,19 +167,16 @@
         }
         .img-preview-box.active { display: flex; }
         .img-preview-box img { height: 100%; object-fit: contain; }
-
         .modal-footer { display: flex; gap: 10px; margin-top: 25px; }
         .btn-modal {
             flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s;
         }
         .btn-cancel { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; }
         .btn-submit { background: #4ade80; color: #064e3b; box-shadow: 0 4px 15px rgba(74, 222, 128, 0.2); }
-
         .margin-info {
             background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);
             color: #93c5fd; font-size: 0.75rem; padding: 15px; border-radius: 12px; margin-top: 5px;
         }
-
         /* --- BOTTOM NAV --- */
         .bottom-nav-container {
             position: fixed; bottom: 0; left: 0; width: 100%; z-index: 90;
@@ -209,20 +194,16 @@
         }
         .nav-item.active { color: #4ade80; }
         .nav-item i { font-size: 1.2rem; }
-
         @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
     </style>
 </head>
 <body>
-
     <div class="aurora-bg">
         <div class="blob b1"></div>
         <div class="blob b2"></div>
     </div>
-
     <div class="mobile-container">
         
         <header class="dashboard-header">
@@ -238,7 +219,6 @@
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
                 <input type="text" id="searchInput" class="search-input" placeholder="Cari nama produk..." onkeyup="filterProducts()">
             </div>
-
             <div class="filter-scroll">
                 <div class="filter-chip active" onclick="setFilter(this, '')">Semua</div>
                 <div class="filter-chip" onclick="setFilter(this, 'Pulsa')">Pulsa</div>
@@ -254,8 +234,8 @@
         <div id="ppobListContainer" class="ppob-list">
             <p style="text-align:center; color:#64748b; margin-top:30px;"><i class="fa-solid fa-circle-notch fa-spin"></i> Memuat data...</p>
         </div>
-
     </div> 
+
     <div class="fab-container">
         <button class="fab-add" onclick="openModal('add')">
             <i class="fa-solid fa-plus"></i>
@@ -341,7 +321,9 @@
                 <div class="form-group">
                     <label class="form-label">Gambar Icon (Opsional)</label>
                     <input type="file" id="pImage" class="form-input" accept="image/*" onchange="previewImage(this)">
-                    <div id="imagePreviewBox" class="img-preview-box"><img id="imgPreview" src="" alt="Preview"></div>
+                    <div id="imagePreviewBox" class="img-preview-box">
+                        <img id="imgPreview" src="" alt="Preview">
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -352,23 +334,19 @@
         </div>
     </div>
 
-    <script>
+<script>
     const API_URL = '/api';
     const token = localStorage.getItem('adminToken');
     let allProducts = [];
     let globalMargin = 0;
 
     document.addEventListener('DOMContentLoaded', async () => {
-        // Cek Auth sederhana sebelum load
         if(!token) window.location.href = '/login.html';
-
-        // 1. Load Setting Margin (Server -> Fallback Local)
         await loadGlobalSettings(); 
-        // 2. Load List Produk
         await loadPPOBProducts();   
     });
 
-    // --- 1. FILTER & SEARCH LOGIC (DIPERBARUI) ---
+    // --- 1. FILTER & SEARCH LOGIC ---
     function setFilter(el, category) {
         document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
@@ -381,7 +359,6 @@
         const categoryQuery = document.getElementById('currentFilter').value;
         
         const filtered = allProducts.filter(p => {
-            // Safety check: pastikan property ada sebelum toLowerCase
             const pName = p.name ? p.name.toLowerCase() : '';
             const catName = p.category ? (p.category.name || p.category).toLowerCase() : '';
             
@@ -403,34 +380,24 @@
         renderList(filtered);
     }
 
-    // --- 2. GLOBAL SETTINGS LOGIC (SMART LOAD) ---
+    // --- 2. GLOBAL SETTINGS LOGIC ---
     async function loadGlobalSettings() {
         try {
-            // Prioritas 1: Coba ambil dari Server (Pastikan ada endpoint /api/settings atau sesuaikan)
-            // Jika belum ada endpoint ini, dia akan otomatis lari ke 'catch' (Fallback)
             const res = await fetch(`${API_URL}/settings/ppob`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-
             if (res.ok) {
                 const data = await res.json();
                 globalMargin = parseInt(data.margin) || 0;
-                // Update local storage agar sinkron untuk sesi berikutnya
                 localStorage.setItem('ppobConfig', JSON.stringify({ margin: globalMargin }));
-            } else {
-                throw new Error("Server settings not reachable");
             }
         } catch (error) {
-            // Prioritas 2: Fallback ke LocalStorage jika server gagal/offline
-            // console.warn("Menggunakan margin lokal/default."); 
             const localConfig = localStorage.getItem('ppobConfig');
             if (localConfig) {
                 try {
                     const config = JSON.parse(localConfig);
                     globalMargin = parseInt(config.margin) || 0;
                 } catch(e) { globalMargin = 0; }
-            } else {
-                globalMargin = 0;
             }
         }
         updateMarginDisplay();
@@ -441,14 +408,13 @@
         if (marginEl) {
             marginEl.innerText = new Intl.NumberFormat('id-ID').format(globalMargin);
         }
-        // Trigger ulang perhitungan harga jual di form jika sedang terbuka
         const basePriceInput = document.getElementById('pBasePrice');
         if (basePriceInput && basePriceInput.value) {
             basePriceInput.dispatchEvent(new Event('input'));
         }
     }
 
-    // --- 3. CRUD PRODUK ---
+    // --- 3. CRUD PRODUK (READ) ---
     async function loadPPOBProducts() {
         const container = document.getElementById('ppobListContainer');
         try {
@@ -456,22 +422,20 @@
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             
-            // Handle Token Expired
             if (res.status === 401 || res.status === 403) {
-                logout(); 
-                return;
+                logout(); return;
             }
-
+            
             const data = await res.json();
-            // Simpan ke variabel global untuk filtering
             allProducts = Array.isArray(data) ? data : [];
-            filterProducts(); // Render via filter agar konsisten
+            filterProducts(); 
         } catch (error) { 
             console.error(error); 
             container.innerHTML = '<p style="text-align:center; color:#ef4444;">Gagal memuat data. Periksa koneksi.</p>'; 
         }
     }
 
+    // --- UPDATED RENDER LIST (GAMBAR & FALLBACK ICON) ---
     function renderList(products) {
         const container = document.getElementById('ppobListContainer');
         container.innerHTML = '';
@@ -489,19 +453,42 @@
             const catName = p.category ? (p.category.name || p.category) : '-';
             const hargaModal = new Intl.NumberFormat('id-ID').format(p.price); 
             
+            // --- LOGIKA GAMBAR PRODUK ---
             let thumbHTML = '';
-            if (p.images && p.images.length > 0) {
-                thumbHTML = `<img src="${p.images[0]}" class="item-thumb" alt="img">`;
+
+            // 1. Cek apakah ada gambar hasil upload (Cloudinary)
+            if (p.images && p.images.length > 0 && p.images[0] !== "") {
+                thumbHTML = `<img src="${p.images[0]}" class="item-thumb" alt="img" style="background:#fff; padding:2px; object-fit:contain;">`;
             } else {
-                thumbHTML = `<div class="item-thumb-placeholder"><i class="fa-solid fa-cube"></i></div>`;
+                // 2. Jika TIDAK ADA gambar, pakai Icon Otomatis sesuai Kategori
+                let iconClass = 'fa-cube'; // Default
+                let iconColor = '#4ade80'; // Default Hijau
+
+                const lowerCat = catName.toLowerCase();
+                if (lowerCat.includes('game') || lowerCat.includes('legend') || lowerCat.includes('free fire') || lowerCat.includes('pubg') || lowerCat.includes('roblox')) {
+                    iconClass = 'fa-gamepad'; iconColor = '#f472b6'; // Pink
+                } else if (lowerCat.includes('pln') || lowerCat.includes('token') || lowerCat.includes('listrik')) {
+                    iconClass = 'fa-bolt'; iconColor = '#fbbf24'; // Kuning
+                } else if (lowerCat.includes('pulsa')) {
+                    iconClass = 'fa-mobile-screen'; iconColor = '#60a5fa'; // Biru
+                } else if (lowerCat.includes('data') || lowerCat.includes('internet') || lowerCat.includes('kuota')) {
+                    iconClass = 'fa-wifi'; iconColor = '#34d399'; // Hijau Laut
+                } else if (lowerCat.includes('dana') || lowerCat.includes('ovo') || lowerCat.includes('gopay') || lowerCat.includes('shopee') || lowerCat.includes('wallet')) {
+                    iconClass = 'fa-wallet'; iconColor = '#a78bfa'; // Ungu
+                } else if (lowerCat.includes('google') || lowerCat.includes('voucher')) {
+                    iconClass = 'fa-ticket'; iconColor = '#f87171'; // Merah
+                }
+
+                thumbHTML = `
+                    <div class="item-thumb-placeholder" style="color:${iconColor}; border-color:${iconColor}40; background:${iconColor}10;">
+                        <i class="fa-solid ${iconClass}"></i>
+                    </div>`;
             }
 
             const div = document.createElement('div');
             div.className = 'ppob-item';
             div.style.animationDelay = `${index * 0.05}s`;
             
-            // PERUBAHAN PENTING: onclick='prepareEdit(...)' menggunakan ID, bukan JSON string
-            // Ini mencegah error syntax jika nama produk mengandung tanda kutip (')
             div.innerHTML = `
                 ${thumbHTML}
                 <div class="item-info">
@@ -519,6 +506,7 @@
     }
 
     // --- 4. FORM & MODAL LOGIC ---
+    
     function previewImage(input) {
         const box = document.getElementById('imagePreviewBox');
         const img = document.getElementById('imgPreview');
@@ -530,14 +518,16 @@
             }
             reader.readAsDataURL(input.files[0]);
         } else {
-            box.classList.remove('active');
+            const id = document.getElementById('productId').value;
+            if(!id) box.classList.remove('active');
         }
     }
 
     function openModal(mode) {
-        loadGlobalSettings(); // Refresh margin
+        loadGlobalSettings();
         document.getElementById('productModal').classList.add('show');
         document.getElementById('imagePreviewBox').classList.remove('active');
+        document.getElementById('pImage').value = "";
         
         if (mode === 'add') {
             document.getElementById('modalTitle').innerText = 'Tambah Produk';
@@ -547,7 +537,6 @@
         }
     }
 
-    // Fungsi baru untuk mencari data produk berdasarkan ID (Lebih Aman)
     function prepareEdit(id) {
         const p = allProducts.find(item => item._id === id);
         if (p) editProduct(p);
@@ -561,6 +550,7 @@
         document.getElementById('productId').value = p._id;
         document.getElementById('pName').value = p.name;
         document.getElementById('pBasePrice').value = p.price;
+        document.getElementById('pImage').value = "";
         
         const catName = p.category ? (p.category.name || p.category) : '';
         document.getElementById('pCategory').value = catName;
@@ -572,7 +562,6 @@
             document.getElementById('imagePreviewBox').classList.remove('active');
         }
         
-        // Trigger manual agar harga jual terhitung
         document.getElementById('pBasePrice').dispatchEvent(new Event('input'));
     }
 
@@ -580,36 +569,36 @@
         document.getElementById('productModal').classList.remove('show'); 
     }
 
-    // Event Listener Real-time Calculation
     document.getElementById('pBasePrice').addEventListener('input', function() {
         const modal = parseInt(this.value) || 0;
         const final = modal + parseInt(globalMargin);
         document.getElementById('displayFinalPrice').innerText = new Intl.NumberFormat('id-ID').format(final);
     });
 
-    // Submit Form (Add/Edit)
     document.getElementById('ppobForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('btnSave');
         const originalText = btn.innerText;
         
-        btn.innerText = 'Menyimpan...';
+        btn.innerText = 'Mengupload...';
         btn.disabled = true;
 
         const id = document.getElementById('productId').value;
         const name = document.getElementById('pName').value;
         const category = document.getElementById('pCategory').value;
         const basePrice = parseInt(document.getElementById('pBasePrice').value) || 0;
-
+        
         const formData = new FormData();
         formData.append('name', name);
         formData.append('category', category);
         formData.append('price', basePrice); 
-        formData.append('description', 'Produk PPOB Manual'); 
+        formData.append('description', 'Produk PPOB'); 
         formData.append('platform', 'PPOB'); 
         
         const imageFile = document.getElementById('pImage').files[0];
-        if(imageFile) formData.append('image', imageFile);
+        if(imageFile) {
+            formData.append('image', imageFile);
+        }
 
         try {
             let url = `${API_URL}/products`;
@@ -626,7 +615,7 @@
 
             if (res.ok) {
                 closeModal();
-                loadPPOBProducts(); // Reload data
+                loadPPOBProducts(); 
                 alert('Berhasil menyimpan produk!');
             } else {
                 throw new Error(result.message || 'Gagal menyimpan');
@@ -641,7 +630,7 @@
     });
 
     async function deleteProduct(id) {
-        if(!confirm('Yakin ingin menghapus produk ini? Tindakan tidak bisa dibatalkan.')) return;
+        if(!confirm('Yakin hapus produk ini?')) return;
         try {
             const res = await fetch(`${API_URL}/products/${id}`, {
                 method: 'DELETE',
@@ -665,6 +654,5 @@
         }
     }
 </script>
-
 </body>
 </html>

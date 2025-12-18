@@ -11,7 +11,6 @@
     
     <script src="../js/auth.js"></script>
     <script>checkAuth();</script>
-
     <style>
         body { background-color: #0f172a; padding-bottom: 80px; }
         .dashboard-header { background: #1e293b; padding: 1rem; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: flex-start; gap: 15px; }
@@ -30,7 +29,6 @@
         .p-name { color: white; font-weight: 600; font-size: 1rem; }
         .p-detail { color: #94a3b8; font-size: 0.85rem; margin-top: 2px; }
         .btn-delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: none; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
         /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; display: none; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
         .modal-overlay.show { display: flex; }
@@ -46,23 +44,19 @@
     </style>
 </head>
 <body>
-
     <div class="mobile-container">
         <header class="dashboard-header">
             <a href="dashboard.html" style="color:white; font-size: 1.2rem;"><i class="fa-solid fa-arrow-left"></i></a>
             <h2>Kelola Pembayaran</h2>
         </header>
-
         <div class="content-box">
             <button class="btn-add" onclick="openModal()">
                 <i class="fa-solid fa-plus"></i> Tambah Metode Baru
             </button>
-
             <div id="paymentListContainer" class="payment-list">
                 <p style="text-align: center; color: #64748b;">Memuat data...</p>
             </div>
         </div>
-
         <nav class="bottom-nav">
             <a href="/"><i class="fa-solid fa-store"></i><span>Toko</span></a>
             <a href="dashboard.html" class="active"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
@@ -104,6 +98,9 @@
                     <label class="form-label" id="labelImage">Logo Bank (Opsional)</label>
                     <input type="file" id="pIcon" class="form-input" accept="image/*">
                     <small style="color:#64748b; font-size:0.7rem;">Untuk QRIS, wajib upload gambar QR Code.</small>
+                    <div id="previewBox" style="margin-top:10px; display:none; text-align:center;">
+                        <img id="imgPreview" style="max-height:100px; border-radius:8px;" src="" alt="Preview">
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -117,51 +114,77 @@
     <script>
         const API_URL = '/api/payments';
         const token = localStorage.getItem('adminToken');
-
+        
         document.addEventListener('DOMContentLoaded', loadPayments);
+        
+        // --- 1. PREVIEW GAMBAR SAAT UPLOAD ---
+        document.getElementById('pIcon').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const previewBox = document.getElementById('previewBox');
+            const imgPreview = document.getElementById('imgPreview');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    imgPreview.src = evt.target.result;
+                    previewBox.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                previewBox.style.display = 'none';
+            }
+        });
 
-        // LOGIKA GANTI TAMPILAN FORM
+        // --- 2. LOGIKA TAMPILAN FORM ---
         function toggleFormMode() {
             const type = document.getElementById('pType').value;
             const bankFields = document.getElementById('bankFields');
             const labelImage = document.getElementById('labelImage');
-
+            
             if (type === 'qris') {
-                // Mode QRIS: Sembunyikan Input Nomor, Wajibkan Gambar
+                // Mode QRIS: Sembunyikan Input Nomor
                 bankFields.classList.add('hidden');
                 labelImage.innerText = "Upload Gambar QRIS (Wajib)";
                 document.getElementById('pNumber').removeAttribute('required');
                 document.getElementById('pHolder').removeAttribute('required');
+                document.getElementById('pIcon').setAttribute('required', 'true'); // Wajib Upload
             } else {
                 // Mode Bank: Tampilkan Input Nomor
                 bankFields.classList.remove('hidden');
                 labelImage.innerText = "Logo Bank / Wallet (Opsional)";
                 document.getElementById('pNumber').setAttribute('required', 'true');
                 document.getElementById('pHolder').setAttribute('required', 'true');
+                document.getElementById('pIcon').removeAttribute('required');
             }
         }
 
+        // --- 3. LOAD DATA PEMBAYARAN ---
         async function loadPayments() {
             const container = document.getElementById('paymentListContainer');
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
-
+                
                 container.innerHTML = '';
+                
                 if(data.length === 0) {
                     container.innerHTML = '<p style="text-align:center; color:#64748b;">Belum ada metode pembayaran.</p>';
                     return;
                 }
-
+                
                 data.forEach(item => {
                     let iconHtml = '<i class="fa-solid fa-money-bill"></i>';
-                    if (item.type === 'qris') iconHtml = '<i class="fa-solid fa-qrcode"></i>';
-                    if (item.icon) iconHtml = `<img src="${item.icon}" alt="icon">`;
                     
-                    // Detail Teks (Beda QRIS dan Bank)
-                    let detailText = `${item.number} a.n ${item.holder}`;
+                    if (item.type === 'qris') iconHtml = '<i class="fa-solid fa-qrcode"></i>';
+                    
+                    // Pastikan Icon ada dan berupa URL Cloudinary
+                    if (item.icon) {
+                        iconHtml = `<img src="${item.icon}" alt="icon" onerror="this.style.display='none'">`;
+                    }
+                    
+                    let detailText = `${item.number || '-'} a.n ${item.holder || '-'}`;
                     if (item.type === 'qris') detailText = 'Scan QR Code';
-
+                    
                     const div = document.createElement('div');
                     div.className = 'payment-item';
                     div.innerHTML = `
@@ -174,38 +197,54 @@
                     `;
                     container.appendChild(div);
                 });
-
             } catch (error) {
                 console.error(error);
                 container.innerHTML = '<p style="color:#ef4444; text-align:center;">Gagal memuat data.</p>';
             }
         }
 
+        // --- 4. SIMPAN DATA (FIXED UNTUK CLOUDINARY) ---
         document.getElementById('addForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSave');
-            btn.innerText = 'Menyimpan...'; btn.disabled = true;
-
+            btn.innerText = 'Mengupload...'; 
+            btn.disabled = true;
+            
             const formData = new FormData();
-            formData.append('type', document.getElementById('pType').value);
+            const type = document.getElementById('pType').value;
+            
+            formData.append('type', type);
             formData.append('name', document.getElementById('pName').value);
             
-            // Kirim nomor hanya jika bukan QRIS
-            if (document.getElementById('pType').value !== 'qris') {
+            // --- FIX: Tetap kirim string kosong jika field tidak ada (agar database tidak error) ---
+            if (type !== 'qris') {
                 formData.append('number', document.getElementById('pNumber').value);
                 formData.append('holder', document.getElementById('pHolder').value);
+            } else {
+                // Untuk QRIS, kirim '-' atau string kosong agar tidak undefined
+                formData.append('number', '-');
+                formData.append('holder', 'QRIS Payment');
             }
             
             const iconFile = document.getElementById('pIcon').files[0];
-            if(iconFile) formData.append('icon', iconFile);
+            if(iconFile) {
+                formData.append('icon', iconFile); // Key 'icon' sesuai backend
+            } else if (type === 'qris') {
+                alert("Wajib upload gambar QRIS!");
+                btn.innerText = 'Simpan'; btn.disabled = false;
+                return;
+            }
 
             try {
+                // Jangan set Content-Type, biarkan browser atur Boundary
                 const res = await fetch(API_URL, {
                     method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` },
+                    headers: { 
+                        'Authorization': `Bearer ${token}` 
+                    },
                     body: formData
                 });
-
+                
                 if(res.ok) {
                     alert('Berhasil!');
                     closeModal();
@@ -218,7 +257,8 @@
                 console.error(error);
                 alert('Terjadi kesalahan server.');
             } finally {
-                btn.innerText = 'Simpan'; btn.disabled = false;
+                btn.innerText = 'Simpan'; 
+                btn.disabled = false;
             }
         });
 
@@ -236,8 +276,10 @@
         function openModal() { 
             document.getElementById('addModal').classList.add('show'); 
             document.getElementById('addForm').reset(); 
-            toggleFormMode(); // Reset tampilan form
+            document.getElementById('previewBox').style.display = 'none';
+            toggleFormMode(); 
         }
+
         function closeModal() { document.getElementById('addModal').classList.remove('show'); }
         function logout() { if(confirm('Keluar dari Admin?')) { localStorage.removeItem('adminToken'); window.location.href = '/login.html'; } }
     </script>

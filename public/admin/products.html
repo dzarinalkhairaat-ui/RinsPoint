@@ -132,6 +132,13 @@
         </main>
     </div>
 
+    <nav class="bottom-nav">
+            <a href="/"><i class="fa-solid fa-store"></i><span>Toko</span></a>
+            <a href="#" class="active"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+            <a href="ppob-settings.html"><i class="fa-solid fa-sliders"></i><span>PPOB</span></a>
+            <a href="#" onclick="logout()"><i class="fa-solid fa-power-off"></i><span>LogOut</span></a>
+        </nav>
+
     <script>
         const API_URL = '/api';
         const token = localStorage.getItem('adminToken');

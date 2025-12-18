@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
     <style>
         /* --- 1. GLOBAL & BACKGROUND --- */
         html { height: 100%; background: #0f172a; }
@@ -17,7 +16,6 @@
             overflow-x: hidden; position: relative;
             background-color: #0f172a;
         }
-
         /* Background Aurora */
         .aurora-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
@@ -34,14 +32,12 @@
             0% { transform: translate(0, 0); }
             100% { transform: translate(30px, 50px); }
         }
-
         .mobile-container {
             max-width: 480px; margin: 0 auto; min-height: 100vh;
             display: flex; flex-direction: column; position: relative;
             background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(15px);
             padding-bottom: 120px; /* Extra space for Floating Bar */
         }
-
         /* --- 2. HEADER --- */
         .checkout-header {
             position: sticky; top: 0; z-index: 50;
@@ -53,11 +49,9 @@
         }
         .btn-back { color: #fff; font-size: 1.2rem; text-decoration: none; }
         .header-title { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; }
-
         /* --- 3. RECEIPT CARD (Rincian Pesanan) --- */
         .content-area { padding: 20px; animation: fadeInUp 0.5s ease; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
         .receipt-card {
             background: linear-gradient(145deg, #1e293b, #0f172a);
             border-radius: 20px; padding: 25px;
@@ -72,7 +66,6 @@
             background: radial-gradient(circle, transparent 4px, #1e293b 5px);
             background-size: 10px 10px; opacity: 0.5;
         }
-
         .row-detail { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; align-items: center; }
         .label { color: #94a3b8; font-size: 0.85rem; }
         .value { color: #fff; font-weight: 600; text-align: right; max-width: 60%; word-wrap: break-word; }
@@ -85,7 +78,6 @@
             color: #4ade80; font-weight: 800; font-size: 1.4rem; 
             text-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
         }
-
         /* --- 4. PAYMENT METHODS --- */
         .section-header { margin-bottom: 15px; }
         .sec-title { 
@@ -93,7 +85,6 @@
             display: flex; align-items: center; text-transform: uppercase; letter-spacing: 0.5px;
         }
         .sec-bar { height: 18px; width: 4px; background: #3b82f6; border-radius: 4px; margin-right: 10px; }
-
         .method-group { margin-bottom: 20px; }
         .method-label { 
             color: #64748b; font-size: 0.75rem; margin-bottom: 8px; 
@@ -116,11 +107,13 @@
             background: rgba(74, 222, 128, 0.08);
             box-shadow: 0 0 20px rgba(74, 222, 128, 0.1);
         }
-
         .method-icon { 
             font-size: 1.5rem; color: #fff; width: 45px; height: 45px;
             background: rgba(255,255,255,0.05); border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
+        }
+        .method-icon img {
+            width: 100%; height: 100%; object-fit: contain;
         }
         
         .method-info { flex: 1; }
@@ -134,14 +127,12 @@
         }
         .payment-method.active .check-badge { display: flex; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-
         .btn-copy { 
             background: rgba(255,255,255,0.1); color: #cbd5e1; border: none; 
             padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; 
             cursor: pointer; text-transform: uppercase; font-weight: 600; transition: 0.2s;
         }
         .btn-copy:active { background: #fff; color: #000; }
-
         /* --- 5. UPLOAD AREA --- */
         .upload-box {
             border: 2px dashed #475569; border-radius: 16px; padding: 30px 20px;
@@ -162,7 +153,6 @@
             width: 100%; height: 100%; object-fit: contain; position: absolute; 
             top: 0; left: 0; display: none; background: #0f172a; z-index: 5; 
         }
-
         /* --- 6. FLOATING BOTTOM BAR (E-COMMERCE STYLE) --- */
         .floating-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
@@ -176,7 +166,6 @@
         .bar-total { display: flex; flex-direction: column; }
         .bar-label { font-size: 0.75rem; color: #94a3b8; }
         .bar-price { font-size: 1.2rem; font-weight: 700; color: #fff; }
-
         .btn-confirm { 
             background: linear-gradient(to right, #22c55e, #16a34a);
             color: #fff; border: none; padding: 12px 30px; border-radius: 50px;
@@ -189,7 +178,6 @@
         .btn-confirm:disabled { 
             background: #334155; color: #64748b; cursor: not-allowed; box-shadow: none; 
         }
-
         /* --- 7. MODALS (PRESERVED) --- */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
@@ -215,18 +203,14 @@
             width: 40px; height: 40px; background: #25D366; border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;
         }
-
         #qrisImage { width: 100%; max-width: 280px; border-radius: 15px; margin: 15px 0; border: 4px solid #fff; }
-
     </style>
 </head>
 <body>
-
     <div class="aurora-bg">
         <div class="blob b1"></div>
         <div class="blob b2"></div>
     </div>
-
     <div class="mobile-container">
         
         <header class="checkout-header">
@@ -279,6 +263,9 @@
                 <img id="previewImg">
             </div>
 
+            <p style="font-size:0.75rem; color:#94a3b8; text-align:center; margin-top:10px;">
+                *Pastikan nominal transfer sesuai dengan total tagihan.
+            </p>
         </main>
 
         <div class="floating-bar">
@@ -345,34 +332,49 @@
         async function loadPaymentMethods() {
             const container = document.getElementById('paymentMethodsContainer');
             try {
-                const res = await fetch(`${API_URL}/payments`);
+                // Tambah timestamp agar gambar icon selalu fresh (tidak cache lama)
+                const res = await fetch(`${API_URL}/payments?t=${new Date().getTime()}`);
                 const methods = await res.json();
+                
                 container.innerHTML = '';
-
                 const groups = { bank: [], ewallet: [], qris: [] };
-                methods.forEach(m => { if(m.isActive) groups[m.type].push(m); });
+                
+                methods.forEach(m => { 
+                    // Filter yang isActive saja
+                    // Pastikan struktur data API sesuai
+                    groups[m.type].push(m); 
+                });
 
                 if (groups.qris.length > 0) renderGroup(container, 'Scan QRIS', groups.qris);
                 if (groups.bank.length > 0) renderGroup(container, 'Transfer Bank', groups.bank);
                 if (groups.ewallet.length > 0) renderGroup(container, 'E-Wallet', groups.ewallet);
-
-            } catch (error) { console.error(error); container.innerHTML = '<p style="color:#ef4444; text-align:center;">Gagal memuat metode pembayaran.</p>'; }
+            } catch (error) { 
+                console.error(error); 
+                container.innerHTML = '<p style="color:#ef4444; text-align:center;">Gagal memuat metode pembayaran.</p>'; 
+            }
         }
 
         function renderGroup(container, title, items) {
             let html = `<div class="method-group"><span class="method-label">${title}</span>`;
+            
             items.forEach(m => {
                 let iconHtml = '<i class="fa-solid fa-building-columns"></i>';
                 if(m.type === 'ewallet') iconHtml = '<i class="fa-solid fa-wallet"></i>';
                 if(m.type === 'qris') iconHtml = '<i class="fa-solid fa-qrcode"></i>';
                 
-                if(m.icon && m.type !== 'qris') iconHtml = `<img src="${m.icon}" style="width:100%; height:100%; object-fit:contain;">`;
+                // --- FIX: TAMPILKAN GAMBAR ICON DARI CLOUDINARY ---
+                if(m.icon) {
+                    iconHtml = `<img src="${m.icon}" style="width:100%; height:100%; object-fit:contain;" onerror="this.style.display='none'">`;
+                }
 
                 let desc = `${m.number} a.n ${m.holder}`;
                 if (m.type === 'qris') desc = 'Ketuk untuk melihat QR Code';
+                
+                // Gunakan onclick dengan JSON.stringify yang aman (replace quote)
+                const jsonData = JSON.stringify(m).replace(/"/g, '&quot;');
 
                 html += `
-                <div class="payment-method" onclick='selectMethod(this, ${JSON.stringify(m)})'>
+                <div class="payment-method" onclick="selectMethod(this, ${jsonData})">
                     <div class="method-icon">${iconHtml}</div>
                     <div class="method-info">
                         <div class="method-name">${m.name} 
@@ -390,11 +392,13 @@
         function selectMethod(el, methodData) {
             document.querySelectorAll('.payment-method').forEach(e => e.classList.remove('active'));
             el.classList.add('active');
+            
             selectedMethod = methodData;
             checkForm();
 
             if (methodData.type === 'qris') {
                 document.getElementById('qrisName').innerText = methodData.name;
+                // Pastikan gambar QRIS juga dari Cloudinary
                 document.getElementById('qrisImage').src = methodData.icon;
                 document.getElementById('qrisModal').classList.add('show');
             }
@@ -417,34 +421,49 @@
             const hasMethod = selectedMethod !== null;
             const hasProof = document.getElementById('proofFile').files.length > 0;
             const btn = document.getElementById('btnConfirm');
-            if (hasMethod && hasProof) { btn.disabled = false; } else { btn.disabled = true; }
+            
+            if (hasMethod && hasProof) { 
+                btn.disabled = false; 
+            } else { 
+                btn.disabled = true; 
+            }
         }
 
         function copyText(e, text) {
             e.stopPropagation();
             navigator.clipboard.writeText(text);
-            // Optional: Show toast instead of alert for luxury feel
             alert('Nomor disalin: ' + text); 
         }
 
         async function loadAdmins() {
             try {
-                const res = await fetch(`${API_URL}/settings`);
+                // Gunakan timestamp untuk hindari cache
+                const res = await fetch(`${API_URL}/settings?t=${new Date().getTime()}`);
                 const settings = await res.json();
+                
                 if (settings.adminContacts) {
                     adminContacts = settings.adminContacts.filter(a => a.isActive);
                 }
+                
                 const container = document.getElementById('adminListContainer');
                 container.innerHTML = '';
+                
                 if(adminContacts.length === 0) {
                     container.innerHTML = '<p style="text-align:center; color:#64748b;">Tidak ada admin online.</p>';
                     return;
                 }
+                
                 adminContacts.forEach(admin => {
                     const div = document.createElement('div');
                     div.className = 'admin-item';
                     div.onclick = () => sendOrder(admin.phone);
-                    div.innerHTML = `<div class="admin-avatar"><i class="fa-brands fa-whatsapp"></i></div><div style="flex:1;"><div style="color:white; font-weight:600;">${admin.name}</div><div style="color:#4ade80; font-size:0.75rem;">Online</div></div><i class="fa-solid fa-chevron-right" style="color:#4ade80;"></i>`;
+                    div.innerHTML = `
+                        <div class="admin-avatar"><i class="fa-brands fa-whatsapp"></i></div>
+                        <div style="flex:1;">
+                            <div style="color:white; font-weight:600;">${admin.name}</div>
+                            <div style="color:#4ade80; font-size:0.75rem;">Online</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="color:#4ade80;"></i>`;
                     container.appendChild(div);
                 });
             } catch (error) { console.error(error); }
@@ -458,27 +477,32 @@
             const priceLine = new Intl.NumberFormat('id-ID').format(transaction.productPrice);
             const methodLine = `${selectedMethod.name} ${selectedMethod.type !== 'qris' ? '' : '(Scan QR)'}`;
 
-            // TEMPLATE AMAN (ASCII)
+            // FORMAT PESAN WHATSAPP YANG RAPI
             const message = `Halo Admin, konfirmasi pesanan baru:
+=========================
+*RINCISAN PESANAN*
+=========================
+ Produk  : ${productLine}
+ Tujuan  : ${targetLine}
+ Total   : Rp ${priceLine}
+-------------------------
+*DATA PEMBAYARAN*
+-------------------------
+ Metode  : ${methodLine}
+ Bukti   : *Terlampir di chat ini*
 
-----------------------------
-*DATA PESANAN*
-----------------------------
-Produk  : ${productLine}
-Tujuan  : ${targetLine}
-Total   : Rp ${priceLine}
-
-----------------------------
-*PEMBAYARAN*
-----------------------------
-Metode  : ${methodLine}
-Bukti   : Terlampir
-
-Mohon segera diproses. Terima kasih!`;
+Mohon segera diproses ya Min. Terima kasih!`;
 
             const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            
+            // Redirect ke WA
             window.open(url, '_blank');
-            setTimeout(() => { window.location.href = '/ppob.html'; }, 1000);
+            
+            // Redirect User kembali ke Home setelah beberapa detik
+            setTimeout(() => { 
+                alert('Jangan lupa lampirkan gambar bukti transfer di WhatsApp ya!');
+                window.location.href = '/ppob.html'; 
+            }, 2000);
         }
     </script>
 </body>

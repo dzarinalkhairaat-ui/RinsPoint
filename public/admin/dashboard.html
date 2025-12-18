@@ -4,44 +4,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dashboard - RinsPoint Admin</title>
+    
     <link rel="stylesheet" href="../css/style.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
     <link rel="apple-touch-icon" href="/assets/images/icon.png">
+    
     <script src="/js/pwa-register.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <script src="../js/auth.js"></script>
     <script>checkAuth();</script>
+    
+    <style>
+        /* Base Layout */
+        body { background-color: #0F172A; } /* Pastikan background gelap */
+        
+        /* Grid Layout */
+        .stats-grid-abstract {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        /* Kartu Utama */
+        .abs-card {
+            position: relative;
+            height: 140px;
+            border-radius: 24px;
+            padding: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(30, 41, 59, 0.4); /* Glass Effect Base */
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .abs-card:active { transform: scale(0.96); }
+
+        /* Teks & Konten */
+        .abs-content {
+            position: relative;
+            z-index: 10; /* Di atas blob */
+        }
+        
+        .abs-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1;
+            background: linear-gradient(to bottom, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .abs-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 5px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Elemen Dekorasi (Blob Animasi) */
+        .blob-anim {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.5;
+            z-index: 1;
+            animation: moveBlob 8s infinite alternate ease-in-out;
+        }
+
+        /* Variasi Warna Kartu 1 (Hijau - Produk) */
+        .card-product .blob-1 {
+            width: 100px; height: 100px;
+            background: #4ade80;
+            top: -30px; right: -30px;
+        }
+        .card-product .blob-2 {
+            width: 80px; height: 80px;
+            background: #22c55e;
+            bottom: -20px; left: -20px;
+            animation-duration: 12s;
+        }
+
+        /* Variasi Warna Kartu 2 (Biru Teal - PPOB) */
+        .card-ppob .blob-1 {
+            width: 100px; height: 100px;
+            background: #38bdf8;
+            top: -20px; left: -20px;
+        }
+        .card-ppob .blob-2 {
+            width: 90px; height: 90px;
+            background: #0ea5e9;
+            bottom: -30px; right: -30px;
+            animation-duration: 10s;
+        }
+
+        /* Watermark Icon Besar */
+        .watermark-icon {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            font-size: 5rem;
+            opacity: 0.05;
+            color: #fff;
+            transform: rotate(-15deg);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Keyframes Animasi */
+        @keyframes moveBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(20px, 30px) scale(1.1); }
+        }
+
+        /* Update Menu Grid agar rapi dibawahnya */
+        .welcome-text { margin-bottom: 5px; }
+        .menu-grid { margin-top: 20px; }
+    </style>
 </head>
 <body>
-
     <div class="mobile-container">
         <header class="dashboard-header">
             <h2>Rins Admin</h2>
-            <div style="cursor: pointer;" onclick="openPinModal()">
-                <i class="fa-solid fa-wallet" style="font-size: 1.2rem; color: #4ADE80;"></i>
-                <span style="font-size: 0.8rem; color: #4ADE80; margin-left:5px;">Saldo</span>
+            <div style="cursor: pointer; display: flex; align-items: center; background: rgba(74, 222, 128, 0.1); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(74, 222, 128, 0.2);" onclick="openPinModal()">
+                <i class="fa-solid fa-wallet" style="font-size: 1rem; color: #4ADE80;"></i>
+                <span style="font-size: 0.85rem; color: #4ADE80; margin-left:8px; font-weight: 600;">Saldo</span>
             </div>
         </header>
 
-        <main class="dashboard-content" style="padding-bottom: 6rem;">
-            <div class="welcome-text">Selamat Datang, <br><span>Kelola tokomu dari sini.</span></div>
-
-            <div class="stats-grid">
-                <div class="stat-card"><h3>0</h3><p>Klik Produk</p></div>
-                <div class="stat-card"><h3>0</h3><p>Transaksi PPOB</p></div>
+        <main class="dashboard-content" style="padding-bottom: 6rem; padding-top: 10px;">
+            
+            <div class="welcome-text">
+                Selamat Datang, <br>
+                <span style="color: #4ade80; font-weight: 600;">Kelola tokomu dari sini.</span>
             </div>
 
-            <div class="welcome-text" style="margin-top: 1rem;">Menu Manajemen</div>
+            <div class="stats-grid-abstract">
+                <div class="abs-card card-product">
+                    <div class="blob-anim blob-1"></div>
+                    <div class="blob-anim blob-2"></div>
+                    <i class="fa-solid fa-arrow-pointer watermark-icon"></i>
+                    
+                    <div class="abs-content">
+                        <div class="abs-number" id="statClick">0</div>
+                        <div class="abs-label">Klik Produk</div>
+                    </div>
+                </div>
 
+                <div class="abs-card card-ppob">
+                    <div class="blob-anim blob-1"></div>
+                    <div class="blob-anim blob-2"></div>
+                    <i class="fa-solid fa-receipt watermark-icon"></i>
+                    
+                    <div class="abs-content">
+                        <div class="abs-number" id="statPpob">0</div>
+                        <div class="abs-label">Transaksi PPOB</div>
+                    </div>
+                </div>
+            </div>
+            <div class="welcome-text" style="margin-top: 1.5rem; font-size: 0.9rem; color: #64748b;">Menu Manajemen</div>
+            
             <div class="menu-grid">
                 <a href="products.html" class="menu-item"><i class="fa-solid fa-box-open"></i><span>Kelola Produk Affiliate</span></a>
                 <a href="categories.html" class="menu-item"><i class="fa-solid fa-tags"></i><span>Kelola Kategori</span></a>
                 <a href="manage-ppob.html" class="menu-item"><i class="fa-solid fa-server"></i><span>Kelola PPOB</span></a>
-                
                 <a href="ppobpayment.html" class="menu-item"><i class="fa-solid fa-wallet"></i><span>Kelola Pembayaran</span></a>
-                
                 <a href="settings.html" class="menu-item"><i class="fa-solid fa-gear"></i><span>Pengaturan</span></a>
             </div>
         </main>
@@ -68,8 +207,30 @@
     <script>
         const pinModal = document.getElementById('pinModal');
         const pinInput = document.getElementById('pinInput');
+
+        // --- FUNGSI LOAD STATISTIK (DUMMY / REAL) ---
+        // Saya tambahkan script ini agar angka "0" bisa berubah nanti jika backend sudah siap
+        async function loadStats() {
+            try {
+                // Di sini nanti fetch ke API statistik Anda
+                // const res = await fetch('/api/stats/dashboard'); 
+                // const data = await res.json();
+                
+                // Contoh Simulasi Angka (Bisa dihapus jika sudah ada API)
+                // document.getElementById('statClick').innerText = "128";
+                // document.getElementById('statPpob').innerText = "45";
+                
+            } catch (error) {
+                console.error("Gagal load statistik");
+            }
+        }
+        
+        // Panggil saat load
+        loadStats();
+
         function openPinModal() { pinModal.classList.add('show'); pinInput.value = ''; pinInput.focus(); }
         function closePinModal() { pinModal.classList.remove('show'); }
+        
         async function submitPin() {
             const pin = pinInput.value;
             if (pin.length < 4) return alert('PIN terlalu pendek!');
@@ -83,6 +244,7 @@
                 if (data.success) { window.location.href = 'saldo.html'; } else { alert('PIN Salah!'); pinInput.value = ''; }
             } catch (error) { alert('Error server.'); }
         }
+
         function logout() {
             if(confirm('Yakin ingin keluar?')) {
                 localStorage.removeItem('adminToken');
