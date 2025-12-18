@@ -7,218 +7,230 @@
     
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script src="../js/auth.js"></script>
     <script>checkAuth();</script>
 
     <style>
-        /* --- 1. CORE LAYOUT --- */
-        html, body {
-            margin: 0; padding: 0; height: 100%; width: 100%;
-            background: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow-x: hidden; color: #fff;
+        /* --- STYLE DARI MANAGE-PPOB.HTML (AGAR SERAGAM) --- */
+        html { height: 100%; background: #0f172a; }
+        body { 
+            margin: 0; min-height: 100%; color: #fff; font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; position: relative;
+            background-color: #0f172a;
+            padding-bottom: 90px; 
         }
-
-        /* Container Utama */
-        .admin-container {
-            max-width: 480px; margin: 0 auto; min-height: 100vh;
-            position: relative;
-            background: #0f172a;
-            /* Padding atas/bawah agar konten tidak tertutup fixed header/navbar */
-            padding-top: 80px; 
-            padding-bottom: 100px; 
-            box-sizing: border-box;
-        }
-
-        /* Background Aurora Halus */
+        /* Aurora Effect */
         .aurora-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10;
-            background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0f172a 100%);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: #0f172a; overflow: hidden;
         }
-
-        /* --- 2. HEADER FIXED (FULL WIDTH) --- */
-        .glass-header {
-            position: fixed; top: 0; 
-            left: 50%; transform: translateX(-50%);
-            width: 100%; max-width: 480px;
-            
-            /* Padding header disamakan dengan konten agar lurus */
-            padding: 20px 15px; 
-            box-sizing: border-box;
-            background: rgba(15, 23, 42, 0.95); 
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex; align-items: center; justify-content: space-between;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        .blob {
+            position: absolute; filter: blur(90px); opacity: 0.3;
+            animation: floatBlob 20s infinite alternate; border-radius: 50%;
         }
-        .page-title { font-size: 1.1rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; }
-        .btn-back {
-            width: 38px; height: 38px; border-radius: 12px;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; justify-content: center;
-            color: #fff; text-decoration: none; transition: 0.3s;
+        .b1 { top: -10%; left: -10%; width: 400px; height: 400px; background: #3b82f6; }
+        .b2 { bottom: 20%; right: -10%; width: 350px; height: 350px; background: #10b981; animation-duration: 25s; }
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 60px); }
         }
-
-        /* --- 3. LIST CONTENT (PADDING DIPERBAIKI: 15px) --- */
-        .content-area { 
-            /* REVISI: Ubah 24px jadi 15px agar kartu lebih lebar */
-            padding: 20px 15px; 
-            width: 100%; box-sizing: border-box;
+        .mobile-container {
+            max-width: 480px; margin: 0 auto; min-height: 100vh;
+            display: flex; flex-direction: column; position: relative;
+            background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(20px);
+            z-index: 1; 
         }
+        /* --- HEADER --- */
+        .dashboard-header {
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .header-title { font-size: 1.1rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
         
-        .payment-card {
-            background: rgba(30, 41, 59, 0.6); 
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px; padding: 15px; margin-bottom: 12px;
+        /* --- LIST STYLE (ADAPTASI DARI PRODUK LIST) --- */
+        .ppob-list { padding: 20px; display: grid; gap: 12px; }
+        
+        .ppob-item {
+            background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px; padding: 12px;
             display: flex; align-items: center; gap: 15px;
-            position: relative; overflow: hidden; transition: transform 0.3s;
+            transition: 0.3s; animation: slideUp 0.4s ease forwards;
+            opacity: 0; transform: translateY(20px);
         }
         
-        .p-icon-box {
-            width: 50px; height: 50px; border-radius: 12px; background: #fff;
-            display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); flex-shrink: 0;
+        .item-thumb { 
+            width: 50px; height: 50px; border-radius: 12px; object-fit: contain; 
+            background: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 0;
         }
-        .p-icon-box img { width: 100%; height: 100%; object-fit: cover; }
-        .p-icon-box i { color: #1e293b; font-size: 1.5rem; }
-
-        .p-info { flex: 1; min-width: 0; }
-        .p-name { font-weight: 700; font-size: 1rem; color: #fff; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-badge { 
-            font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; 
-            background: rgba(74, 222, 128, 0.1); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3);
-            text-transform: uppercase; font-weight: 600; margin-left: 5px;
+        .item-thumb-placeholder {
+            width: 50px; height: 50px; border-radius: 12px; 
+            background: rgba(74, 222, 128, 0.1); color: #4ade80;
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 1.2rem; border: 1px solid rgba(74, 222, 128, 0.2);
         }
-        .p-desc { font-size: 0.8rem; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .btn-del {
-            width: 35px; height: 35px; border-radius: 10px;
-            background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        .item-info { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+        .item-cat-badge {
+            font-size: 0.65rem; background: rgba(59, 130, 246, 0.15); color: #60a5fa;
+            padding: 2px 8px; border-radius: 6px; width: fit-content; font-weight: 600;
+            text-transform: uppercase;
         }
+        .item-name { color: #fff; font-weight: 600; font-size: 0.95rem; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .item-price { color: #94a3b8; font-weight: 400; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .item-actions { display: flex; gap: 5px; }
+        .btn-icon {
+            width: 32px; height: 32px; border-radius: 8px; border: none;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .btn-icon:active { transform: scale(0.9); }
 
-        /* --- 4. FLOATING ADD BUTTON --- */
+        /* --- FLOATING ADD BUTTON (FAB) --- */
+        .fab-container {
+            position: fixed; bottom: 85px; right: 20px; z-index: 100;
+            width: 100%; max-width: 480px; 
+            left: 50%; transform: translateX(-50%);
+            pointer-events: none;
+            display: flex; justify-content: flex-end; padding-right: 20px;
+        }
         .fab-add {
-            position: fixed; bottom: 100px; 
-            /* Jarak kanan disesuaikan jadi 20px agar aman */
-            right: 20px; 
-            margin-right: max(0px, calc((100vw - 480px) / 2));
-            
             width: 55px; height: 55px; border-radius: 50%;
             background: linear-gradient(135deg, #4ade80, #22c55e);
-            color: #064e3b; font-size: 1.5rem; border: none;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
-            cursor: pointer; animation: pulseBtn 2s infinite; z-index: 900;
+            color: #064e3b; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+            border: none; cursor: pointer; transition: 0.3s;
+            pointer-events: auto;
+            animation: pulseBtn 2s infinite;
         }
+        .fab-add:active { transform: scale(0.9) rotate(90deg); }
+        
         @keyframes pulseBtn {
             0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
             70% { box-shadow: 0 0 0 15px rgba(74, 222, 128, 0); }
             100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
         }
 
-        /* --- 5. BOTTOM NAVBAR FIXED --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 100%; max-width: 480px;
-            height: 70px;
-            background: rgba(15, 23, 42, 0.95); 
-            backdrop-filter: blur(15px);
-            border-top: 1px solid rgba(255,255,255,0.05);
-            display: flex; justify-content: space-around; align-items: center;
-            z-index: 1000;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; gap: 5px;
-            color: #64748b; text-decoration: none; font-size: 0.7rem; 
-            font-weight: 500; transition: 0.3s;
-            width: 25%;
-        }
-        .nav-item i { font-size: 1.3rem; transition: 0.3s; }
-        .nav-item.active { color: #4ade80; }
-        .nav-item.active i { transform: translateY(-3px); text-shadow: 0 5px 15px rgba(74,222,128,0.4); }
-
-        /* --- 6. MODAL FORM --- */
+        /* --- MODAL --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 2000;
-            display: none; justify-content: center; align-items: center; padding: 20px;
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            z-index: 200; display: none; justify-content: center; align-items: center;
+            padding: 20px; animation: fadeIn 0.3s ease;
         }
-        .modal-overlay.show { display: flex; animation: zoomIn 0.3s ease; }
-        .modal-card {
+        .modal-overlay.show { display: flex; }
+        
+        .modal-box {
             background: #1e293b; width: 100%; max-width: 400px;
-            border-radius: 20px; padding: 25px; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            border-radius: 24px; padding: 25px; border: 1px solid rgba(255,255,255,0.1);
+            max-height: 85vh; overflow-y: auto; position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .form-group { margin-bottom: 15px; }
-        .form-label { display: block; color: #cbd5e1; font-size: 0.85rem; margin-bottom: 8px; font-weight: 600; }
-        .form-input {
-            width: 100%; padding: 14px; border-radius: 12px;
-            background: #0f172a; border: 1px solid #334155;
-            color: #fff; outline: none; font-family: inherit; box-sizing: border-box;
+        .form-group { margin-bottom: 18px; }
+        .form-label { display: block; color: #94a3b8; margin-bottom: 8px; font-size: 0.85rem; font-weight: 500; }
+        .form-input, .form-select {
+            width: 100%; padding: 12px 15px; background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            color: #fff; outline: none; transition: 0.3s; font-family: inherit;
+            box-sizing: border-box; /* Fix padding issue */
         }
-        .modal-actions { display: flex; gap: 10px; margin-top: 25px; }
-        .btn-save { flex: 1; background: #4ade80; color: #064e3b; border: none; padding: 14px; border-radius: 12px; font-weight: 800; cursor: pointer; }
-        .btn-cancel { flex: 1; background: transparent; border: 1px solid #475569; color: #cbd5e1; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        .form-input:focus, .form-select:focus { border-color: #4ade80; background: rgba(15, 23, 42, 0.8); }
+        
+        .img-preview-box {
+            width: 100%; height: 120px; background: rgba(15, 23, 42, 0.5);
+            border: 2px dashed rgba(255,255,255,0.1); border-radius: 12px;
+            margin-top: 10px; display: none; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .img-preview-box.active { display: flex; }
+        .img-preview-box img { height: 100%; object-fit: contain; }
+        
+        .modal-footer { display: flex; gap: 10px; margin-top: 25px; }
+        .btn-modal {
+            flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s;
+        }
+        .btn-cancel { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; }
+        .btn-submit { background: #4ade80; color: #064e3b; box-shadow: 0 4px 15px rgba(74, 222, 128, 0.2); }
+        
         .hidden { display: none !important; }
 
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        /* --- BOTTOM NAV --- */
+        .bottom-nav-container {
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 90;
+            display: flex; justify-content: center;
+        }
+        .bottom-nav {
+            width: 100%; max-width: 480px;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-around; padding: 12px 0;
+        }
+        .nav-item {
+            color: #64748b; text-decoration: none; display: flex; flex-direction: column;
+            align-items: center; font-size: 0.7rem; gap: 4px; transition: 0.3s;
+        }
+        .nav-item.active { color: #4ade80; }
+        .nav-item i { font-size: 1.2rem; }
+        
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
+    <div class="aurora-bg">
+        <div class="blob b1"></div>
+        <div class="blob b2"></div>
+    </div>
     
-    <div class="aurora-bg"></div>
-
-    <header class="glass-header">
-        <a href="dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-        <div class="page-title"><i class="fa-solid fa-wallet"></i> Kelola Pembayaran</div>
-        <div style="width:38px;"></div>
-    </header>
-
-    <div class="admin-container">
-        <div class="content-area">
-            <div id="paymentListContainer">
-                <p style="text-align: center; color: #94a3b8; margin-top: 50px;">
-                    <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat data...
-                </p>
+    <div class="mobile-container">
+        
+        <header class="dashboard-header">
+            <div class="header-left">
+                <a href="dashboard.html" style="color:white; font-size: 1.2rem;"><i class="fa-solid fa-arrow-left"></i></a>
+                <h2 class="header-title">Kelola Pembayaran</h2>
             </div>
+            <div style="width:35px; height:35px; background:rgba(255,255,255,0.1); border-radius:10px; display:flex; align-items:center; justify-content:center; color:#4ade80;">
+                <i class="fa-solid fa-wallet"></i>
+            </div>
+        </header>
+
+        <div id="paymentListContainer" class="ppob-list">
+            <p style="text-align:center; color:#64748b; margin-top:30px;">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat data...
+            </p>
         </div>
+    </div> 
+
+    <div class="fab-container">
+        <button class="fab-add" onclick="openModal()">
+            <i class="fa-solid fa-plus"></i>
+        </button>
     </div>
 
-    <button class="fab-add" onclick="openModal()">
-        <i class="fa-solid fa-plus"></i>
-    </button>
-
-    <nav class="bottom-nav">
-        <a href="dashboard.html" class="nav-item">
-            <i class="fa-solid fa-house"></i>
-            <span>Home</span>
-        </a>
-        <a href="transaksi.html" class="nav-item">
-            <i class="fa-solid fa-list-check"></i>
-            <span>Transaksi</span>
-        </a>
-        <a href="ppob-settings.html" class="nav-item active">
-            <i class="fa-solid fa-sliders"></i>
-            <span>Settings</span>
-        </a>
-        <a href="#" onclick="logout()" class="nav-item">
-            <i class="fa-solid fa-power-off"></i>
-            <span>Logout</span>
-        </a>
-    </nav>
+    <div class="bottom-nav-container">
+        <nav class="bottom-nav">
+            <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
+            <a href="transaksi.html" class="nav-item"><i class="fa-solid fa-list-check"></i><span>Transaksi</span></a>
+            <a href="ppob-settings.html" class="nav-item active"><i class="fa-solid fa-sliders"></i><span>Settings</span></a>
+            <a href="#" onclick="logout()" class="nav-item"><i class="fa-solid fa-power-off"></i><span>LogOut</span></a>
+        </nav>
+    </div>
 
     <div id="addModal" class="modal-overlay">
-        <div class="modal-card">
-            <h3 style="color: white; margin: 0 0 20px 0; font-size: 1.2rem;">Tambah Metode Baru</h3>
+        <div class="modal-box">
+            <h3 style="color: white; margin: 0 0 20px 0; font-size: 1.2rem;">Metode Baru</h3>
             <form id="addForm">
                 <div class="form-group">
                     <label class="form-label">Tipe Pembayaran</label>
-                    <select id="pType" class="form-input" onchange="toggleFormMode()">
+                    <select id="pType" class="form-select" onchange="toggleFormMode()">
                         <option value="bank">Transfer Bank</option>
                         <option value="ewallet">E-Wallet (Dana/Ovo/dll)</option>
                         <option value="qris">Scan QRIS</option>
@@ -243,19 +255,15 @@
 
                 <div class="form-group">
                     <label class="form-label" id="labelImage">Logo / QR Code</label>
-                    <div style="background: #0f172a; padding: 15px; border-radius: 12px; border: 1px dashed #475569; text-align: center;">
-                        <input type="file" id="pIcon" accept="image/*" style="display: none;" onchange="previewImage(this)">
-                        <label for="pIcon" style="cursor: pointer; display: block;">
-                            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 1.5rem; color: #4ade80; margin-bottom: 5px;"></i>
-                            <div style="font-size: 0.8rem; color: #94a3b8;">Klik untuk Upload Gambar</div>
-                        </label>
-                        <img id="imgPreview" style="max-height: 80px; margin-top: 10px; display: none; border-radius: 8px; border: 1px solid #334155;">
+                    <input type="file" id="pIcon" class="form-input" accept="image/*" onchange="previewImage(this)">
+                    <div id="imgPreviewBox" class="img-preview-box">
+                        <img id="imgPreview" src="" alt="Preview">
                     </div>
                 </div>
 
-                <div class="modal-actions">
-                    <button type="button" class="btn-cancel" onclick="closeModal()">Batal</button>
-                    <button type="submit" class="btn-save" id="btnSave">Simpan</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal btn-cancel" onclick="closeModal()">Batal</button>
+                    <button type="submit" class="btn-modal btn-submit" id="btnSave">Simpan</button>
                 </div>
             </form>
         </div>
@@ -269,16 +277,17 @@
         
         // --- PREVIEW IMAGE ---
         function previewImage(input) {
-            const preview = document.getElementById('imgPreview');
+            const box = document.getElementById('imgPreviewBox');
+            const img = document.getElementById('imgPreview');
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'inline-block';
+                    img.src = e.target.result;
+                    box.classList.add('active');
                 }
                 reader.readAsDataURL(input.files[0]);
             } else {
-                preview.style.display = 'none';
+                box.classList.remove('active');
             }
         }
 
@@ -301,7 +310,7 @@
             }
         }
 
-        // --- LOAD DATA ---
+        // --- LOAD DATA (RENDER SEPERTI MANAGE-PPOB) ---
         async function loadPayments() {
             const container = document.getElementById('paymentListContainer');
             try {
@@ -312,29 +321,52 @@
                 
                 if(data.length === 0) {
                     container.innerHTML = `
-                        <div style="text-align:center; margin-top:50px; opacity:0.7;">
-                            <i class="fa-solid fa-box-open" style="font-size:3rem; color:#475569;"></i>
-                            <p style="margin-top:10px;">Belum ada metode pembayaran.</p>
+                        <div style="text-align:center; padding:50px 20px; color:#64748b;">
+                            <i class="fa-solid fa-box-open" style="font-size:3rem; margin-bottom:15px; opacity:0.5;"></i><br>
+                            Belum ada metode pembayaran.
                         </div>`;
                     return;
                 }
                 
-                data.forEach(item => {
-                    let iconHtml = '<i class="fa-solid fa-wallet"></i>';
-                    if (item.type === 'qris') iconHtml = '<i class="fa-solid fa-qrcode"></i>';
-                    if (item.icon) iconHtml = `<img src="${item.icon}" alt="Logo">`;
-                    
-                    let subText = item.type === 'qris' ? 'Scan QR Code' : `${item.number} • ${item.holder}`;
-                    
+                data.forEach((item, index) => {
+                    // Logic Icon
+                    let thumbHTML = '';
+                    if (item.icon && item.icon !== "") {
+                        thumbHTML = `<img src="${item.icon}" class="item-thumb" alt="icon">`;
+                    } else {
+                        // Fallback Icon
+                        let iconClass = 'fa-wallet';
+                        let iconColor = '#60a5fa'; // Default blue
+                        if(item.type === 'qris') { iconClass = 'fa-qrcode'; iconColor = '#4ade80'; }
+                        if(item.type === 'bank') { iconClass = 'fa-building-columns'; iconColor = '#fbbf24'; }
+                        
+                        thumbHTML = `
+                            <div class="item-thumb-placeholder" style="color:${iconColor}; border-color:${iconColor}40; background:${iconColor}10;">
+                                <i class="fa-solid ${iconClass}"></i>
+                            </div>`;
+                    }
+
+                    // Badge Type
+                    const badgeText = item.type.toUpperCase();
+                    let badgeColor = 'rgba(59, 130, 246, 0.15)'; // Default blue bg
+                    let badgeTextCol = '#60a5fa';
+                    if(item.type === 'qris') { badgeColor = 'rgba(74, 222, 128, 0.15)'; badgeTextCol = '#4ade80'; }
+
+                    const subText = item.type === 'qris' ? 'Scan QR Code' : `${item.number} • ${item.holder}`;
+
                     const div = document.createElement('div');
-                    div.className = 'payment-card';
+                    div.className = 'ppob-item';
+                    div.style.animationDelay = `${index * 0.05}s`;
+                    
                     div.innerHTML = `
-                        <div class="p-icon-box">${iconHtml}</div>
-                        <div class="p-info">
-                            <div class="p-name">${item.name} <span class="p-badge">${item.type}</span></div>
-                            <div class="p-desc">${subText}</div>
+                        ${thumbHTML}
+                        <div class="item-info">
+                            <div class="item-name">${item.name} <span class="item-cat-badge" style="background:${badgeColor}; color:${badgeTextCol};">${badgeText}</span></div>
+                            <div class="item-price">${subText}</div>
                         </div>
-                        <button class="btn-del" onclick="deletePayment('${item._id}')"><i class="fa-solid fa-trash"></i></button>
+                        <div class="item-actions">
+                            <button class="btn-icon btn-delete" onclick="deletePayment('${item._id}')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     `;
                     container.appendChild(div);
                 });
@@ -412,7 +444,7 @@
         function openModal() { 
             document.getElementById('addModal').classList.add('show'); 
             document.getElementById('addForm').reset(); 
-            document.getElementById('imgPreview').style.display = 'none';
+            document.getElementById('imgPreviewBox').classList.remove('active');
             toggleFormMode(); 
         }
         function closeModal() { document.getElementById('addModal').classList.remove('show'); }
