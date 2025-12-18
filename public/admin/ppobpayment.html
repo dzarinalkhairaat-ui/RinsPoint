@@ -20,13 +20,15 @@
             overflow-x: hidden; color: #fff;
         }
 
-        /* Container Utama (TANPA PADDING AGAR HEADER FULL) */
+        /* Container Utama */
         .admin-container {
             max-width: 480px; margin: 0 auto; min-height: 100vh;
-            display: flex; flex-direction: column; position: relative;
-            background: #0f172a; /* Base color */
-            padding: 0; /* PENTING: 0 agar header mentok kiri-kanan */
-            padding-bottom: 90px; /* Space untuk navbar bawah */
+            position: relative;
+            background: #0f172a;
+            /* PENTING: Padding agar konten tidak tertutup Header/Navbar Fixed */
+            padding-top: 80px; 
+            padding-bottom: 100px; 
+            box-sizing: border-box;
         }
 
         /* Background Aurora Halus */
@@ -35,15 +37,19 @@
             background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0f172a 100%);
         }
 
-        /* --- 2. HEADER (FULL WIDTH) --- */
+        /* --- 2. HEADER FIXED (DIJAMIN FULL) --- */
         .glass-header {
-            width: 100%; /* Paksa Full */
-            padding: 20px 24px; /* Padding dalam header */
-            box-sizing: border-box; /* Agar padding tidak menambah lebar */
-            position: sticky; top: 0; z-index: 50;
+            position: fixed; top: 0; 
+            /* Trik Centering Fixed Element: */
+            left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 480px;
+            
+            padding: 20px 24px; box-sizing: border-box;
             background: rgba(15, 23, 42, 0.95); 
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
             display: flex; align-items: center; justify-content: space-between;
+            z-index: 1000; /* Paling atas */
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         .page-title { font-size: 1.1rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; }
@@ -54,9 +60,9 @@
             color: #fff; text-decoration: none; transition: 0.3s;
         }
 
-        /* --- 3. LIST CONTENT (DENGAN PADDING) --- */
+        /* --- 3. LIST CONTENT --- */
         .content-area { 
-            padding: 20px 24px; /* Padding dipindah ke sini */
+            padding: 20px 24px; 
             width: 100%; box-sizing: border-box;
         }
         
@@ -73,7 +79,6 @@
             display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 0;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2); flex-shrink: 0;
         }
-        /* Gambar Icon Full */
         .p-icon-box img { width: 100%; height: 100%; object-fit: cover; }
         .p-icon-box i { color: #1e293b; font-size: 1.5rem; }
 
@@ -92,25 +97,74 @@
             display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
 
-        /* --- 4. FLOATING ADD BUTTON (FAB) --- */
+        /* --- 4. FLOATING ADD BUTTON --- */
         .fab-add {
             position: fixed; bottom: 100px; right: 24px;
+            /* Pastikan FAB tetap di dalam area max-width */
+            margin-right: max(0px, calc((100vw - 480px) / 2));
+            
             width: 55px; height: 55px; border-radius: 50%;
             background: linear-gradient(135deg, #4ade80, #22c55e);
             color: #064e3b; font-size: 1.5rem; border: none;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
-            cursor: pointer; animation: pulseBtn 2s infinite; z-index: 90;
-            /* Pastikan FAB tetap di dalam max-width layout pada layar besar */
-            right: calc(50% - 240px + 24px); 
+            cursor: pointer; animation: pulseBtn 2s infinite; z-index: 900;
         }
-        @media (max-width: 480px) { .fab-add { right: 24px; } }
-
         @keyframes pulseBtn {
             0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
             70% { box-shadow: 0 0 0 15px rgba(74, 222, 128, 0); }
             100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
         }
+
+        /* --- 5. BOTTOM NAVBAR FIXED (FULL & SERASI) --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; 
+            /* Trik Centering Fixed Element: */
+            left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 480px;
+            
+            height: 70px;
+            background: rgba(15, 23, 42, 0.95); 
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 1000;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            color: #64748b; text-decoration: none; font-size: 0.7rem; 
+            font-weight: 500; transition: 0.3s;
+            width: 25%;
+        }
+        .nav-item i { font-size: 1.3rem; transition: 0.3s; }
+        .nav-item.active { color: #4ade80; }
+        .nav-item.active i { transform: translateY(-3px); text-shadow: 0 5px 15px rgba(74,222,128,0.4); }
+
+        /* --- 6. MODAL FORM --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 2000; /* Z-index harus tertinggi */
+            display: none; justify-content: center; align-items: center; padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+        .modal-overlay.show { display: flex; animation: zoomIn 0.3s ease; }
+        .modal-card {
+            background: #1e293b; width: 100%; max-width: 400px;
+            border-radius: 20px; padding: 25px; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; color: #cbd5e1; font-size: 0.85rem; margin-bottom: 8px; font-weight: 600; }
+        .form-input {
+            width: 100%; padding: 14px; border-radius: 12px;
+            background: #0f172a; border: 1px solid #334155;
+            color: #fff; outline: none; font-family: inherit; box-sizing: border-box;
+        }
+        .modal-actions { display: flex; gap: 10px; margin-top: 25px; }
+        .btn-save { flex: 1; background: #4ade80; color: #064e3b; border: none; padding: 14px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        .btn-cancel { flex: 1; background: transparent; border: 1px solid #475569; color: #cbd5e1; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        .hidden { display: none !important; }
 
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
@@ -119,13 +173,13 @@
     
     <div class="aurora-bg"></div>
 
-    <div class="admin-container">
-        <header class="glass-header">
-            <a href="dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="page-title"><i class="fa-solid fa-wallet"></i> Kelola Pembayaran</div>
-            <div style="width:38px;"></div>
-        </header>
+    <header class="glass-header">
+        <a href="dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+        <div class="page-title"><i class="fa-solid fa-wallet"></i> Kelola Pembayaran</div>
+        <div style="width:38px;"></div>
+    </header>
 
+    <div class="admin-container">
         <div class="content-area">
             <div id="paymentListContainer">
                 <p style="text-align: center; color: #94a3b8; margin-top: 50px;">
@@ -133,18 +187,30 @@
                 </p>
             </div>
         </div>
-
-        <button class="fab-add" onclick="openModal()">
-            <i class="fa-solid fa-plus"></i>
-        </button>
-
-        <nav class="bottom-nav">
-            <a href="/"><i class="fa-solid fa-store"></i><span>Toko</span></a>
-            <a href="#" class="active"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
-            <a href="ppob-settings.html"><i class="fa-solid fa-sliders"></i><span>PPOB</span></a>
-            <a href="#" onclick="logout()"><i class="fa-solid fa-power-off"></i><span>LogOut</span></a>
-        </nav>
     </div>
+
+    <button class="fab-add" onclick="openModal()">
+        <i class="fa-solid fa-plus"></i>
+    </button>
+
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="transaksi.html" class="nav-item">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Transaksi</span>
+        </a>
+        <a href="ppob-settings.html" class="nav-item active">
+            <i class="fa-solid fa-sliders"></i>
+            <span>Settings</span>
+        </a>
+        <a href="#" onclick="logout()" class="nav-item">
+            <i class="fa-solid fa-power-off"></i>
+            <span>Logout</span>
+        </a>
+    </nav>
 
     <div id="addModal" class="modal-overlay">
         <div class="modal-card">
