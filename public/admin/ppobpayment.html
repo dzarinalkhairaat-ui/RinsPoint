@@ -13,57 +13,52 @@
     <script>checkAuth();</script>
 
     <style>
-        /* --- 1. CORE LAYOUT & BACKGROUND --- */
+        /* --- 1. CORE LAYOUT --- */
         html, body {
             margin: 0; padding: 0; height: 100%; width: 100%;
             background: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden; color: #fff;
         }
 
-        /* ANIMASI BACKGROUND (AURORA) */
-        .admin-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10;
-            background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0f172a 100%);
-            overflow: hidden;
-        }
-        .orb {
-            position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.4;
-            animation: moveOrb 20s infinite alternate ease-in-out;
-        }
-        .o1 { width: 300px; height: 300px; background: #4ade80; top: -10%; left: -20%; }
-        .o2 { width: 250px; height: 250px; background: #3b82f6; bottom: 10%; right: -10%; animation-duration: 25s; }
-
-        @keyframes moveOrb {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(40px, 30px) scale(1.1); }
-        }
-
+        /* Container Utama (TANPA PADDING AGAR HEADER FULL) */
         .admin-container {
             max-width: 480px; margin: 0 auto; min-height: 100vh;
             display: flex; flex-direction: column; position: relative;
-            background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px);
-            padding-bottom: 100px;
+            background: #0f172a; /* Base color */
+            padding: 0; /* PENTING: 0 agar header mentok kiri-kanan */
+            padding-bottom: 90px; /* Space untuk navbar bawah */
         }
 
-        /* --- 2. HEADER --- */
+        /* Background Aurora Halus */
+        .aurora-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10;
+            background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0f172a 100%);
+        }
+
+        /* --- 2. HEADER (FULL WIDTH) --- */
         .glass-header {
-            padding: 20px; position: sticky; top: 0; z-index: 50;
-            background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid rgba(255,255,255,0.05);
+            width: 100%; /* Paksa Full */
+            padding: 20px 24px; /* Padding dalam header */
+            box-sizing: border-box; /* Agar padding tidak menambah lebar */
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(15, 23, 42, 0.95); 
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             display: flex; align-items: center; justify-content: space-between;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
-        .page-title { font-size: 1.3rem; font-weight: 700; color: #4ade80; display: flex; align-items: center; gap: 10px; }
-
-
+        .page-title { font-size: 1.1rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; }
         .btn-back {
-            width: 40px; height: 40px; border-radius: 12px;
+            width: 38px; height: 38px; border-radius: 12px;
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
             display: flex; align-items: center; justify-content: center;
             color: #fff; text-decoration: none; transition: 0.3s;
         }
 
-        /* --- 3. LIST METODE (CARD STYLE) --- */
-        .content-area { padding: 20px; }
+        /* --- 3. LIST CONTENT (DENGAN PADDING) --- */
+        .content-area { 
+            padding: 20px 24px; /* Padding dipindah ke sini */
+            width: 100%; box-sizing: border-box;
+        }
         
         .payment-card {
             background: rgba(30, 41, 59, 0.6); 
@@ -71,110 +66,64 @@
             border-radius: 16px; padding: 15px; margin-bottom: 15px;
             display: flex; align-items: center; gap: 15px;
             position: relative; overflow: hidden; transition: transform 0.3s;
-            animation: fadeIn 0.5s ease;
         }
-        .payment-card:active { transform: scale(0.98); }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* ICON BOX (Sama seperti User Side) */
         .p-icon-box {
             width: 50px; height: 50px; border-radius: 12px; background: #fff;
-            display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 5px;
+            display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 0;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2); flex-shrink: 0;
         }
-        .p-icon-box img { width: 100%; height: 100%; object-fit: contain; }
+        /* Gambar Icon Full */
+        .p-icon-box img { width: 100%; height: 100%; object-fit: cover; }
         .p-icon-box i { color: #1e293b; font-size: 1.5rem; }
 
-        .p-info { flex: 1; }
-        .p-name { font-weight: 700; font-size: 1rem; color: #fff; margin-bottom: 2px; }
+        .p-info { flex: 1; min-width: 0; }
+        .p-name { font-weight: 700; font-size: 1rem; color: #fff; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .p-badge { 
-            font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; 
+            font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; 
             background: rgba(74, 222, 128, 0.1); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3);
             text-transform: uppercase; font-weight: 600; margin-left: 5px;
         }
-        .p-desc { font-size: 0.8rem; color: #94a3b8; }
+        .p-desc { font-size: 0.8rem; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Delete Button */
         .btn-del {
             width: 35px; height: 35px; border-radius: 10px;
             background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none;
             display: flex; align-items: center; justify-content: center; cursor: pointer;
-            transition: 0.3s;
         }
-        .btn-del:active { background: #ef4444; color: #fff; }
 
         /* --- 4. FLOATING ADD BUTTON (FAB) --- */
         .fab-add {
-            position: fixed; bottom: 100px; right: 20px;
-            width: 60px; height: 60px; border-radius: 50%;
+            position: fixed; bottom: 100px; right: 24px;
+            width: 55px; height: 55px; border-radius: 50%;
             background: linear-gradient(135deg, #4ade80, #22c55e);
-            color: #064e3b; font-size: 1.8rem; border: none;
+            color: #064e3b; font-size: 1.5rem; border: none;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
+            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
             cursor: pointer; animation: pulseBtn 2s infinite; z-index: 90;
+            /* Pastikan FAB tetap di dalam max-width layout pada layar besar */
+            right: calc(50% - 240px + 24px); 
         }
+        @media (max-width: 480px) { .fab-add { right: 24px; } }
+
         @keyframes pulseBtn {
             0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
             70% { box-shadow: 0 0 0 15px rgba(74, 222, 128, 0); }
             100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
         }
 
-        /* --- 5. MODAL FORM (MODERN) --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 200;
-            display: none; justify-content: center; align-items: center; padding: 20px;
-            backdrop-filter: blur(8px);
-        }
-        .modal-overlay.show { display: flex; animation: zoomIn 0.3s ease; }
-        
-        .modal-card {
-            background: #1e293b; width: 100%; max-width: 400px;
-            border-radius: 20px; padding: 25px; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5); position: relative;
-        }
-        
-        .form-group { margin-bottom: 18px; }
-        .form-label { display: block; color: #cbd5e1; font-size: 0.85rem; margin-bottom: 8px; font-weight: 600; }
-        .form-input {
-            width: 100%; padding: 14px; border-radius: 12px;
-            background: #0f172a; border: 1px solid #334155;
-            color: #fff; outline: none; font-family: inherit; transition: 0.3s;
-        }
-        .form-input:focus { border-color: #4ade80; box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1); }
-        
-        /* Select Style */
-        select.form-input { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23cbd5e1%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 0.65em auto; }
-
-        .modal-actions { display: flex; gap: 10px; margin-top: 25px; }
-        .btn-save { 
-            flex: 1; background: #4ade80; color: #064e3b; border: none; padding: 14px; 
-            border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s;
-        }
-        .btn-cancel {
-            flex: 1; background: transparent; border: 1px solid #475569; color: #cbd5e1; 
-            padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer;
-        }
-
-        .hidden { display: none !important; }
-        
-        
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
     
-    <div class="admin-bg">
-        <div class="orb o1"></div>
-        <div class="orb o2"></div>
-    </div>
+    <div class="aurora-bg"></div>
 
     <div class="admin-container">
         <header class="glass-header">
             <a href="dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="page-title"> Kelola Pembayaran</div>
-            <div style="width:30px;"></div>
+            <div class="page-title"><i class="fa-solid fa-wallet"></i> Kelola Pembayaran</div>
+            <div style="width:38px;"></div>
         </header>
 
         <div class="content-area">
@@ -199,7 +148,7 @@
 
     <div id="addModal" class="modal-overlay">
         <div class="modal-card">
-            <h3 style="color: white; margin: 0 0 20px 0; font-size: 1.3rem;">Metode Baru</h3>
+            <h3 style="color: white; margin: 0 0 20px 0; font-size: 1.2rem;">Tambah Metode Baru</h3>
             <form id="addForm">
                 <div class="form-group">
                     <label class="form-label">Tipe Pembayaran</label>
@@ -240,7 +189,7 @@
 
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="closeModal()">Batal</button>
-                    <button type="submit" class="btn-save" id="btnSave">Simpan Data</button>
+                    <button type="submit" class="btn-save" id="btnSave">Simpan</button>
                 </div>
             </form>
         </div>
@@ -267,7 +216,7 @@
             }
         }
 
-        // --- TOGGLE FORM FIELDS ---
+        // --- TOGGLE FORM ---
         function toggleFormMode() {
             const type = document.getElementById('pType').value;
             const bankFields = document.getElementById('bankFields');
@@ -280,7 +229,7 @@
                 document.getElementById('pHolder').removeAttribute('required');
             } else {
                 bankFields.classList.remove('hidden');
-                labelImage.innerText = "Logo Bank (Opsional - Agar Keren)";
+                labelImage.innerText = "Logo Bank (Opsional)";
                 document.getElementById('pNumber').setAttribute('required', 'true');
                 document.getElementById('pHolder').setAttribute('required', 'true');
             }
@@ -299,7 +248,7 @@
                     container.innerHTML = `
                         <div style="text-align:center; margin-top:50px; opacity:0.7;">
                             <i class="fa-solid fa-box-open" style="font-size:3rem; color:#475569;"></i>
-                            <p>Belum ada metode pembayaran.</p>
+                            <p style="margin-top:10px;">Belum ada metode pembayaran.</p>
                         </div>`;
                     return;
                 }
