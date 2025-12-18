@@ -3,109 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kelola Pembayaran PPOB - Admin</title>
+    <title>Kelola Pembayaran - Admin</title>
     
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script src="../js/auth.js"></script>
     <script>checkAuth();</script>
+
     <style>
-        body { background-color: #0f172a; padding-bottom: 80px; }
-        .dashboard-header { background: #1e293b; padding: 1rem; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: flex-start; gap: 15px; }
-        .dashboard-header h2 { margin: 0; color: #4ade80; font-size: 1.1rem; }
+        /* --- 1. CORE LAYOUT & BACKGROUND --- */
+        html, body {
+            margin: 0; padding: 0; height: 100%; width: 100%;
+            background: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden; color: #fff;
+        }
+
+        /* ANIMASI BACKGROUND (AURORA) */
+        .admin-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10;
+            background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0f172a 100%);
+            overflow: hidden;
+        }
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.4;
+            animation: moveOrb 20s infinite alternate ease-in-out;
+        }
+        .o1 { width: 300px; height: 300px; background: #4ade80; top: -10%; left: -20%; }
+        .o2 { width: 250px; height: 250px; background: #3b82f6; bottom: 10%; right: -10%; animation-duration: 25s; }
+
+        @keyframes moveOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 30px) scale(1.1); }
+        }
+
+        .admin-container {
+            max-width: 480px; margin: 0 auto; min-height: 100vh;
+            display: flex; flex-direction: column; position: relative;
+            background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px);
+            padding-bottom: 100px;
+        }
+
+        /* --- 2. HEADER --- */
+        .glass-header {
+            padding: 20px; position: sticky; top: 0; z-index: 50;
+            background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .page-title { font-size: 1.3rem; font-weight: 700; color: #4ade80; display: flex; align-items: center; gap: 10px; }
+
+
+        .btn-back {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; text-decoration: none; transition: 0.3s;
+        }
+
+        /* --- 3. LIST METODE (CARD STYLE) --- */
+        .content-area { padding: 20px; }
         
-        .content-box { padding: 20px; }
-        .btn-add { width: 100%; background: #4ade80; color: #064e3b; padding: 12px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; }
+        .payment-card {
+            background: rgba(30, 41, 59, 0.6); 
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; padding: 15px; margin-bottom: 15px;
+            display: flex; align-items: center; gap: 15px;
+            position: relative; overflow: hidden; transition: transform 0.3s;
+            animation: fadeIn 0.5s ease;
+        }
+        .payment-card:active { transform: scale(0.98); }
         
-        .payment-list { display: flex; flex-direction: column; gap: 15px; }
-        .payment-item { background: #1e293b; padding: 15px; border-radius: 12px; border: 1px solid #334155; display: flex; align-items: center; gap: 15px; }
-        .payment-icon { width: 50px; height: 50px; background: #0f172a; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #334155; }
-        .payment-icon img { width: 100%; height: 100%; object-fit: contain; }
-        .payment-icon i { font-size: 1.5rem; color: #94a3b8; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ICON BOX (Sama seperti User Side) */
+        .p-icon-box {
+            width: 50px; height: 50px; border-radius: 12px; background: #fff;
+            display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); flex-shrink: 0;
+        }
+        .p-icon-box img { width: 100%; height: 100%; object-fit: contain; }
+        .p-icon-box i { color: #1e293b; font-size: 1.5rem; }
+
+        .p-info { flex: 1; }
+        .p-name { font-weight: 700; font-size: 1rem; color: #fff; margin-bottom: 2px; }
+        .p-badge { 
+            font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; 
+            background: rgba(74, 222, 128, 0.1); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3);
+            text-transform: uppercase; font-weight: 600; margin-left: 5px;
+        }
+        .p-desc { font-size: 0.8rem; color: #94a3b8; }
+
+        /* Delete Button */
+        .btn-del {
+            width: 35px; height: 35px; border-radius: 10px;
+            background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-del:active { background: #ef4444; color: #fff; }
+
+        /* --- 4. FLOATING ADD BUTTON (FAB) --- */
+        .fab-add {
+            position: fixed; bottom: 100px; right: 20px;
+            width: 60px; height: 60px; border-radius: 50%;
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: #064e3b; font-size: 1.8rem; border: none;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
+            cursor: pointer; animation: pulseBtn 2s infinite; z-index: 90;
+        }
+        @keyframes pulseBtn {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(74, 222, 128, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        }
+
+        /* --- 5. MODAL FORM (MODERN) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 200;
+            display: none; justify-content: center; align-items: center; padding: 20px;
+            backdrop-filter: blur(8px);
+        }
+        .modal-overlay.show { display: flex; animation: zoomIn 0.3s ease; }
         
-        .payment-info { flex: 1; }
-        .p-name { color: white; font-weight: 600; font-size: 1rem; }
-        .p-detail { color: #94a3b8; font-size: 0.85rem; margin-top: 2px; }
-        .btn-delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: none; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        /* MODAL */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; display: none; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
-        .modal-overlay.show { display: flex; }
-        .modal-box { background: #1e293b; width: 100%; max-width: 400px; border-radius: 16px; padding: 20px; border: 1px solid #334155; }
-        .form-group { margin-bottom: 15px; transition: 0.3s; }
-        .form-label { display: block; color: #94a3b8; margin-bottom: 5px; font-size: 0.85rem; }
-        .form-input, .form-select { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; outline: none; }
-        .modal-footer { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-submit { flex: 1; background: #4ade80; color: #064e3b; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
-        .btn-cancel { flex: 1; background: #334155; color: white; padding: 12px; border-radius: 8px; border: none; cursor: pointer; }
+        .modal-card {
+            background: #1e293b; width: 100%; max-width: 400px;
+            border-radius: 20px; padding: 25px; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5); position: relative;
+        }
         
+        .form-group { margin-bottom: 18px; }
+        .form-label { display: block; color: #cbd5e1; font-size: 0.85rem; margin-bottom: 8px; font-weight: 600; }
+        .form-input {
+            width: 100%; padding: 14px; border-radius: 12px;
+            background: #0f172a; border: 1px solid #334155;
+            color: #fff; outline: none; font-family: inherit; transition: 0.3s;
+        }
+        .form-input:focus { border-color: #4ade80; box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1); }
+        
+        /* Select Style */
+        select.form-input { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23cbd5e1%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 0.65em auto; }
+
+        .modal-actions { display: flex; gap: 10px; margin-top: 25px; }
+        .btn-save { 
+            flex: 1; background: #4ade80; color: #064e3b; border: none; padding: 14px; 
+            border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s;
+        }
+        .btn-cancel {
+            flex: 1; background: transparent; border: 1px solid #475569; color: #cbd5e1; 
+            padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer;
+        }
+
         .hidden { display: none !important; }
+        
+        
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
-    <div class="mobile-container">
-        <header class="dashboard-header">
-            <a href="dashboard.html" style="color:white; font-size: 1.2rem;"><i class="fa-solid fa-arrow-left"></i></a>
-            <h2>Kelola Pembayaran</h2>
+    
+    <div class="admin-bg">
+        <div class="orb o1"></div>
+        <div class="orb o2"></div>
+    </div>
+
+    <div class="admin-container">
+        <header class="glass-header">
+            <a href="dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <div class="page-title"> Kelola Pembayaran</div>
+            <div style="width:30px;"></div>
         </header>
-        <div class="content-box">
-            <button class="btn-add" onclick="openModal()">
-                <i class="fa-solid fa-plus"></i> Tambah Metode Baru
-            </button>
-            <div id="paymentListContainer" class="payment-list">
-                <p style="text-align: center; color: #64748b;">Memuat data...</p>
+
+        <div class="content-area">
+            <div id="paymentListContainer">
+                <p style="text-align: center; color: #94a3b8; margin-top: 50px;">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat data...
+                </p>
             </div>
         </div>
+
+        <button class="fab-add" onclick="openModal()">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+
         <nav class="bottom-nav">
             <a href="/"><i class="fa-solid fa-store"></i><span>Toko</span></a>
-            <a href="dashboard.html" class="active"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+            <a href="#" class="active"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
             <a href="ppob-settings.html"><i class="fa-solid fa-sliders"></i><span>PPOB</span></a>
             <a href="#" onclick="logout()"><i class="fa-solid fa-power-off"></i><span>LogOut</span></a>
         </nav>
     </div>
 
     <div id="addModal" class="modal-overlay">
-        <div class="modal-box">
-            <h3 style="color: white; margin-bottom: 20px;">Tambah Pembayaran</h3>
+        <div class="modal-card">
+            <h3 style="color: white; margin: 0 0 20px 0; font-size: 1.3rem;">Metode Baru</h3>
             <form id="addForm">
                 <div class="form-group">
                     <label class="form-label">Tipe Pembayaran</label>
-                    <select id="pType" class="form-select" onchange="toggleFormMode()">
+                    <select id="pType" class="form-input" onchange="toggleFormMode()">
                         <option value="bank">Transfer Bank</option>
                         <option value="ewallet">E-Wallet (Dana/Ovo/dll)</option>
-                        <option value="qris">QRIS</option>
+                        <option value="qris">Scan QRIS</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">Nama Bank / Wallet / QRIS</label>
-                    <input type="text" id="pName" class="form-input" placeholder="Contoh: BSI, DANA, QRIS Toko" required>
+                    <label class="form-label">Nama Metode</label>
+                    <input type="text" id="pName" class="form-input" placeholder="Cth: Bank BCA / DANA" required>
                 </div>
 
                 <div id="bankFields">
                     <div class="form-group">
                         <label class="form-label">Nomor Rekening / HP</label>
-                        <input type="text" id="pNumber" class="form-input" placeholder="Contoh: 731970...">
+                        <input type="text" id="pNumber" class="form-input" placeholder="1234567890">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Atas Nama</label>
-                        <input type="text" id="pHolder" class="form-input" placeholder="Contoh: MOH ABIDARIN">
+                        <input type="text" id="pHolder" class="form-input" placeholder="Nama Pemilik Akun">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" id="labelImage">Logo Bank (Opsional)</label>
-                    <input type="file" id="pIcon" class="form-input" accept="image/*">
-                    <small style="color:#64748b; font-size:0.7rem;">Untuk QRIS, wajib upload gambar QR Code.</small>
-                    <div id="previewBox" style="margin-top:10px; display:none; text-align:center;">
-                        <img id="imgPreview" style="max-height:100px; border-radius:8px;" src="" alt="Preview">
+                    <label class="form-label" id="labelImage">Logo / QR Code</label>
+                    <div style="background: #0f172a; padding: 15px; border-radius: 12px; border: 1px dashed #475569; text-align: center;">
+                        <input type="file" id="pIcon" accept="image/*" style="display: none;" onchange="previewImage(this)">
+                        <label for="pIcon" style="cursor: pointer; display: block;">
+                            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 1.5rem; color: #4ade80; margin-bottom: 5px;"></i>
+                            <div style="font-size: 0.8rem; color: #94a3b8;">Klik untuk Upload Gambar</div>
+                        </label>
+                        <img id="imgPreview" style="max-height: 80px; margin-top: 10px; display: none; border-radius: 8px; border: 1px solid #334155;">
                     </div>
                 </div>
 
-                <div class="modal-footer">
+                <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="closeModal()">Batal</button>
-                    <button type="submit" class="btn-submit" id="btnSave">Simpan</button>
+                    <button type="submit" class="btn-save" id="btnSave">Simpan Data</button>
                 </div>
             </form>
         </div>
@@ -117,48 +252,41 @@
         
         document.addEventListener('DOMContentLoaded', loadPayments);
         
-        // --- 1. PREVIEW GAMBAR SAAT UPLOAD ---
-        document.getElementById('pIcon').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const previewBox = document.getElementById('previewBox');
-            const imgPreview = document.getElementById('imgPreview');
-            
-            if (file) {
+        // --- PREVIEW IMAGE ---
+        function previewImage(input) {
+            const preview = document.getElementById('imgPreview');
+            if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(evt) {
-                    imgPreview.src = evt.target.result;
-                    previewBox.style.display = 'block';
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'inline-block';
                 }
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(input.files[0]);
             } else {
-                previewBox.style.display = 'none';
+                preview.style.display = 'none';
             }
-        });
+        }
 
-        // --- 2. LOGIKA TAMPILAN FORM ---
+        // --- TOGGLE FORM FIELDS ---
         function toggleFormMode() {
             const type = document.getElementById('pType').value;
             const bankFields = document.getElementById('bankFields');
             const labelImage = document.getElementById('labelImage');
             
             if (type === 'qris') {
-                // Mode QRIS: Sembunyikan Input Nomor
                 bankFields.classList.add('hidden');
                 labelImage.innerText = "Upload Gambar QRIS (Wajib)";
                 document.getElementById('pNumber').removeAttribute('required');
                 document.getElementById('pHolder').removeAttribute('required');
-                document.getElementById('pIcon').setAttribute('required', 'true'); // Wajib Upload
             } else {
-                // Mode Bank: Tampilkan Input Nomor
                 bankFields.classList.remove('hidden');
-                labelImage.innerText = "Logo Bank / Wallet (Opsional)";
+                labelImage.innerText = "Logo Bank (Opsional - Agar Keren)";
                 document.getElementById('pNumber').setAttribute('required', 'true');
                 document.getElementById('pHolder').setAttribute('required', 'true');
-                document.getElementById('pIcon').removeAttribute('required');
             }
         }
 
-        // --- 3. LOAD DATA PEMBAYARAN ---
+        // --- LOAD DATA ---
         async function loadPayments() {
             const container = document.getElementById('paymentListContainer');
             try {
@@ -168,32 +296,30 @@
                 container.innerHTML = '';
                 
                 if(data.length === 0) {
-                    container.innerHTML = '<p style="text-align:center; color:#64748b;">Belum ada metode pembayaran.</p>';
+                    container.innerHTML = `
+                        <div style="text-align:center; margin-top:50px; opacity:0.7;">
+                            <i class="fa-solid fa-box-open" style="font-size:3rem; color:#475569;"></i>
+                            <p>Belum ada metode pembayaran.</p>
+                        </div>`;
                     return;
                 }
                 
                 data.forEach(item => {
-                    let iconHtml = '<i class="fa-solid fa-money-bill"></i>';
-                    
+                    let iconHtml = '<i class="fa-solid fa-wallet"></i>';
                     if (item.type === 'qris') iconHtml = '<i class="fa-solid fa-qrcode"></i>';
+                    if (item.icon) iconHtml = `<img src="${item.icon}" alt="Logo">`;
                     
-                    // Pastikan Icon ada dan berupa URL Cloudinary
-                    if (item.icon) {
-                        iconHtml = `<img src="${item.icon}" alt="icon" onerror="this.style.display='none'">`;
-                    }
-                    
-                    let detailText = `${item.number || '-'} a.n ${item.holder || '-'}`;
-                    if (item.type === 'qris') detailText = 'Scan QR Code';
+                    let subText = item.type === 'qris' ? 'Scan QR Code' : `${item.number} • ${item.holder}`;
                     
                     const div = document.createElement('div');
-                    div.className = 'payment-item';
+                    div.className = 'payment-card';
                     div.innerHTML = `
-                        <div class="payment-icon">${iconHtml}</div>
-                        <div class="payment-info">
-                            <div class="p-name">${item.name} <small style="color:#60a5fa; font-size:0.7rem; border:1px solid #60a5fa; padding:1px 4px; border-radius:4px;">${item.type.toUpperCase()}</small></div>
-                            <div class="p-detail" style="font-size:0.8rem; color:#cbd5e1;">${detailText}</div>
+                        <div class="p-icon-box">${iconHtml}</div>
+                        <div class="p-info">
+                            <div class="p-name">${item.name} <span class="p-badge">${item.type}</span></div>
+                            <div class="p-desc">${subText}</div>
                         </div>
-                        <button class="btn-delete" onclick="deletePayment('${item._id}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-del" onclick="deletePayment('${item._id}')"><i class="fa-solid fa-trash"></i></button>
                     `;
                     container.appendChild(div);
                 });
@@ -203,12 +329,12 @@
             }
         }
 
-        // --- 4. SIMPAN DATA (FIXED UNTUK CLOUDINARY) ---
+        // --- SAVE DATA ---
         document.getElementById('addForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSave');
-            btn.innerText = 'Mengupload...'; 
-            btn.disabled = true;
+            const originalText = btn.innerText;
+            btn.innerText = 'Menyimpan...'; btn.disabled = true;
             
             const formData = new FormData();
             const type = document.getElementById('pType').value;
@@ -216,37 +342,31 @@
             formData.append('type', type);
             formData.append('name', document.getElementById('pName').value);
             
-            // --- FIX: Tetap kirim string kosong jika field tidak ada (agar database tidak error) ---
             if (type !== 'qris') {
                 formData.append('number', document.getElementById('pNumber').value);
                 formData.append('holder', document.getElementById('pHolder').value);
             } else {
-                // Untuk QRIS, kirim '-' atau string kosong agar tidak undefined
                 formData.append('number', '-');
                 formData.append('holder', 'QRIS Payment');
             }
             
             const iconFile = document.getElementById('pIcon').files[0];
             if(iconFile) {
-                formData.append('icon', iconFile); // Key 'icon' sesuai backend
+                formData.append('icon', iconFile);
             } else if (type === 'qris') {
                 alert("Wajib upload gambar QRIS!");
-                btn.innerText = 'Simpan'; btn.disabled = false;
+                btn.innerText = originalText; btn.disabled = false;
                 return;
             }
 
             try {
-                // Jangan set Content-Type, biarkan browser atur Boundary
                 const res = await fetch(API_URL, {
                     method: 'POST',
-                    headers: { 
-                        'Authorization': `Bearer ${token}` 
-                    },
+                    headers: { 'Authorization': `Bearer ${token}` },
                     body: formData
                 });
                 
                 if(res.ok) {
-                    alert('Berhasil!');
                     closeModal();
                     loadPayments();
                 } else {
@@ -255,15 +375,15 @@
                 }
             } catch (error) {
                 console.error(error);
-                alert('Terjadi kesalahan server.');
+                alert('Server Error.');
             } finally {
-                btn.innerText = 'Simpan'; 
-                btn.disabled = false;
+                btn.innerText = originalText; btn.disabled = false;
             }
         });
 
+        // --- DELETE ---
         async function deletePayment(id) {
-            if(!confirm('Yakin hapus metode ini?')) return;
+            if(!confirm('Hapus metode ini?')) return;
             try {
                 const res = await fetch(`${API_URL}/${id}`, {
                     method: 'DELETE',
@@ -273,15 +393,21 @@
             } catch (error) { alert('Gagal hapus.'); }
         }
 
+        // --- MODAL CONTROLS ---
         function openModal() { 
             document.getElementById('addModal').classList.add('show'); 
             document.getElementById('addForm').reset(); 
-            document.getElementById('previewBox').style.display = 'none';
+            document.getElementById('imgPreview').style.display = 'none';
             toggleFormMode(); 
         }
-
         function closeModal() { document.getElementById('addModal').classList.remove('show'); }
-        function logout() { if(confirm('Keluar dari Admin?')) { localStorage.removeItem('adminToken'); window.location.href = '/login.html'; } }
+        
+        function logout() { 
+            if(confirm('Keluar dari Admin?')) { 
+                localStorage.removeItem('adminToken'); 
+                window.location.href = '/login.html'; 
+            } 
+        }
     </script>
 </body>
 </html>

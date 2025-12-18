@@ -60,7 +60,6 @@
             box-shadow: 0 10px 30px -5px rgba(0,0,0,0.4);
             margin-bottom: 25px;
         }
-        /* Hiasan gerigi di atas struk */
         .receipt-card::before {
             content: ''; position: absolute; top: -5px; left: 0; right: 0; height: 10px;
             background: radial-gradient(circle, transparent 4px, #1e293b 5px);
@@ -78,7 +77,7 @@
             color: #4ade80; font-weight: 800; font-size: 1.4rem; 
             text-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
         }
-        /* --- 4. PAYMENT METHODS --- */
+        /* --- 4. PAYMENT METHODS (GRID FIX: FULL COVER) --- */
         .section-header { margin-bottom: 15px; }
         .sec-title { 
             font-size: 0.95rem; font-weight: 700; color: #e2e8f0; 
@@ -94,7 +93,8 @@
         .payment-method {
             display: flex; align-items: center; gap: 15px;
             background: rgba(30, 41, 59, 0.6); 
-            padding: 15px; border-radius: 16px;
+            padding: 12px; 
+            border-radius: 16px;
             border: 1px solid rgba(255,255,255,0.05);
             margin-bottom: 12px; cursor: pointer; transition: 0.3s;
             position: relative; overflow: hidden;
@@ -107,13 +107,55 @@
             background: rgba(74, 222, 128, 0.08);
             box-shadow: 0 0 20px rgba(74, 222, 128, 0.1);
         }
-        .method-icon { 
-            font-size: 1.5rem; color: #fff; width: 45px; height: 45px;
-            background: rgba(255,255,255,0.05); border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
+
+        /* --- REVISI FINAL: ICON FULL FILL 1:1 (Memenuhi Kotak) --- */
+        .method-icon {
+            /* Ukuran container tetap kotak */
+            width: 55px;
+            height: 55px;
+
+            /* Background transparan saja, karena akan tertutup gambar penuh */
+            background: transparent;
+
+            /* Sudut melengkung */
+            border-radius: 14px;
+
+            /* Centering hanya berguna untuk fallback icon (i), tidak untuk img */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            /* PENTING: overflow hidden agar sudut gambar terpotong mengikuti border-radius */
+            overflow: hidden;
+
+            /* PENTING SEKALI: Padding HARUS 0 agar gambar mepet ke pinggir */
+            padding: 0 !important;
+
+            flex-shrink: 0;
+            /* Shadow di luar container agar terlihat timbul */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            /* Border tipis sebagai bingkai luar */
+            border: 1px solid rgba(255,255,255,0.1);
         }
+
         .method-icon img {
-            width: 100%; height: 100%; object-fit: contain;
+            /* Paksa lebar dan tinggi 100% dari container */
+            width: 100%;
+            height: 100%;
+
+            /* PENTING: 'cover' akan memaksa gambar 1:1 Anda mengisi penuh seluruh area kotak.
+               Karena inputnya sudah 1:1, maka tidak akan ada yang terpotong. */
+            object-fit: cover;
+
+            display: block;
+            /* Hapus margin/padding bawaan image jika ada */
+            margin: 0;
+        }
+
+        /* Fallback untuk icon font (jika tidak ada gambar di database) */
+        .method-icon i {
+            font-size: 1.8rem;
+            color: #e2e8f0; /* Warna terang karena bg transparan/gelap */
         }
         
         .method-info { flex: 1; }
@@ -178,7 +220,7 @@
         .btn-confirm:disabled { 
             background: #334155; color: #64748b; cursor: not-allowed; box-shadow: none; 
         }
-        /* --- 7. MODALS (PRESERVED) --- */
+        /* --- 7. MODALS --- */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.9); z-index: 9999; display: none; 
@@ -186,6 +228,7 @@
         }
         .modal-overlay.show { display: flex; animation: zoomIn 0.3s ease; }
         
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .modal-box { 
             background: #1e293b; width: 100%; max-width: 350px; 
             border-radius: 24px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); 
@@ -204,6 +247,13 @@
             display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;
         }
         #qrisImage { width: 100%; max-width: 280px; border-radius: 15px; margin: 15px 0; border: 4px solid #fff; }
+
+        /* --- TAMBAHAN CSS KHUSUS UNTUK ICON POPUP REMINDER --- */
+        @keyframes iconPulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -217,7 +267,6 @@
             <a href="/ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <div class="header-title">Checkout Pesanan</div>
         </header>
-
         <main class="content-area">
             
             <div class="receipt-card">
@@ -237,19 +286,16 @@
                     <span class="total-value" id="dispPrice">Rp 0</span>
                 </div>
             </div>
-
             <div class="section-header">
                 <div class="sec-title">
                     <div class="sec-bar"></div> Metode Pembayaran
                 </div>
             </div>
-
             <div id="paymentMethodsContainer">
                 <p style="text-align:center; color:#64748b; margin-top:20px;">
                     <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat data...
                 </p>
             </div>
-
             <div class="section-header" style="margin-top: 30px;">
                 <div class="sec-title">
                     <div class="sec-bar" style="background:#10b981;"></div> Konfirmasi Bukti
@@ -262,12 +308,10 @@
                 <div class="upload-text">Ketuk untuk upload bukti transfer</div>
                 <img id="previewImg">
             </div>
-
             <p style="font-size:0.75rem; color:#94a3b8; text-align:center; margin-top:10px;">
                 *Pastikan nominal transfer sesuai dengan total tagihan.
             </p>
         </main>
-
         <div class="floating-bar">
             <div class="bar-total">
                 <span class="bar-label">Total Bayar:</span>
@@ -278,7 +322,7 @@
             </button>
         </div>
     </div>
-
+    
     <div id="adminModal" class="modal-overlay">
         <div class="modal-box">
             <i class="fa-brands fa-whatsapp" style="font-size: 3rem; color: #25D366; margin-bottom: 15px;"></i>
@@ -288,6 +332,30 @@
             <div id="adminListContainer" class="admin-list"></div>
             
             <button onclick="document.getElementById('adminModal').classList.remove('show')" style="width:100%; padding:12px; background:transparent; border:1px solid #64748b; color:#cbd5e1; border-radius:12px; margin-top:15px; cursor:pointer; font-weight:600;">Batal</button>
+        </div>
+    </div>
+
+    <div id="reminderModal" class="modal-overlay">
+        <div class="modal-box">
+            <div style="width:75px; height:75px; background: linear-gradient(135deg, rgba(74, 222, 128, 0.25), rgba(37, 211, 102, 0.1)); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px auto; box-shadow: 0 0 25px rgba(74, 222, 128, 0.25); border: 1px solid rgba(74, 222, 128, 0.4);">
+                <i class="fa-solid fa-file-circle-check" style="font-size: 2.5rem; color: #4ade80; animation: iconPulse 2s infinite ease-in-out;"></i>
+            </div>
+            
+            <h3 style="color:white; margin:0 0 10px 0;">Mohon Perhatian!</h3>
+            <p style="color:#cbd5e1; font-size:0.9rem; line-height:1.6; margin-bottom:25px;">
+                Sesaat setelah masuk ke WhatsApp, mohon <strong>Lampirkan FOTO BUKTI TRANSFER</strong> yang baru saja Anda upload agar pesanan bisa diproses.
+            </p>
+            
+            <div style="display:flex; gap:10px;">
+                <button onclick="document.getElementById('reminderModal').classList.remove('show')" 
+                    style="flex:1; background:transparent; border:1px solid #64748b; color:#cbd5e1; padding:12px; border-radius:12px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
+                    Cek Lagi
+                </button>
+                <button id="btnProceedWA" 
+                    style="flex:1.5; background: linear-gradient(to right, #25D366, #16a34a); color:white; border:none; padding:12px; border-radius:12px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); transition:0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                    Lanjut WA <i class="fa-brands fa-whatsapp"></i>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -309,22 +377,20 @@
         let transaction = null;
         let selectedMethod = null;
         let adminContacts = [];
+        let targetAdminPhone = null; 
 
         document.addEventListener('DOMContentLoaded', async () => {
             const rawData = localStorage.getItem('currentTransaction');
             if (!rawData) { alert('Data transaksi hilang.'); window.location.href = '/ppob.html'; return; }
             transaction = JSON.parse(rawData);
-
-            // Update Text di Receipt Card
+            
             document.getElementById('dispProduct').innerText = transaction.productName;
             document.getElementById('dispNumber').innerText = transaction.customerNumber;
             const formattedPrice = 'Rp ' + new Intl.NumberFormat('id-ID').format(transaction.productPrice);
             document.getElementById('dispPrice').innerText = formattedPrice;
             
-            // Update Text di Floating Bar (New)
             const floatPrice = document.getElementById('dispPriceFloat');
             if(floatPrice) floatPrice.innerText = formattedPrice;
-
             await loadPaymentMethods();
             await loadAdmins();
         });
@@ -332,7 +398,6 @@
         async function loadPaymentMethods() {
             const container = document.getElementById('paymentMethodsContainer');
             try {
-                // Tambah timestamp agar gambar icon selalu fresh (tidak cache lama)
                 const res = await fetch(`${API_URL}/payments?t=${new Date().getTime()}`);
                 const methods = await res.json();
                 
@@ -340,11 +405,8 @@
                 const groups = { bank: [], ewallet: [], qris: [] };
                 
                 methods.forEach(m => { 
-                    // Filter yang isActive saja
-                    // Pastikan struktur data API sesuai
-                    groups[m.type].push(m); 
+                    if(m.isActive) groups[m.type].push(m); 
                 });
-
                 if (groups.qris.length > 0) renderGroup(container, 'Scan QRIS', groups.qris);
                 if (groups.bank.length > 0) renderGroup(container, 'Transfer Bank', groups.bank);
                 if (groups.ewallet.length > 0) renderGroup(container, 'E-Wallet', groups.ewallet);
@@ -358,21 +420,20 @@
             let html = `<div class="method-group"><span class="method-label">${title}</span>`;
             
             items.forEach(m => {
-                let iconHtml = '<i class="fa-solid fa-building-columns"></i>';
-                if(m.type === 'ewallet') iconHtml = '<i class="fa-solid fa-wallet"></i>';
-                if(m.type === 'qris') iconHtml = '<i class="fa-solid fa-qrcode"></i>';
+                // LOGIC ICON GAMBAR PRESISI (FULL COVER)
+                let iconHtml = '<i class="fa-solid fa-building-columns" style="color:#0f172a;"></i>';
                 
-                // --- FIX: TAMPILKAN GAMBAR ICON DARI CLOUDINARY ---
-                if(m.icon) {
-                    iconHtml = `<img src="${m.icon}" style="width:100%; height:100%; object-fit:contain;" onerror="this.style.display='none'">`;
+                if(m.icon && m.icon.trim() !== "") {
+                    // Update: object-fit cover agar full kotak
+                    iconHtml = `<img src="${m.icon}" alt="${m.name}">`;
+                } else {
+                    if(m.type === 'ewallet') iconHtml = '<i class="fa-solid fa-wallet" style="color:#0f172a;"></i>';
+                    if(m.type === 'qris') iconHtml = '<i class="fa-solid fa-qrcode" style="color:#0f172a;"></i>';
                 }
-
                 let desc = `${m.number} a.n ${m.holder}`;
                 if (m.type === 'qris') desc = 'Ketuk untuk melihat QR Code';
                 
-                // Gunakan onclick dengan JSON.stringify yang aman (replace quote)
                 const jsonData = JSON.stringify(m).replace(/"/g, '&quot;');
-
                 html += `
                 <div class="payment-method" onclick="selectMethod(this, ${jsonData})">
                     <div class="method-icon">${iconHtml}</div>
@@ -395,10 +456,8 @@
             
             selectedMethod = methodData;
             checkForm();
-
             if (methodData.type === 'qris') {
                 document.getElementById('qrisName').innerText = methodData.name;
-                // Pastikan gambar QRIS juga dari Cloudinary
                 document.getElementById('qrisImage').src = methodData.icon;
                 document.getElementById('qrisModal').classList.add('show');
             }
@@ -437,7 +496,6 @@
 
         async function loadAdmins() {
             try {
-                // Gunakan timestamp untuk hindari cache
                 const res = await fetch(`${API_URL}/settings?t=${new Date().getTime()}`);
                 const settings = await res.json();
                 
@@ -456,7 +514,8 @@
                 adminContacts.forEach(admin => {
                     const div = document.createElement('div');
                     div.className = 'admin-item';
-                    div.onclick = () => sendOrder(admin.phone);
+                    // SAAT DIKLIK, BUKA REMINDER DULU, BUKAN LANGSUNG WA
+                    div.onclick = () => showReminder(admin.phone);
                     div.innerHTML = `
                         <div class="admin-avatar"><i class="fa-brands fa-whatsapp"></i></div>
                         <div style="flex:1;">
@@ -470,14 +529,24 @@
         }
 
         function openAdminModal() { document.getElementById('adminModal').classList.add('show'); }
+        
+        // --- LOGIC REMINDER POPUP (UPDATED) ---
+        function showReminder(phone) {
+            targetAdminPhone = phone; 
+            document.getElementById('adminModal').classList.remove('show'); 
+            document.getElementById('reminderModal').classList.add('show'); 
+        }
 
-        async function sendOrder(phone) {
+        document.getElementById('btnProceedWA').addEventListener('click', () => {
+             proceedToWhatsapp(targetAdminPhone);
+        });
+
+        async function proceedToWhatsapp(phone) {
             const productLine = transaction.productName;
             const targetLine = transaction.customerNumber;
             const priceLine = new Intl.NumberFormat('id-ID').format(transaction.productPrice);
             const methodLine = `${selectedMethod.name} ${selectedMethod.type !== 'qris' ? '' : '(Scan QR)'}`;
-
-            // FORMAT PESAN WHATSAPP YANG RAPI
+            
             const message = `Halo Admin, konfirmasi pesanan baru:
 =========================
 *RINCISAN PESANAN*
@@ -490,19 +559,15 @@
 -------------------------
  Metode  : ${methodLine}
  Bukti   : *Terlampir di chat ini*
-
 Mohon segera diproses ya Min. Terima kasih!`;
-
+            
             const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
             
-            // Redirect ke WA
             window.open(url, '_blank');
             
-            // Redirect User kembali ke Home setelah beberapa detik
             setTimeout(() => { 
-                alert('Jangan lupa lampirkan gambar bukti transfer di WhatsApp ya!');
                 window.location.href = '/ppob.html'; 
-            }, 2000);
+            }, 1000);
         }
     </script>
 </body>
