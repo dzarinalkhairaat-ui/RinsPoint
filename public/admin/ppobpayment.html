@@ -25,7 +25,7 @@
             max-width: 480px; margin: 0 auto; min-height: 100vh;
             position: relative;
             background: #0f172a;
-            /* PENTING: Padding agar konten tidak tertutup Header/Navbar Fixed */
+            /* Padding atas/bawah agar konten tidak tertutup fixed header/navbar */
             padding-top: 80px; 
             padding-bottom: 100px; 
             box-sizing: border-box;
@@ -37,19 +37,20 @@
             background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0f172a 100%);
         }
 
-        /* --- 2. HEADER FIXED (DIJAMIN FULL) --- */
+        /* --- 2. HEADER FIXED (FULL WIDTH & LEBIH RAPAT) --- */
         .glass-header {
             position: fixed; top: 0; 
-            /* Trik Centering Fixed Element: */
             left: 50%; transform: translateX(-50%);
             width: 100%; max-width: 480px;
             
-            padding: 20px 24px; box-sizing: border-box;
+            /* PADDING DIKURANGI AGAR LEBIH LEGA (15px) */
+            padding: 20px 15px; 
+            box-sizing: border-box;
             background: rgba(15, 23, 42, 0.95); 
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
             display: flex; align-items: center; justify-content: space-between;
-            z-index: 1000; /* Paling atas */
+            z-index: 1000;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         .page-title { font-size: 1.1rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; }
@@ -60,16 +61,17 @@
             color: #fff; text-decoration: none; transition: 0.3s;
         }
 
-        /* --- 3. LIST CONTENT --- */
+        /* --- 3. LIST CONTENT (PADDING DIKURANGI) --- */
         .content-area { 
-            padding: 20px 24px; 
+            /* PADDING DIKURANGI DARI 24px JADI 15px */
+            padding: 20px 15px; 
             width: 100%; box-sizing: border-box;
         }
         
         .payment-card {
             background: rgba(30, 41, 59, 0.6); 
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px; padding: 15px; margin-bottom: 15px;
+            border-radius: 16px; padding: 15px; margin-bottom: 12px; /* Jarak antar kartu dirapatkan sedikit */
             display: flex; align-items: center; gap: 15px;
             position: relative; overflow: hidden; transition: transform 0.3s;
         }
@@ -97,10 +99,11 @@
             display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
 
-        /* --- 4. FLOATING ADD BUTTON --- */
+        /* --- 4. FLOATING ADD BUTTON (POSISI DISESUAIKAN) --- */
         .fab-add {
-            position: fixed; bottom: 100px; right: 24px;
-            /* Pastikan FAB tetap di dalam area max-width */
+            position: fixed; bottom: 100px; 
+            /* Jarak kanan disesuaikan jadi 15px agar lurus dengan konten */
+            right: 15px; 
             margin-right: max(0px, calc((100vw - 480px) / 2));
             
             width: 55px; height: 55px; border-radius: 50%;
@@ -116,13 +119,10 @@
             100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
         }
 
-        /* --- 5. BOTTOM NAVBAR FIXED (FULL & SERASI) --- */
+        /* --- 5. BOTTOM NAVBAR FIXED --- */
         .bottom-nav {
-            position: fixed; bottom: 0; 
-            /* Trik Centering Fixed Element: */
-            left: 50%; transform: translateX(-50%);
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
             width: 100%; max-width: 480px;
-            
             height: 70px;
             background: rgba(15, 23, 42, 0.95); 
             backdrop-filter: blur(15px);
@@ -144,7 +144,7 @@
         /* --- 6. MODAL FORM --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 2000; /* Z-index harus tertinggi */
+            background: rgba(0,0,0,0.85); z-index: 2000;
             display: none; justify-content: center; align-items: center; padding: 20px;
             backdrop-filter: blur(5px);
         }
