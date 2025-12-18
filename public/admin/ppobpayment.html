@@ -37,13 +37,13 @@
             background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0f172a 100%);
         }
 
-        /* --- 2. HEADER FIXED (FULL WIDTH & LEBIH RAPAT) --- */
+        /* --- 2. HEADER FIXED (FULL WIDTH) --- */
         .glass-header {
             position: fixed; top: 0; 
             left: 50%; transform: translateX(-50%);
             width: 100%; max-width: 480px;
             
-            /* PADDING DIKURANGI AGAR LEBIH LEGA (15px) */
+            /* Padding header disamakan dengan konten agar lurus */
             padding: 20px 15px; 
             box-sizing: border-box;
             background: rgba(15, 23, 42, 0.95); 
@@ -61,9 +61,9 @@
             color: #fff; text-decoration: none; transition: 0.3s;
         }
 
-        /* --- 3. LIST CONTENT (PADDING DIKURANGI) --- */
+        /* --- 3. LIST CONTENT (PADDING DIPERBAIKI: 15px) --- */
         .content-area { 
-            /* PADDING DIKURANGI DARI 24px JADI 15px */
+            /* REVISI: Ubah 24px jadi 15px agar kartu lebih lebar */
             padding: 20px 15px; 
             width: 100%; box-sizing: border-box;
         }
@@ -71,7 +71,7 @@
         .payment-card {
             background: rgba(30, 41, 59, 0.6); 
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px; padding: 15px; margin-bottom: 12px; /* Jarak antar kartu dirapatkan sedikit */
+            border-radius: 16px; padding: 15px; margin-bottom: 12px;
             display: flex; align-items: center; gap: 15px;
             position: relative; overflow: hidden; transition: transform 0.3s;
         }
@@ -99,11 +99,11 @@
             display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
 
-        /* --- 4. FLOATING ADD BUTTON (POSISI DISESUAIKAN) --- */
+        /* --- 4. FLOATING ADD BUTTON --- */
         .fab-add {
             position: fixed; bottom: 100px; 
-            /* Jarak kanan disesuaikan jadi 15px agar lurus dengan konten */
-            right: 15px; 
+            /* Jarak kanan disesuaikan jadi 20px agar aman */
+            right: 20px; 
             margin-right: max(0px, calc((100vw - 480px) / 2));
             
             width: 55px; height: 55px; border-radius: 50%;
