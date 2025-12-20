@@ -289,6 +289,7 @@
                             <option value="Ovo">Ovo</option>
                             <option value="Gopay">Gopay</option>
                             <option value="ShopeePay">ShopeePay</option>
+                            <option value="LinkAja">LinkAja</option>
                         </optgroup>
                         <optgroup label="GAME">
                             <option value="Mobile Legend">Mobile Legend</option>
@@ -368,7 +369,8 @@
             if(categoryQuery) {
                 const q = categoryQuery.toLowerCase();
                 if (q === 'e-wallet') { 
-                    catMatch = ['dana','ovo','gopay','shopeepay'].some(c => catName.includes(c)); 
+                    // UPDATED: Added 'linkaja' to filter logic
+                    catMatch = ['dana','ovo','gopay','shopeepay','linkaja'].some(c => catName.includes(c)); 
                 } else if (q === 'game') { 
                     catMatch = ['mobile legend','pubg','free fire','roblox'].some(c => catName.includes(c)); 
                 } else {
@@ -473,7 +475,7 @@
                     iconClass = 'fa-mobile-screen'; iconColor = '#60a5fa'; // Biru
                 } else if (lowerCat.includes('data') || lowerCat.includes('internet') || lowerCat.includes('kuota')) {
                     iconClass = 'fa-wifi'; iconColor = '#34d399'; // Hijau Laut
-                } else if (lowerCat.includes('dana') || lowerCat.includes('ovo') || lowerCat.includes('gopay') || lowerCat.includes('shopee') || lowerCat.includes('wallet')) {
+                } else if (lowerCat.includes('dana') || lowerCat.includes('ovo') || lowerCat.includes('gopay') || lowerCat.includes('shopee') || lowerCat.includes('wallet') || lowerCat.includes('linkaja')) { // UPDATED: Added linkaja
                     iconClass = 'fa-wallet'; iconColor = '#a78bfa'; // Ungu
                 } else if (lowerCat.includes('google') || lowerCat.includes('voucher')) {
                     iconClass = 'fa-ticket'; iconColor = '#f87171'; // Merah
