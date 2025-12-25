@@ -50,7 +50,12 @@ body {
     position: sticky; top: 0; z-index: 50;
     background: rgba(2, 6, 23, 0.9); border-bottom: 1px solid rgba(0, 170, 19, 0.2);
 }
-.btn-back { color: #fff; font-size: 1.2rem; text-decoration: none; }
+.btn-back { 
+    width: 38px; height: 38px; border-radius: 12px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; text-decoration: none; transition: 0.3s
+ }
 .page-title { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; color: #fff; }
 .header-logo { color: #00AA13; font-size: 1.4rem; }
 
@@ -116,8 +121,8 @@ body {
     content: '\f058'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
     position: absolute; top: 10px; right: 10px; color: #00AA13;
 }
-.nom-title { font-size: 1.1rem; font-weight: 700; color: #fff; display: block; }
-.nom-price { font-size: 0.85rem; color: #4ade80; margin-top: 5px; display: block; }
+.nom-title { font-size: 0.90rem; font-weight: 700; color: #fff; display: block; }
+.nom-price { font-size: 1.1rem; color: #4ade80; margin-top: 5px; display: block; }
 
 /* 6. BUTTON BAYAR */
 .btn-wrapper { margin-top: 30px; width: 100%; }

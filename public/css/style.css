@@ -396,7 +396,7 @@ button { font-family: inherit; }
     font-size: 1.3rem;
 }
 
-/* --- TOMBOL CLOSE (X) - FIXED POSITION & BACKGROUND --- */
+/* --- TOMBOL CLOSE (X) - PERFECT CENTER --- */
 .btn-close-modal {
     /* Posisi Mutlak di Pojok Kanan Atas */
     position: absolute;
@@ -408,30 +408,41 @@ button { font-family: inherit; }
     height: 36px;
     
     /* Background & Glass Effect */
-    background: rgba(255, 255, 255, 0.1); /* Background transparan terang */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Border tipis */
+    background: rgba(255, 255, 255, 0.1); 
+    border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(4px);
-    border-radius: 50%; /* Bentuk Bulat */
+    border-radius: 50%; 
     
-    /* Layout Icon Tengah */
+    /* --- TEKNIK CENTER PRESISI --- */
     display: flex; 
-    align-items: center; 
-    justify-content: center;
+    align-items: center; /* Tengah Vertikal */
+    justify-content: center; /* Tengah Horizontal */
+    padding: 0; /* Hapus padding default */
+    margin: 0;
     
     /* Warna Icon */
     color: #cbd5e1; 
-    font-size: 1.1rem;
+    font-size: 1.1rem; /* Ukuran icon */
+    line-height: 1; /* Reset tinggi baris agar tidak geser ke bawah */
     cursor: pointer;
     z-index: 10;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Shadow halus */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Pastikan Icon di dalamnya tidak punya margin liar */
+.btn-close-modal i {
+    margin: 0;
+    padding: 0;
+    line-height: 0; /* Trik agar icon font benar-benar di tengah */
 }
 
 /* Efek saat ditekan/hover */
 .btn-close-modal:active, .btn-close-modal:hover {
-    background: rgba(239, 68, 68, 0.2); /* Merah transparan saat disentuh */
-    color: #ef4444; /* Icon jadi merah */
-    transform: scale(0.95); /* Efek tekan */
+    background: rgba(239, 68, 68, 0.2); 
+    color: #ef4444; 
+    transform: scale(0.95); 
+    border-color: rgba(239, 68, 68, 0.3);
     border-color: rgba(239, 68, 68, 0.3);
 }
 

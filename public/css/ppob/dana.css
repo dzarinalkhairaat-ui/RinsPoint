@@ -43,7 +43,12 @@ body {
     background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
-.btn-back { color: #fff; font-size: 1.2rem; text-decoration: none; }
+.btn-back { 
+    width: 38px; height: 38px; border-radius: 12px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; text-decoration: none; transition: 0.3s
+ }
 .page-title { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.5px; }
 
 /* 3. HERO: GLASS CARD */
@@ -113,8 +118,8 @@ body {
     content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
     position: absolute; top: 10px; right: 10px; color: #118eea; font-size: 0.8rem;
 }
-.nom-value { font-size: 1.1rem; font-weight: 700; color: #fff; display: block; }
-.nom-price { font-size: 0.85rem; color: #94a3b8; margin-top: 4px; display: block; }
+.nom-value { font-size: 1rem; font-weight: 700; color: #fff; display: block; }
+.nom-price { font-size: 1.1rem; color: #3b82f6; margin-top: 4px; display: block; }
 .nominal-item.selected .nom-price { color: #118eea; }
 
 /* 6. BUTTON BAYAR */

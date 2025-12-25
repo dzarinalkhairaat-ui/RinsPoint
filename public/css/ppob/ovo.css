@@ -48,7 +48,12 @@ body {
     background: rgba(46, 16, 101, 0.8); backdrop-filter: blur(15px);
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
-.btn-back { color: #e9d5ff; font-size: 1.2rem; text-decoration: none; transition: 0.2s; }
+.btn-back { 
+    width: 38px; height: 38px; border-radius: 12px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; text-decoration: none; transition: 0.3s
+ }
 .page-title { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; color: #fff; }
 .header-icon { color: #a78bfa; font-size: 1.2rem; }
 
@@ -128,8 +133,8 @@ body {
     background: #a78bfa; color: #2e1065;
     padding: 2px 8px; border-radius: 0 0 0 10px; font-size: 0.7rem;
 }
-.amount { font-size: 1.15rem; font-weight: 700; color: #fff; display: block; }
-.price { font-size: 0.85rem; color: #a78bfa; margin-top: 4px; display: block; }
+.amount { font-size: 1rem; font-weight: 700; color: #fff; display: block; }
+.price { font-size: 1.1rem; color: #a78bfa; margin-top: 4px; display: block; }
 .grid-item.selected .price { color: #fff; }
 
 /* 7. BUTTON BAYAR */
