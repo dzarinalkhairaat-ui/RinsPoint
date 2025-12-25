@@ -1,0 +1,140 @@
+/* --- STYLE KHUSUS HALAMAN TOP UP DANA --- */
+
+/* 1. RESET & ANIMATED BACKGROUND */
+html { height: 100%; background: #0f172a; }
+body { 
+    margin: 0; min-height: 100%; color: #fff; font-family: 'Poppins', sans-serif;
+    overflow-x: hidden; position: relative;
+    background-color: #0f172a;
+}
+
+/* Background Abstrak */
+.bg-shapes {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+    overflow: hidden;
+}
+.shape {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); opacity: 0.6;
+    animation: floatShape 10s infinite alternate;
+}
+.shape-1 { width: 300px; height: 300px; background: #118eea; top: -50px; left: -100px; }
+.shape-2 { width: 250px; height: 250px; background: #3b82f6; bottom: 10%; right: -50px; animation-duration: 15s; }
+.shape-3 { width: 150px; height: 150px; background: #06b6d4; top: 40%; left: 30%; animation-duration: 12s; opacity: 0.4; }
+
+@keyframes floatShape {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(30px, 50px) scale(1.1); }
+}
+
+.mobile-container {
+    max-width: 480px; margin: 0 auto; min-height: 100vh;
+    display: flex; flex-direction: column; position: relative;
+    background: rgba(15, 23, 42, 0.7); 
+    backdrop-filter: blur(20px); 
+    border-left: 1px solid rgba(255,255,255,0.05);
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+/* 2. HEADER TRANSPARAN */
+.app-header {
+    padding: 20px; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.btn-back { color: #fff; font-size: 1.2rem; text-decoration: none; }
+.page-title { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.5px; }
+
+/* 3. HERO: GLASS CARD */
+.hero-section { padding: 25px 20px; }
+.glass-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px; padding: 25px;
+    position: relative; overflow: hidden;
+    box-shadow: 0 8px 32px 0 rgba(17, 142, 234, 0.15);
+}
+.glass-card::before {
+    content: ''; position: absolute; top: 0; left: -50%; width: 100%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+    transform: skewX(-25deg); animation: shine 6s infinite;
+}
+@keyframes shine { 
+    0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } 
+}
+.card-top { display: flex; justify-content: space-between; align-items: start; margin-bottom: 30px; }
+.dana-logo { width: 80px; filter: brightness(0) invert(1); } 
+.chip-img { width: 35px; opacity: 0.8; }
+
+.card-bottom h3 { margin: 0; font-size: 0.8rem; color: #94a3b8; font-weight: 400; text-transform: uppercase; }
+.card-bottom .balance-text { font-size: 1.4rem; font-weight: 700; color: #fff; letter-spacing: 1px; margin-top: 5px; }
+
+/* 4. INPUT FORM */
+.input-section { padding: 0 20px 20px 20px; }
+.input-wrapper {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px; padding: 5px 15px;
+    display: flex; align-items: center; gap: 10px;
+    transition: 0.3s;
+}
+.input-wrapper:focus-within {
+    border-color: #118eea; background: rgba(17, 142, 234, 0.1);
+    box-shadow: 0 0 15px rgba(17, 142, 234, 0.2);
+}
+.prefix { color: #94a3b8; font-weight: 500; padding-right: 10px; border-right: 1px solid rgba(255,255,255,0.1); }
+.dana-input {
+    width: 100%; background: transparent; border: none; outline: none;
+    color: #fff; font-size: 1.1rem; font-weight: 600; padding: 10px 0; letter-spacing: 1px;
+}
+.contact-btn { color: #118eea; font-size: 1.2rem; cursor: pointer; }
+
+/* 5. NOMINAL GRID */
+.grid-section { padding: 10px 20px 120px 20px; }
+.section-label { color: #cbd5e1; font-size: 0.9rem; margin-bottom: 15px; font-weight: 500; }
+
+.nominal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.nominal-item {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 14px; padding: 15px;
+    cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative; overflow: hidden;
+}
+.nominal-item:hover { transform: translateY(-2px); background: rgba(30, 41, 59, 0.8); }
+
+.nominal-item.selected {
+    background: linear-gradient(135deg, rgba(17, 142, 234, 0.2), rgba(17, 142, 234, 0.05));
+    border-color: #118eea;
+    box-shadow: 0 0 20px rgba(17, 142, 234, 0.15);
+}
+.nominal-item.selected::after {
+    content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+    position: absolute; top: 10px; right: 10px; color: #118eea; font-size: 0.8rem;
+}
+.nom-value { font-size: 1.1rem; font-weight: 700; color: #fff; display: block; }
+.nom-price { font-size: 0.85rem; color: #94a3b8; margin-top: 4px; display: block; }
+.nominal-item.selected .nom-price { color: #118eea; }
+
+/* 6. BUTTON BAYAR */
+.pay-container { margin-top: 30px; width: 100%; }
+.btn-pay {
+    width: 100%; padding: 16px; border: none; border-radius: 14px;
+    background: #118eea; color: #fff;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    box-shadow: 0 5px 20px rgba(17, 142, 234, 0.4);
+    transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.btn-pay:active { transform: scale(0.98); }
+.btn-pay:disabled {
+    background: #334155; color: #64748b; box-shadow: none; cursor: not-allowed; opacity: 0.7;
+}
+
+/* Banner Toko Tutup */
+.store-closed-banner {
+    background: rgba(17, 142, 234, 0.15); border: 1px dashed #118eea; color: #118eea;
+    padding: 20px; border-radius: 12px; text-align: center; font-weight: 600;
+    margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
+}
+.store-closed-banner i { font-size: 2rem; margin-bottom: 10px; }

@@ -7,220 +7,10 @@
     
     <link rel="stylesheet" href="css/style.css">
     
+    <link rel="stylesheet" href="css/pages/ppob.css">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        /* --- 1. GLOBAL SETTINGS --- */
-        html { height: 100%; background: #0f172a; }
-        body { 
-            margin: 0; min-height: 100%; color: #fff; font-family: 'Poppins', sans-serif;
-            overflow-x: hidden; position: relative;
-            background-color: #0f172a;
-        }
-
-        /* Background Aurora Abstrak */
-        .aurora-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: #0f172a; overflow: hidden;
-        }
-        .blob {
-            position: absolute; filter: blur(80px); opacity: 0.4;
-            animation: floatBlob 15s infinite alternate; border-radius: 50%;
-        }
-        .b1 { top: -20%; right: -20%; width: 400px; height: 400px; background: #4f46e5; }
-        .b2 { bottom: 10%; left: -10%; width: 300px; height: 300px; background: #0ea5e9; animation-duration: 20s; }
-        
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(-30px, 50px) scale(1.1); }
-        }
-
-        .mobile-container {
-            max-width: 480px; margin: 0 auto; min-height: 100vh;
-            display: flex; flex-direction: column; position: relative;
-            background: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(12px);
-            padding-bottom: 100px; /* Space untuk navbar */
-        }
-
-        /* --- 2. HEADER SIMPEL (HIJAU & TEXT ONLY) --- */
-        .simple-header {
-            position: sticky; top: 0; z-index: 50;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding: 15px 0;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
-
-        .header-title-text {
-            font-size: 1.1rem; font-weight: 800; letter-spacing: 1px;
-            margin: 0;
-            /* Warna Hijau Tema */
-            color: #4ade80; 
-            text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
-        }
-
-        /* --- NEW: BANNER GIF SECTION --- */
-        .promo-banner-area {
-            padding: 20px 20px 5px 20px; /* Padding atas bawah */
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .banner-slider {
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none; /* Firefox */
-            border-radius: 16px;
-        }
-        .banner-slider::-webkit-scrollbar { display: none; /* Chrome */ }
-        
-        .banner-card {
-            min-width: 100%; /* Satu banner full lebar container */
-            border-radius: 16px;
-            overflow: hidden;
-            scroll-snap-align: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            position: relative;
-            /* Rasio Aspek Banner (Misal 2.5:1) - Sesuaikan dengan GIF Anda */
-            aspect-ratio: 2.5 / 1; 
-            background: rgba(30, 41, 59, 0.5); /* Placeholder color */
-        }
-        
-        .banner-card img {
-            width: 100%; height: 100%; 
-            object-fit: cover; /* Memenuhi kotak */
-            display: block;
-        }
-
-        /* --- 3. MENU SECTIONS --- */
-        .section-header { padding: 10px 20px 5px 20px; margin-top: 10px; }
-        
-        .sec-title { 
-            font-size: 0.9rem; font-weight: 700; color: #e2e8f0; 
-            display: flex; align-items: center;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        
-        /* GARIS VERTIKAL (BERDIRI) */
-        .sec-bar { 
-            height: 18px; width: 4px;
-            background: #3b82f6; 
-            border-radius: 4px; 
-            margin-right: 12px;
-        }
-
-        /* Grid System */
-        .ppob-grid {
-            display: grid !important;
-            grid-template-columns: repeat(4, 1fr) !important; 
-            gap: 20px 10px !important;
-            padding: 0 20px !important;
-            margin-bottom: 15px !important;
-        }
-
-        .ppob-item {
-            display: flex !important; flex-direction: column !important; 
-            align-items: center !important; text-decoration: none !important;
-            cursor: pointer !important; transition: transform 0.2s !important;
-        }
-        .ppob-item:active { transform: scale(0.95) !important; }
-
-        /* Icon Box Default (Untuk FontAwesome) */
-        .icon-box {
-            width: 58px !important; height: 58px !important;
-            background: rgba(30, 41, 59, 0.6) !important; 
-            border: 1px solid rgba(255,255,255,0.08) !important;
-            border-radius: 18px !important; 
-            display: flex !important; align-items: center !important; justify-content: center !important;
-            margin-bottom: 8px !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
-            position: relative !important; overflow: hidden !important;
-        }
-        
-        .icon-box i { font-size: 1.6rem !important; }
-        .pulsa-ico { color: #facc15; }
-        .data-ico { color: #38bdf8; }
-        .pln-ico { color: #fbbf24; }
-        .lain-ico { color: #94a3b8; }
-
-        /* Icon Box Khusus Gambar (Full Cover) */
-        .icon-box.img-box {
-            background: transparent !important; /* Hapus background warna */
-            border: none !important; /* Hapus border jika gambar full */
-            padding: 0 !important;
-        }
-
-        /* Image Icons Full Size */
-        .full-icon-img { 
-            width: 100% !important; height: 100% !important; 
-            object-fit: cover !important; /* Memenuhi kotak */
-            border-radius: 18px !important; 
-            display: block !important;
-        }
-
-        .ppob-item span {
-            font-size: 0.75rem !important; color: #cbd5e1 !important; text-align: center !important;
-            font-weight: 500 !important; line-height: 1.3 !important;
-            white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; max-width: 100% !important;
-        }
-
-        /* --- 4. POPUP MODAL (RGB BORDER) --- */
-        .confirm-modal {
-            position: fixed !important; top: 0 !important; left: 0 !important;
-            width: 100% !important; height: 100% !important;
-            background: rgba(0, 0, 0, 0.9) !important;
-            backdrop-filter: blur(15px) !important;
-            z-index: 9999 !important;
-            display: none; justify-content: center !important; align-items: center !important;
-            padding: 20px !important;
-        }
-        .confirm-modal.show-flex { display: flex !important; animation: zoomIn 0.4s ease; }
-        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-        /* RGB Border Wrapper */
-        .rgb-wrapper {
-            position: relative; padding: 2px; border-radius: 26px; 
-            background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff);
-            background-size: 400%; animation: rgbFlow 5s linear infinite;
-            width: 100%; max-width: 360px;
-        }
-        .rgb-wrapper::before {
-            content: ''; position: absolute; inset: -2px;
-            background: inherit; background-size: 400%; z-index: -1; filter: blur(15px); opacity: 0.5;
-            border-radius: 30px; animation: rgbFlow 5s linear infinite;
-        }
-        @keyframes rgbFlow { 0% { background-position: 0%; } 100% { background-position: 400%; } }
-
-        .confirm-box {
-            background: #0f172a !important; border-radius: 24px !important; padding: 35px 25px !important;
-            text-align: center !important; position: relative !important;
-        }
-
-        .modal-icon-wrap {
-            width: 80px; height: 80px; margin: 0 auto 20px auto;
-            background: rgba(255, 255, 255, 0.05); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .btn-full {
-            width: 100% !important; padding: 15px !important;
-            border-radius: 12px !important; font-weight: 700 !important;
-            font-size: 0.95rem !important; cursor: pointer !important; border: none !important;
-            margin-bottom: 12px !important; transition: 0.2s !important;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn-glow { background: #fff !important; color: #000 !important; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3) !important; }
-        .btn-ghost { background: transparent !important; color: #94a3b8 !important; border: 1px solid #334155 !important; }
-
-    </style>
 </head>
 <body>
 
@@ -242,8 +32,9 @@
                     <div class="banner-card">
                         <img src="assets/banner-gif/banner.gif" alt="Promo PPOB" onerror="this.style.display='none'">
                     </div>
-                    </div>
+                </div>
             </div>
+
             <div class="section-header">
                 <div class="sec-title" style="color: #60a5fa;">
                     <div class="sec-bar" style="background:#60a5fa;"></div> ISI ULANG & TAGIHAN
@@ -300,12 +91,11 @@
                 </a>
                 
                 <a href="ppob/linkaja.html" class="ppob-item">
-                    <div class="icon-box" style="border-color: rgba(225, 29, 72, 0.3) !important;">
-                        <i class="fa-solid fa-wallet" style="color: #e11d48; font-size: 1.6rem;"></i>
+                    <div class="icon-box img-box">
+                        <img src="assets/icons/LinkAja.png" class="full-icon-img" alt="Shopee">
                     </div>
                     <span>LinkAja</span>
                 </a>
-
             </div>
 
             <div class="section-header">

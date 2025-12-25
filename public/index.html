@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RinsPoint - Toko Serba Ada</title>
     
-    <link rel="stylesheet" href="css/style.css?v=PRODUCT_MARGIN_FIX">
+    <link rel="stylesheet" href="css/style.css?v=CLEAN_MIGRATION">
+    
+    <link rel="stylesheet" href="css/pages/home.css">
+
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
     <link rel="apple-touch-icon" href="/assets/images/icon.png">
@@ -13,65 +16,6 @@
     <script src="/js/pwa-register.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* --- LAYOUT BANNER MANUAL --- */
-        .hero-section {
-            width: 100%;
-            margin-bottom: 15px; 
-            padding: 15px 15px 0 15px; 
-            box-sizing: border-box;
-        }
-        
-        .static-banner {
-            width: 100%;
-            height: auto; 
-            display: block;
-            border-radius: 15px; 
-            
-            /* --- UPDATE: SHADOW HIJAU (GLOW EFFECT) --- */
-            /* Menggunakan RGB dari #4ade80 (74, 222, 128) */
-            box-shadow: 0 10px 30px -5px rgba(74, 222, 128, 0.4), 
-                        0 5px 15px -3px rgba(74, 222, 128, 0.2);
-            
-            /* Border tipis hijau transparan agar makin menyatu */
-            border: 1px solid rgba(74, 222, 128, 0.2);
-        }
-
-        /* --- PERBAIKAN JARAK PRODUK (FINAL) --- */
-        .latest-products-section {
-            width: 100%;
-            padding: 0 15px; 
-            box-sizing: border-box;
-            margin-bottom: 80px; 
-        }
-        
-        .latest-products-section .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            margin-top: 10px;
-            padding: 0 2px; 
-        }
-
-        /* --- CSS GRID PRODUK --- */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 15px; 
-            width: 100%;
-        }
-        
-        .product-card {
-            background: #fff; 
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            width: 100%; 
-            box-sizing: border-box;
-        }
-    </style>
 </head>
 <body>
     <div class="mobile-container">
@@ -83,6 +27,7 @@
                 <input type="text" id="homeSearchInput" placeholder="Cari produk...">
             </div>
         </header>
+
         <main class="home-page">
             
             <div class="hero-section">
@@ -94,6 +39,7 @@
                     <p style="padding:1rem; color:#94a3b8;">Loading...</p>
                 </div>
             </div>
+
             <div class="latest-products-section">
                 <div class="section-header">
                     <h3>Terbaru</h3>
@@ -103,7 +49,9 @@
                     <p style="color:#64748b; padding:1rem;">Memuat produk...</p>
                 </div>
             </div>
+
         </main>
+
         <footer class="main-footer">
             <div class="footer-logo"><span style="color:#4ade80;">Rins</span>Point</div>
             <div class="social-links">
@@ -114,6 +62,7 @@
             <div class="footer-menu"><a href="about.html">Tentang Kami</a><a href="how-to.html">Cara Belanja</a></div>
             <div class="copyright">&copy; 2025 RinsPoint. All rights reserved.</div>
         </footer>
+
         <nav class="bottom-nav">
             <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
             <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
@@ -121,11 +70,11 @@
             <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
         </nav>
     </div>
+
     <script src="js/loading.js"></script>
-    <script src="js/index.js?v=MANUAL_SPACING_FIX_V2"></script>
+    <script src="js/index.js?v=CLEAN_MIGRATION"></script>
     <script src="js/whatsapp.js"></script>
     <script>
-
         document.addEventListener('DOMContentLoaded', async () => {
             const homeInput = document.getElementById('homeSearchInput');
             const homeIcon = document.getElementById('homeSearchIcon');
@@ -136,7 +85,6 @@
             const badge = document.getElementById('cartBadge'); 
             if(badge){ badge.innerText=cart.length; badge.classList.toggle('show', cart.length>0); }
         });
-        
     </script>
 </body>
 </html>

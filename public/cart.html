@@ -4,55 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Keranjang - RinsPoint</title>
+    
     <link rel="stylesheet" href="css/style.css">
+    
+    <link rel="stylesheet" href="css/pages/cart.css">
+
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
     <link rel="apple-touch-icon" href="/assets/images/icon.png">
+    
     <script src="/js/pwa-register.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* --- CSS KHUSUS POPUP ADMIN --- */
-        .admin-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8); z-index: 9999;
-            display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-        .admin-modal.show { display: flex; animation: fadeIn 0.3s ease; }
-        
-        .admin-box {
-            background: #1E293B; width: 90%; max-width: 350px;
-            border-radius: 16px; padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center; position: relative;
-        }
-        
-        .admin-box h3 { color: white; margin-bottom: 0.5rem; font-size: 1.1rem; }
-        .admin-box p { color: #94a3b8; font-size: 0.85rem; margin-bottom: 1.5rem; }
-        
-        .admin-list { display: flex; flex-direction: column; gap: 10px; }
-        
-        .admin-btn {
-            display: flex; align-items: center; justify-content: space-between;
-            background: #0F172A; color: white; padding: 12px 15px;
-            border-radius: 10px; text-decoration: none; border: 1px solid #334155;
-            transition: 0.2s; cursor: pointer;
-        }
-        .admin-btn:hover { border-color: #4ADE80; background: rgba(74, 222, 128, 0.1); }
-        .admin-btn i { color: #25D366; font-size: 1.2rem; }
-        .admin-info { text-align: left; }
-        .admin-name { display: block; font-weight: 600; font-size: 0.9rem; }
-        .admin-status { font-size: 0.75rem; color: #4ADE80; }
-
-        .close-modal {
-            position: absolute; top: 15px; right: 15px; color: #94a3b8;
-            cursor: pointer; font-size: 1.2rem;
-        }
-        
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    </style>
 </head>
 <body>
 
@@ -175,7 +138,7 @@
             }
         }
 
-        // --- UPDATE: CHECKOUT DENGAN PILIHAN ADMIN ---
+        // --- CHECKOUT LOGIC ---
         async function checkoutWA() {
             if(cart.length === 0) return;
 
@@ -195,39 +158,30 @@
                 message += `%0A*Total: Rp ${new Intl.NumberFormat('id-ID').format(total)}*`;
                 message += "%0A%0AMohon info ketersediaan stok & ongkir. Terima kasih.";
 
-                // 2. Ambil Daftar Admin dari Database
+                // 2. Ambil Daftar Admin
                 const res = await fetch('/api/settings');
                 const data = await res.json();
                 
-                // Cek apakah ada kontak tambahan
                 let activeContacts = [];
-                
-                // Masukkan kontak dari array adminContacts jika ada
                 if (data.adminContacts && data.adminContacts.length > 0) {
                     activeContacts = data.adminContacts.filter(c => c.isActive);
                 }
-
-                // Jika array kosong, gunakan adminPhone utama sebagai fallback
                 if (activeContacts.length === 0 && data.adminPhone) {
                     activeContacts.push({ name: 'Admin Utama', phone: data.adminPhone });
                 }
 
                 // 3. Logika Tampilan
                 if (activeContacts.length > 1) {
-                    // JIKA ADMIN LEBIH DARI 1: Tampilkan Popup
                     showAdminPopup(activeContacts, message);
                 } else if (activeContacts.length === 1) {
-                    // JIKA CUMA 1: Langsung buka WA
                     const phone = formatPhone(activeContacts[0].phone);
                     window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
                 } else {
-                    // Fallback Terakhir (Hardcoded)
                     window.open(`https://wa.me/6281234567890?text=${message}`, '_blank');
                 }
 
             } catch (error) {
                 console.error("Gagal load admin:", error);
-                // Fallback jika error
                 window.open(`https://wa.me/6281234567890?text=Halo Admin...`, '_blank');
             } finally {
                 btn.innerHTML = originalText;
@@ -235,10 +189,9 @@
             }
         }
 
-        // Fungsi Tampilkan Modal
         function showAdminPopup(contacts, msg) {
             const list = document.getElementById('adminListContainer');
-            list.innerHTML = ''; // Bersihkan
+            list.innerHTML = ''; 
 
             contacts.forEach(c => {
                 const phone = formatPhone(c.phone);
@@ -248,7 +201,7 @@
                 btn.className = 'admin-btn';
                 btn.href = link;
                 btn.target = '_blank';
-                btn.onclick = closeAdminModal; // Tutup modal saat diklik
+                btn.onclick = closeAdminModal; 
                 
                 btn.innerHTML = `
                     <div class="admin-info">

@@ -1,0 +1,205 @@
+/* --- STYLE KHUSUS HALAMAN PUBG MOBILE --- */
+
+/* 1. RESET & TACTICAL BACKGROUND */
+html { height: 100%; background: #0c0a09; }
+body { 
+    margin: 0; min-height: 100%; color: #fff; font-family: 'Poppins', sans-serif;
+    overflow-x: hidden; position: relative;
+    background-color: #0c0a09;
+}
+
+/* Background Animasi: Rising Embers */
+.battlefield-bg {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+    background: radial-gradient(circle at bottom, #1c1917 0%, #000000 100%);
+    overflow: hidden;
+}
+.ember {
+    position: absolute; bottom: -10px;
+    width: 4px; height: 4px; background: #f97316;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #f97316, 0 0 20px #facc15;
+    animation: rise 5s infinite linear; opacity: 0;
+}
+.e1 { left: 10%; animation-duration: 8s; }
+.e2 { left: 30%; animation-duration: 12s; animation-delay: 2s; }
+.e3 { left: 50%; animation-duration: 7s; animation-delay: 1s; }
+.e4 { left: 80%; animation-duration: 10s; animation-delay: 3s; }
+
+@keyframes rise {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateY(-100vh) scale(0); opacity: 0; }
+}
+
+.mobile-container {
+    max-width: 480px; margin: 0 auto; min-height: 100vh;
+    display: flex; flex-direction: column; position: relative;
+    background: rgba(12, 10, 9, 0.85); 
+    backdrop-filter: blur(5px);
+    border-left: 1px solid rgba(245, 158, 11, 0.1);
+    border-right: 1px solid rgba(245, 158, 11, 0.1);
+}
+
+/* 2. HEADER */
+.game-header {
+    padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(12, 10, 9, 0.95); border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+}
+.btn-back { color: #cbd5e1; font-size: 1.2rem; text-decoration: none; }
+.header-title { 
+    font-family: 'Black Ops One', cursive;
+    font-size: 1.2rem; color: #fbbf24; letter-spacing: 1px;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+}
+
+/* 3. BANNER HERO */
+.banner-section {
+    width: 100%; height: 220px;
+    position: relative; overflow: hidden;
+    border-bottom: 2px solid #fbbf24;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.banner-img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block; transition: transform 5s ease;
+}
+.banner-section:hover .banner-img { transform: scale(1.05); }
+.banner-overlay {
+    position: absolute; bottom: 0; left: 0; width: 100%;
+    background: linear-gradient(to top, #0c0a09, transparent); height: 80px;
+}
+
+/* 4. INPUT ID */
+.form-area { padding: 20px; margin-top: -30px; position: relative; z-index: 10; }
+.input-card {
+    background: linear-gradient(145deg, #1c1917, #0c0a09);
+    border: 1px solid #44403c; border-radius: 16px; padding: 20px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.8);
+}
+.input-label { 
+    color: #fbbf24; font-size: 0.85rem; margin-bottom: 10px; font-weight: 600; 
+    display: flex; align-items: center; gap: 8px; text-transform: uppercase;
+}
+.input-wrapper {
+    background: #000; border: 1px solid #44403c;
+    border-radius: 10px; padding: 10px 15px;
+    transition: 0.3s; position: relative;
+}
+.input-wrapper:focus-within {
+    border-color: #f97316; box-shadow: 0 0 15px rgba(249, 115, 22, 0.2);
+}
+.game-input {
+    width: 100%; background: transparent; border: none; outline: none;
+    color: #fff; font-size: 1.1rem; font-weight: 600; letter-spacing: 1px;
+}
+.game-input:disabled { color: #78716c; cursor: not-allowed; }
+.input-hint { font-size: 0.7rem; color: #a8a29e; position: absolute; top: -10px; left: 10px; background: #1c1917; padding: 0 5px; border-radius: 4px; }
+
+/* 5. GRID UC (PREMIUM STYLE) */
+.grid-area { padding: 0 20px 120px 20px; }
+.section-label { 
+    color: #e2e8f0; font-size: 0.9rem; margin-bottom: 15px; font-weight: 600; 
+    border-left: 3px solid #fbbf24; padding-left: 10px; margin-top: 25px;
+    text-transform: uppercase; letter-spacing: 1px; font-family: 'Black Ops One', cursive;
+}
+
+.uc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+
+/* CARD STYLE */
+.uc-card {
+    background: #292524; /* Stone 800 */
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex; flex-direction: column; justify-content: space-between;
+    overflow: hidden; position: relative;
+    cursor: pointer; transition: 0.2s;
+    min-height: 125px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+.uc-card:hover { 
+    transform: translateY(-4px); 
+    border-color: #f97316; 
+}
+.uc-card::before {
+    content: ''; position: absolute;
+    top: -20px; right: -20px; width: 80px; height: 80px;
+    background: repeating-linear-gradient(45deg, rgba(251, 191, 36, 0.05), rgba(251, 191, 36, 0.05) 10px, transparent 10px, transparent 20px);
+    border-radius: 50%; pointer-events: none;
+}
+.uc-card.selected {
+    background: #1c1917;
+    border: 2px solid #fbbf24; /* Gold Selected */
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+}
+.card-body { 
+    padding: 15px 15px 10px 15px; 
+    flex-grow: 1; 
+    display: flex; flex-direction: column;
+    position: relative; z-index: 1;
+}
+
+.uc-amount { 
+    font-size: 0.9rem; font-weight: 700; color: #f1f5f9; 
+    line-height: 1.3; margin-bottom: auto; 
+    min-height: 2.6em; 
+}
+
+.uc-price-row { 
+    display: flex; align-items: center; gap: 10px; margin-top: 10px; 
+}
+.uc-icon-img { 
+    width: 24px; height: 24px; object-fit: contain; 
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    transition: transform 0.3s;
+}
+.uc-card:hover .uc-icon-img { transform: scale(1.1); }
+
+.uc-price { 
+    font-size: 0.95rem; font-weight: 700; 
+    color: #fbbf24; /* Harga Gold */
+    text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+.card-footer {
+    background: rgba(0, 0, 0, 0.4); 
+    padding: 8px 15px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex; justify-content: flex-end;
+    align-items: center;
+}
+
+.instant-badge {
+    background: rgba(249, 115, 22, 0.15); 
+    color: #fb923c; /* Orange Text */
+    font-size: 0.6rem; font-weight: 800;
+    padding: 4px 8px; border-radius: 4px;
+    display: flex; align-items: center; gap: 5px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+/* 6. BUTTON BAYAR */
+.pay-bar { margin-top: 30px; width: 100%; }
+.btn-pay {
+    width: 100%; padding: 16px; border: none; border-radius: 4px; /* Sudut Tajam Militer */
+    background: linear-gradient(to right, #f59e0b, #d97706);
+    color: #000; font-size: 1rem; font-weight: 800; cursor: pointer;
+    box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3);
+    transition: 0.4s; text-transform: uppercase; letter-spacing: 2px;
+    font-family: 'Black Ops One', cursive;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+.btn-pay:active { transform: scale(0.98); }
+.btn-pay:disabled {
+    background: #44403c; color: #78716c; box-shadow: none; cursor: not-allowed;
+}
+
+/* Banner Toko Tutup */
+.store-closed-banner {
+    background: rgba(249, 115, 22, 0.15); border: 1px dashed #f97316; color: #fb923c;
+    padding: 15px; border-radius: 12px; text-align: center; font-weight: 600;
+    margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;
+}
+.store-closed-banner i { font-size: 1.5rem; margin-bottom: 8px; }
+.store-closed-banner p { margin: 5px 0 0; font-size: 0.75rem; color: #fbbf24; opacity: 0.8; }

@@ -6,132 +6,16 @@
     <title>Paket Data - RinsPoint</title>
     
     <link rel="stylesheet" href="../css/style.css">
+    
+    <link rel="stylesheet" href="../css/ppob/data.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* --- FIX GAP BAWAH (Wajib ada) --- */
-        html { 
-            background-color: #0f172a; 
-            height: 100%; /* Paksa tinggi HTML full layar */
-        }
-
-        body { 
-            background-color: #0f172a; 
-            min-height: 100%; /* Body minimal setinggi HTML */
-            margin: 0;
-            padding-bottom: 0; /* Padding dihandle di container */
-            color: #f8fafc; 
-            font-family: 'Poppins', sans-serif; 
-            box-sizing: border-box;
-            display: flex; 
-            flex-direction: column; /* Susunan vertikal */
-        }
-
-        /* Wrapper agar background terisi penuh */
-        .mobile-container {
-            flex: 1; /* Mengisi sisa ruang kosong */
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            max-width: 480px; /* Standar mobile width */
-            margin: 0 auto;
-            background-color: #0f172a; /* Pastikan background sama */
-            min-height: 100vh;
-        }
-        
-        /* HEADER (Konsisten tapi Icon Data) */
-        .ppob-header {
-            background: #1e293b; padding: 15px 20px;
-            position: sticky; top: 0; z-index: 50;
-            border-bottom: 1px solid #334155;
-            display: flex; align-items: center; gap: 15px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        /* Judul warna Sky Blue untuk pembeda Data */
-        .ppob-header h2 { margin: 0; color: #38bdf8; font-size: 1.2rem; font-weight: 600; }
-        .btn-back { color: #cbd5e1; font-size: 1.2rem; text-decoration: none; }
-        
-        /* CONTAINER UTAMA */
-        .container { 
-            padding: 20px; 
-            width: 100%; 
-            box-sizing: border-box;
-            /* Tambah padding bawah agar konten terbawah tidak mepet */
-            padding-bottom: 100px; 
-        }
-        
-        /* --- HERO INFO SECTION --- */
-        .data-hero {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 25px;
-            border: 1px solid #334155;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        .data-hero::after {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(56,189,248,0.05) 0%, transparent 60%);
-            pointer-events: none;
-        }
-        .hero-icon {
-            width: 50px; height: 50px;
-            background: rgba(56, 189, 248, 0.1);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            color: #38bdf8; font-size: 1.5rem;
-            border: 1px solid rgba(56, 189, 248, 0.2);
-        }
-        .hero-text h3 { margin: 0; font-size: 1rem; color: #fff; font-weight: 600; }
-        .hero-text p { margin: 4px 0 0 0; font-size: 0.75rem; color: #94a3b8; }
-
-        .section-title { 
-            font-size: 0.9rem; color: #94a3b8; margin-bottom: 15px; 
-            text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
-            border-left: 3px solid #38bdf8; padding-left: 10px; 
-        }
-        
-        /* GRID PROVIDER */
-        .provider-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 12px; 
-        }
-        .provider-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px; 
-            aspect-ratio: 3 / 4.5; 
-            display: block; 
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-decoration: none; 
-        }
-        .provider-card:active { 
-            transform: scale(0.95); 
-            border-color: #38bdf8; 
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); 
-        }
-        .provider-img {
-            width: 100%; height: 100%;
-            object-fit: cover; 
-            display: block;
-        }
-    </style>
 </head>
 <body>
     <div class="mobile-container">
         <header class="ppob-header">
-            <a href="/" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <h2>Paket Data</h2>
         </header>
         
@@ -176,11 +60,21 @@
     </div>
 
     <nav class="bottom-nav">
-            <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
-            <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
-            <a href="/cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span><span class="cart-badge-fixed" id="cartBadge">0</span></a>
-            <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
-        </nav>
+        <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+        <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
+        <a href="/cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span><span class="cart-badge-fixed" id="cartBadge">0</span></a>
+        <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+    </nav>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
+            const badge = document.getElementById('cartBadge');
+            if (badge) {
+                badge.innerText = cart.length;
+                badge.classList.toggle('show', cart.length > 0);
+            }
+        });
+    </script>
 </body>
 </html>

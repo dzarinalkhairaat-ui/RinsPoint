@@ -1,0 +1,245 @@
+/* --- STYLE KHUSUS HALAMAN DETAIL PRODUK --- */
+
+/* Container Slider Utama */
+.product-slider-container {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    background: #000;
+    overflow: hidden;
+}
+
+.product-slider-track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+.product-slider-track::-webkit-scrollbar {
+    display: none;
+}
+
+.product-slide {
+    flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    position: relative;
+}
+
+.product-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Tombol Back Floating */
+.btn-back-floating {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    border: none;
+}
+
+/* Indikator Slide (Angka) */
+.slide-counter {
+    position: absolute;
+    bottom: 30px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    backdrop-filter: blur(4px);
+    z-index: 10;
+}
+
+/* Area Info Produk (Background Gelap Melengkung) */
+.product-info-area {
+    padding: 1.5rem;
+    padding-bottom: 6rem; /* Space untuk bottom bar */
+    background: #0F172A;
+    border-radius: 20px 20px 0 0;
+    margin-top: -20px;
+    position: relative;
+    z-index: 5;
+}
+
+.category-tag {
+    color: #4ADE80;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.product-title {
+    color: white;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+    font-weight: 700;
+}
+
+.price-container {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.original-price {
+    color: #94a3b8;
+    text-decoration: line-through;
+    font-size: 0.9rem;
+}
+
+.current-price {
+    color: #4ADE80;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.divider {
+    width: 100%;
+    height: 1px;
+    background: #334155;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.product-description {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    white-space: pre-line;
+}
+
+/* Produk Terkait */
+.related-products-section {
+    margin-bottom: 2rem;
+}
+
+.related-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    align-items: stretch;
+}
+
+.related-card {
+    background: #1E293B;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.related-card:active {
+    transform: scale(0.98);
+}
+
+.related-card img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    display: block;
+}
+
+.related-card .info {
+    padding: 10px;
+}
+
+.related-card h4 {
+    color: white;
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.related-card .price {
+    color: #4ADE80;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+/* Action Bar (Tombol Beli Fixed di Bawah) */
+.action-bar {
+    display: flex;
+    gap: 10px;
+    padding: 1rem;
+    background: #1E293B;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100;
+}
+
+.btn-cart {
+    flex: 1;
+    background: transparent;
+    border: 1px solid #4ADE80;
+    color: #4ADE80;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: transform 0.1s ease;
+}
+.btn-cart:active {
+    transform: scale(0.95);
+}
+
+.btn-buy-now {
+    flex: 1;
+    background: #4ADE80;
+    color: #064E3B;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+.btn-buy-now:hover {
+    background: #22c55e;
+}

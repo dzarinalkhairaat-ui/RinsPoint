@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kategori - RinsPoint</title>
+    
     <link rel="stylesheet" href="css/style.css">
+    
+    <link rel="stylesheet" href="css/pages/category.css">
 
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
@@ -169,7 +172,6 @@
             const card = document.createElement('div');
             card.className = 'product-card';
             card.onclick = () => window.location.href = `product.html?slug=${prod.slug}`;
-            card.style.cursor = 'pointer';
 
             card.innerHTML = `
                 ${badgeHtml}
@@ -177,7 +179,7 @@
                 <div class="details">
                     <h4>${prod.name}</h4>
                     ${priceHtml}
-                    <div class="btn-buy" style="margin-top: auto; text-align:center;">LIHAT DETAIL</div>
+                    <div class="btn-buy">LIHAT DETAIL</div>
                 </div>
             `;
             container.appendChild(card);
@@ -185,10 +187,10 @@
 
         function renderEmptyState(container) {
             container.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;">
-                    <i class="fa-solid fa-box-open" style="font-size: 4rem; color: #334155; margin-bottom: 1rem;"></i>
-                    <h3 style="color: #94a3b8; font-size: 1.1rem; font-weight: 600;">Belum ada produk</h3>
-                    <p style="color: #64748b; font-size: 0.9rem;">Coba filter atau kategori lain.</p>
+                <div class="empty-state-container">
+                    <i class="fa-solid fa-box-open"></i>
+                    <h3>Belum ada produk</h3>
+                    <p>Coba filter atau kategori lain.</p>
                 </div>
             `;
         }

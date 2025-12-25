@@ -6,100 +6,11 @@
     <title>Fitur Sedang Disiapkan</title>
     
     <link rel="stylesheet" href="css/style.css">
+    
+    <link rel="stylesheet" href="css/pages/maintenance.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        /* --- RESET & BACKGROUND --- */
-        html { height: 100%; background: #0f172a; }
-        body { 
-            margin: 0; min-height: 100%; color: #fff; font-family: 'Poppins', sans-serif;
-            overflow: hidden; /* Mencegah scroll */
-            background-color: #0f172a;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        /* Background Aurora Abstrak */
-        .aurora-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: #0f172a;
-        }
-        .blob {
-            position: absolute; filter: blur(90px); opacity: 0.3;
-            animation: floatBlob 10s infinite alternate; border-radius: 50%;
-        }
-        .b1 { top: -10%; left: -10%; width: 400px; height: 400px; background: #fbbf24; } /* Gold */
-        .b2 { bottom: 10%; right: -10%; width: 300px; height: 300px; background: #3b82f6; animation-duration: 20s; } /* Blue */
-        
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(30px, 50px); }
-        }
-
-        .maintenance-container {
-            text-align: center; padding: 40px 30px;
-            max-width: 400px; width: 90%;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5);
-            position: relative; z-index: 10;
-        }
-
-        /* --- GEAR ANIMATION --- */
-        .gear-wrapper {
-            position: relative; width: 120px; height: 120px; margin: 0 auto 30px auto;
-        }
-        
-        /* Gear Besar */
-        .gear-big {
-            font-size: 5rem; color: #fbbf24; /* Emas */
-            position: absolute; top: 0; left: 0;
-            filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.4));
-            animation: spinRight 8s infinite linear;
-        }
-        
-        /* Gear Kecil */
-        .gear-small {
-            font-size: 3.5rem; color: #94a3b8; /* Silver */
-            position: absolute; bottom: 0; right: 0;
-            filter: drop-shadow(0 0 10px rgba(148, 163, 184, 0.4));
-            animation: spinLeft 5s infinite linear;
-        }
-
-        @keyframes spinRight { 100% { transform: rotate(360deg); } }
-        @keyframes spinLeft { 100% { transform: rotate(-360deg); } }
-
-        /* --- TEXT STYLING --- */
-        .title-text {
-            font-size: 1.5rem; font-weight: 800; margin-bottom: 10px;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            letter-spacing: 0.5px;
-        }
-        
-        .desc-text {
-            font-size: 0.9rem; color: #94a3b8; line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        /* --- BUTTON --- */
-        .btn-back {
-            display: inline-flex; align-items: center; gap: 10px;
-            padding: 12px 30px; border-radius: 50px;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            color: #fff; text-decoration: none; font-weight: 600; font-size: 0.95rem;
-            transition: 0.3s;
-        }
-        .btn-back:hover {
-            background: rgba(255,255,255,0.1); border-color: #fbbf24; color: #fbbf24;
-            transform: translateY(-2px); box-shadow: 0 5px 15px rgba(251, 191, 36, 0.1);
-        }
-        .btn-back i { transition: 0.3s; }
-        .btn-back:hover i { transform: translateX(-3px); }
-
-    </style>
 </head>
 <body>
 

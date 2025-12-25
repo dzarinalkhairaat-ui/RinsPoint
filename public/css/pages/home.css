@@ -1,0 +1,254 @@
+/* --- STYLE KHUSUS HALAMAN HOME (ANTI-GAP) --- */
+
+/* --- STYLE KHUSUS HALAMAN HOME (REVISI GAP) --- */
+
+/* 1. LAYOUT UTAMA */
+.home-page {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    
+    /* UBAH INI JADI 0 AGAR FOOTER NEMPEL KE BAWAH */
+    padding-bottom: 0 !important; 
+    
+    width: 100%;
+}
+
+/* ...sisanya biarkan sama... */
+
+/* 2. HERO SECTION (BANNER) - UKURAN PPOB + GLOW HIJAU */
+.hero-section {
+    width: 100%;
+    /* Padding disamakan dengan PPOB */
+    padding: 20px 20px 5px 20px; 
+    box-sizing: border-box;
+}
+
+.static-banner {
+    width: 100%;
+    height: auto;
+    display: block;
+    
+    /* 1. Rasio Banner (TETAP SAMA DENGAN PPOB) */
+    aspect-ratio: 2.5 / 1; 
+    
+    /* 2. Style Visual */
+    object-fit: cover;
+    border-radius: 16px;
+    
+    /* 3. Shadow & Border (Ganti jadi HIJAU sesuai request) */
+    /* Shadow hijau "Glow" */
+    box-shadow: 0 10px 25px -5px rgba(74, 222, 128, 0.3), 
+                0 8px 10px -6px rgba(74, 222, 128, 0.1);
+                
+    /* Border hijau transparan tipis biar makin matching */
+    border: 1px solid rgba(74, 222, 128, 0.25); 
+    
+    /* Background placeholder */
+    background: rgba(30, 41, 59, 0.5);
+}
+
+/* 3. KATEGORI (SCROLL HORIZONTAL) */
+.categories-section {
+    padding: 0 20px; /* Padding kiri-kanan konsisten */
+}
+
+.category-scroll-wrapper {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 10px; /* Ruang untuk scrollbar (meski disembunyikan) */
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Firefox hide scrollbar */
+}
+.category-scroll-wrapper::-webkit-scrollbar {
+    display: none; /* Chrome/Safari hide scrollbar */
+}
+
+.category-item {
+    min-width: 80px;
+    width: 80px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    
+    /* Style Kartu Kategori */
+    background: rgba(30, 41, 59, 0.6); /* Semi-transparan */
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    padding: 12px 5px;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+    scroll-snap-align: start;
+    cursor: pointer;
+}
+.category-item:active {
+    transform: scale(0.95);
+    background: rgba(74, 222, 128, 0.1);
+}
+
+.category-item .icon {
+    font-size: 1.5rem;
+    color: #4ADE80;
+    margin-bottom: 8px;
+}
+
+.category-item span {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #F8FAFC; 
+    text-align: center;
+    line-height: 1.2;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+/* 4. PRODUK TERBARU (GRID) */
+.latest-products-section {
+    width: 100%;
+    padding: 0 20px;
+    /* PENTING: Hapus margin-bottom besar yang bikin gap */
+    margin-bottom: 0; 
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.section-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #F8FAFC;
+    margin: 0;
+    border-left: 4px solid #4ADE80;
+    padding-left: 10px;
+    line-height: 1;
+}
+
+.section-header .see-all {
+    font-size: 0.8rem;
+    color: #4ADE80;
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+.section-header .see-all:active { opacity: 0.7; }
+
+/* GRID SYSTEM */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
+}
+
+/* --- KARTU PRODUK --- */
+.product-card {
+    background: #1E293B; 
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.product-card:active {
+    transform: scale(0.98);
+}
+
+/* Badge Diskon */
+.product-card .badges {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #EF4444; 
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    z-index: 2;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Wrapper Gambar */
+.product-card .img-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #0F172A; /* Fallback warna background gambar */
+    overflow: hidden;
+}
+.product-card .img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Detail Info */
+.product-card .details {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 4px;
+}
+
+.product-card .details h4 {
+    color: #F8FAFC;
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.3;
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 2.6em; /* Jaga tinggi konsisten */
+}
+
+.product-card .details .price-container {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card .details .original-price {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-decoration: line-through;
+}
+
+.product-card .details .current-price {
+    color: #4ADE80;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+/* Tombol Beli */
+.product-card .details .btn-buy {
+    width: 100%;
+    text-align: center;
+    background: rgba(74, 222, 128, 0.1);
+    color: #4ADE80;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    padding: 8px 0;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px; /* Memberi jarak dari harga */
+    transition: 0.2s;
+}
+.product-card .details .btn-buy:active {
+    background: #4ADE80;
+    color: #064E3B;
+}

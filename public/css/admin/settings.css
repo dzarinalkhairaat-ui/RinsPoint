@@ -1,0 +1,122 @@
+/* --- STYLE PENGATURAN UMUM (ADMIN) --- */
+
+/* 1. Global & Layout */
+body { 
+    background-color: #0f172a; 
+    padding-bottom: 90px; 
+    font-family: 'Poppins', sans-serif; 
+    color: #f8fafc;
+    margin: 0;
+}
+
+.mobile-container {
+    max-width: 600px; /* Sedikit lebih lebar untuk settings */
+    margin: 0 auto; 
+}
+
+/* 2. Header */
+.dashboard-header { 
+    background: rgba(15, 23, 42, 0.95); padding: 15px 20px; 
+    position: sticky; top: 0; z-index: 50; 
+    border-bottom: 1px solid #334155; 
+    display: flex; align-items: center; justify-content: flex-start;
+    gap: 15px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.dashboard-header h2 { margin: 0; color: #4ade80; font-size: 1.2rem; font-weight: 600; flex-grow: 0; }
+.btn-back { color: #cbd5e1; font-size: 1.2rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; text-decoration: none; }
+.btn-back:hover { color: #fff; }
+
+.dashboard-content { padding: 20px; }
+
+/* 3. Cards */
+.settings-card { 
+    background: #1e293b; border-radius: 16px; 
+    padding: 20px; margin-bottom: 25px; 
+    border: 1px solid #334155; 
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+.card-header { 
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px; 
+    border-bottom: 1px solid #334155; padding-bottom: 15px; 
+}
+.card-header i { color: #4ade80; font-size: 1.3rem; }
+.card-header h3 { margin: 0; font-size: 1.1rem; font-weight: 600; color: #fff; }
+
+/* 4. Form Inputs */
+.form-group { margin-bottom: 18px; }
+.form-label { display: block; color: #94a3b8; margin-bottom: 8px; font-size: 0.9rem; font-weight: 500; }
+.form-input { 
+    width: 100%; padding: 12px 15px; 
+    background: #020617; border: 1px solid #334155; 
+    border-radius: 10px; color: white; outline: none; 
+    font-family: 'Poppins', sans-serif; transition: all 0.3s;
+    box-sizing: border-box; 
+}
+.form-input:focus { border-color: #4ade80; box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2); }
+
+/* 5. Info Box */
+.info-box { 
+    background: rgba(16, 185, 129, 0.1); border: 1px dashed #10b981; 
+    color: #6ee7b7; padding: 15px; border-radius: 12px; 
+    font-size: 0.9rem; margin-bottom: 25px; 
+    display: flex; gap: 12px; align-items: flex-start; line-height: 1.5;
+}
+.info-box i { font-size: 1.2rem; margin-top: 2px; }
+
+/* 6. Dynamic Contact List */
+.contact-row { 
+    display: flex; 
+    gap: 8px; 
+    margin-bottom: 12px; 
+    align-items: stretch; 
+}
+
+/* Input Nama (Pendek) */
+.contact-row .c-name { 
+    flex: 1; 
+    min-width: 0; 
+}
+
+/* Input HP (Lebih Panjang) */
+.contact-row .c-phone { 
+    flex: 1.5; 
+    min-width: 0; 
+}
+
+/* Tombol Sampah */
+.btn-del-contact { 
+    background: rgba(239, 68, 68, 0.2); 
+    border: 1px solid #ef4444; 
+    color: #ef4444; 
+    width: 46px; 
+    border-radius: 10px; cursor: pointer; 
+    transition: 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; 
+}
+.btn-del-contact:hover { background: #ef4444; color: white; }
+
+.btn-add-contact { 
+    background: transparent; color: #4ade80; 
+    border: 1px dashed #4ade80; 
+    padding: 12px; width: 100%; 
+    border-radius: 10px; cursor: pointer; 
+    font-weight: 600; transition: 0.3s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-add-contact:hover { background: rgba(74, 222, 128, 0.1); }
+
+/* 7. Save Button */
+.btn-save { 
+    width: 100%; background: linear-gradient(to right, #22c55e, #16a34a); 
+    color: white; padding: 16px; 
+    border: none; border-radius: 12px; 
+    font-weight: 700; font-size: 1rem; cursor: pointer; 
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.btn-save:active { transform: scale(0.98); }
+.btn-save:disabled { opacity: 0.7; cursor: not-allowed; }
+
+/* 8. Bottom Nav */
+.bottom-nav { border-top: 1px solid #334155; background: #1e293b; }

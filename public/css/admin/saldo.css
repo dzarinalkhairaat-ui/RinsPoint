@@ -1,0 +1,88 @@
+/* --- STYLE HALAMAN SALDO ADMIN --- */
+
+/* 1. Reset & Global */
+body { 
+    background-color: #0F172A; 
+}
+
+/* 2. Kartu Saldo (Gradient) */
+.saldo-card {
+    background: linear-gradient(135deg, #064E3B 0%, #0F172A 100%);
+    border: 1px solid #4ADE80;
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(74, 222, 128, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efek Hiasan (Glow) */
+.saldo-card::before {
+    content: ''; position: absolute; top: -50px; left: -50px;
+    width: 150px; height: 150px; background: rgba(74, 222, 128, 0.1);
+    border-radius: 50%; filter: blur(50px);
+}
+
+.label-saldo { 
+    color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem; 
+    text-transform: uppercase; letter-spacing: 1px; 
+    position: relative; z-index: 10;
+}
+
+.nilai-saldo { 
+    font-size: 2.5rem; font-weight: 700; color: white; margin-bottom: 1rem; 
+    position: relative; z-index: 10;
+}
+
+/* 3. Status Badge */
+.status-badge {
+    display: inline-block; padding: 5px 12px; border-radius: 20px;
+    font-size: 0.8rem; background: rgba(255,255,255,0.1); color: #cbd5e1;
+    border: 1px solid transparent;
+    position: relative; z-index: 10;
+}
+.status-badge.connected { 
+    background: rgba(34, 197, 94, 0.2); 
+    color: #4ADE80; 
+    border-color: #4ADE80; 
+}
+.status-badge.error { 
+    background: rgba(239, 68, 68, 0.2); 
+    color: #EF4444; 
+    border-color: #EF4444; 
+}
+
+/* 4. Action Buttons Grid */
+.action-buttons { 
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; 
+}
+
+.btn-action {
+    background: #1E293B; border: 1px solid #334155; padding: 1rem;
+    border-radius: 12px; color: white; text-align: center; cursor: pointer;
+    transition: 0.2s; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.btn-action:hover { 
+    border-color: #4ADE80; background: #0F172A; 
+}
+.btn-action:active { transform: scale(0.98); }
+
+.btn-action i { 
+    font-size: 1.5rem; color: #4ADE80; 
+}
+
+/* 5. Info Card */
+.setting-card {
+    background: #1e293b; border-radius: 16px; border: 1px solid #334155;
+    padding: 20px; margin-bottom: 20px;
+}
+.setting-card h3 {
+    margin: 0 0 10px 0; color: #fff; font-size: 1rem;
+}
+
+/* 6. Layout Helper */
+.settings-page {
+    padding: 20px;
+}

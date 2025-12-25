@@ -4,129 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pengaturan Website - Admin</title>
+    
     <link rel="stylesheet" href="../css/style.css">
+    
+    <link rel="stylesheet" href="../css/admin/settings.css">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <script src="../js/auth.js"></script>
     <script>checkAuth();</script>
-    
-    <style>
-        body { 
-            background-color: #0f172a; 
-            padding-bottom: 90px; 
-            font-family: 'Poppins', sans-serif; 
-            color: #f8fafc;
-        }
-
-        /* --- HEADER --- */
-        .dashboard-header { 
-            background: #1e293b; padding: 15px 20px; 
-            position: sticky; top: 0; z-index: 50; 
-            border-bottom: 1px solid #334155; 
-            display: flex; align-items: center; justify-content: flex-start;
-            gap: 15px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .dashboard-header h2 { margin: 0; color: #4ade80; font-size: 1.2rem; font-weight: 600; flex-grow: 0; }
-        .btn-back { color: #cbd5e1; font-size: 1.2rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; }
-        .btn-back:hover { color: #fff; }
-
-        .dashboard-content { padding: 20px; max-width: 600px; margin: 0 auto; }
-
-        /* CARDS */
-        .settings-card { 
-            background: #1e293b; border-radius: 16px; 
-            padding: 20px; margin-bottom: 25px; 
-            border: 1px solid #334155; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        .card-header { 
-            display: flex; align-items: center; gap: 12px; margin-bottom: 20px; 
-            border-bottom: 1px solid #334155; padding-bottom: 15px; 
-        }
-        .card-header i { color: #4ade80; font-size: 1.3rem; }
-        .card-header h3 { margin: 0; font-size: 1.1rem; font-weight: 600; color: #fff; }
-
-        /* INPUTS */
-        .form-group { margin-bottom: 18px; }
-        .form-label { display: block; color: #94a3b8; margin-bottom: 8px; font-size: 0.9rem; font-weight: 500; }
-        .form-input { 
-            width: 100%; padding: 12px 15px; 
-            background: #020617; border: 1px solid #334155; 
-            border-radius: 10px; color: white; outline: none; 
-            font-family: 'Poppins', sans-serif; transition: all 0.3s;
-            box-sizing: border-box; /* KUNCI AGAR TIDAK MELEBAR */
-        }
-        .form-input:focus { border-color: #4ade80; box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2); }
-
-        /* INFO BOX */
-        .info-box { 
-            background: rgba(16, 185, 129, 0.1); border: 1px dashed #10b981; 
-            color: #6ee7b7; padding: 15px; border-radius: 12px; 
-            font-size: 0.9rem; margin-bottom: 25px; 
-            display: flex; gap: 12px; align-items: flex-start; line-height: 1.5;
-        }
-        .info-box i { font-size: 1.2rem; margin-top: 2px; }
-
-        /* --- KONTAK LIST PERBAIKAN (RAHASIA RAPI) --- */
-        .contact-row { 
-            display: flex; 
-            gap: 8px; 
-            margin-bottom: 12px; 
-            align-items: stretch; /* Tinggi elemen sama */
-        }
-        
-        /* Input Nama (Pendek) */
-        .contact-row .c-name { 
-            flex: 1; /* Ambil 1 bagian ruang */
-            min-width: 0; /* Mencegah overflow */
-        }
-        
-        /* Input HP (Lebih Panjang) */
-        .contact-row .c-phone { 
-            flex: 1.5; /* Ambil 1.5 bagian ruang (lebih lebar dikit) */
-            min-width: 0; /* Mencegah overflow */
-        }
-
-        /* Tombol Sampah */
-        .btn-del-contact { 
-            background: rgba(239, 68, 68, 0.2); 
-            border: 1px solid #ef4444; 
-            color: #ef4444; 
-            width: 46px; /* Lebar Tetap */
-            border-radius: 10px; cursor: pointer; 
-            transition: 0.2s;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; /* JANGAN MENGECIL */
-        }
-        .btn-del-contact:hover { background: #ef4444; color: white; }
-        
-        .btn-add-contact { 
-            background: transparent; color: #4ade80; 
-            border: 1px dashed #4ade80; 
-            padding: 12px; width: 100%; 
-            border-radius: 10px; cursor: pointer; 
-            font-weight: 600; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn-add-contact:hover { background: rgba(74, 222, 128, 0.1); }
-
-        /* SAVE BUTTON */
-        .btn-save { 
-            width: 100%; background: linear-gradient(to right, #22c55e, #16a34a); 
-            color: white; padding: 16px; 
-            border: none; border-radius: 12px; 
-            font-weight: 700; font-size: 1rem; cursor: pointer; 
-            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .btn-save:active { transform: scale(0.98); }
-        .btn-save:disabled { opacity: 0.7; cursor: not-allowed; }
-
-        .bottom-nav { border-top: 1px solid #334155; background: #1e293b; }
-    </style>
 </head>
 <body>
     <div class="mobile-container">
+        
         <header class="dashboard-header">
             <a href="dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <h2>Pengaturan Website</h2>
@@ -183,6 +74,7 @@
     <script>
         const API_URL = '/api/settings';
         const token = localStorage.getItem('adminToken');
+        
         document.addEventListener('DOMContentLoaded', loadData);
 
         async function loadData() {
@@ -191,17 +83,21 @@
                 const data = await res.json();
                 document.getElementById('siteName').value = data.siteName || '';
                 document.getElementById('adminPhone').value = data.adminPhone || '';
-                const cContainer = document.getElementById('contactsContainer'); cContainer.innerHTML = '';
+                
+                const cContainer = document.getElementById('contactsContainer'); 
+                cContainer.innerHTML = '';
+                
                 if (data.adminContacts && data.adminContacts.length > 0) { 
                     data.adminContacts.forEach(c => addContactField(c.name, c.phone)); 
-                } else { addContactField(); }
+                } else { 
+                    addContactField(); 
+                }
             } catch (err) { console.error(err); }
         }
 
         function addContactField(name='', phone='') {
             const div = document.createElement('div'); 
             div.className = 'contact-row';
-            // PERBAIKAN: Input diberi class khusus (c-name, c-phone) untuk styling lebar
             div.innerHTML = `
                 <input type="text" class="c-name form-input" value="${name}" placeholder="Nama">
                 <input type="text" class="c-phone form-input" value="${phone}" placeholder="No WA (628..)">
@@ -214,24 +110,53 @@
 
         document.getElementById('settingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnSave'); const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...'; btn.disabled = true;
+            const btn = document.getElementById('btnSave'); 
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...'; 
+            btn.disabled = true;
             
             const cNames = document.querySelectorAll('.c-name'); 
             const cPhones = document.querySelectorAll('.c-phone');
             const contacts = []; 
-            cNames.forEach((inp, i) => { if (inp.value && cPhones[i].value) contacts.push({ name: inp.value, phone: cPhones[i].value }); });
+            
+            cNames.forEach((inp, i) => { 
+                if (inp.value && cPhones[i].value) {
+                    contacts.push({ name: inp.value, phone: cPhones[i].value }); 
+                }
+            });
 
             try {
                 const res = await fetch(API_URL, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ siteName: document.getElementById('siteName').value, adminPhone: document.getElementById('adminPhone').value, adminContacts: contacts })
+                    body: JSON.stringify({ 
+                        siteName: document.getElementById('siteName').value, 
+                        adminPhone: document.getElementById('adminPhone').value, 
+                        adminContacts: contacts 
+                    })
                 });
-                if(res.ok) { alert('Berhasil!'); location.reload(); } else { throw new Error('Gagal'); }
-            } catch (err) { alert('Error.'); } finally { btn.innerHTML = originalText; btn.disabled = false; }
+                
+                if(res.ok) { 
+                    alert('Berhasil disimpan!'); 
+                    location.reload(); 
+                } else { 
+                    throw new Error('Gagal menyimpan'); 
+                }
+            } catch (err) { 
+                alert('Terjadi kesalahan saat menyimpan.'); 
+            } finally { 
+                btn.innerHTML = originalText; 
+                btn.disabled = false; 
+            }
         });
-        function logout() { if(confirm('Keluar?')) { localStorage.removeItem('adminToken'); window.location.href = '/login.html'; } }
+        
+        function logout() { 
+            if(confirm('Keluar?')) { 
+                localStorage.removeItem('adminToken'); 
+                window.location.href = '/login.html'; 
+            } 
+        }
     </script>
 </body>
 </html>

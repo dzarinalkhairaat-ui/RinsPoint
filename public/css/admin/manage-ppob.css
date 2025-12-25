@@ -1,0 +1,202 @@
+/* --- STYLE HALAMAN KELOLA PPOB (ADMIN) --- */
+
+/* 1. Global & Animated Background */
+html { height: 100%; background: #0f172a; }
+body { 
+    margin: 0; min-height: 100%; color: #fff; font-family: 'Poppins', sans-serif;
+    overflow-x: hidden; position: relative;
+    background-color: #0f172a;
+    padding-bottom: 90px; 
+}
+
+/* Aurora Effect */
+.aurora-bg {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+    background: #0f172a; overflow: hidden;
+}
+.blob {
+    position: absolute; filter: blur(90px); opacity: 0.3;
+    animation: floatBlob 20s infinite alternate; border-radius: 50%;
+}
+.b1 { top: -10%; left: -10%; width: 400px; height: 400px; background: #3b82f6; }
+.b2 { bottom: 20%; right: -10%; width: 350px; height: 350px; background: #10b981; animation-duration: 25s; }
+
+@keyframes floatBlob {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(40px, 60px); }
+}
+
+.mobile-container {
+    max-width: 480px; margin: 0 auto; min-height: 100vh;
+    display: flex; flex-direction: column; position: relative;
+    background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(20px);
+    z-index: 1; 
+}
+
+/* 2. Header */
+.dashboard-header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+}
+.header-left { display: flex; align-items: center; gap: 15px; }
+.header-title { font-size: 1.1rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; margin: 0; }
+
+/* 3. Tools & Filter */
+.tools-section { padding: 20px 20px 10px 20px; }
+
+.search-box {
+    background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px; padding: 12px 15px; display: flex; align-items: center; gap: 10px;
+    transition: 0.3s; margin-bottom: 15px;
+}
+.search-box:focus-within { border-color: #4ade80; background: rgba(30, 41, 59, 0.9); }
+.search-input { 
+    background: transparent; border: none; outline: none; 
+    color: #fff; width: 100%; font-size: 0.9rem; 
+}
+.search-icon { color: #94a3b8; }
+
+.filter-scroll {
+    display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;
+    scrollbar-width: none; 
+}
+.filter-scroll::-webkit-scrollbar { display: none; }
+
+.filter-chip {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; color: #cbd5e1;
+    white-space: nowrap; cursor: pointer; transition: 0.3s;
+}
+.filter-chip.active {
+    background: #4ade80; color: #064e3b; border-color: #4ade80; font-weight: 600;
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+}
+
+/* 4. Product List */
+.ppob-list { padding: 10px 20px; display: grid; gap: 12px; }
+
+.ppob-item {
+    background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px; padding: 12px;
+    display: flex; align-items: center; gap: 15px;
+    transition: 0.3s; animation: slideUp 0.4s ease forwards;
+    opacity: 0; transform: translateY(20px);
+}
+
+.item-thumb { 
+    width: 50px; height: 50px; border-radius: 12px; object-fit: contain; 
+    background: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 2px;
+}
+.item-thumb-placeholder {
+    width: 50px; height: 50px; border-radius: 12px; 
+    background: rgba(74, 222, 128, 0.1); color: #4ade80;
+    display: flex; align-items: center; justify-content: center; 
+    font-size: 1.2rem; border: 1px solid rgba(74, 222, 128, 0.2);
+}
+.item-info { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.item-cat-badge {
+    font-size: 0.65rem; background: rgba(59, 130, 246, 0.15); color: #60a5fa;
+    padding: 2px 8px; border-radius: 6px; width: fit-content; font-weight: 600;
+}
+.item-name { color: #fff; font-weight: 600; font-size: 0.9rem; line-height: 1.2; }
+.item-price { color: #fbbf24; font-weight: 700; font-size: 0.85rem; }
+.item-actions { display: flex; gap: 5px; }
+
+.btn-icon {
+    width: 32px; height: 32px; border-radius: 8px; border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.2s;
+}
+.btn-edit { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.btn-icon:active { transform: scale(0.9); }
+
+/* 5. Floating Add Button (FAB) */
+.fab-container {
+    position: fixed; bottom: 85px; right: 20px; z-index: 100;
+    width: 100%; max-width: 480px; 
+    left: 50%; transform: translateX(-50%);
+    pointer-events: none;
+    display: flex; justify-content: flex-end; padding-right: 20px;
+}
+.fab-add {
+    width: 55px; height: 55px; border-radius: 50%;
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: #064e3b; display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+    border: none; cursor: pointer; transition: 0.3s;
+    pointer-events: auto;
+}
+.fab-add:active { transform: scale(0.9) rotate(90deg); }
+
+/* 6. Modal Form */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+    z-index: 200; display: none; justify-content: center; align-items: center;
+    padding: 20px; animation: fadeIn 0.3s ease;
+}
+.modal-overlay.show { display: flex; }
+
+.modal-box {
+    background: #1e293b; width: 100%; max-width: 400px;
+    border-radius: 24px; padding: 25px; border: 1px solid rgba(255,255,255,0.1);
+    max-height: 85vh; overflow-y: auto; position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.form-group { margin-bottom: 18px; }
+.form-label { display: block; color: #94a3b8; margin-bottom: 8px; font-size: 0.85rem; font-weight: 500; }
+.form-input, .form-select {
+    width: 100%; padding: 12px 15px; background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+    color: #fff; outline: none; transition: 0.3s; font-family: inherit;
+}
+.form-input:focus, .form-select:focus { border-color: #4ade80; background: rgba(15, 23, 42, 0.8); }
+
+.img-preview-box {
+    width: 100%; height: 120px; background: rgba(15, 23, 42, 0.5);
+    border: 2px dashed rgba(255,255,255,0.1); border-radius: 12px;
+    margin-top: 10px; display: none; align-items: center; justify-content: center;
+    overflow: hidden;
+}
+.img-preview-box.active { display: flex; }
+.img-preview-box img { height: 100%; object-fit: contain; }
+
+.modal-footer { display: flex; gap: 10px; margin-top: 25px; }
+.btn-modal {
+    flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s;
+}
+.btn-cancel { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; }
+.btn-submit { background: #4ade80; color: #064e3b; box-shadow: 0 4px 15px rgba(74, 222, 128, 0.2); }
+
+.margin-info {
+    background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);
+    color: #93c5fd; font-size: 0.75rem; padding: 15px; border-radius: 12px; margin-top: 5px;
+}
+
+/* 7. Bottom Nav (Override for Admin) */
+.bottom-nav-container {
+    position: fixed; bottom: 0; left: 0; width: 100%; z-index: 90;
+    display: flex; justify-content: center;
+}
+.bottom-nav {
+    width: 100%; max-width: 480px;
+    background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex; justify-content: space-around; padding: 12px 0;
+}
+.nav-item {
+    color: #64748b; text-decoration: none; display: flex; flex-direction: column;
+    align-items: center; font-size: 0.7rem; gap: 4px; transition: 0.3s;
+}
+.nav-item.active { color: #4ade80; }
+.nav-item i { font-size: 1.2rem; }
+
+/* Animations */
+@keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }

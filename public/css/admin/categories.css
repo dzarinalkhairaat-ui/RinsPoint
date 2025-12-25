@@ -1,0 +1,287 @@
+/* --- STYLE HALAMAN KELOLA KATEGORI ADMIN --- */
+
+/* Variabel Warna (Hardcoded dari Tema) */
+:root {
+    --bg-primary: #020617;
+    --bg-secondary: #1e293b;
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --cta-primary: #4ade80; /* Hijau */
+    --danger: #ef4444; /* Merah */
+}
+
+.categories-management-page {
+    padding: 1.5rem;
+    padding-bottom: 6rem;
+}
+
+.categories-management-page .page-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.categories-management-page .page-header .btn-back {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin-right: 1rem;
+}
+
+.categories-management-page .page-header h2 {
+    font-size: 1.4rem;
+    color: var(--text-primary);
+}
+
+/* Form Tambah (Card) */
+.add-category-card {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.1); /* text-secondary transparent */
+    margin-bottom: 2rem;
+}
+
+.add-category-card h3 {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    margin-top: 0;
+}
+
+.add-category-card .form-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.add-category-card .form-row input {
+    flex: 1;
+    padding: 12px;
+    background: var(--bg-primary);
+    border: 1px solid #0f172a; /* lighten bg-primary slightly */
+    border-radius: 10px;
+    color: white;
+    outline: none;
+}
+
+.add-category-card .form-row input:focus {
+    border-color: var(--cta-primary);
+}
+
+.add-category-card .btn-add {
+    width: 100%;
+    padding: 12px;
+    background: var(--cta-primary);
+    color: #064E3B;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.add-category-card .btn-add:active {
+    transform: scale(0.98);
+}
+
+/* List Kategori */
+.category-list-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.category-list-admin .cat-card-admin {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+}
+
+/* Header Kartu */
+.cat-card-admin .cat-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    padding-bottom: 1rem;
+}
+
+.cat-card-admin .cat-header i.icon {
+    font-size: 1.8rem;
+    color: var(--cta-primary);
+}
+
+.cat-card-admin .cat-header .cat-info {
+    flex: 1;
+}
+
+.cat-card-admin .cat-header .cat-info h4 {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    margin: 0 0 2px 0;
+}
+
+.cat-card-admin .cat-header .cat-info small {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+}
+
+.cat-card-admin .cat-header .actions {
+    display: flex;
+    gap: 8px;
+}
+
+.cat-card-admin .cat-header .actions button {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cat-card-admin .cat-header .actions button.btn-edit {
+    background: rgba(245, 158, 11, 0.2);
+    color: #F59E0B;
+}
+
+.cat-card-admin .cat-header .actions button.btn-delete {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+}
+
+/* Area Subkategori */
+.cat-card-admin .sub-section h5 {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.cat-card-admin .sub-section .add-sub-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+
+.cat-card-admin .sub-section .add-sub-form input {
+    flex: 1;
+    padding: 8px 12px;
+    background: var(--bg-primary);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.85rem;
+    outline: none;
+}
+
+.cat-card-admin .sub-section .add-sub-form button {
+    padding: 0 12px;
+    background: var(--cta-primary);
+    color: #064E3B;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.cat-card-admin .sub-section .sub-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cat-card-admin .sub-section .sub-tags .sub-tag {
+    background: var(--bg-primary);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    padding: 6px 12px;
+    border-radius: 20px;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cat-card-admin .sub-section .sub-tags .sub-tag i {
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.cat-card-admin .sub-section .sub-tags .sub-tag i:hover {
+    transform: scale(1.2);
+}
+
+/* Modal Edit */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.show {
+    display: flex;
+    animation: fadeIn 0.2s;
+}
+
+.modal-overlay .modal-box {
+    background: var(--bg-secondary);
+    width: 90%;
+    max-width: 350px;
+    padding: 1.5rem;
+    border-radius: 16px;
+    text-align: center;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.modal-overlay .modal-box h3 {
+    color: white;
+    margin-bottom: 1rem;
+    margin-top: 0;
+}
+
+.modal-overlay .modal-box input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: var(--bg-primary);
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: white;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.modal-overlay .modal-box .btn-update {
+    width: 100%;
+    padding: 12px;
+    background: var(--cta-primary);
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #064E3B;
+}
+
+.modal-overlay .modal-box .btn-cancel {
+    margin-top: 15px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

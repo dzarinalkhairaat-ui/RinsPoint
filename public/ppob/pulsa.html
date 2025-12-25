@@ -6,77 +6,16 @@
     <title>Pilih Operator - RinsPoint</title>
     
     <link rel="stylesheet" href="../css/style.css">
+    
+    <link rel="stylesheet" href="../css/ppob/pulsa.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* --- FIX BACKGROUND ABSOLUT --- */
-        /* Pastikan HTML dan BODY warnanya sama, jadi saat overscroll tetap gelap */
-        html {
-            background-color: #0f172a;
-            height: 100%; /* Pastikan html setinggi viewport */
-        }
-
-        body { 
-            background-color: #0f172a; 
-            min-height: 100vh; /* Minimal setinggi layar */
-            margin: 0;
-            padding-bottom: 90px; /* Ruang untuk navbar bawah */
-            color: #f8fafc; 
-            font-family: 'Poppins', sans-serif; 
-            /* Memastikan background meluas ke area padding bawah */
-            box-sizing: border-box; 
-        }
-        
-        .ppob-header {
-            background: #1e293b; padding: 15px 20px;
-            position: sticky; top: 0; z-index: 50;
-            border-bottom: 1px solid #334155;
-            display: flex; align-items: center; gap: 15px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .ppob-header h2 { margin: 0; color: #4ade80; font-size: 1.2rem; font-weight: 600; }
-        .btn-back { color: #cbd5e1; font-size: 1.2rem; text-decoration: none; }
-        
-        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
-        
-        .section-title { 
-            font-size: 0.9rem; color: #94a3b8; margin-bottom: 15px; 
-            text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
-        }
-        
-        /* GRID PROVIDER */
-        .provider-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 12px; 
-        }
-        .provider-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px; 
-            aspect-ratio: 3 / 4.5; 
-            display: block; 
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-decoration: none; 
-        }
-        .provider-card:active { transform: scale(0.95); border-color: #4ade80; }
-        
-        .provider-img {
-            width: 100%; height: 100%;
-            object-fit: cover; 
-            display: block;
-        }
-    </style>
 </head>
 <body>
     <div class="mobile-container">
         <header class="ppob-header">
-            <a href="/" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="../ppob.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
             <h2>Isi Pulsa</h2>
         </header>
         <main class="container">
@@ -109,11 +48,11 @@
     </div>
 
     <nav class="bottom-nav">
-            <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
-            <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
-            <a href="/cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span><span class="cart-badge-fixed" id="cartBadge">0</span></a>
-            <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
-        </nav>
-        
+        <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+        <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
+        <a href="/cart.html"><i class="fa-solid fa-cart-shopping"></i><span>Troli</span><span class="cart-badge-fixed" id="cartBadge">0</span></a>
+        <a href="/admin/dashboard.html"><i class="fa-solid fa-user-shield"></i><span>Admin</span></a>
+    </nav>
+    
 </body>
 </html>

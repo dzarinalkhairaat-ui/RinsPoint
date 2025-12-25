@@ -4,52 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Detail Produk - RinsPoint</title>
+    
     <link rel="stylesheet" href="css/style.css">
+    
+    <link rel="stylesheet" href="css/pages/detail.css">
+
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
     <link rel="apple-touch-icon" href="/assets/images/icon.png">
+    
     <script src="/js/pwa-register.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        .product-slider-container { position: relative; width: 100%; height: 380px; background: #000; overflow: hidden; }
-        .product-slider-track { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-        .product-slide { flex-shrink: 0; width: 100%; height: 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative; }
-        .product-slide img { width: 100%; height: 100%; object-fit: cover; }
-        .slide-counter { position: absolute; bottom: 30px; right: 20px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; backdrop-filter: blur(4px); }
-        .action-bar { display: flex; gap: 10px; padding: 1rem; background: #1E293B; position: fixed; bottom: 0; width: 100%; max-width: 480px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 100; }
-        .btn-cart { flex: 1; background: transparent; border: 1px solid #4ADE80; color: #4ADE80; padding: 12px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; font-size: 0.9rem; transition: transform 0.1s ease; }
-        .btn-buy-now { flex: 1; background: #4ADE80; color: #064E3B; border: none; padding: 12px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; cursor: pointer; font-size: 0.9rem; }
-        
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; display:none; } 
-    </style>
 </head>
 <body>
     <div class="mobile-container">
+        
         <div class="product-slider-container">
-            <a href="javascript:history.back()" style="position: absolute; top: 20px; left: 20px; z-index: 10; width: 40px; height: 40px; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+            <a href="javascript:history.back()" class="btn-back-floating">
                 <i class="fa-solid fa-arrow-left"></i>
             </a>
             <div class="product-slider-track" id="sliderTrack">
-                <div class="product-slide"><img src="https://via.placeholder.com/400x400?text=Loading..." alt="Loading"></div>
+                <div class="product-slide">
+                    <img src="https://via.placeholder.com/400x400?text=Loading..." alt="Loading">
+                </div>
             </div>
             <div class="slide-counter" id="slideCounter">0 / 0</div>
         </div>
 
-        <div style="padding: 1.5rem; padding-bottom: 6rem; background: #0F172A; border-radius: 20px 20px 0 0; margin-top: -20px; position: relative; z-index: 5;">
-            <div id="detailCategory" style="color: #4ADE80; font-size: 0.8rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">...</div>
-            <h1 id="detailName" style="color: white; font-size: 1.3rem; margin-bottom: 0.5rem; line-height: 1.4;">Memuat...</h1>
-            <div style="margin-bottom: 1.5rem; display: flex; align-items: baseline; gap: 10px;">
-                <span id="detailOriginalPrice" style="color: #94a3b8; text-decoration: line-through; font-size: 0.9rem;"></span>
-                <span id="detailPrice" style="color: #4ADE80; font-size: 1.5rem; font-weight: 700;">Rp 0</span>
+        <div class="product-info-area">
+            <div id="detailCategory" class="category-tag">...</div>
+            <h1 id="detailName" class="product-title">Memuat...</h1>
+            
+            <div class="price-container">
+                <span id="detailOriginalPrice" class="original-price"></span>
+                <span id="detailPrice" class="current-price">Rp 0</span>
             </div>
-            <div style="width: 100%; height: 1px; background: #334155; margin-bottom: 1.5rem;"></div>
-            <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Deskripsi Produk</h3>
-            <p id="detailDesc" style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.6; white-space: pre-line;">...</p>
-            <div style="width: 100%; height: 1px; background: #334155; margin: 2rem 0 1rem 0;"></div>
-            <div class="related-products-section" style="margin-bottom: 2rem;">
-                <h3 style="color: white; font-size: 1rem; margin-bottom: 1rem;">Produk Terkait</h3>
-                <div id="relatedProductsContainer" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; align-items: stretch;">
+
+            <div class="divider"></div>
+
+            <h3 class="section-title">Deskripsi Produk</h3>
+            <p id="detailDesc" class="product-description">...</p>
+
+            <div class="divider" style="margin: 2rem 0 1rem 0;"></div>
+
+            <div class="related-products-section">
+                <h3 class="section-title" style="margin-bottom: 1rem;">Produk Terkait</h3>
+                <div id="relatedProductsContainer" class="related-grid">
                     <p style="color: #64748b; font-size: 0.8rem;">Memuat rekomendasi...</p>
                 </div>
             </div>
@@ -100,17 +101,16 @@
             document.title = prod.name;
             
             // --- FIX CATEGORY DISPLAY ---
-            // Cek apakah category itu Object (Affiliate) atau String (PPOB)
             let catDisplay = 'Umum';
             let catValueForQuery = null;
 
             if (prod.category) {
                 if (typeof prod.category === 'object' && prod.category.name) {
-                    catDisplay = prod.category.name; // Affiliate
-                    catValueForQuery = prod.category._id; // Gunakan ID untuk query affiliate
+                    catDisplay = prod.category.name; 
+                    catValueForQuery = prod.category._id; 
                 } else {
-                    catDisplay = prod.category; // PPOB (String)
-                    catValueForQuery = prod.category; // Gunakan string untuk query PPOB
+                    catDisplay = prod.category; 
+                    catValueForQuery = prod.category; 
                 }
             }
 
@@ -123,21 +123,19 @@
             }
             document.getElementById('detailDesc').innerText = prod.description;
             
-            // Handle Link (If PPOB, maybe hide or point to WhatsApp/Checkout page)
+            // Handle Link 
             if (prod.affiliateLink) {
                 document.getElementById('btnBuyLink').href = prod.affiliateLink;
             } else {
-                document.getElementById('btnBuyLink').href = '#'; // Or logic to add to cart/checkout
+                document.getElementById('btnBuyLink').href = '#'; 
                 document.getElementById('btnBuyLink').innerText = 'Beli Langsung';
                 document.getElementById('btnBuyLink').onclick = (e) => {
                     e.preventDefault();
-                    // Simple Add to Cart logic then redirect
                     addToCartLogic();
-                    window.location.href = '/checkout.html'; // Assuming you have a checkout page
+                    window.location.href = '/checkout.html'; 
                 };
             }
             
-            // Load Related Products dengan nilai kategori yang benar
             loadRelatedProducts(catValueForQuery, prod._id);
         }
 
@@ -149,11 +147,8 @@
             }
 
             try {
-                // Fetch products based on category (Works for both ID and String)
                 const res = await fetch(`${API_URL}/products?category=${catValue}`);
                 const products = await res.json();
-                
-                // Filter current product out & limit to 4
                 const related = products.filter(p => p._id !== currentId).slice(0, 4);
                 
                 container.innerHTML = '';
@@ -165,13 +160,14 @@
                 related.forEach(p => {
                     const img = (p.images && p.images.length > 0) ? p.images[0] : 'https://via.placeholder.com/150';
                     const div = document.createElement('div');
-                    div.style.cssText = "background:#1E293B; border-radius:12px; overflow:hidden; cursor:pointer;";
+                    div.className = 'related-card'; // Pakai Class CSS baru
                     div.onclick = () => window.location.href=`product.html?slug=${p.slug}`;
+                    
                     div.innerHTML = `
-                        <img src="${img}" style="width:100%; aspect-ratio:1/1; object-fit:cover;" onerror="this.src='https://via.placeholder.com/150'">
-                        <div style="padding:10px;">
-                            <h4 style="color:white; font-size:0.8rem; margin-bottom:4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${p.name}</h4>
-                            <div style="color:#4ADE80; font-weight:700; font-size:0.9rem;">Rp ${new Intl.NumberFormat('id-ID').format(p.price)}</div>
+                        <img src="${img}" onerror="this.src='https://via.placeholder.com/150'">
+                        <div class="info">
+                            <h4>${p.name}</h4>
+                            <div class="price">Rp ${new Intl.NumberFormat('id-ID').format(p.price)}</div>
                         </div>`;
                     container.appendChild(div);
                 });
@@ -185,19 +181,12 @@
             if (!currentProduct) return;
             const btn = document.getElementById('btnAddToCart');
             
-            // Visual Effect
-            btn.style.transform = "scale(0.95)";
-            setTimeout(() => btn.style.transform = "scale(1)", 150);
+            // Visual Effect (Sudah di CSS)
+            // btn.style.transform handled by CSS :active
 
             // Save to Storage
             let cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
-            
-            // Check duplications (Optional: increase qty instead)
             const existingItem = cart.find(item => item.id === currentProduct._id);
-            if(existingItem) {
-                // alert('Produk sudah ada di keranjang');
-                // return; 
-            }
 
             const img = (currentProduct.images && currentProduct.images.length > 0) ? currentProduct.images[0] : '';
             
@@ -221,7 +210,6 @@
             }, 1500);
         }
 
-        // --- ADD TO CART LISTENER ---
         document.getElementById('btnAddToCart').addEventListener('click', addToCartLogic);
     </script>
 </body>

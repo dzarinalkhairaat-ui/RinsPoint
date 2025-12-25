@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tentang Kami - RinsPoint</title>
+    
     <link rel="stylesheet" href="css/style.css">
+    
+    <link rel="stylesheet" href="css/pages/info.css">
 
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
     <link rel="apple-touch-icon" href="/assets/images/icon.png">
     
     <script src="/js/pwa-register.js"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -44,7 +46,7 @@
         </main>
 
         <nav class="bottom-nav">
-            <a href="/" class="active"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
+            <a href="/"><i class="fa-solid fa-house"></i><span>Beranda</span></a>
             <a href="/ppob.html"><i class="fa-solid fa-bolt"></i><span>PPOB</span></a>
             <a href="cart.html">
                 <i class="fa-solid fa-cart-shopping"></i>
@@ -58,7 +60,6 @@
     <script src="js/whatsapp.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // HANYA UPDATE BADGE TROLI (Script lain dihapus)
             const cart = JSON.parse(localStorage.getItem('rinsCart')) || [];
             const badge = document.getElementById('cartBadge');
             

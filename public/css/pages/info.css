@@ -1,0 +1,103 @@
+/* --- STYLE HALAMAN INFORMASI (About & How-To) --- */
+
+.info-page {
+    padding: 1.5rem;
+    padding-bottom: 6rem; /* Ruang nav bawah */
+}
+
+/* --- TENTANG KAMI (About) --- */
+.about-card {
+    background: #1E293B; /* $bg-secondary */
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.about-card .logo-area {
+    width: 80px;
+    height: 80px;
+    /* Gradient Hijau */
+    background: linear-gradient(135deg, #4ADE80, #166534);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem auto;
+    font-size: 2rem;
+    color: white;
+    box-shadow: 0 10px 20px rgba(74, 222, 128, 0.2);
+}
+
+.about-card h2 {
+    font-size: 1.5rem;
+    color: #F8FAFC; /* $text-primary */
+    margin-bottom: 0.5rem;
+}
+
+.about-card p {
+    color: #94a3b8; /* $text-secondary */
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.vision-mission {
+    margin-top: 2rem;
+}
+
+.vision-mission h3 {
+    color: #4ADE80; /* $cta-primary */
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    border-left: 3px solid #4ADE80;
+    padding-left: 10px;
+}
+
+.vision-mission p {
+    color: #94a3b8; /* $text-secondary */
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+/* --- CARA BELANJA (How-To) --- */
+.how-to-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.how-to-list .step-item {
+    display: flex;
+    gap: 1rem;
+}
+
+.how-to-list .step-item .step-number {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ADE80;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.how-to-list .step-item .step-content h4 {
+    color: #F8FAFC; /* $text-primary */
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+}
+
+.how-to-list .step-item .step-content p {
+    color: #94a3b8; /* $text-secondary */
+    font-size: 0.85rem;
+    line-height: 1.5;
+}

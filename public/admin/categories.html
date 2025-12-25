@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Kategori - Admin</title>
-    <link rel="stylesheet" href="../css/style.css">
+    
+    <link rel="stylesheet" href="../css/admin/categories.css">
 
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
@@ -14,18 +15,19 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <script src="../js/auth.js"></script>
     <script>checkAuth();</script>
 </head>
 <body>
 
     <div class="mobile-container">
-        <header class="main-header">
-            <a href="dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="logo-text">Kelola Kategori</div>
+        <header class="main-header" style="display:flex; align-items:center; padding: 20px; background: #1e293b; position: sticky; top:0; z-index:50;">
+            <a href="dashboard.html" class="btn-back" style="color:white; font-size:1.2rem; margin-right:15px; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i></a>
+            <div class="logo-text" style="color:white; font-weight:700; font-size:1.1rem;">Kelola Kategori</div>
         </header>
 
-        <main class="categories-management-page" style="padding-top:1rem;">
+        <main class="categories-management-page">
             
             <div class="add-category-card">
                 <h3><i class="fa-solid fa-plus-circle"></i> Tambah Kategori</h3>
@@ -50,7 +52,7 @@
             <h3>Edit Kategori</h3>
             <input type="hidden" id="editId">
             <input type="text" id="editName" placeholder="Nama Kategori">
-            <input type="text" id="editIcon" placeholder="Kode Icon">
+            <input type="text" id="editIcon" placeholder="Kode Icon (ex: fa-home)">
             <button class="btn-update" onclick="submitEdit()">UPDATE</button>
             <div class="btn-cancel" onclick="closeEditModal()">Batal</div>
         </div>
@@ -113,7 +115,7 @@
                     `;
                     container.appendChild(div);
                 });
-            } catch (error) { container.innerHTML = 'Gagal memuat.'; }
+            } catch (error) { container.innerHTML = '<p style="color:#ef4444; text-align:center;">Gagal memuat data.</p>'; }
         }
 
         // --- CRUD KATEGORI UTAMA ---
@@ -124,6 +126,7 @@
 
             await apiRequest(`${API_URL}/categories`, 'POST', { name, icon });
             document.getElementById('catName').value = '';
+            document.getElementById('catIcon').value = '';
             loadCategories();
         }
 

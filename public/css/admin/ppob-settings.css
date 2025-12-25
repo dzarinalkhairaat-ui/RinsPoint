@@ -1,0 +1,107 @@
+/* --- STYLE PENGATURAN PPOB (ADMIN) --- */
+
+/* 1. Global & Layout */
+body { 
+    background-color: #0f172a; 
+    padding-bottom: 80px; 
+    font-family: 'Poppins', sans-serif; 
+    color: #fff; 
+    margin: 0; 
+}
+
+.mobile-container {
+    max-width: 480px; 
+    margin: 0 auto; 
+}
+
+/* 2. Header */
+.dashboard-header {
+    background: #1e293b; padding: 1rem; position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid #334155; 
+    display: flex; align-items: center; justify-content: flex-start; gap: 15px;
+}
+
+.dashboard-header h2 { margin: 0; color: #4ade80; font-size: 1.1rem; }
+
+.dashboard-content { padding: 20px; }
+
+/* 3. Card Style Modern */
+.setting-card {
+    background: #1e293b; border-radius: 16px; border: 1px solid #334155;
+    padding: 20px; margin-bottom: 20px;
+}
+
+.card-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 15px;
+    border-bottom: 1px dashed #334155; padding-bottom: 10px;
+}
+.card-header i { color: #4ade80; font-size: 1.2rem; }
+.card-header h3 { color: white; margin: 0; font-size: 1rem; }
+
+/* 4. Form Elements */
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; color: #94a3b8; margin-bottom: 8px; font-size: 0.85rem; }
+
+.input-dark {
+    width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155;
+    border-radius: 10px; color: white; outline: none; transition: 0.3s;
+    box-sizing: border-box; 
+}
+.input-dark:focus { border-color: #4ade80; }
+
+/* 5. Toggle Switch (Jam Buka/Tutup) */
+.switch-wrapper { 
+    display: flex; justify-content: space-between; align-items: center; 
+    background: #0f172a; padding: 15px; border-radius: 10px; border: 1px solid #334155; 
+}
+.switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+
+.slider { 
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; 
+    background-color: #334155; transition: .4s; border-radius: 34px; 
+}
+.slider:before { 
+    position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; 
+    background-color: white; transition: .4s; border-radius: 50%; 
+}
+input:checked + .slider { background-color: #4ade80; }
+input:checked + .slider:before { transform: translateX(24px); }
+
+/* Status Label */
+.status-label { font-weight: bold; font-size: 0.9rem; }
+.status-open { color: #4ade80; }
+.status-closed { color: #ef4444; }
+
+/* 6. Logo Grid */
+.logo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.logo-item { 
+    background: #0f172a; padding: 10px; border-radius: 10px; 
+    border: 1px solid #334155; text-align: center; 
+}
+.logo-preview { 
+    width: 100%; height: 40px; object-fit: contain; margin-bottom: 5px; 
+    background: rgba(255,255,255,0.05); border-radius: 6px; 
+}
+
+/* 7. Button Save */
+.btn-save {
+    width: 100%; background: #4ade80; color: #064e3b; padding: 14px;
+    border: none; border-radius: 12px; font-weight: bold; font-size: 1rem;
+    cursor: pointer; box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3); transition: 0.2s;
+}
+.btn-save:active { transform: scale(0.98); }
+.btn-save:disabled { background: #334155; color: #94a3b8; cursor: not-allowed; box-shadow: none; }
+
+/* 8. Bottom Nav */
+.bottom-nav {
+    position: fixed; bottom: 0; width: 100%; max-width: 480px;
+    background: #1e293b; border-top: 1px solid #334155;
+    display: flex; justify-content: space-around; padding: 15px 0; z-index: 90;
+}
+.nav-item { 
+    color: #64748b; text-decoration: none; text-align: center; 
+    font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; gap: 4px; 
+}
+.nav-item.active { color: #4ade80; }
+.nav-item i { font-size: 1.2rem; }

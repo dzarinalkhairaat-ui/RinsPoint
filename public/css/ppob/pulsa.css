@@ -1,0 +1,69 @@
+/* --- STYLE KHUSUS HALAMAN ISI PULSA --- */
+
+/* 1. FIX BACKGROUND ABSOLUT */
+/* Pastikan HTML dan BODY warnanya sama, jadi saat overscroll tetap gelap */
+html {
+    background-color: #0f172a;
+    height: 100%; /* Pastikan html setinggi viewport */
+}
+
+body { 
+    background-color: #0f172a; 
+    min-height: 100vh; /* Minimal setinggi layar */
+    margin: 0;
+    padding-bottom: 90px; /* Ruang untuk navbar bawah */
+    color: #f8fafc; 
+    font-family: 'Poppins', sans-serif; 
+    /* Memastikan background meluas ke area padding bawah */
+    box-sizing: border-box; 
+}
+
+/* 2. CONTAINER & HEADER */
+.mobile-container {
+    max-width: 480px; margin: 0 auto;
+    /* Tidak perlu min-height di sini karena body sudah handle */
+}
+
+.ppob-header {
+    background: #1e293b; padding: 15px 20px;
+    position: sticky; top: 0; z-index: 50;
+    border-bottom: 1px solid #334155;
+    display: flex; align-items: center; gap: 15px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.ppob-header h2 { margin: 0; color: #4ade80; font-size: 1.2rem; font-weight: 600; }
+.btn-back { color: #cbd5e1; font-size: 1.2rem; text-decoration: none; }
+
+.container { padding: 20px; width: 100%; box-sizing: border-box; }
+
+.section-title { 
+    font-size: 0.9rem; color: #94a3b8; margin-bottom: 15px; 
+    text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+}
+
+/* 3. GRID PROVIDER */
+.provider-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 12px; 
+}
+.provider-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px; 
+    aspect-ratio: 3 / 4.5; 
+    display: block; 
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-decoration: none; 
+}
+.provider-card:active { transform: scale(0.95); border-color: #4ade80; }
+
+.provider-img {
+    width: 100%; height: 100%;
+    object-fit: cover; 
+    display: block;
+}

@@ -1,0 +1,149 @@
+/* --- STYLE KHUSUS HALAMAN TOP UP SHOPEEPAY --- */
+
+/* 1. RESET & BACKGROUND */
+html { height: 100%; background: #0f172a; }
+body { 
+    margin: 0; min-height: 100%; color: #fff; font-family: 'Poppins', sans-serif;
+    overflow-x: hidden; position: relative;
+    background-color: #0f172a;
+}
+
+/* Animasi Background Abstrak */
+.bg-animation {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+    overflow: hidden;
+    background: linear-gradient(to bottom, #1a0b08, #0f172a);
+}
+.floater {
+    position: absolute; border-radius: 50%;
+    background: radial-gradient(circle, rgba(238, 77, 45, 0.4) 0%, transparent 70%);
+    filter: blur(40px); animation: floatObj 10s infinite ease-in-out alternate;
+}
+.f1 { width: 300px; height: 300px; top: -100px; left: -50px; }
+.f2 { 
+    width: 200px; height: 200px; bottom: 20%; right: -50px; 
+    animation-duration: 15s; 
+    background: radial-gradient(circle, rgba(255, 115, 0, 0.3) 0%, transparent 70%); 
+}
+.f3 { width: 150px; height: 150px; top: 40%; left: 40%; animation-duration: 12s; opacity: 0.3; }
+
+@keyframes floatObj {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(30px) scale(1.1); }
+}
+
+.mobile-container {
+    max-width: 480px; margin: 0 auto; min-height: 100vh;
+    display: flex; flex-direction: column; position: relative;
+    background: rgba(15, 23, 42, 0.6); 
+    backdrop-filter: blur(10px);
+    border-left: 1px solid rgba(238, 77, 45, 0.1);
+    border-right: 1px solid rgba(238, 77, 45, 0.1);
+}
+
+/* 2. HEADER */
+.sp-header {
+    padding: 20px; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(15, 23, 42, 0.9); border-bottom: 1px solid rgba(238, 77, 45, 0.2);
+}
+.btn-back { color: #fff; font-size: 1.2rem; text-decoration: none; }
+.page-title { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; color: #ee4d2d; }
+.header-icon { color: #ee4d2d; font-size: 1.2rem; }
+
+/* 3. HERO: SHOPEE CARD */
+.hero-box { padding: 30px 20px; }
+.sp-card {
+    background: linear-gradient(135deg, #ee4d2d, #ff7300);
+    border-radius: 20px; padding: 25px;
+    box-shadow: 0 10px 30px -5px rgba(238, 77, 45, 0.4);
+    position: relative; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.sp-card::after {
+    content: '\f290'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+    position: absolute; bottom: -20px; right: -20px;
+    font-size: 8rem; color: rgba(255,255,255,0.1); transform: rotate(-15deg);
+}
+
+.card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; position: relative; z-index: 2;}
+.sp-logo-text { font-size: 1.2rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+.card-chip { font-size: 2rem; color: rgba(255,255,255,0.8); }
+
+.card-bal { position: relative; z-index: 2; }
+.bal-label { font-size: 0.8rem; color: rgba(255,255,255,0.9); }
+.bal-amount { font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 5px; }
+
+/* 4. INPUT */
+.form-area { padding: 0 20px 20px 20px; }
+.input-label { color: #ee4d2d; font-size: 0.85rem; margin-bottom: 8px; font-weight: 600; }
+.input-wrap {
+    background: #1e293b; border: 1px solid #334155;
+    border-radius: 12px; padding: 12px 15px;
+    display: flex; align-items: center; gap: 10px;
+    transition: 0.3s;
+}
+.input-wrap:focus-within {
+    border-color: #ee4d2d; box-shadow: 0 0 15px rgba(238, 77, 45, 0.2);
+}
+.sp-input {
+    width: 100%; background: transparent; border: none; outline: none;
+    color: #fff; font-size: 1.1rem; font-weight: 600;
+}
+.sp-input:disabled { color: #64748b; cursor: not-allowed; }
+.contact-btn { color: #ee4d2d; cursor: pointer; }
+
+/* 5. GRID NOMINAL */
+.grid-area { padding: 10px 20px 120px 20px; }
+.grid-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.grid-item {
+    background: #1e293b; border: 1px solid #334155;
+    border-radius: 12px; padding: 15px;
+    cursor: pointer; transition: 0.2s; position: relative;
+}
+.grid-item:hover { border-color: #ee4d2d; background: rgba(238, 77, 45, 0.1); }
+.grid-item.selected {
+    background: rgba(238, 77, 45, 0.15); border-color: #ee4d2d;
+    box-shadow: 0 4px 15px rgba(238, 77, 45, 0.2);
+}
+.grid-item.selected::after {
+    content: '\f058'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+    position: absolute; top: 8px; right: 8px; color: #ee4d2d; font-size: 0.9rem;
+}
+.item-nom { font-size: 1.1rem; font-weight: 700; color: #fff; display: block; }
+.item-price { font-size: 0.85rem; color: #fb923c; margin-top: 5px; display: block; }
+
+/* 6. BUTTON BAYAR */
+.btn-container { margin-top: 30px; width: 100%; }
+.btn-pay {
+    width: 100%; padding: 16px; border: none; border-radius: 12px;
+    background: linear-gradient(to right, #ee4d2d, #ea580c);
+    color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer;
+    box-shadow: 0 5px 20px rgba(238, 77, 45, 0.4);
+    transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.btn-pay:active { transform: scale(0.98); }
+.btn-pay:disabled {
+    background: #334155 !important; color: #94a3b8 !important; 
+    box-shadow: none !important; cursor: not-allowed; opacity: 0.7;
+}
+
+/* Banner Toko Tutup */
+.store-closed-banner {
+    background: rgba(238, 77, 45, 0.1); 
+    border: 1px dashed #ee4d2d; 
+    color: #ee4d2d;
+    padding: 25px 20px; 
+    border-radius: 16px; 
+    text-align: center; 
+    margin-bottom: 25px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+.store-closed-banner i { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.8; }
+.store-closed-banner h3 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+.store-closed-banner p { margin: 5px 0 0; font-size: 0.85rem; opacity: 0.8; }

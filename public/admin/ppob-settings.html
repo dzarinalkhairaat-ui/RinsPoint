@@ -7,78 +7,16 @@
     
     <link rel="stylesheet" href="../css/style.css">
     
+    <link rel="stylesheet" href="../css/admin/ppob-settings.css">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
     <script src="../js/auth.js"></script>
     <script>checkAuth();</script>
-    <style>
-        body { background-color: #0f172a; padding-bottom: 80px; font-family: 'Poppins', sans-serif; color: #fff; }
-        
-        .dashboard-header {
-            background: #1e293b; padding: 1rem; position: sticky; top: 0; z-index: 100;
-            border-bottom: 1px solid #334155; 
-            display: flex; align-items: center; justify-content: flex-start; gap: 15px;
-        }
-        
-        .dashboard-header h2 { margin: 0; color: #4ade80; font-size: 1.1rem; }
-        /* Card Style Modern */
-        .setting-card {
-            background: #1e293b; border-radius: 16px; border: 1px solid #334155;
-            padding: 20px; margin-bottom: 20px;
-        }
-        
-        .card-header {
-            display: flex; align-items: center; gap: 10px; margin-bottom: 15px;
-            border-bottom: 1px dashed #334155; padding-bottom: 10px;
-        }
-        .card-header i { color: #4ade80; font-size: 1.2rem; }
-        .card-header h3 { color: white; margin: 0; font-size: 1rem; }
-        /* Form Elements */
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; color: #94a3b8; margin-bottom: 8px; font-size: 0.85rem; }
-        
-        .input-dark {
-            width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155;
-            border-radius: 10px; color: white; outline: none; transition: 0.3s;
-            box-sizing: border-box; 
-        }
-        .input-dark:focus { border-color: #4ade80; }
-        /* Toggle Switch */
-        .switch-wrapper { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 15px; border-radius: 10px; border: 1px solid #334155; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #4ade80; }
-        input:checked + .slider:before { transform: translateX(24px); }
-        /* Status Label */
-        .status-label { font-weight: bold; font-size: 0.9rem; }
-        .status-open { color: #4ade80; }
-        .status-closed { color: #ef4444; }
-        /* Logo Grid */
-        .logo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .logo-item { background: #0f172a; padding: 10px; border-radius: 10px; border: 1px solid #334155; text-align: center; }
-        .logo-preview { width: 100%; height: 40px; object-fit: contain; margin-bottom: 5px; background: rgba(255,255,255,0.05); border-radius: 6px; }
-        .btn-save {
-            width: 100%; background: #4ade80; color: #064e3b; padding: 14px;
-            border: none; border-radius: 12px; font-weight: bold; font-size: 1rem;
-            cursor: pointer; box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3); transition: 0.2s;
-        }
-        .btn-save:active { transform: scale(0.98); }
-        /* Bottom Nav */
-        .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; max-width: 480px;
-            background: #1e293b; border-top: 1px solid #334155;
-            display: flex; justify-content: space-around; padding: 15px 0; z-index: 90;
-        }
-        .nav-item { color: #64748b; text-decoration: none; text-align: center; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .nav-item.active { color: #4ade80; }
-        .nav-item i { font-size: 1.2rem; }
-    </style>
 </head>
 <body>
-    <div class="mobile-container" style="max-width: 480px; margin: 0 auto;">
+    <div class="mobile-container">
         
         <header class="dashboard-header">
             <a href="dashboard.html" style="color:white; font-size: 1.2rem;">
@@ -86,7 +24,8 @@
             </a>
             <h2>Pengaturan PPOB</h2>
         </header>
-        <main class="dashboard-content" style="padding: 20px;">
+
+        <main class="dashboard-content">
             
             <form id="ppobSettingsForm">
                 
@@ -135,25 +74,6 @@
                     </div>
                 </div>
 
-                <div class="setting-card">
-                    <div class="card-header">
-                        <i class="fa-solid fa-images"></i>
-                        <h3>Logo Provider</h3>
-                    </div>
-                    <p style="color:#94a3b8; font-size:0.8rem; margin-bottom:15px;">Fitur upload logo akan tersedia pada update backend berikutnya.</p>
-                    
-                    <div class="logo-grid">
-                        <div class="logo-item">
-                            <img src="../../assets/images/pulsa/picture/telkomsel-logo.jpeg" class="logo-preview" alt="Tsel">
-                            <span style="font-size:0.7rem; color:#cbd5e1;">Telkomsel</span>
-                        </div>
-                        <div class="logo-item">
-                            <img src="../../assets/images/pulsa/picture/indosat-logo.jpeg" class="logo-preview" alt="Isat">
-                            <span style="font-size:0.7rem; color:#cbd5e1;">Indosat</span>
-                        </div>
-                    </div>
-                </div>
-
                 <button type="submit" id="btnSave" class="btn-save">SIMPAN PENGATURAN</button>
             </form>
         </main>
@@ -170,11 +90,11 @@
         const API_URL = '/api';
         const token = localStorage.getItem('adminToken');
 
-        // --- 1. LOAD DATA (SERVER PRIORITY -> LOCAL FALLBACK) ---
+        // --- 1. LOAD DATA ---
         document.addEventListener('DOMContentLoaded', async () => {
             if(!token) window.location.href = '/login.html';
             
-            // Default config jika semua gagal
+            // Default config
             let config = { 
                 isOpen: true, 
                 margin: 0,
@@ -183,23 +103,18 @@
             };
 
             try {
-                // Coba ambil dari server
                 const res = await fetch(`${API_URL}/settings/ppob`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
                 if (res.ok) {
                     const data = await res.json();
-                    config = { ...config, ...data }; // Merge data server
-                    // Update localStorage agar sinkron
+                    config = { ...config, ...data }; 
                     localStorage.setItem('ppobConfig', JSON.stringify(config));
                 } else {
-                    // Jika server error/404, gunakan localStorage
                     throw new Error("Server settings not reachable");
                 }
             } catch (error) {
-                // Fallback ke localStorage
-                // console.warn("Load failed, using localStorage:", error);
                 const local = localStorage.getItem('ppobConfig');
                 if(local) config = JSON.parse(local);
             }
@@ -226,7 +141,7 @@
             }
         }
 
-        // --- 3. SIMPAN DATA (SERVER + LOCAL) ---
+        // --- 3. SIMPAN DATA ---
         document.getElementById('ppobSettingsForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -235,7 +150,6 @@
             btn.innerText = 'Menyimpan...';
             btn.disabled = true;
 
-            // Ambil value form
             const isOpen = document.getElementById('ppobStatus').checked;
             const margin = parseInt(document.getElementById('ppobMargin').value) || 0;
             const openTime = document.getElementById('openTime').value;
@@ -244,9 +158,8 @@
             const config = { isOpen, margin, openTime, closeTime };
 
             try {
-                // 1. Simpan ke Server (Prioritas)
                 const res = await fetch(`${API_URL}/settings/ppob`, {
-                    method: 'POST', // atau PUT, tergantung backend nanti
+                    method: 'POST', 
                     headers: { 
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}` 
@@ -256,14 +169,11 @@
 
                 if (!res.ok) throw new Error("Gagal menyimpan ke server");
 
-                // 2. Simpan ke LocalStorage (Backup/Cache)
                 localStorage.setItem('ppobConfig', JSON.stringify(config));
-                
                 alert('Pengaturan PPOB Berhasil Disimpan!');
 
             } catch (error) {
                 console.error(error);
-                // Jika server gagal, tetap simpan di local agar user tidak bingung (Sementara)
                 localStorage.setItem('ppobConfig', JSON.stringify(config));
                 alert('Disimpan di Local Storage (Server Offline/Error).');
             } finally {
