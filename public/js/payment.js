@@ -5,7 +5,6 @@ let transaction = null;
 let selectedMethod = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Ambil Data dari LocalStorage
     const rawData = localStorage.getItem('currentTransaction');
     if (!rawData) { 
         alert('Data transaksi hilang.'); 
@@ -15,7 +14,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     transaction = JSON.parse(rawData);
     
-    // 2. Tampilkan Data
     document.getElementById('dispProduct').innerText = transaction.productName;
     document.getElementById('dispNumber').innerText = transaction.customerNumber;
     const formattedPrice = 'Rp ' + new Intl.NumberFormat('id-ID').format(transaction.productPrice);
@@ -24,7 +22,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const floatPrice = document.getElementById('dispPriceFloat');
     if(floatPrice) floatPrice.innerText = formattedPrice;
     
-    // 3. Muat Metode Pembayaran
     await loadPaymentMethods();
 });
 
@@ -119,7 +116,7 @@ function checkForm() {
     else btn.disabled = true; 
 }
 
-// --- BAGIAN INI YANG PALING PENTING (DIUPDATE) ---
+// --- PROSES BAYAR (KIRIM ID NOTIFIKASI) ---
 async function processPayment() {
     const btn = document.getElementById('btnConfirm');
     const originalText = btn.innerHTML;
@@ -141,8 +138,7 @@ async function processPayment() {
             formData.append('paymentProof', fileInput.files[0]);
         }
 
-        // --- AMBIL ID NOTIFIKASI PEMBELI (BARU) ---
-        // Kita cek apakah OneSignal sudah siap, lalu ambil ID-nya
+        // --- AMBIL ID NOTIFIKASI PEMBELI ---
         if (window.OneSignalDeferred) {
             await new Promise(resolve => {
                 window.OneSignalDeferred.push(async function(OneSignal) {
@@ -150,7 +146,7 @@ async function processPayment() {
                         const id = await OneSignal.User.PushSubscription.id;
                         if (id) {
                             console.log("Player ID Found:", id);
-                            formData.append('userPlayerId', id); // Kirim ke Backend
+                            formData.append('userPlayerId', id); 
                         }
                     } catch (e) {
                         console.warn("Gagal ambil OneSignal ID", e);
@@ -160,7 +156,6 @@ async function processPayment() {
             });
         }
 
-        // Kirim ke Backend
         const response = await fetch('/api/ppob/transaction', {
             method: 'POST',
             body: formData 

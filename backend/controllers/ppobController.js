@@ -1,6 +1,15 @@
 const Product = require('../../models/Product');
 const Transaction = require('../../models/Transaction');
 const { sendToDevice } = require('../utils/onesignal');
+// 1. IMPORT CLOUDINARY (BARU)
+const cloudinary = require('cloudinary').v2;
+
+// 2. KONFIGURASI CLOUDINARY (Agar bisa akses fungsi delete)
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 // --- 1. GET PRICELIST ---
 const getPriceList = async (req, res) => {
@@ -19,15 +28,13 @@ const getPriceList = async (req, res) => {
     } catch (error) { res.status(500).json({ message: "Gagal mengambil data" }); }
 };
 
-// --- 2. BUAT TRANSAKSI (UPDATE: SIMPAN PLAYER ID) ---
+// --- 2. BUAT TRANSAKSI ---
 const createTransaction = async (req, res) => {
-    // Tangkap userPlayerId dari body (dikirim frontend nanti)
     const { productCode, productName, customerPhone, price, userPlayerId } = req.body;
     const proofImage = req.file ? req.file.path : null; 
 
     try {
         const trxId = 'TRX-' + Date.now();
-
         const transaction = await Transaction.create({
             trxId: trxId,
             customerPhone: customerPhone,
@@ -36,19 +43,17 @@ const createTransaction = async (req, res) => {
             status: 'pending',
             note: 'Menunggu Verifikasi Bukti Pembayaran',
             paymentProof: proofImage, 
-            userPlayerId: userPlayerId, // <--- DISIMPAN DISINI
+            userPlayerId: userPlayerId, 
             providerResponse: { productName }
         });
 
-        // NOTIFIKASI KE ADMIN (TETAP JALAN)
+        // Notif Admin
         const adminId = process.env.ONESIGNAL_ADMIN_ID;
         if (adminId) {
             const notifTitle = "💰 Order Baru Masuk Bos!";
             const priceFormatted = parseInt(price).toLocaleString('id-ID');
             const proofStatus = proofImage ? "📸 Bukti Terlampir" : "❌ Tanpa Bukti";
             const notifMsg = `${productName || 'Produk'}\nNo: ${customerPhone}\nRp ${priceFormatted}\n${proofStatus}`;
-            
-            // Kita bungkus try-catch agar kalau notif admin gagal, transaksi tetap sukses
             try { await sendToDevice(adminId, notifMsg, notifTitle); } catch(e){}
         }
 
@@ -68,7 +73,7 @@ const getTransactionDetail = async (req, res) => {
     } catch (error) { res.status(500).json({ message: 'Server Error' }); }
 };
 
-// --- 4. ADMIN: GET ALL TRANSACTIONS ---
+// --- 4. ADMIN: GET ALL ---
 const getAllTransactions = async (req, res) => {
     try {
         const transactions = await Transaction.find().sort({ createdAt: -1 });
@@ -76,7 +81,7 @@ const getAllTransactions = async (req, res) => {
     } catch (error) { res.status(500).json({ message: 'Gagal ambil data' }); }
 };
 
-// --- 5. ADMIN: UPDATE STATUS (UPDATE: KIRIM NOTIF KE PEMBELI) ---
+// --- 5. ADMIN: UPDATE STATUS ---
 const updateTransactionStatus = async (req, res) => {
     const { status, note } = req.body; 
     const { trxId } = req.params;
@@ -85,36 +90,23 @@ const updateTransactionStatus = async (req, res) => {
         const transaction = await Transaction.findOne({ trxId });
         if (!transaction) return res.status(404).json({ message: "Transaksi tidak ditemukan" });
 
-        // Update Data
         transaction.status = status;
         if(note) transaction.note = note;
         await transaction.save();
 
-        // --- LOGIKA NOTIFIKASI KE PEMBELI ---
+        // Notif User
         if (transaction.userPlayerId) {
-            let userMsg = "";
-            let userHeading = "";
-
+            let userMsg = "", userHeading = "";
             if (status === 'success') {
                 userHeading = "✅ Pesanan Sukses!";
-                userMsg = `Hore! Pesanan ${transaction.providerResponse?.productName} ke ${transaction.customerPhone} BERHASIL diproses.`;
+                userMsg = `Hore! Pesanan ${transaction.providerResponse?.productName} BERHASIL diproses.`;
                 if(note) userMsg += `\nInfo: ${note}`;
             } else if (status === 'failed') {
                 userHeading = "❌ Pesanan Gagal";
                 userMsg = `Maaf, pesananmu dibatalkan. Alasan: ${note || 'Hubungi Admin'}`;
             }
-
-            // Kirim Notif jika statusnya success/failed
-            if (userHeading) {
-                try {
-                    await sendToDevice(transaction.userPlayerId, userMsg, userHeading);
-                    console.log(`Notif sent to user: ${transaction.userPlayerId}`);
-                } catch (err) {
-                    console.error("Gagal kirim notif user:", err.message);
-                }
-            }
+            if (userHeading) try { await sendToDevice(transaction.userPlayerId, userMsg, userHeading); } catch(e){}
         }
-
         res.json(transaction);
     } catch (error) {
         console.error(error);
@@ -122,13 +114,42 @@ const updateTransactionStatus = async (req, res) => {
     }
 };
 
+// --- 6. ADMIN: HAPUS TRANSAKSI (FITUR BARU) ---
+const deleteTransaction = async (req, res) => {
+    const { trxId } = req.params;
+    try {
+        const transaction = await Transaction.findOne({ trxId });
+        if (!transaction) return res.status(404).json({ message: "Transaksi tidak ditemukan" });
+
+        // A. Hapus Gambar di Cloudinary jika ada
+        if (transaction.paymentProof) {
+            try {
+                // Logic: Ambil Public ID dari URL
+                const parts = transaction.paymentProof.split('/');
+                const fileName = parts.pop().split('.')[0]; 
+                const folder = parts.pop(); 
+                const publicId = `${folder}/${fileName}`;
+
+                await cloudinary.uploader.destroy(publicId);
+                console.log("Gambar Cloudinary dihapus:", publicId);
+            } catch (err) {
+                console.error("Gagal hapus gambar Cloudinary:", err);
+            }
+        }
+
+        // B. Hapus Data di MongoDB
+        await Transaction.deleteOne({ trxId });
+        res.json({ message: "Transaksi berhasil dihapus permanen" });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Gagal menghapus transaksi" });
+    }
+};
+
 const handleWebhook = async (req, res) => { res.status(200).json({ message: "Ignored" }); };
 
 module.exports = { 
-    getPriceList, 
-    createTransaction, 
-    getTransactionDetail, 
-    handleWebhook, 
-    getAllTransactions, 
-    updateTransactionStatus 
+    getPriceList, createTransaction, getTransactionDetail, handleWebhook, 
+    getAllTransactions, updateTransactionStatus, deleteTransaction 
 };

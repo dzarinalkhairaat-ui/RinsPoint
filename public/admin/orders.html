@@ -115,7 +115,7 @@
                     proofBtn = `<span class="no-proof"><i class="fa-solid fa-ban"></i> No Bukti</span>`;
                 }
 
-                // --- BAGIAN UPDATE TOMBOL (SESUAI REQUEST) ---
+                // --- TOMBOL STATUS (Gagal / Sukses) ---
                 let actionBtns = '';
                 if(trx.status === 'pending') {
                     actionBtns = `
@@ -131,13 +131,22 @@
                 } else {
                     actionBtns = `<div class="info-row"><small>${trx.note || '-'}</small></div>`;
                 }
-                // ---------------------------------------------
+
+                // --- TOMBOL HAPUS (BARU) ---
+                const deleteBtn = `
+                    <button class="btn-delete" onclick="deleteOrder('${trx.trxId}')" title="Hapus Permanen">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                `;
 
                 const cardHtml = `
                     <div class="order-card">
                         <div class="card-top">
                             <span class="trx-id">#${trx.trxId.split('-')[1]}</span>
-                            <span class="trx-date">${date}</span>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span class="trx-date">${date}</span>
+                                ${deleteBtn}
+                            </div>
                         </div>
                         
                         <div class="card-body">
@@ -197,15 +206,12 @@
             }
 
             try {
-                // Tampilkan loading sederhana (optional UI enhancement)
                 document.body.style.cursor = 'wait';
-
                 const res = await fetch(`/api/ppob/transaction/${trxId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: newStatus, note: note })
                 });
-
                 document.body.style.cursor = 'default';
 
                 if(res.ok) {
@@ -218,6 +224,27 @@
                 document.body.style.cursor = 'default';
                 console.error(error);
                 alert('Terjadi kesalahan koneksi.');
+            }
+        }
+
+        // --- HAPUS ORDER LOGIC (BARU) ---
+        async function deleteOrder(trxId) {
+            if(!confirm("⚠️ YAKIN HAPUS? \nData Transaksi & Gambar Bukti akan dihapus permanen!")) return;
+            
+            try {
+                const res = await fetch(`/api/ppob/transaction/${trxId}`, {
+                    method: 'DELETE'
+                });
+
+                if(res.ok) {
+                    alert('Data & Gambar berhasil dihapus bersih!');
+                    loadOrders(); // Reload tabel
+                } else {
+                    alert('Gagal menghapus data.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Terjadi kesalahan saat menghapus.');
             }
         }
     </script>
