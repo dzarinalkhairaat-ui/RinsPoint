@@ -1,35 +1,36 @@
 const express = require('express');
 const router = express.Router();
 const ppobController = require('../controllers/ppobController');
-// const { protect } = require('../middleware/authMiddleware'); 
-// (Optional: Jika ingin protect route tertentu, uncomment baris di atas)
+// IMPORT MIDDLEWARE UPLOAD (PENTING)
+const upload = require('../middleware/uploadMiddleware');
 
 // ==============================
-//  ROUTE PUBLIC (Untuk Frontend)
+//  ROUTE PUBLIC (Untuk Frontend User)
 // ==============================
 
-// 1. Ambil Daftar Harga (Pricelist) dari PortalPulsa
-// Method POST karena kita mungkin kirim filter kategori
+// 1. Ambil Daftar Harga
 router.post('/pricelist', ppobController.getPriceList);
 
-// 2. Buat Transaksi Baru
-router.post('/transaction', ppobController.createTransaction);
+// 2. Buat Transaksi Baru (DENGAN UPLOAD BUKTI BAYAR)
+router.post('/transaction', upload.single('paymentProof'), ppobController.createTransaction);
 
-// 3. Cek Status Detail Transaksi (Dipakai di halaman Payment)
+// 3. Cek Status Detail Transaksi (Dipakai user untuk cek resi/status)
 router.get('/transaction/:trxId', ppobController.getTransactionDetail);
 
 // ==============================
 //  ROUTE CALLBACK / WEBHOOK
 // ==============================
-
-// Ini URL yang wajib didaftarkan di Dashboard PortalPulsa
-// DomainRender/api/ppob/callback
 router.post('/callback', ppobController.handleWebhook); 
 
 // ==============================
-//  ROUTE ADMIN (Optional/Nanti)
+//  ROUTE ADMIN (Fitur Baru)
 // ==============================
-// router.get('/balance', protect, ppobController.checkBalance);
-// router.get('/history', protect, ppobController.getTransactions);
+
+// 1. Ambil SEMUA Data Order (Untuk Tabel Admin)
+router.get('/all-transactions', ppobController.getAllTransactions);
+
+// 2. Update Status Order (Saat Admin klik Sukses/Gagal)
+// Menggunakan method PUT karena kita mengupdate data yang sudah ada
+router.put('/transaction/:trxId', ppobController.updateTransactionStatus);
 
 module.exports = router;

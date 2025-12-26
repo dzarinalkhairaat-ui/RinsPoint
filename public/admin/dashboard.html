@@ -6,7 +6,6 @@
     <title>Dashboard - RinsPoint Admin</title>
     
     <link rel="stylesheet" href="../css/style.css">
-    
     <link rel="stylesheet" href="../css/admin/dashboard.css">
 
     <link rel="manifest" href="/manifest.json">
@@ -66,6 +65,11 @@
             <div class="welcome-text" style="margin-top: 1.5rem; font-size: 0.9rem; color: #64748b;">Menu Manajemen</div>
             
             <div class="menu-grid">
+                <a href="../admin/orders.html" class="menu-item" style="border-color: #f59e0b; background: rgba(245, 158, 11, 0.1);">
+                    <i class="fa-solid fa-file-invoice-dollar" style="color: #f59e0b;"></i>
+                    <span style="color: #f59e0b;">Order Masuk</span>
+                </a>
+
                 <a href="products.html" class="menu-item">
                     <i class="fa-solid fa-box-open"></i>
                     <span>Kelola Produk</span>
@@ -76,11 +80,11 @@
                 </a>
                 <a href="manage-ppob.html" class="menu-item">
                     <i class="fa-solid fa-server"></i>
-                    <span>Kelola PPOB</span>
+                    <span>Setting PPOB</span>
                 </a>
                 <a href="ppobpayment.html" class="menu-item">
                     <i class="fa-solid fa-wallet"></i>
-                    <span>Kelola Pembayaran</span>
+                    <span>Metode Bayar</span>
                 </a>
                 <a href="settings.html" class="menu-item">
                     <i class="fa-solid fa-gear"></i>
@@ -92,8 +96,7 @@
         <nav class="bottom-nav">
             <a href="/"><i class="fa-solid fa-store"></i><span>Toko</span></a>
             <a href="#" class="active"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
-            <a href="ppob-settings.html"><i class="fa-solid fa-sliders"></i><span>PPOB</span></a>
-            <a href="#" onclick="logout()"><i class="fa-solid fa-power-off"></i><span>LogOut</span></a>
+            <a href="orders.html"><i class="fa-solid fa-list-check"></i><span>Pesanan</span></a> <a href="#" onclick="logout()"><i class="fa-solid fa-power-off"></i><span>LogOut</span></a>
         </nav>
     </div>
 
@@ -115,20 +118,15 @@
         // FUNGSI LOAD STATISTIK
         async function loadStats() {
             try {
-                // Placeholder fetch statistik jika backend sudah siap
-                // const res = await fetch('/api/stats/dashboard'); 
+                // Placeholder logic statistik
+                // const res = await fetch('/api/ppob/all-transactions'); 
                 // const data = await res.json();
-                
-                // Contoh mengisi data:
-                // document.getElementById('statClick').innerText = data.clicks || 0;
-                // document.getElementById('statPpob').innerText = data.ppobCount || 0;
-                
+                // document.getElementById('statPpob').innerText = data.length || 0;
             } catch (error) {
                 console.error("Gagal load statistik");
             }
         }
         
-        // Panggil saat load
         loadStats();
 
         function openPinModal() { 

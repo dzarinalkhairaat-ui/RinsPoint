@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kelola Pesanan - RinsPoint</title>
+    
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin/orders.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0F172A">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="../js/auth.js"></script>
+    <script>checkAuth();</script>
+</head>
+<body>
+
+    <div class="mobile-container">
+        
+        <header class="page-header">
+            <a href="dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2>Order Masuk</h2>
+            <button onclick="loadOrders()" class="btn-refresh"><i class="fa-solid fa-rotate-right"></i></button>
+        </header>
+
+        <main class="content-area">
+            
+            <div class="filter-tabs">
+                <div class="tab active" onclick="filterOrders('all', this)">Semua</div>
+                <div class="tab" onclick="filterOrders('pending', this)">Pending</div>
+                <div class="tab" onclick="filterOrders('success', this)">Sukses</div>
+            </div>
+
+            <div id="ordersList" class="orders-list">
+                <div class="loading-state">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Memuat data...
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="proofModal" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Bukti Pembayaran</h3>
+                <button onclick="closeModal()" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="img-wrapper">
+                <img id="previewImg" src="" alt="Bukti Transfer">
+            </div>
+            <div class="modal-actions">
+                <a id="downloadLink" href="#" target="_blank" class="btn-download">
+                    <i class="fa-solid fa-download"></i> Unduh Asli
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/ppob';
+        let allOrders = []; 
+
+        document.addEventListener('DOMContentLoaded', loadOrders);
+
+        async function loadOrders() {
+            const container = document.getElementById('ordersList');
+            container.innerHTML = '<div class="loading-state"><i class="fa-solid fa-circle-notch fa-spin"></i> Memuat data...</div>';
+
+            try {
+                const res = await fetch('/api/ppob/all-transactions');
+                const data = await res.json();
+                
+                allOrders = data; 
+                renderOrders(data);
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<div class="empty-state">Gagal memuat data. Periksa koneksi internet.</div>';
+            }
+        }
+
+        function renderOrders(orders) {
+            const container = document.getElementById('ordersList');
+            container.innerHTML = '';
+
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-box-open"></i>
+                        <p>Belum ada pesanan masuk.</p>
+                    </div>`;
+                return;
+            }
+
+            orders.forEach(trx => {
+                const date = new Date(trx.createdAt).toLocaleString('id-ID', { 
+                    day: 'numeric', month: 'short', hour: '2-digit', minute:'2-digit' 
+                });
+                const price = parseInt(trx.amount).toLocaleString('id-ID');
+                
+                let statusBadge = '';
+                if(trx.status === 'pending') statusBadge = '<span class="badge pending">PENDING</span>';
+                else if(trx.status === 'success') statusBadge = '<span class="badge success">SUKSES</span>';
+                else statusBadge = '<span class="badge failed">GAGAL</span>';
+
+                let proofBtn = '';
+                if(trx.paymentProof) {
+                    proofBtn = `<button class="btn-icon view" onclick="viewProof('${trx.paymentProof}')"><i class="fa-regular fa-image"></i> Bukti</button>`;
+                } else {
+                    proofBtn = `<span class="no-proof"><i class="fa-solid fa-ban"></i> No Bukti</span>`;
+                }
+
+                // --- BAGIAN UPDATE TOMBOL (SESUAI REQUEST) ---
+                let actionBtns = '';
+                if(trx.status === 'pending') {
+                    actionBtns = `
+                        <div class="action-row">
+                            <button class="btn-action reject" onclick="updateStatus('${trx.trxId}', 'failed')">
+                                <i class="fa-solid fa-xmark"></i> Gagal
+                            </button>
+                            <button class="btn-action accept" onclick="updateStatus('${trx.trxId}', 'success')">
+                                <i class="fa-solid fa-check"></i> Sukses
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    actionBtns = `<div class="info-row"><small>${trx.note || '-'}</small></div>`;
+                }
+                // ---------------------------------------------
+
+                const cardHtml = `
+                    <div class="order-card">
+                        <div class="card-top">
+                            <span class="trx-id">#${trx.trxId.split('-')[1]}</span>
+                            <span class="trx-date">${date}</span>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="item-info">
+                                <h4>${trx.providerResponse?.productName || 'Produk Manual'}</h4>
+                                <p><i class="fa-solid fa-phone"></i> ${trx.customerPhone}</p>
+                            </div>
+                            <div class="price-info">
+                                Rp ${price}
+                            </div>
+                        </div>
+
+                        <div class="card-status-row">
+                            ${statusBadge}
+                            ${proofBtn}
+                        </div>
+
+                        ${actionBtns}
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        function filterOrders(status, element) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+
+            if(status === 'all') {
+                renderOrders(allOrders);
+            } else {
+                const filtered = allOrders.filter(o => o.status === status);
+                renderOrders(filtered);
+            }
+        }
+
+        function viewProof(url) {
+            document.getElementById('previewImg').src = url;
+            document.getElementById('downloadLink').href = url;
+            document.getElementById('proofModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('proofModal').classList.remove('show');
+        }
+
+        // --- UPDATE STATUS LOGIC ---
+        async function updateStatus(trxId, newStatus) {
+            let note = '';
+            
+            if(newStatus === 'success') {
+                note = prompt("SUKSES! Masukkan Catatan (Misal: Pembayaran Diterima / SN):", "Pembayaran Diterima, Terima Kasih!");
+                if(note === null) return; 
+            } else {
+                note = prompt("GAGAL! Masukkan Alasan Penolakan:", "Bukti pembayaran tidak valid / Buram");
+                if(!note) return; 
+            }
+
+            try {
+                // Tampilkan loading sederhana (optional UI enhancement)
+                document.body.style.cursor = 'wait';
+
+                const res = await fetch(`/api/ppob/transaction/${trxId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus, note: note })
+                });
+
+                document.body.style.cursor = 'default';
+
+                if(res.ok) {
+                    alert('Status berhasil diupdate & Notifikasi dikirim ke User!');
+                    loadOrders(); 
+                } else {
+                    alert('Gagal update status.');
+                }
+            } catch (error) {
+                document.body.style.cursor = 'default';
+                console.error(error);
+                alert('Terjadi kesalahan koneksi.');
+            }
+        }
+    </script>
+</body>
+</html>

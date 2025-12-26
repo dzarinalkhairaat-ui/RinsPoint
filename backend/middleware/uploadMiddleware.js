@@ -10,24 +10,27 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// 2. FUNGSI PENYIMPANAN DINAMIS (BARU)
-// Fungsi ini akan menentukan folder berdasarkan jenis uploadnya
+// 2. FUNGSI PENYIMPANAN DINAMIS
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: async (req, file) => {
-        // Cek dari field name atau path untuk menentukan folder
-        let folderName = 'rinspoint_uploads'; // Default
+        // Default folder
+        let folderName = 'rinspoint_uploads'; 
         
+        // --- LOGIKA PEMISAH FOLDER ---
         if (file.fieldname === 'images') {
             folderName = 'rinspoint_products'; // Untuk Produk
         } else if (file.fieldname === 'bannerImage') {
             folderName = 'rinspoint_banners'; // Untuk Banner
+        } else if (file.fieldname === 'paymentProof') {
+            // KHUSUS BUKTI PEMBAYARAN PELANGGAN
+            folderName = 'rinspoint_payments'; 
         }
 
         return {
             folder: folderName,
             allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-            // Banner biasanya butuh resolusi lebih lebar, kita setting di sini
+            // Kita batasi lebar max 1000px agar hemat storage, tapi tetap jelas terbaca
             transformation: [{ width: 1000, crop: "limit" }] 
         };
     },

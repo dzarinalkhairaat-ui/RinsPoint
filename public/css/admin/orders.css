@@ -1,0 +1,195 @@
+/* public/css/admin/orders.css */
+
+body {
+    background-color: #0F172A; /* Dark Theme Base */
+    color: #cbd5e1;
+}
+
+/* --- HEADER --- */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.95);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #334155;
+}
+
+.page-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.btn-back, .btn-refresh {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid #334155;
+    color: #cbd5e1;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.2s;
+}
+.btn-refresh:active { transform: rotate(180deg); }
+
+/* --- FILTER TABS --- */
+.filter-tabs {
+    display: flex;
+    gap: 10px;
+    padding: 15px 20px;
+    overflow-x: auto;
+}
+
+.tab {
+    padding: 8px 16px;
+    background: #1e293b;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    cursor: pointer;
+    border: 1px solid #334155;
+    white-space: nowrap;
+    transition: 0.2s;
+}
+
+.tab.active {
+    background: #4ade80;
+    color: #064e3b;
+    border-color: #4ade80;
+    font-weight: 600;
+}
+
+/* --- ORDERS LIST --- */
+.orders-list {
+    padding: 0 20px 80px 20px; /* Bawah dikasih jarak buat nav */
+}
+
+.loading-state, .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #64748b;
+}
+.empty-state i { font-size: 3rem; margin-bottom: 10px; opacity: 0.5; }
+
+/* CARD STYLE */
+.order-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+/* Card Header */
+.card-top {
+    display: flex; justify-content: space-between;
+    font-size: 0.75rem; color: #64748b;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #334155;
+    padding-bottom: 8px;
+}
+.trx-id { font-family: monospace; }
+
+/* Card Body */
+.card-body {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px;
+}
+.item-info h4 {
+    margin: 0; color: #fff; font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+.item-info p {
+    margin: 0; color: #94a3b8; font-size: 0.8rem;
+}
+.price-info {
+    font-weight: 700; color: #4ade80;
+    font-size: 1rem;
+}
+
+/* Status & Proof Row */
+.card-status-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 15px;
+}
+
+.badge {
+    padding: 4px 10px; border-radius: 6px;
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+}
+.badge.pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.badge.success { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+.badge.failed { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+.btn-icon.view {
+    background: transparent; border: 1px solid #3b82f6;
+    color: #60a5fa; padding: 4px 10px; border-radius: 6px;
+    font-size: 0.75rem; cursor: pointer;
+}
+.no-proof { font-size: 0.75rem; color: #64748b; font-style: italic; }
+
+/* Action Buttons */
+.action-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.btn-action {
+    padding: 10px; border: none; border-radius: 10px;
+    font-weight: 600; cursor: pointer; font-size: 0.9rem;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-action.accept {
+    background: #22c55e; color: #022c22;
+}
+.btn-action.reject {
+    background: #ef4444; color: white;
+}
+.info-row {
+    background: #0f172a; padding: 8px; border-radius: 8px;
+    font-size: 0.8rem; color: #94a3b8;
+}
+
+/* --- MODAL PREVIEW --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); z-index: 100;
+    display: none; align-items: center; justify-content: center;
+    backdrop-filter: blur(5px);
+}
+.modal-overlay.show { display: flex; animation: fadeIn 0.2s; }
+
+.modal-content {
+    background: #1e293b; width: 90%; max-width: 400px;
+    border-radius: 16px; overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    padding: 15px; display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #334155;
+}
+.modal-header h3 { margin: 0; color: white; font-size: 1rem; }
+.btn-close { background: transparent; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
+
+.img-wrapper {
+    width: 100%; height: 300px; background: #000;
+    display: flex; align-items: center; justify-content: center;
+}
+.img-wrapper img {
+    max-width: 100%; max-height: 100%; object-fit: contain;
+}
+
+.modal-actions { padding: 15px; text-align: center; }
+.btn-download {
+    display: block; width: 100%; padding: 12px;
+    background: #3b82f6; color: white; text-decoration: none;
+    border-radius: 10px; font-weight: 600;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
