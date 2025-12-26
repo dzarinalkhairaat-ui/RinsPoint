@@ -1,26 +1,24 @@
 const Product = require('../../models/Product');
 const Transaction = require('../../models/Transaction');
+// IMPORT FITUR NOTIFIKASI (Gunakan sendToDevice untuk kirim personal)
+const { sendToDevice } = require('../utils/onesignal');
 
 // @desc    Ambil Daftar Harga (MODE MANUAL - DARI DATABASE SENDIRI)
 const getPriceList = async (req, res) => {
     try {
-        // 1. Ambil semua produk dari database lokal
-        // Kita populate kategori agar bisa mendapatkan namanya (misal: "Pulsa", "Data")
         const products = await Product.find().populate('category');
 
-        // 2. Format datanya agar mirip dengan format yang diharapkan Frontend
         const formattedData = products.map(item => {
-            // Cek apakah produk ini punya kategori, kalau tidak kasih label 'Umum'
             const categoryName = item.category ? item.category.name : 'Umum';
             
             return {
-                buyer_sku_code: item._id,     // ID Produk sebagai Kode
-                product_name: item.name,      // Nama Produk
-                category: categoryName,       // Kategori (Penting untuk filter Frontend)
-                brand: 'Manual',              // Brand kita set 'Manual' atau bisa ambil dari deskripsi
+                buyer_sku_code: item._id,     
+                product_name: item.name,      
+                category: categoryName,       
+                brand: 'Manual',              
                 type: 'Manual',
-                price: item.price,            // Harga jual langsung
-                buyer_product_status: true,   // Anggap selalu stok ada
+                price: item.price,            
+                buyer_product_status: true,   
                 seller_product_status: true,
                 desc: item.description
             };
@@ -34,15 +32,14 @@ const getPriceList = async (req, res) => {
     }
 };
 
-// @desc    Buat Transaksi (MODE MANUAL)
+// @desc    Buat Transaksi (MODE MANUAL + NOTIFIKASI KHUSUS ADMIN)
 const createTransaction = async (req, res) => {
     const { productCode, productName, customerPhone, price } = req.body;
 
     try {
         const trxId = 'TRX-' + Date.now();
 
-        // Simpan transaksi langsung sebagai PENDING
-        // Nanti Anda proses manual di dashboard Admin
+        // 1. Simpan ke Database
         const transaction = await Transaction.create({
             trxId: trxId,
             customerPhone: customerPhone,
@@ -53,6 +50,22 @@ const createTransaction = async (req, res) => {
             providerResponse: { productName }
         });
 
+        // 2. KIRIM NOTIFIKASI HANYA KE ADMIN (PRIVATE)
+        const adminId = process.env.ONESIGNAL_ADMIN_ID; // Ambil ID dari .env
+
+        if (adminId) {
+            const notifTitle = "💰 Order Baru Masuk Bos!";
+            // Format harga ke Rupiah biar rapi
+            const priceFormatted = parseInt(price).toLocaleString('id-ID');
+            const notifMsg = `${productName || 'Produk'}\nNo: ${customerPhone}\nRp ${priceFormatted}`;
+            
+            // Kirim KHUSUS ke perangkat Admin saja
+            sendToDevice(adminId, notifMsg, notifTitle);
+        } else {
+            console.log("⚠️ Admin ID belum disetting di .env, notifikasi skip.");
+        }
+
+        // 3. Kirim Respon ke User
         res.status(201).json(transaction);
 
     } catch (error) {
