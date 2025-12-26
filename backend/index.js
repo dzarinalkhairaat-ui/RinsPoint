@@ -6,8 +6,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 
-// --- IMPORT UTILS NOTIFIKASI (BARU) ---
-const { sendToDevice } = require('./utils/onesignal');
+// IMPORT UTILS NOTIFIKASI DIHAPUS
 
 const app = express();
 
@@ -48,47 +47,7 @@ app.use('/api/settings', settingRoutes);
 app.use('/api/ppob', ppobRoutes);
 app.use('/api/payments', paymentMethodRoutes);
 
-// --- 4. RUTE TES NOTIFIKASI (BARU & PENTING!) ---
-// Buka link ini di browser nanti: https://rinspoint.vercel.app/api/test-notif
-app.get('/api/test-notif', async (req, res) => {
-    try {
-        const adminId = process.env.ONESIGNAL_ADMIN_ID;
-        
-        // Cek apakah ID Admin ada di .env
-        if (!adminId) {
-            return res.status(500).json({ 
-                status: 'error', 
-                message: "❌ Gawat! ONESIGNAL_ADMIN_ID belum diisi di .env Vercel." 
-            });
-        }
-
-        console.log("🚀 Mencoba mengirim notifikasi tes ke ID:", adminId);
-        
-        // Coba kirim pesan tes
-        const response = await sendToDevice(
-            adminId, 
-            "Jika pesan ini masuk, berarti server 100% lancar!", 
-            "🔔 Tes Notifikasi Sukses"
-        );
-        
-        res.json({
-            status: 'success',
-            message: "✅ Perintah kirim sudah dijalankan ke OneSignal.",
-            debug_info: {
-                target_id: adminId,
-                onesignal_response: response
-            }
-        });
-
-    } catch (error) {
-        console.error("❌ Error Tes Notif:", error);
-        res.status(500).json({ 
-            status: 'failed', 
-            message: error.message,
-            hint: "Cek Log Vercel untuk detail error (Biasanya API Key salah)"
-        });
-    }
-});
+// ROUTE TEST NOTIFIKASI SUDAH DIHAPUS
 
 // --- 5. STATIC FILES (Gambar/Frontend) ---
 app.use(express.static(path.join(__dirname, '../public')));

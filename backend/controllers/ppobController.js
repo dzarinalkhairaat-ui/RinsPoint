@@ -1,12 +1,8 @@
-// PERHATIKAN PATH INI: ../../ (Naik 2 level ke Root folder)
 const Product = require('../../models/Product'); 
 const Transaction = require('../../models/Transaction'); 
-
-// Utils tetap di dalam backend, jadi cukup naik 1 level
-const { sendToDevice } = require('../utils/onesignal'); 
 const cloudinary = require('cloudinary').v2;
 
-// Konfigurasi Cloudinary
+// Konfigurasi Cloudinary (Tetap dipertahankan untuk fitur upload bukti)
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -30,7 +26,8 @@ const getPriceList = async (req, res) => {
 
 // --- 2. BUAT TRANSAKSI (CREATE) ---
 const createTransaction = async (req, res) => {
-    const { productCode, productName, customerPhone, price, userPlayerId } = req.body;
+    // ID OneSignal dihapus dari sini
+    const { productCode, productName, customerPhone, price } = req.body;
     const proofImage = req.file ? req.file.path : null; 
 
     try {
@@ -44,20 +41,11 @@ const createTransaction = async (req, res) => {
             status: 'pending',
             note: 'Menunggu Verifikasi Bukti Pembayaran',
             paymentProof: proofImage, 
-            userPlayerId: userPlayerId || null, // Simpan ID User
+            // userPlayerId dihapus
             providerResponse: { productName }
         });
 
-        // Notif Admin
-        const adminId = process.env.ONESIGNAL_ADMIN_ID;
-        if (adminId) {
-            const notifTitle = "💰 Order Baru Masuk!";
-            const priceFormatted = parseInt(price).toLocaleString('id-ID');
-            const proofStatus = proofImage ? "📸 Ada Bukti" : "❌ Tanpa Bukti";
-            const notifMsg = `${productName}\nNo: ${customerPhone}\nRp ${priceFormatted}\n${proofStatus}`;
-            
-            try { await sendToDevice(adminId, notifMsg, notifTitle); } catch(e){ console.error("Skip notif admin:", e.message); }
-        }
+        // BAGIAN NOTIFIKASI ADMIN SUDAH DIHAPUS
 
         res.status(201).json(transaction);
     } catch (error) {
@@ -96,23 +84,7 @@ const updateTransactionStatus = async (req, res) => {
         if(note) transaction.note = note;
         await transaction.save();
 
-        // Notif Balasan ke User
-        if (transaction.userPlayerId) {
-            let userMsg = "", userHeading = "";
-            
-            if (status === 'success') {
-                userHeading = "✅ Pesanan Sukses!";
-                userMsg = `Hore! Pesanan ${transaction.providerResponse?.productName} BERHASIL diproses.`;
-                if(note) userMsg += `\nCatatan: ${note}`;
-            } else if (status === 'failed') {
-                userHeading = "❌ Pesanan Gagal";
-                userMsg = `Maaf, pesananmu dibatalkan. Alasan: ${note || 'Hubungi Admin'}`;
-            }
-            
-            if (userHeading) {
-                try { await sendToDevice(transaction.userPlayerId, userMsg, userHeading); } catch(e){ console.error("Skip notif user:", e.message); }
-            }
-        }
+        // BAGIAN NOTIFIKASI BALASAN USER SUDAH DIHAPUS
 
         res.json(transaction);
     } catch (error) {

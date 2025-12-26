@@ -12,26 +12,6 @@
     <meta name="theme-color" content="#0F172A">
     <link rel="apple-touch-icon" href="/assets/images/icon.png">
     
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "73e7eecf-51fd-41c7-9ef9-a802edad4575",
-          safari_web_id: "web.onesignal.auto.6106674a-234b-468f-a982-1c7b8979116e",
-          notifyButton: {
-            enable: true,
-          },
-          allowLocalhostAsSecureOrigin: true,
-          
-          // --- BAGIAN INI YANG KEMARIN HILANG ---
-          serviceWorkerPath: "OneSignalSDKWorker.js", 
-          serviceWorkerParam: { scope: "/" }
-          // -------------------------------------
-        });
-      });
-    </script>
-
     <script src="/js/pwa-register.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -106,17 +86,5 @@
         });
     </script>
 
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/OneSignalSDKWorker.js').then(function(registration) {
-            console.log('✅ Service Worker berhasil daftar di scope:', registration.scope);
-          }, function(err) {
-            console.log('❌ Service Worker gagal daftar:', err);
-          });
-        });
-      }
-    </script>
-
-</body>
+    </body>
 </html>

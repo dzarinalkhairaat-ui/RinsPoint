@@ -119,7 +119,7 @@ function checkForm() {
     else btn.disabled = true; 
 }
 
-// --- BAGIAN INI YANG DIMODIFIKASI UNTUK PAKSA IZIN ---
+// --- BAGIAN INI SUDAH DIBERSIHKAN DARI ONESIGNAL ---
 async function processPayment() {
     const btn = document.getElementById('btnConfirm');
     const originalText = btn.innerHTML;
@@ -141,49 +141,7 @@ async function processPayment() {
             formData.append('paymentProof', fileInput.files[0]);
         }
 
-        // --- LOGIC BARU: PAKSA AMBIL ID ---
-        let userIdCaptured = null;
-
-        if (window.OneSignalDeferred) {
-            await new Promise(resolve => {
-                window.OneSignalDeferred.push(async function(OneSignal) {
-                    try {
-                        // 1. Cek apakah user sudah subscribe?
-                        userIdCaptured = await OneSignal.User.PushSubscription.id;
-                        
-                        // 2. JIKA BELUM ADA ID -> PAKSA MUNCULKAN POPUP IZIN
-                        if (!userIdCaptured) {
-                            console.log("ID tidak ada, meminta izin...");
-                            await OneSignal.Slidedown.promptPush(); // Munculkan popup bawaan OneSignal
-                            
-                            // Tunggu sebentar (4 detik) biar user sempat klik Allow di popup
-                            await new Promise(r => setTimeout(r, 4000));
-                            
-                            // Coba ambil lagi setelah user mungkin klik Allow
-                            userIdCaptured = await OneSignal.User.PushSubscription.id;
-                        }
-                        
-                    } catch (e) {
-                        console.warn("Gagal ambil OneSignal ID", e);
-                    }
-                    resolve();
-                });
-            });
-        }
-
-        // --- JIKA MASIH GAGAL JUGA (User klik Block atau Browser menolak) ---
-        if (!userIdCaptured) {
-            // Beri pilihan ke user: Lanjut tanpa notif atau Batalkan
-            const lanjut = confirm("⚠️ Notifikasi Gagal Diaktifkan!\n\nBrowser HP kamu memblokir notifikasi. Kami tidak bisa mengirim status pesanan nanti.\n\nMau tetap lanjut order tanpa notifikasi?");
-            if (!lanjut) {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-                return; // Batalkan proses jika user pilih Cancel
-            }
-        } else {
-            console.log("✅ ID Berhasil Didapat:", userIdCaptured);
-            formData.append('userPlayerId', userIdCaptured);
-        }
+        // TIDAK ADA LAGI LOGIC AMBIL ID NOTIFIKASI DI SINI
 
         // Kirim ke Backend
         const response = await fetch('/api/ppob/transaction', {
