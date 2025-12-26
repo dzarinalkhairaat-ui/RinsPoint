@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Opsional kalau ada login
     trxId: { type: String, required: true, unique: true }, 
     productCode: { type: String, required: true },
     customerPhone: { type: String, required: true },
@@ -14,11 +14,11 @@ const transactionSchema = new mongoose.Schema({
     sn: { type: String }, 
     note: { type: String }, 
     
-    // --- FITUR BUKTI BAYAR ---
+    // BUKTI BAYAR
     paymentProof: { type: String }, 
     
-    // --- FITUR NOTIFIKASI BALIK (BARU) ---
-    userPlayerId: { type: String }, // Menyimpan ID OneSignal Pembeli
+    // PENTING: ID ONESIGNAL USER (Agar bisa dibalas)
+    userPlayerId: { type: String, default: null }, 
     
     providerResponse: { type: Object } 
 }, { timestamps: true });

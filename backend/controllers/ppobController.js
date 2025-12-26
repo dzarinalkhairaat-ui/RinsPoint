@@ -1,10 +1,12 @@
-const Product = require('../../models/Product');
-const Transaction = require('../../models/Transaction');
-const { sendToDevice } = require('../utils/onesignal');
-// 1. IMPORT CLOUDINARY (BARU)
+// PERHATIKAN PATH INI: ../../ (Naik 2 level ke Root folder)
+const Product = require('../../models/Product'); 
+const Transaction = require('../../models/Transaction'); 
+
+// Utils tetap di dalam backend, jadi cukup naik 1 level
+const { sendToDevice } = require('../utils/onesignal'); 
 const cloudinary = require('cloudinary').v2;
 
-// 2. KONFIGURASI CLOUDINARY (Agar bisa akses fungsi delete)
+// Konfigurasi Cloudinary
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -15,26 +17,25 @@ cloudinary.config({
 const getPriceList = async (req, res) => {
     try {
         const products = await Product.find().populate('category');
-        const formattedData = products.map(item => {
-            return {
-                buyer_sku_code: item._id,     
-                product_name: item.name,      
-                category: item.category ? item.category.name : 'Umum',       
-                brand: 'Manual', type: 'Manual', price: item.price,            
-                buyer_product_status: true, seller_product_status: true, desc: item.description
-            };
-        });
+        const formattedData = products.map(item => ({
+            buyer_sku_code: item._id,      
+            product_name: item.name,      
+            category: item.category ? item.category.name : 'Umum',        
+            brand: 'Manual', type: 'Manual', price: item.price,            
+            buyer_product_status: true, seller_product_status: true, desc: item.description
+        }));
         res.json({ data: formattedData });
     } catch (error) { res.status(500).json({ message: "Gagal mengambil data" }); }
 };
 
-// --- 2. BUAT TRANSAKSI ---
+// --- 2. BUAT TRANSAKSI (CREATE) ---
 const createTransaction = async (req, res) => {
     const { productCode, productName, customerPhone, price, userPlayerId } = req.body;
     const proofImage = req.file ? req.file.path : null; 
 
     try {
         const trxId = 'TRX-' + Date.now();
+        
         const transaction = await Transaction.create({
             trxId: trxId,
             customerPhone: customerPhone,
@@ -43,18 +44,19 @@ const createTransaction = async (req, res) => {
             status: 'pending',
             note: 'Menunggu Verifikasi Bukti Pembayaran',
             paymentProof: proofImage, 
-            userPlayerId: userPlayerId, 
+            userPlayerId: userPlayerId || null, // Simpan ID User
             providerResponse: { productName }
         });
 
         // Notif Admin
         const adminId = process.env.ONESIGNAL_ADMIN_ID;
         if (adminId) {
-            const notifTitle = "💰 Order Baru Masuk Bos!";
+            const notifTitle = "💰 Order Baru Masuk!";
             const priceFormatted = parseInt(price).toLocaleString('id-ID');
-            const proofStatus = proofImage ? "📸 Bukti Terlampir" : "❌ Tanpa Bukti";
-            const notifMsg = `${productName || 'Produk'}\nNo: ${customerPhone}\nRp ${priceFormatted}\n${proofStatus}`;
-            try { await sendToDevice(adminId, notifMsg, notifTitle); } catch(e){}
+            const proofStatus = proofImage ? "📸 Ada Bukti" : "❌ Tanpa Bukti";
+            const notifMsg = `${productName}\nNo: ${customerPhone}\nRp ${priceFormatted}\n${proofStatus}`;
+            
+            try { await sendToDevice(adminId, notifMsg, notifTitle); } catch(e){ console.error("Skip notif admin:", e.message); }
         }
 
         res.status(201).json(transaction);
@@ -94,19 +96,24 @@ const updateTransactionStatus = async (req, res) => {
         if(note) transaction.note = note;
         await transaction.save();
 
-        // Notif User
+        // Notif Balasan ke User
         if (transaction.userPlayerId) {
             let userMsg = "", userHeading = "";
+            
             if (status === 'success') {
                 userHeading = "✅ Pesanan Sukses!";
                 userMsg = `Hore! Pesanan ${transaction.providerResponse?.productName} BERHASIL diproses.`;
-                if(note) userMsg += `\nInfo: ${note}`;
+                if(note) userMsg += `\nCatatan: ${note}`;
             } else if (status === 'failed') {
                 userHeading = "❌ Pesanan Gagal";
                 userMsg = `Maaf, pesananmu dibatalkan. Alasan: ${note || 'Hubungi Admin'}`;
             }
-            if (userHeading) try { await sendToDevice(transaction.userPlayerId, userMsg, userHeading); } catch(e){}
+            
+            if (userHeading) {
+                try { await sendToDevice(transaction.userPlayerId, userMsg, userHeading); } catch(e){ console.error("Skip notif user:", e.message); }
+            }
         }
+
         res.json(transaction);
     } catch (error) {
         console.error(error);
@@ -114,30 +121,25 @@ const updateTransactionStatus = async (req, res) => {
     }
 };
 
-// --- 6. ADMIN: HAPUS TRANSAKSI (FITUR BARU) ---
+// --- 6. ADMIN: HAPUS TRANSAKSI ---
 const deleteTransaction = async (req, res) => {
     const { trxId } = req.params;
     try {
         const transaction = await Transaction.findOne({ trxId });
         if (!transaction) return res.status(404).json({ message: "Transaksi tidak ditemukan" });
 
-        // A. Hapus Gambar di Cloudinary jika ada
+        // Hapus Gambar Cloudinary
         if (transaction.paymentProof) {
             try {
-                // Logic: Ambil Public ID dari URL
-                const parts = transaction.paymentProof.split('/');
-                const fileName = parts.pop().split('.')[0]; 
-                const folder = parts.pop(); 
-                const publicId = `${folder}/${fileName}`;
-
+                const urlParts = transaction.paymentProof.split('/');
+                const fileName = urlParts.pop().split('.')[0]; 
+                const folderName = urlParts.pop(); 
+                const publicId = `${folderName}/${fileName}`;
                 await cloudinary.uploader.destroy(publicId);
-                console.log("Gambar Cloudinary dihapus:", publicId);
-            } catch (err) {
-                console.error("Gagal hapus gambar Cloudinary:", err);
-            }
+            } catch (err) { console.error("Gagal hapus gambar Cloudinary:", err.message); }
         }
 
-        // B. Hapus Data di MongoDB
+        // Hapus Data MongoDB
         await Transaction.deleteOne({ trxId });
         res.json({ message: "Transaksi berhasil dihapus permanen" });
 
