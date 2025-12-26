@@ -6,6 +6,9 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 
+// --- IMPORT UTILS NOTIFIKASI (BARU) ---
+const { sendToDevice } = require('./utils/onesignal');
+
 const app = express();
 
 // --- 1. MIDDLEWARE ---
@@ -35,7 +38,6 @@ const productRoutes = require('./routes/productRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const settingRoutes = require('./routes/settingRoutes');
 const ppobRoutes = require('./routes/ppobRoutes');
-// ROUTE BARU: Payment Method
 const paymentMethodRoutes = require('./routes/paymentMethodRoutes'); 
 
 // Pasang Jalurnya
@@ -44,18 +46,59 @@ app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/ppob', ppobRoutes);
-// Pasang Route Payment
 app.use('/api/payments', paymentMethodRoutes);
 
-// --- 4. STATIC FILES (Gambar/Frontend) ---
+// --- 4. RUTE TES NOTIFIKASI (BARU & PENTING!) ---
+// Buka link ini di browser nanti: https://rinspoint.vercel.app/api/test-notif
+app.get('/api/test-notif', async (req, res) => {
+    try {
+        const adminId = process.env.ONESIGNAL_ADMIN_ID;
+        
+        // Cek apakah ID Admin ada di .env
+        if (!adminId) {
+            return res.status(500).json({ 
+                status: 'error', 
+                message: "❌ Gawat! ONESIGNAL_ADMIN_ID belum diisi di .env Vercel." 
+            });
+        }
+
+        console.log("🚀 Mencoba mengirim notifikasi tes ke ID:", adminId);
+        
+        // Coba kirim pesan tes
+        const response = await sendToDevice(
+            adminId, 
+            "Jika pesan ini masuk, berarti server 100% lancar!", 
+            "🔔 Tes Notifikasi Sukses"
+        );
+        
+        res.json({
+            status: 'success',
+            message: "✅ Perintah kirim sudah dijalankan ke OneSignal.",
+            debug_info: {
+                target_id: adminId,
+                onesignal_response: response
+            }
+        });
+
+    } catch (error) {
+        console.error("❌ Error Tes Notif:", error);
+        res.status(500).json({ 
+            status: 'failed', 
+            message: error.message,
+            hint: "Cek Log Vercel untuk detail error (Biasanya API Key salah)"
+        });
+    }
+});
+
+// --- 5. STATIC FILES (Gambar/Frontend) ---
 app.use(express.static(path.join(__dirname, '../public')));
 
-// --- 5. RUTE FALLBACK (Tangkap Semua) ---
+// --- 6. RUTE FALLBACK (Tangkap Semua) ---
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// --- 6. JALANKAN SERVER ---
+// --- 7. JALANKAN SERVER ---
 if (require.main === module) {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
