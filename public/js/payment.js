@@ -5,6 +5,7 @@ let transaction = null;
 let selectedMethod = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Ambil Data dari LocalStorage
     const rawData = localStorage.getItem('currentTransaction');
     if (!rawData) { 
         alert('Data transaksi hilang.'); 
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     transaction = JSON.parse(rawData);
     
+    // 2. Tampilkan Data
     document.getElementById('dispProduct').innerText = transaction.productName;
     document.getElementById('dispNumber').innerText = transaction.customerNumber;
     const formattedPrice = 'Rp ' + new Intl.NumberFormat('id-ID').format(transaction.productPrice);
@@ -22,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const floatPrice = document.getElementById('dispPriceFloat');
     if(floatPrice) floatPrice.innerText = formattedPrice;
     
+    // 3. Muat Metode Pembayaran
     await loadPaymentMethods();
 });
 
@@ -116,7 +119,7 @@ function checkForm() {
     else btn.disabled = true; 
 }
 
-// --- PROSES BAYAR (KIRIM ID NOTIFIKASI) ---
+// --- BAGIAN INI YANG DIMODIFIKASI UNTUK DEBUG ---
 async function processPayment() {
     const btn = document.getElementById('btnConfirm');
     const originalText = btn.innerHTML;
@@ -138,16 +141,16 @@ async function processPayment() {
             formData.append('paymentProof', fileInput.files[0]);
         }
 
-        // --- AMBIL ID NOTIFIKASI PEMBELI ---
+        // --- AMBIL ID NOTIFIKASI PEMBELI (DEBUG MODE) ---
+        let userIdCaptured = null;
+
         if (window.OneSignalDeferred) {
             await new Promise(resolve => {
                 window.OneSignalDeferred.push(async function(OneSignal) {
                     try {
-                        const id = await OneSignal.User.PushSubscription.id;
-                        if (id) {
-                            console.log("Player ID Found:", id);
-                            formData.append('userPlayerId', id); 
-                        }
+                        // Coba ambil ID
+                        userIdCaptured = await OneSignal.User.PushSubscription.id;
+                        console.log("Player ID Found:", userIdCaptured);
                     } catch (e) {
                         console.warn("Gagal ambil OneSignal ID", e);
                     }
@@ -156,6 +159,16 @@ async function processPayment() {
             });
         }
 
+        // --- CEK APAKAH ID DAPAT ATAU TIDAK ---
+        if (!userIdCaptured) {
+            // Tampilkan Alert biar Admin sadar kalau ID nya kosong
+            alert("⚠️ PERINGATAN: Sistem Gagal Mengambil ID Notifikasi HP ini.\n\nNotifikasi status mungkin tidak akan masuk. Pastikan Izin Notifikasi browser sudah 'Allow'.");
+        } else {
+            // alert("✅ ID Ditemukan: " + userIdCaptured); // Opsional: Aktifkan kalau mau lihat ID-nya
+            formData.append('userPlayerId', userIdCaptured);
+        }
+
+        // Kirim ke Backend
         const response = await fetch('/api/ppob/transaction', {
             method: 'POST',
             body: formData 
