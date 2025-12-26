@@ -1,62 +1,45 @@
 const axios = require('axios');
 
-// Fungsi Helper untuk Request ke OneSignal API
-const sendNotification = async (data) => {
-    const headers = {
-        "Content-Type": "application/json; charset=utf-8",
-        "Authorization": `Basic ${process.env.ONESIGNAL_API_KEY}`
-    };
-
+const sendToDevice = async (playerId, message, heading = "Info Pesanan") => {
     try {
-        const response = await axios.post('https://onesignal.com/api/v1/notifications', data, { headers });
-        console.log("✅ Notifikasi Sukses:", response.data);
+        const ONESIGNAL_APP_ID = "73e7eecf-51fd-41c7-9ef9-a802edad4575"; // ID App Kamu
+        const ONESIGNAL_API_KEY = process.env.ONESIGNAL_API_KEY; // Pastikan ada di .env
+
+        const headers = {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": `Basic ${ONESIGNAL_API_KEY}`
+        };
+
+        const data = {
+            app_id: ONESIGNAL_APP_ID,
+            include_player_ids: [playerId],
+            headings: { "en": heading },
+            contents: { "en": message },
+            
+            // --- SETTING AGAR HP BANGUN (BACKGROUND) ---
+            priority: 10,                 // Paksa High Priority (Network)
+            android_channel_id: "",       // Biarkan default dulu
+            android_group: "rinspoint_order", 
+            android_visibility: 1,        // 1 = Public (Muncul di Lock Screen)
+            android_background_layout: {
+                "headings_color": "000000",
+                "contents_color": "000000"
+            },
+            // Paksa suara & getar
+            android_sound: "nil", 
+            android_led_color: "FF0000FF",
+            android_accent_color: "FF0000FF",
+            // ------------------------------------------
+        };
+
+        const response = await axios.post("https://onesignal.com/api/v1/notifications", data, { headers });
+        console.log("✅ OneSignal Sent:", response.data);
         return response.data;
+
     } catch (error) {
-        console.error("❌ Gagal Kirim Notif:", error.response ? error.response.data : error.message);
-        return null;
+        console.error("❌ OneSignal Error:", error.response ? error.response.data : error.message);
+        throw new Error("Gagal kirim notifikasi");
     }
 };
 
-/**
- * Kirim ke Admin (User Tertentu yang diset sebagai Admin di .env)
- */
-const sendToDevice = async (playerId, message, heading = "Info RinsPoint") => {
-    // Cek dulu apakah playerId ada isinya
-    if (!playerId) {
-        console.log("⚠️ Player ID kosong, skip notifikasi.");
-        return;
-    }
-
-    const data = {
-        app_id: process.env.ONESIGNAL_APP_ID,
-        include_player_ids: [playerId], // Target ID User/Admin
-        headings: { en: heading },
-        contents: { en: message },
-        
-        // SETTING AGAR MUNCUL SAAT BACKGROUND / LAYAR MATI
-        priority: 10, 
-        
-        // Icon (Gunakan icon dari Vercel kamu)
-        // Ganti URL ini dengan domain vercel-mu yang asli
-        chrome_web_icon: "https://rinspoint.vercel.app/assets/images/icon-192.png",
-        
-        // Agar saat diklik langsung buka aplikasi
-        url: "https://rinspoint.vercel.app/admin/orders.html" 
-    };
-
-    return await sendNotification(data);
-};
-
-// (Opsional) Jika butuh broadcast ke semua orang
-const sendToAll = async (message, heading = "Info") => {
-    const data = {
-        app_id: process.env.ONESIGNAL_APP_ID,
-        included_segments: ["Total Subscriptions"],
-        headings: { en: heading },
-        contents: { en: message },
-        priority: 10
-    };
-    return await sendNotification(data);
-};
-
-module.exports = { sendToDevice, sendToAll };
+module.exports = { sendToDevice };
