@@ -2,7 +2,11 @@ const Product = require('../../models/Product');
 const Transaction = require('../../models/Transaction'); 
 const cloudinary = require('cloudinary').v2;
 
-// Konfigurasi Cloudinary (Tetap dipertahankan untuk fitur upload bukti)
+// --- 1. IMPORT FIREBASE (BARU) ---
+const { sendFCM } = require('../utils/firebase'); 
+// ---------------------------------
+
+// Konfigurasi Cloudinary
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -26,8 +30,8 @@ const getPriceList = async (req, res) => {
 
 // --- 2. BUAT TRANSAKSI (CREATE) ---
 const createTransaction = async (req, res) => {
-    // ID OneSignal dihapus dari sini
-    const { productCode, productName, customerPhone, price } = req.body;
+    // Kita ambil userPlayerId (Token Firebase) dari Frontend
+    const { productCode, productName, customerPhone, price, userPlayerId } = req.body;
     const proofImage = req.file ? req.file.path : null; 
 
     try {
@@ -41,11 +45,23 @@ const createTransaction = async (req, res) => {
             status: 'pending',
             note: 'Menunggu Verifikasi Bukti Pembayaran',
             paymentProof: proofImage, 
-            // userPlayerId dihapus
+            userPlayerId: userPlayerId || null, // SIMPAN TOKEN FIREBASE USER DI SINI
             providerResponse: { productName }
         });
 
-        // BAGIAN NOTIFIKASI ADMIN SUDAH DIHAPUS
+        // --- 2. NOTIFIKASI KE ADMIN (VIA FIREBASE) ---
+        // Nanti kita simpan Token HP Admin di .env dengan nama FIREBASE_ADMIN_TOKEN
+        const adminToken = process.env.FIREBASE_ADMIN_TOKEN;
+        
+        if (adminToken) {
+            const priceFmt = parseInt(price).toLocaleString('id-ID');
+            const statusBukti = proofImage ? "📸 Ada Bukti" : "⏳ Tanpa Bukti";
+            const msgBody = `${productName}\nNo: ${customerPhone}\nRp ${priceFmt}\n${statusBukti}`;
+            
+            // Kirim notifikasi "Fire & Forget" (gak perlu await biar order cepat)
+            sendFCM(adminToken, "💰 Order Baru Masuk!", msgBody);
+        }
+        // ---------------------------------------------
 
         res.status(201).json(transaction);
     } catch (error) {
@@ -84,7 +100,26 @@ const updateTransactionStatus = async (req, res) => {
         if(note) transaction.note = note;
         await transaction.save();
 
-        // BAGIAN NOTIFIKASI BALASAN USER SUDAH DIHAPUS
+        // --- 3. NOTIFIKASI BALASAN KE USER (VIA FIREBASE) ---
+        // Cek apakah transaksi ini punya Token User?
+        if (transaction.userPlayerId) { 
+            let title = "";
+            let body = "";
+
+            if (status === 'success') {
+                title = "✅ Pesanan Sukses!";
+                body = `Hore! ${transaction.providerResponse?.productName || 'Pesananmu'} berhasil diproses.`;
+            } else if (status === 'failed') {
+                title = "❌ Pesanan Dibatalkan";
+                body = `Maaf, pesanan gagal. Alasan: ${note || 'Hubungi Admin'}`;
+            }
+
+            // Kirim jika statusnya success/failed
+            if (title) {
+                sendFCM(transaction.userPlayerId, title, body);
+            }
+        }
+        // ----------------------------------------------------
 
         res.json(transaction);
     } catch (error) {
