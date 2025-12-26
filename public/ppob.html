@@ -187,5 +187,19 @@
              // Logic popup preserved
         });
     </script>
+
+    <script>
+  // Paksa Browser Daftarkan Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/OneSignalSDKWorker.js').then(function(registration) {
+        console.log('✅ Service Worker berhasil daftar di scope:', registration.scope);
+      }, function(err) {
+        console.log('❌ Service Worker gagal daftar:', err);
+      });
+    });
+  }
+</script>
+
 </body>
 </html>
