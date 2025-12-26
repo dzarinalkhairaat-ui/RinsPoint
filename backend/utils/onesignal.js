@@ -1,60 +1,62 @@
-// backend/utils/onesignal.js
+const axios = require('axios');
 
-const OneSignal = require('onesignal-node');
+// Fungsi Helper untuk Request ke OneSignal API
+const sendNotification = async (data) => {
+    const headers = {
+        "Content-Type": "application/json; charset=utf-8",
+        "Authorization": `Basic ${process.env.ONESIGNAL_API_KEY}`
+    };
 
-// Mengambil kunci dari .env
-const client = new OneSignal.Client(
-    process.env.ONESIGNAL_APP_ID,
-    process.env.ONESIGNAL_API_KEY
-);
-
-/**
- * Fungsi untuk mengirim notifikasi ke SEMUA Admin/User (Broadcast)
- * Cocok untuk memberi tahu Admin kalau ada orderan baru.
- */
-const sendToAll = async (message, heading = "RinsPoint Info") => {
     try {
-        const notification = {
-            contents: {
-                'en': message,
-                'id': message
-            },
-            headings: {
-                'en': heading,
-                'id': heading
-            },
-            included_segments: ['Total Subscriptions'], // Kirim ke semua yang subscribe
-            // small_icon: "ic_stat_onesignal_default" // Opsional jika punya icon khusus
-        };
-
-        const response = await client.createNotification(notification);
-        console.log("✅ Notifikasi Terkirim (Broadcast):", response.body.id);
-        return response;
+        const response = await axios.post('https://onesignal.com/api/v1/notifications', data, { headers });
+        console.log("✅ Notifikasi Sukses:", response.data);
+        return response.data;
     } catch (error) {
-        console.error("❌ Gagal kirim notifikasi:", error);
-        // Kita tidak throw error agar transaksi tetap jalan meski notif gagal
+        console.error("❌ Gagal Kirim Notif:", error.response ? error.response.data : error.message);
+        return null;
     }
 };
 
 /**
- * Fungsi untuk mengirim notifikasi ke USER TERTENTU (Based on Player ID)
- * Nanti dipakai saat update status transaksi.
- * * Note: Untuk tahap awal, kita pakai Broadcast dulu atau simpan PlayerID user.
+ * Kirim ke Admin (User Tertentu yang diset sebagai Admin di .env)
  */
-const sendToDevice = async (playerId, message, heading = "Status Pesanan") => {
-    try {
-        const notification = {
-            contents: { 'en': message },
-            headings: { 'en': heading },
-            include_player_ids: [playerId] // Target khusus ke HP user tertentu
-        };
-
-        const response = await client.createNotification(notification);
-        console.log("✅ Notifikasi Personal Terkirim:", response.body.id);
-        return response;
-    } catch (error) {
-        console.error("❌ Gagal kirim notifikasi personal:", error);
+const sendToDevice = async (playerId, message, heading = "Info RinsPoint") => {
+    // Cek dulu apakah playerId ada isinya
+    if (!playerId) {
+        console.log("⚠️ Player ID kosong, skip notifikasi.");
+        return;
     }
+
+    const data = {
+        app_id: process.env.ONESIGNAL_APP_ID,
+        include_player_ids: [playerId], // Target ID User/Admin
+        headings: { en: heading },
+        contents: { en: message },
+        
+        // SETTING AGAR MUNCUL SAAT BACKGROUND / LAYAR MATI
+        priority: 10, 
+        
+        // Icon (Gunakan icon dari Vercel kamu)
+        // Ganti URL ini dengan domain vercel-mu yang asli
+        chrome_web_icon: "https://rinspoint.vercel.app/assets/images/icon-192.png",
+        
+        // Agar saat diklik langsung buka aplikasi
+        url: "https://rinspoint.vercel.app/admin/orders.html" 
+    };
+
+    return await sendNotification(data);
 };
 
-module.exports = { sendToAll, sendToDevice };
+// (Opsional) Jika butuh broadcast ke semua orang
+const sendToAll = async (message, heading = "Info") => {
+    const data = {
+        app_id: process.env.ONESIGNAL_APP_ID,
+        included_segments: ["Total Subscriptions"],
+        headings: { en: heading },
+        contents: { en: message },
+        priority: 10
+    };
+    return await sendNotification(data);
+};
+
+module.exports = { sendToDevice, sendToAll };
