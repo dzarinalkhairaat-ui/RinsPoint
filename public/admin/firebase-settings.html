@@ -60,7 +60,8 @@
                     <span>Tes Notifikasi</span>
                 </div>
                 <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:15px;">
-                    Pastikan volume HP besar dan tidak dalam mode hening.
+                    <strong>PENTING:</strong> Pastikan Volume Media & Notifikasi HP kamu Kencang.<br>
+                    Jika tombol ini bunyi tapi notifikasi order diam, cek "Kategori Notifikasi" di pengaturan Chrome HP.
                 </p>
                 <button class="btn-save btn-test" onclick="testSound()">
                     <i class="fa-solid fa-play"></i> TES BUNYI SEKARANG
@@ -87,8 +88,8 @@
         const messaging = firebase.messaging();
         let currentToken = null;
 
-        // Suara 'Ting' Sederhana (Base64) agar tidak perlu upload file
-        const testAudio = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU"); // Placeholder pendek, nanti akan diganti suara browser
+        // Suara "TING" (Base64) - Tidak perlu download, langsung bunyi
+        const audioBeep = new Audio("data:audio/mp3;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7cQBCNJxhDBnlD//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA");
 
         // 2. AMBIL TOKEN SAAT LOAD
         document.addEventListener('DOMContentLoaded', async () => {
@@ -128,10 +129,7 @@
                 const res = await fetch('/api/ppob/admin/save-token', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        token: currentToken,
-                        deviceName: devName
-                    })
+                    body: JSON.stringify({ token: currentToken, deviceName: devName })
                 });
 
                 const data = await res.json();
@@ -148,24 +146,22 @@
             }
         }
 
-        // 4. FUNGSI TEST BUNYI (UPDATED)
+        // 4. FUNGSI TEST BUNYI (Fixed)
         function testSound() {
-            // A. Tampilkan Notifikasi Visual
+            // A. Bunyikan Suara Halaman Web (Media Volume)
+            audioBeep.currentTime = 0;
+            audioBeep.play().catch(e => alert("Audio Error: " + e.message));
+
+            // B. Tampilkan Notifikasi Sistem (Notification Volume)
             if (Notification.permission === 'granted') {
                 new Notification("🔔 Tes Bunyi Berhasil", {
-                    body: "Jika kamu tidak mendengar suara, cek Volume Media/Notifikasi HP kamu.",
+                    body: "Apakah kamu mendengar suara ting?",
                     icon: "/assets/images/icon.png",
                     vibrate: [200, 100, 200]
                 });
             } else {
-                alert("Izinkan notifikasi dulu!");
+                alert("Izinkan notifikasi browser dulu!");
             }
-
-            // B. Putar Suara Bell (Link eksternal yang stabil)
-            // Ini untuk memastikan speaker browser jalan
-            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'); 
-            audio.volume = 1.0;
-            audio.play().catch(e => alert("Gagal memutar audio test: " + e));
         }
     </script>
 </body>
