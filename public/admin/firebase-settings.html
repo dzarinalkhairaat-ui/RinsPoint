@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Setting Notifikasi - RinsPoint</title>
+    
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin/dashboard.css">
+    <link rel="stylesheet" href="../css/admin/firebase-settings.css">
+
+    <link rel="manifest" href="/manifest.json">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="../js/auth.js"></script>
+    <script>checkAuth();</script>
+</head>
+<body>
+    <div class="mobile-container">
+        <header class="dashboard-header">
+            <a href="dashboard.html" style="color:white; font-size:1.2rem;"><i class="fa-solid fa-arrow-left"></i></a>
+            <h2 style="margin-left: 15px; font-size: 1.1rem;">Setting Notifikasi</h2>
+            <div style="width: 24px;"></div>
+        </header>
+
+        <main class="dashboard-content" style="padding-top: 20px;">
+            
+            <div class="setting-card">
+                <div class="setting-header">
+                    <i class="fa-solid fa-database" style="color: #4ade80;"></i>
+                    <span>Simpan Token ke Database</span>
+                </div>
+                <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:15px;">
+                    Klik simpan agar notifikasi tetap masuk walaupun data browser terhapus.
+                </p>
+
+                <div class="form-group">
+                    <label>Nama Perangkat Admin:</label>
+                    <input type="text" id="deviceName" class="form-input" placeholder="Contoh: HP Admin Utama">
+                </div>
+
+                <div class="form-group">
+                    <label>Token Saat Ini:</label>
+                    <div id="tokenDisplay" class="token-box">Sedang mengambil token...</div>
+                </div>
+
+                <button class="btn-save" onclick="saveToDatabase()">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> SIMPAN TOKEN PERMANEN
+                </button>
+            </div>
+
+            <div class="setting-card">
+                <div class="setting-header">
+                    <i class="fa-solid fa-bell" style="color: #f59e0b;"></i>
+                    <span>Tes Notifikasi</span>
+                </div>
+                <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:15px;">
+                    Pastikan volume HP besar dan tidak dalam mode hening.
+                </p>
+                <button class="btn-save btn-test" onclick="testSound()">
+                    <i class="fa-solid fa-play"></i> TES BUNYI SEKARANG
+                </button>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // 1. CONFIG FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsV9fJKzYQHLuSBC4LIf740OyNjgL36VE",
+            authDomain: "rinspoint-2e239.firebaseapp.com",
+            projectId: "rinspoint-2e239",
+            storageBucket: "rinspoint-2e239.firebasestorage.app",
+            messagingSenderId: "680165358672",
+            appId: "1:680165358672:web:5bdf28d0b55c9b71a06555",
+            measurementId: "G-S0EYYE6EDL"
+        };
+        const vapidKey = "BNlfGzcvNuXeJ6j4EnCquoNAHmyiWQLZrJHpvY-JJb4RN0AX1X3Okv0WVXLX-uErG2VL8_4NKDRrsZyoKiWVIMY";
+
+        firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
+        let currentToken = null;
+
+        // 2. AMBIL TOKEN SAAT LOAD
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const permission = await Notification.requestPermission();
+                if(permission !== 'granted') {
+                    document.getElementById('tokenDisplay').innerText = "⚠️ Izin Notifikasi Ditolak!";
+                    document.getElementById('tokenDisplay').style.color = "#ef4444";
+                    return;
+                }
+
+                currentToken = await messaging.getToken({ vapidKey: vapidKey });
+                if(currentToken) {
+                    document.getElementById('tokenDisplay').innerText = currentToken;
+                } else {
+                    document.getElementById('tokenDisplay').innerText = "Gagal mendapatkan token.";
+                }
+            } catch (error) {
+                console.error(error);
+                document.getElementById('tokenDisplay').innerText = "Error: " + error.message;
+            }
+        });
+
+        // 3. FUNGSI SIMPAN KE DATABASE
+        async function saveToDatabase() {
+            const devName = document.getElementById('deviceName').value;
+            
+            if(!currentToken) return alert('Token belum siap. Tunggu sebentar atau refresh.');
+            if(!devName) return alert('Harap isi Nama Perangkat dulu!');
+
+            const btn = document.querySelector('.btn-save');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Menyimpan...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/ppob/admin/save-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        token: currentToken,
+                        deviceName: devName
+                    })
+                });
+
+                const data = await res.json();
+                if(data.success) {
+                    alert('✅ BERHASIL! Token HP ini sudah tersimpan aman di Database.');
+                } else {
+                    alert('Gagal: ' + data.message);
+                }
+            } catch (error) {
+                alert('Terjadi kesalahan koneksi.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // 4. FUNGSI TEST BUNYI
+        function testSound() {
+            new Notification("🔔 Tes Bunyi", {
+                body: "Jika kamu mendengar & melihat ini, berarti aman!",
+                icon: "/assets/images/icon.png",
+                vibrate: [200, 100, 200]
+            });
+        }
+    </script>
+</body>
+</html>
