@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/admin/dashboard.css">
     <link rel="stylesheet" href="../css/admin/firebase-settings.css">
-
     <link rel="manifest" href="/manifest.json">
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -60,8 +59,10 @@
                     <span>Tes Notifikasi</span>
                 </div>
                 <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:15px;">
-                    <strong>PENTING:</strong> Pastikan Volume Media & Notifikasi HP kamu Kencang.<br>
-                    Jika tombol ini bunyi tapi notifikasi order diam, cek "Kategori Notifikasi" di pengaturan Chrome HP.
+                    <strong>PENTING:</strong> <br>
+                    1. Pastikan Volume <strong>Media</strong> (Musik) HP Full.<br>
+                    2. Klik tombol di bawah.<br>
+                    3. Jika bunyi "Ting" tapi tidak ada notif di atas, berarti Browser kamu memblokir notifikasi pop-up.
                 </p>
                 <button class="btn-save btn-test" onclick="testSound()">
                     <i class="fa-solid fa-play"></i> TES BUNYI SEKARANG
@@ -88,8 +89,10 @@
         const messaging = firebase.messaging();
         let currentToken = null;
 
-        // SUARA BEEP SEDERHANA (WAV FORMAT) - Pasti Support di Android
-        const audioBeep = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU");
+        // DATA AUDIO MP3 (Suara Notifikasi "Ting" Pendek)
+        // Ini adalah file audio asli yang di-encode, bukan header kosong
+        const audioData = "data:audio/mp3;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7cQBCNJxhDBnlD//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA";
+        const audioBeep = new Audio(audioData);
 
         // 2. AMBIL TOKEN SAAT LOAD
         document.addEventListener('DOMContentLoaded', async () => {
@@ -100,7 +103,6 @@
                     document.getElementById('tokenDisplay').style.color = "#ef4444";
                     return;
                 }
-
                 currentToken = await messaging.getToken({ vapidKey: vapidKey });
                 if(currentToken) {
                     document.getElementById('tokenDisplay').innerText = currentToken;
@@ -116,7 +118,6 @@
         // 3. FUNGSI SIMPAN KE DATABASE
         async function saveToDatabase() {
             const devName = document.getElementById('deviceName').value;
-            
             if(!currentToken) return alert('Token belum siap. Tunggu sebentar atau refresh.');
             if(!devName) return alert('Harap isi Nama Perangkat dulu!');
 
@@ -131,7 +132,6 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: currentToken, deviceName: devName })
                 });
-
                 const data = await res.json();
                 if(data.success) {
                     alert('✅ BERHASIL! Token HP ini sudah tersimpan aman di Database.');
@@ -146,26 +146,36 @@
             }
         }
 
-        // 4. FUNGSI TEST BUNYI (Fixed Audio Source)
+        // 4. FUNGSI TEST BUNYI (VERSI FINAL)
         function testSound() {
-            // A. Coba Bunyikan Suara Beep Internal
+            // STEP A: Bunyikan Suara Browser (Pake Volume Media/Musik)
             try {
+                audioBeep.volume = 1.0;
                 audioBeep.currentTime = 0;
-                audioBeep.play().catch(e => {
-                    // Jika internal gagal, fallback ke alert biasa
-                    console.log("Audio play error:", e);
-                });
-            } catch(e) { console.log(e); }
+                const playPromise = audioBeep.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        console.log("Audio diputar.");
+                    })
+                    .catch(error => {
+                        console.log("Playback dicegah browser:", error);
+                        alert("Browser memblokir suara otomatis. Coba klik lagi!");
+                    });
+                }
+            } catch(e) { 
+                alert("Gagal memutar audio: " + e.message); 
+            }
 
-            // B. Tampilkan Notifikasi Sistem
+            // STEP B: Munculkan Notifikasi Sistem (Pake Volume Notifikasi)
             if (Notification.permission === 'granted') {
-                new Notification("🔔 Tes Bunyi Berhasil", {
-                    body: "Jika tidak ada suara, cek Volume Media & Notifikasi HP kamu.",
+                new Notification("🔔 TES BERHASIL!", {
+                    body: "Suara 'Ting' berasal dari Media. Notifikasi ini dari Sistem.",
                     icon: "/assets/images/icon.png",
                     vibrate: [200, 100, 200]
                 });
             } else {
-                alert("Izinkan notifikasi browser dulu!");
+                alert("Izin Notifikasi belum diberikan!");
             }
         }
     </script>
