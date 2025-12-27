@@ -124,10 +124,10 @@
         requestPermission();
 
         // ===============================================
-        // 🔇 STARTUP MUTE LOGIC (USER)
+        // 🔇 STARTUP MUTE LOGIC (USER - 10 Detik)
         // ===============================================
         let isAppReady = false;
-        setTimeout(() => { isAppReady = true; }, 5000); // 5 Detik
+        setTimeout(() => { isAppReady = true; }, 10000); // 10 Detik
 
         // 5. Pesan saat aplikasi dibuka (Foreground)
         messaging.onMessage((payload) => {
