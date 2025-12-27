@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../css/admin/dashboard.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
+    <link rel="apple-touch-icon" href="/assets/images/icon.png">
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
@@ -23,7 +24,6 @@
 <body>
 
     <div class="mobile-container">
-        
         <header class="dashboard-header">
             <h2><span class="rins">Rins</span> <span class="admin">Admin</span></h2>
             <div class="saldo-badge" onclick="openPinModal()">
@@ -33,7 +33,6 @@
         </header>
 
         <main class="dashboard-content" style="padding-bottom: 6rem; padding-top: 10px;">
-            
             <div class="welcome-text">
                 <strong>Selamat Datang!</strong> <br>
                 <span style="color: #4ade80; font-weight: 600;">Kelola tokomu dari sini.</span>
@@ -69,7 +68,6 @@
                     <i class="fa-solid fa-file-invoice-dollar" style="color: #f59e0b;"></i>
                     <span style="color: #f59e0b;">Order Masuk</span>
                 </a>
-
                 <a href="products.html" class="menu-item">
                     <i class="fa-solid fa-box-open"></i>
                     <span>Kelola Produk</span>
@@ -117,7 +115,6 @@
     </div>
 
     <script>
-        // CONFIG FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyCsV9fJKzYQHLuSBC4LIf740OyNjgL36VE",
             authDomain: "rinspoint-2e239.firebaseapp.com",
@@ -131,12 +128,18 @@
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
 
-        // 1. HANDLER PESAN MASUK (FOREGROUND - Saat aplikasi dibuka)
+        // AUDIO MANUAL (Backup jika sistem silent)
+        const alertAudio = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU");
+
+        // 1. HANDLER FOREGROUND (LANGSUNG BUNYI)
         messaging.onMessage((payload) => {
-            console.log('🔔 Order Masuk:', payload);
-            loadStats(); // Update badge
+            console.log('🔔 Order Masuk (Foreground):', payload);
+            loadStats(); 
             
-            // TAMPILKAN NOTIFIKASI
+            // PAKSA AUDIO
+            try { alertAudio.play().catch(e => console.log("Audio play prevented by browser")); } catch(e){}
+
+            // PAKSA NOTIFIKASI
             const title = payload.notification.title;
             const options = {
                 body: payload.notification.body,
@@ -147,28 +150,26 @@
             if (Notification.permission === 'granted') {
                 new Notification(title, options);
             } else {
-                // Backup kalau izin belum ada, pakai Alert biasa
-                alert("🔔 " + title + "\n" + options.body);
+                // Fallback Kasar: Alert
+                alert(`🔔 ${title}\n${options.body}`);
             }
         });
 
-        // 2. REGISTER SERVICE WORKER (WAJIB UTK BACKGROUND)
+        // 2. REGISTER SW
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/firebase-messaging-sw.js')
-                .then(reg => console.log("✅ SW Admin Ready", reg))
-                .catch(err => console.log("❌ SW Admin Error", err));
+                .then(reg => console.log("✅ SW Admin Ready"))
+                .catch(err => console.log("❌ SW Admin Fail", err));
             });
         }
         
-        // 3. REQUEST PERMISSION OTOMATIS
+        // 3. AUTO PERMISSION
         if (Notification.permission !== "granted") {
-            Notification.requestPermission().then(permission => {
-                if(permission === 'granted') console.log("Izin Notifikasi Diberikan");
-            });
+            Notification.requestPermission();
         }
 
-        // --- LOGIC HALAMAN (PIN, STATS) ---
+        // --- LOGIC LAINNYA ---
         const pinModal = document.getElementById('pinModal');
         const pinInput = document.getElementById('pinInput');
 
@@ -187,10 +188,10 @@
                         badge.classList.remove('show', 'pulse');
                     }
                 }
-            } catch (error) { console.error("Err stats"); }
+            } catch (error) { console.error("Gagal load statistik:", error); }
         }
         loadStats();
-        setInterval(loadStats, 30000); 
+        setInterval(loadStats, 15000); // Cek tiap 15 detik
 
         function openPinModal() { pinModal.classList.add('show'); pinInput.value = ''; pinInput.focus(); }
         function closePinModal() { pinModal.classList.remove('show'); }

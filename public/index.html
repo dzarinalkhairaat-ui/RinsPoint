@@ -7,7 +7,6 @@
     
     <link rel="stylesheet" href="css/style.css?v=CLEAN_MIGRATION">
     <link rel="stylesheet" href="css/pages/home.css">
-
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
     <link rel="apple-touch-icon" href="/assets/images/icon.png">
@@ -21,7 +20,6 @@
 </head>
 <body>
     <div class="mobile-container">
-        
         <header class="main-header">
             <div class="logo-text"><span class="brand-green">Rins</span>Point</div>
             <div class="search-bar">
@@ -31,7 +29,6 @@
         </header>
 
         <main class="home-page">
-            
             <div class="hero-section">
                 <img src="assets/images/banner.jpg" alt="Promo RinsPoint" class="static-banner">
             </div>
@@ -51,7 +48,6 @@
                     <p style="color:#64748b; padding:1rem;">Memuat produk...</p>
                 </div>
             </div>
-
         </main>
 
         <footer class="main-footer">
@@ -90,7 +86,6 @@
     </script>
 
     <script>
-        // 1. Config Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCsV9fJKzYQHLuSBC4LIf740OyNjgL36VE",
             authDomain: "rinspoint-2e239.firebaseapp.com",
@@ -100,53 +95,33 @@
             appId: "1:680165358672:web:5bdf28d0b55c9b71a06555",
             measurementId: "G-S0EYYE6EDL"
         };
-
         const vapidKey = "BNlfGzcvNuXeJ6j4EnCquoNAHmyiWQLZrJHpvY-JJb4RN0AX1X3Okv0WVXLX-uErG2VL8_4NKDRrsZyoKiWVIMY";
 
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
 
-        // 4. Minta Izin & Simpan Token
         async function requestPermission() {
             try {
                 const permission = await Notification.requestPermission();
                 if (permission === 'granted') {
                     const token = await messaging.getToken({ vapidKey: vapidKey });
-                    if (token) {
-                        localStorage.setItem('fcm_token', token);
-                    }
+                    if (token) localStorage.setItem('fcm_token', token);
                 }
-            } catch (err) {
-                console.log('⚠️ Error Token:', err);
-            }
+            } catch (err) { console.log('⚠️ Error Token:', err); }
         }
-        
         requestPermission();
 
-        // ===============================================
-        // 🔇 STARTUP MUTE LOGIC (USER)
-        // ===============================================
-        let isAppReady = false;
-        setTimeout(() => { isAppReady = true; }, 5000); // 5 Detik
-
-        // 5. Pesan saat aplikasi dibuka (Foreground)
+        // LOGIKA STANDARD: TERIMA PESAN LANGSUNG (TANPA MUTE)
         messaging.onMessage((payload) => {
             console.log('🔔 Pesan Masuk:', payload);
-            
-            // Kalau masih startup, jangan munculkan alert
-            if (!isAppReady) return;
-
-            // Kalau sudah siap, baru munculkan
             alert(`${payload.notification.title}\n${payload.notification.body}`);
         });
 
-        // 6. Daftarkan Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/firebase-messaging-sw.js');
             });
         }
     </script>
-
 </body>
 </html>

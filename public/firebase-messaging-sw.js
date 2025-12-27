@@ -14,16 +14,19 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
-// Handler untuk pesan saat aplikasi di Background (Layar Mati/Tutup)
+// HANDLER BACKGROUND (Saat Layar Mati / Aplikasi Tutup)
 messaging.onBackgroundMessage((payload) => {
-    console.log('[SW] Pesan Background:', payload);
+    console.log('[SW] Order Masuk (Background):', payload);
 
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
         icon: '/assets/images/icon.png',
         badge: '/assets/images/icon.png',
-        vibrate: [200, 100, 200]
+        // Getar Agresif: Panjang-Pendek-Panjang
+        vibrate: [500, 200, 500], 
+        tag: 'order-notification',
+        renotify: true // Pastikan bunyi lagi walau notif lama belum dihapus
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
