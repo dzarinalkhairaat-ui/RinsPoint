@@ -12,6 +12,9 @@
     <meta name="theme-color" content="#0F172A">
     <link rel="apple-touch-icon" href="/assets/images/icon.png">
     
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
+
     <script src="/js/pwa-register.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -86,5 +89,61 @@
         });
     </script>
 
-    </body>
+    <script>
+        // 1. Config Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsV9fJKzYQHLuSBC4LIf740OyNjgL36VE",
+            authDomain: "rinspoint-2e239.firebaseapp.com",
+            projectId: "rinspoint-2e239",
+            storageBucket: "rinspoint-2e239.firebasestorage.app",
+            messagingSenderId: "680165358672",
+            appId: "1:680165358672:web:5bdf28d0b55c9b71a06555",
+            measurementId: "G-S0EYYE6EDL"
+        };
+
+        // 2. VAPID Key
+        const vapidKey = "BNlfGzcvNuXeJ6j4EnCquoNAHmyiWQLZrJHpvY-JJb4RN0AX1X3Okv0WVXLX-uErG2VL8_4NKDRrsZyoKiWVIMY";
+
+        // 3. Inisialisasi
+        firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
+
+        // 4. Minta Izin & Simpan Token
+        async function requestPermission() {
+            try {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    console.log('🔔 Izin notifikasi diberikan');
+                    const token = await messaging.getToken({ vapidKey: vapidKey });
+                    if (token) {
+                        console.log('✅ TOKEN FIREBASE:', token);
+                        localStorage.setItem('fcm_token', token); // Simpan agar bisa diambil saat bayar
+                    }
+                } else {
+                    console.log('❌ Izin notifikasi ditolak');
+                }
+            } catch (err) {
+                console.log('⚠️ Error Token:', err);
+            }
+        }
+        
+        requestPermission();
+
+        // 5. Pesan saat aplikasi dibuka (Foreground)
+        messaging.onMessage((payload) => {
+            console.log('🔔 Pesan Masuk:', payload);
+            alert(`${payload.notification.title}\n${payload.notification.body}`);
+        });
+
+        // 6. Daftarkan Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then(reg => console.log('✅ SW Firebase OK:', reg.scope))
+                .catch(err => console.log('❌ SW Firebase Gagal:', err));
+            });
+        }
+    </script>
+
+</body>
 </html>

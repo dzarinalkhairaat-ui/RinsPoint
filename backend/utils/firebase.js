@@ -1,36 +1,45 @@
 const admin = require('firebase-admin');
+const path = require('path'); 
 
-// --- CARA BARU: BACA DARI ENVIRONMENT VARIABLE (AMAN) ---
 let serviceAccount;
+
 try {
-    // Kita cek apakah ada variabel 'FIREBASE_SERVICE_ACCOUNT' di Vercel?
+    // 1. Cek Apakah ada di Vercel/Environment Variable? (Prioritas Utama)
     if (process.env.FIREBASE_SERVICE_ACCOUNT) {
         serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    } else {
-        throw new Error("Variabel FIREBASE_SERVICE_ACCOUNT tidak ditemukan di .env");
+        console.log("🔥 Menggunakan Config dari Environment Variable (Mode Server)");
+    } 
+    // 2. Jika tidak, Cek File Lokal (Mode Laptop/Localhost)
+    else {
+        try {
+            // Kita coba cari file fisik yang ada di laptopmu
+            serviceAccount = require(path.join(__dirname, '../serviceAccountKey.json'));
+            console.log("💻 Menggunakan Config dari File Lokal (Mode Dev)");
+        } catch (e) {
+            console.log("⚠️ Config Firebase tidak ditemukan di Env maupun File Lokal.");
+        }
     }
-    
-    if (!admin.apps.length) {
+
+    // 3. Inisialisasi Firebase
+    if (serviceAccount && !admin.apps.length) {
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount)
         });
-        console.log("🔥 Firebase Admin Berhasil Terhubung!");
+        console.log("✅ Firebase Admin Terhubung!");
     }
-} catch (error) {
-    console.error("❌ Gagal Konek Firebase:", error.message);
-}
-// -------------------------------------------------------
 
+} catch (error) {
+    console.error("❌ Gagal Inisialisasi Firebase:", error.message);
+}
+
+// Fungsi Kirim Notifikasi
 const sendFCM = async (token, title, body) => {
     if (!token) return;
 
     try {
         const message = {
             token: token,
-            notification: {
-                title: title,
-                body: body
-            },
+            notification: { title, body },
             android: {
                 priority: 'high',
                 notification: {
@@ -42,11 +51,8 @@ const sendFCM = async (token, title, body) => {
                 }
             }
         };
-
-        const response = await admin.messaging().send(message);
+        await admin.messaging().send(message);
         console.log(`✅ Notif Terkirim ke ${token.substr(0, 10)}...`);
-        return response;
-
     } catch (error) {
         console.error('❌ Gagal Kirim Notif:', error.message);
     }

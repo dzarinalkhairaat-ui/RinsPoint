@@ -11,6 +11,9 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
     
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -91,7 +94,6 @@
                     </div>
                     <span>Shopee</span>
                 </a>
-                
                 <a href="ppob/linkaja.html" class="ppob-item">
                     <div class="icon-box img-box">
                         <img src="assets/icons/LinkAja.png" class="full-icon-img" alt="Shopee">
@@ -163,13 +165,10 @@
                 <div class="modal-icon-wrap">
                     <i class="fa-solid fa-shield-halved" style="font-size: 2.5rem; color: #4ade80; filter: drop-shadow(0 0 10px #4ade80);"></i>
                 </div>
-                
                 <h3 style="color: white; margin: 0 0 10px 0; font-size: 1.3rem; letter-spacing: 0.5px;">Transaksi Aman</h3>
-                
                 <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 30px; line-height: 1.6;">
                     Transaksi Anda diproses manual oleh Admin untuk menjamin <span style="color:#fff; font-weight:600;">keamanan 100%</span>.
                 </p>
-                
                 <button onclick="window.location.href='pemberitahuanppob.html'" class="btn-full btn-ghost">
                     <i class="fa-solid fa-book-open"></i> Baca Selengkapnya
                 </button>
@@ -190,5 +189,44 @@
         });
     </script>
 
-    </body>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsV9fJKzYQHLuSBC4LIf740OyNjgL36VE",
+            authDomain: "rinspoint-2e239.firebaseapp.com",
+            projectId: "rinspoint-2e239",
+            storageBucket: "rinspoint-2e239.firebasestorage.app",
+            messagingSenderId: "680165358672",
+            appId: "1:680165358672:web:5bdf28d0b55c9b71a06555",
+            measurementId: "G-S0EYYE6EDL"
+        };
+        const vapidKey = "BNlfGzcvNuXeJ6j4EnCquoNAHmyiWQLZrJHpvY-JJb4RN0AX1X3Okv0WVXLX-uErG2VL8_4NKDRrsZyoKiWVIMY";
+
+        firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
+
+        async function requestPermission() {
+            try {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    const token = await messaging.getToken({ vapidKey: vapidKey });
+                    if (token) localStorage.setItem('fcm_token', token);
+                }
+            } catch (err) { console.log('Error Token:', err); }
+        }
+        
+        requestPermission();
+
+        messaging.onMessage((payload) => {
+            console.log('🔔 Pesan Masuk:', payload);
+            alert(`${payload.notification.title}\n${payload.notification.body}`);
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/firebase-messaging-sw.js');
+            });
+        }
+    </script>
+
+</body>
 </html>
