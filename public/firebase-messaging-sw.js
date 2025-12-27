@@ -1,7 +1,7 @@
 importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js');
 
-// Config Firebase (Sesuai data kamu)
+// 1. Config Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCsV9fJKzYQHLuSBC4LIf740OyNjgL36VE",
   authDomain: "rinspoint-2e239.firebaseapp.com",
@@ -15,15 +15,31 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
-// Handler Pesan Background
+// 2. Handler Saat Layar Mati / Background
 messaging.onBackgroundMessage((payload) => {
   console.log('[SW] Notif Background:', payload);
+
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/assets/images/icon-512.png', // Saya ubah jadi icon.png sesuai manifest kamu
-    badge: '/assets/images/icon-512.png'
+    // Gunakan icon.png yang pasti ada (sesuai header html kamu)
+    icon: '/assets/images/icon.png', 
+    badge: '/assets/images/icon.png',
+    vibrate: [200, 100, 200], // Getar Biar Terasa
+    tag: 'order-notification', // Agar notif tidak menumpuk
+    renotify: true // Bunyi lagi kalau ada notif baru
   };
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  return self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+// 3. LOGIKA WAJIB: Paksa Service Worker Selalu Aktif
+self.addEventListener('install', (event) => {
+    console.log('[SW] Installing...');
+    self.skipWaiting(); // Jangan antri, langsung install!
+});
+
+self.addEventListener('activate', (event) => {
+    console.log('[SW] Activating...');
+    event.waitUntil(clients.claim()); // Ambil alih kontrol segera!
 });

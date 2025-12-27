@@ -116,7 +116,7 @@
     </div>
 
     <script>
-        // --- 1. FIREBASE SETUP & NOTIFIKASI ADMIN ---
+        // --- SETUP FIREBASE & NOTIFIKASI ---
         const firebaseConfig = {
             apiKey: "AIzaSyCsV9fJKzYQHLuSBC4LIf740OyNjgL36VE",
             authDomain: "rinspoint-2e239.firebaseapp.com",
@@ -130,12 +130,11 @@
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
 
-        // Handler saat Admin sedang membuka Aplikasi (Foreground)
+        // 1. HANDLER FOREGROUND (Saat Aplikasi Dibuka)
+        // Kita paksa pakai Notifikasi Sistem biar muncul di status bar atas
         messaging.onMessage((payload) => {
             console.log('🔔 Order Masuk (Foreground):', payload);
             
-            // UPDATE: Ganti Alert dengan System Notification
-            // Ini akan memunculkan notif di status bar walau aplikasi sedang dibuka
             const title = payload.notification.title;
             const options = {
                 body: payload.notification.body,
@@ -143,24 +142,32 @@
                 vibrate: [200, 100, 200]
             };
 
+            // Cek Izin & Tampilkan
             if (Notification.permission === 'granted') {
                 new Notification(title, options);
+            } else {
+                // Fallback kalau izin belum ada
+                alert(`${title}\n${options.body}`);
             }
             
-            // Refresh badge & statistik secara otomatis saat notif masuk
-            loadStats(); 
+            loadStats(); // Refresh angka order
         });
 
-        // Daftarkan Service Worker (Untuk Background / Layar Mati)
+        // 2. REGISTER SW (Wajib untuk Background)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/firebase-messaging-sw.js')
-                .then(reg => console.log('✅ SW Admin Ready:', reg.scope))
-                .catch(err => console.log('❌ SW Admin Fail:', err));
+                .then(reg => console.log('✅ SW Admin Terdaftar:', reg.scope))
+                .catch(err => console.log('❌ SW Admin Gagal:', err));
             });
         }
-        // ---------------------------------------------
+        
+        // Minta Izin Notifikasi saat halaman dimuat
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
 
+        // --- LOGIC HALAMAN (PIN, STATS) ---
         const pinModal = document.getElementById('pinModal');
         const pinInput = document.getElementById('pinInput');
 
@@ -181,46 +188,27 @@
                         badge.classList.remove('show', 'pulse');
                     }
                 }
-            } catch (error) {
-                console.error("Gagal load statistik:", error);
-            }
+            } catch (error) { console.error("Gagal load statistik:", error); }
         }
         
         loadStats();
-        setInterval(loadStats, 30000); // Auto refresh tiap 30 detik
+        setInterval(loadStats, 30000); // Auto Refresh
 
-        function openPinModal() { 
-            pinModal.classList.add('show'); 
-            pinInput.value = ''; 
-            pinInput.focus(); 
-        }
-        
-        function closePinModal() { 
-            pinModal.classList.remove('show'); 
-        }
-        
+        function openPinModal() { pinModal.classList.add('show'); pinInput.value = ''; pinInput.focus(); }
+        function closePinModal() { pinModal.classList.remove('show'); }
         async function submitPin() {
             const pin = pinInput.value;
             if (pin.length < 4) return alert('PIN terlalu pendek!');
-            
             try {
                 const res = await fetch('/api/auth/verify-pin', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` },
                     body: JSON.stringify({ pin })
                 });
-                
                 const data = await res.json();
-                
-                if (data.success) { 
-                    window.location.href = 'saldo.html'; 
-                } else { 
-                    alert('PIN Salah!'); 
-                    pinInput.value = ''; 
-                }
-            } catch (error) { 
-                alert('Error server.'); 
-            }
+                if (data.success) { window.location.href = 'saldo.html'; } 
+                else { alert('PIN Salah!'); pinInput.value = ''; }
+            } catch (error) { alert('Error server.'); }
         }
 
         function logout() {
