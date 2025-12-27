@@ -7,10 +7,8 @@
     
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/admin/dashboard.css">
-
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
-    <link rel="apple-touch-icon" href="/assets/images/icon.png">
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
@@ -46,7 +44,6 @@
                     <div class="blob-anim blob-1"></div>
                     <div class="blob-anim blob-2"></div>
                     <i class="fa-solid fa-arrow-pointer watermark-icon"></i>
-                    
                     <div class="abs-content">
                         <div class="abs-number" id="statClick">0</div>
                         <div class="abs-label">Klik Produk</div>
@@ -57,7 +54,6 @@
                     <div class="blob-anim blob-1"></div>
                     <div class="blob-anim blob-2"></div>
                     <i class="fa-solid fa-receipt watermark-icon"></i>
-                    
                     <div class="abs-content">
                         <div class="abs-number" id="statPpob">0</div>
                         <div class="abs-label">Transaksi PPOB</div>
@@ -104,7 +100,8 @@
         <nav class="bottom-nav">
             <a href="/"><i class="fa-solid fa-store"></i><span>Toko</span></a>
             <a href="#" class="active"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
-            <a href="orders.html"><i class="fa-solid fa-list-check"></i><span>Pesanan</span></a> <a href="#" onclick="logout()"><i class="fa-solid fa-power-off"></i><span>LogOut</span></a>
+            <a href="orders.html"><i class="fa-solid fa-list-check"></i><span>Pesanan</span></a> 
+            <a href="#" onclick="logout()"><i class="fa-solid fa-power-off"></i><span>LogOut</span></a>
         </nav>
     </div>
 
@@ -120,7 +117,7 @@
     </div>
 
     <script>
-        // --- SETUP FIREBASE & NOTIFIKASI ---
+        // CONFIG FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyCsV9fJKzYQHLuSBC4LIf740OyNjgL36VE",
             authDomain: "rinspoint-2e239.firebaseapp.com",
@@ -134,56 +131,50 @@
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
 
-        // ===============================================
-        // 🔇 STARTUP MUTE LOGIC (PEREDAM SUARA 5 DETIK)
-        // ===============================================
-        let isAppReady = false;
-        
-        // Timer: Setelah 5 detik, baru boleh bunyi
-        setTimeout(() => { 
-            isAppReady = true; 
-            console.log("🔊 System Ready: Notifikasi akan berbunyi sekarang.");
-        }, 5000);
+        // AUDIO PAKSA BUNYI (Backup jika notifikasi sistem silent)
+        const alertSound = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU");
 
-        // 1. HANDLER FOREGROUND (Saat Aplikasi Dibuka)
+        // SMART MUTE: Hanya diam 3 detik awal untuk menahan cache
+        let isAppReady = false; 
+        setTimeout(() => { isAppReady = true; }, 3000); 
+
+        // HANDLER PESAN MASUK (SAAT APLIKASI DIBUKA)
         messaging.onMessage((payload) => {
             console.log('🔔 Order Masuk:', payload);
+            loadStats(); 
             
-            // SELALU UPDATE STATISTIK (Biar badge tetap real-time)
-            loadStats();
+            // JANGAN BUNYI jika pesan masuk saat loading awal (< 3 detik)
+            if (!isAppReady) return;
 
-            // CEK: Apakah masih dalam masa "Startup Mute"?
-            if (!isAppReady) {
-                console.log('🔇 Muted: Mengabaikan bunyi notifikasi startup.');
-                return; // STOP DI SINI (JANGAN BUNYI)
-            }
-            
-            // Kalau sudah > 5 detik, baru bunyikan:
+            // Jika > 3 detik, GAS BUNYI!
             const title = payload.notification.title;
-            const options = {
-                body: payload.notification.body,
-                icon: '/assets/images/icon.png',
-                vibrate: [200, 100, 200]
-            };
+            const body = payload.notification.body;
+            
+            // 1. Coba Bunyikan Audio Paksa
+            try { alertSound.play(); } catch(e) {}
 
-            // Paksa muncul notifikasi sistem agar bunyi
+            // 2. Tampilkan Notifikasi Sistem
             if (Notification.permission === 'granted') {
-                new Notification(title, options);
+                new Notification(title, {
+                    body: body,
+                    icon: '/assets/images/icon.png',
+                    vibrate: [200, 100, 200, 100, 200]
+                });
+            } else {
+                // Fallback jika izin notif belum ada, pakai Alert
+                alert(`🔔 ${title}\n${body}`);
             }
         });
 
-        // 2. REGISTER SW
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/firebase-messaging-sw.js');
             });
         }
         
-        if (Notification.permission !== "granted") {
-            Notification.requestPermission();
-        }
+        if (Notification.permission !== "granted") Notification.requestPermission();
 
-        // --- LOGIC HALAMAN (PIN, STATS) ---
+        // LOGIKA LAIN
         const pinModal = document.getElementById('pinModal');
         const pinInput = document.getElementById('pinInput');
 
@@ -191,12 +182,10 @@
             try {
                 const res = await fetch('/api/ppob/all-transactions'); 
                 const data = await res.json();
-                
                 if (Array.isArray(data)) {
                     document.getElementById('statPpob').innerText = data.length;
                     const pendingCount = data.filter(trx => trx.status === 'pending').length;
                     const badge = document.getElementById('orderBadge');
-                    
                     if (pendingCount > 0) {
                         badge.innerText = pendingCount > 99 ? '99+' : pendingCount;
                         badge.classList.add('show', 'pulse');
@@ -204,17 +193,16 @@
                         badge.classList.remove('show', 'pulse');
                     }
                 }
-            } catch (error) { console.error("Gagal load statistik:", error); }
+            } catch (error) { console.error("Err stats"); }
         }
-        
         loadStats();
-        setInterval(loadStats, 30000); // Auto Refresh
+        setInterval(loadStats, 30000); 
 
         function openPinModal() { pinModal.classList.add('show'); pinInput.value = ''; pinInput.focus(); }
         function closePinModal() { pinModal.classList.remove('show'); }
         async function submitPin() {
             const pin = pinInput.value;
-            if (pin.length < 4) return alert('PIN terlalu pendek!');
+            if (pin.length < 4) return alert('PIN Pendek!');
             try {
                 const res = await fetch('/api/auth/verify-pin', {
                     method: 'POST',
@@ -228,7 +216,7 @@
         }
 
         function logout() {
-            if(confirm('Yakin ingin keluar?')) {
+            if(confirm('Keluar?')) {
                 localStorage.removeItem('adminToken');
                 window.location.href = '/login.html';
             }
