@@ -29,10 +29,25 @@
 
         <main class="content-area">
             
-            <div class="filter-tabs">
-                <div class="tab active" onclick="filterOrders('all', this)">Semua</div>
-                <div class="tab" onclick="filterOrders('pending', this)">Pending</div>
-                <div class="tab" onclick="filterOrders('success', this)">Sukses</div>
+            <div class="filter-container">
+                <div class="filter-tabs">
+                    <div class="tab active" onclick="setFilterStatus('all', this)">Semua</div>
+                    <div class="tab" onclick="setFilterStatus('pending', this)">Pending</div>
+                    <div class="tab" onclick="setFilterStatus('success', this)">Sukses</div>
+                    <div class="tab fail-tab" onclick="setFilterStatus('failed', this)">Gagal</div>
+                </div>
+
+                <select id="productFilter" class="product-filter" onchange="applyFilters()">
+                    <option value="all">Semua Produk</option>
+                    <option value="Pulsa">Pulsa</option>
+                    <option value="Data">Paket Data</option>
+                    <option value="PLN">Token PLN</option>
+                    <option value="Dana">Dana</option>
+                    <option value="GoPay">GoPay</option>
+                    <option value="OVO">OVO</option>
+                    <option value="Shopee">Shopee</option>
+                    <option value="Games">Games</option>
+                </select>
             </div>
 
             <div id="ordersList" class="orders-list">
@@ -64,6 +79,7 @@
     <script>
         const API_URL = '/api/ppob';
         let allOrders = []; 
+        let currentStatus = 'all';
 
         document.addEventListener('DOMContentLoaded', loadOrders);
 
@@ -74,14 +90,44 @@
             try {
                 const res = await fetch('/api/ppob/all-transactions');
                 const data = await res.json();
-                
                 allOrders = data; 
-                renderOrders(data);
-
+                applyFilters();
             } catch (error) {
                 console.error(error);
                 container.innerHTML = '<div class="empty-state">Gagal memuat data. Periksa koneksi internet.</div>';
             }
+        }
+
+        // --- LOGIKA FILTER ---
+        function setFilterStatus(status, element) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            currentStatus = status;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const productType = document.getElementById('productFilter').value;
+            let filtered = allOrders;
+
+            // 1. Filter Status
+            if (currentStatus !== 'all') {
+                filtered = filtered.filter(o => o.status === currentStatus);
+            }
+
+            // 2. Filter Produk
+            if (productType !== 'all') {
+                filtered = filtered.filter(o => {
+                    const name = (o.providerResponse?.productName || '').toLowerCase();
+                    const type = productType.toLowerCase();
+                    if (type === 'games') {
+                        return name.includes('diamond') || name.includes('mobile') || name.includes('free fire') || name.includes('pubg') || name.includes('roblox');
+                    } else {
+                        return name.includes(type);
+                    }
+                });
+            }
+            renderOrders(filtered);
         }
 
         function renderOrders(orders) {
@@ -89,18 +135,12 @@
             container.innerHTML = '';
 
             if (orders.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fa-solid fa-box-open"></i>
-                        <p>Belum ada pesanan masuk.</p>
-                    </div>`;
+                container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-filter-circle-xmark"></i><p>Tidak ada data yang cocok.</p></div>`;
                 return;
             }
 
             orders.forEach(trx => {
-                const date = new Date(trx.createdAt).toLocaleString('id-ID', { 
-                    day: 'numeric', month: 'short', hour: '2-digit', minute:'2-digit' 
-                });
+                const date = new Date(trx.createdAt).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute:'2-digit' });
                 const price = parseInt(trx.amount).toLocaleString('id-ID');
                 
                 let statusBadge = '';
@@ -108,36 +148,22 @@
                 else if(trx.status === 'success') statusBadge = '<span class="badge success">SUKSES</span>';
                 else statusBadge = '<span class="badge failed">GAGAL</span>';
 
-                let proofBtn = '';
-                if(trx.paymentProof) {
-                    proofBtn = `<button class="btn-icon view" onclick="viewProof('${trx.paymentProof}')"><i class="fa-regular fa-image"></i> Bukti</button>`;
-                } else {
-                    proofBtn = `<span class="no-proof"><i class="fa-solid fa-ban"></i> No Bukti</span>`;
-                }
+                let proofBtn = trx.paymentProof ? 
+                    `<button class="btn-icon view" onclick="viewProof('${trx.paymentProof}')"><i class="fa-regular fa-image"></i> Bukti</button>` : 
+                    `<span class="no-proof"><i class="fa-solid fa-ban"></i> No Bukti</span>`;
 
-                // --- TOMBOL STATUS (Gagal / Sukses) ---
                 let actionBtns = '';
                 if(trx.status === 'pending') {
                     actionBtns = `
                         <div class="action-row">
-                            <button class="btn-action reject" onclick="updateStatus('${trx.trxId}', 'failed')">
-                                <i class="fa-solid fa-xmark"></i> Gagal
-                            </button>
-                            <button class="btn-action accept" onclick="updateStatus('${trx.trxId}', 'success')">
-                                <i class="fa-solid fa-check"></i> Sukses
-                            </button>
-                        </div>
-                    `;
+                            <button class="btn-action reject" onclick="updateStatus('${trx.trxId}', 'failed')"><i class="fa-solid fa-xmark"></i> Gagal</button>
+                            <button class="btn-action accept" onclick="updateStatus('${trx.trxId}', 'success')"><i class="fa-solid fa-check"></i> Sukses</button>
+                        </div>`;
                 } else {
                     actionBtns = `<div class="info-row"><small>${trx.note || '-'}</small></div>`;
                 }
 
-                // --- TOMBOL HAPUS (BARU) ---
-                const deleteBtn = `
-                    <button class="btn-delete" onclick="deleteOrder('${trx.trxId}')" title="Hapus Permanen">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                `;
+                const deleteBtn = `<button class="btn-delete" onclick="deleteOrder('${trx.trxId}')" title="Hapus Permanen"><i class="fa-solid fa-trash"></i></button>`;
 
                 const cardHtml = `
                     <div class="order-card">
@@ -148,39 +174,18 @@
                                 ${deleteBtn}
                             </div>
                         </div>
-                        
                         <div class="card-body">
                             <div class="item-info">
                                 <h4>${trx.providerResponse?.productName || 'Produk Manual'}</h4>
                                 <p><i class="fa-solid fa-phone"></i> ${trx.customerPhone}</p>
                             </div>
-                            <div class="price-info">
-                                Rp ${price}
-                            </div>
+                            <div class="price-info">Rp ${price}</div>
                         </div>
-
-                        <div class="card-status-row">
-                            ${statusBadge}
-                            ${proofBtn}
-                        </div>
-
+                        <div class="card-status-row">${statusBadge}${proofBtn}</div>
                         ${actionBtns}
-                    </div>
-                `;
+                    </div>`;
                 container.innerHTML += cardHtml;
             });
-        }
-
-        function filterOrders(status, element) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            element.classList.add('active');
-
-            if(status === 'all') {
-                renderOrders(allOrders);
-            } else {
-                const filtered = allOrders.filter(o => o.status === status);
-                renderOrders(filtered);
-            }
         }
 
         function viewProof(url) {
@@ -193,18 +198,15 @@
             document.getElementById('proofModal').classList.remove('show');
         }
 
-        // --- UPDATE STATUS LOGIC ---
         async function updateStatus(trxId, newStatus) {
             let note = '';
-            
             if(newStatus === 'success') {
-                note = prompt("SUKSES! Masukkan Catatan (Misal: Pembayaran Diterima / SN):", "Pembayaran Diterima, Terima Kasih!");
-                if(note === null) return; 
+                note = prompt("SUKSES! Masukkan Catatan:", "Pembayaran Diterima, Terima Kasih!");
+                if(note === null) return;
             } else {
-                note = prompt("GAGAL! Masukkan Alasan Penolakan:", "Bukti pembayaran tidak valid / Buram");
-                if(!note) return; 
+                note = prompt("GAGAL! Masukkan Alasan Penolakan:", "Bukti pembayaran tidak valid");
+                if(!note) return;
             }
-
             try {
                 document.body.style.cursor = 'wait';
                 const res = await fetch(`/api/ppob/transaction/${trxId}`, {
@@ -213,39 +215,18 @@
                     body: JSON.stringify({ status: newStatus, note: note })
                 });
                 document.body.style.cursor = 'default';
-
-                if(res.ok) {
-                    alert('Status berhasil diupdate & Notifikasi dikirim ke User!');
-                    loadOrders(); 
-                } else {
-                    alert('Gagal update status.');
-                }
-            } catch (error) {
-                document.body.style.cursor = 'default';
-                console.error(error);
-                alert('Terjadi kesalahan koneksi.');
-            }
+                if(res.ok) { alert('Status berhasil diupdate!'); loadOrders(); } 
+                else { alert('Gagal update status.'); }
+            } catch (error) { document.body.style.cursor = 'default'; alert('Terjadi kesalahan koneksi.'); }
         }
 
-        // --- HAPUS ORDER LOGIC (BARU) ---
         async function deleteOrder(trxId) {
             if(!confirm("⚠️ YAKIN HAPUS? \nData Transaksi & Gambar Bukti akan dihapus permanen!")) return;
-            
             try {
-                const res = await fetch(`/api/ppob/transaction/${trxId}`, {
-                    method: 'DELETE'
-                });
-
-                if(res.ok) {
-                    alert('Data & Gambar berhasil dihapus bersih!');
-                    loadOrders(); // Reload tabel
-                } else {
-                    alert('Gagal menghapus data.');
-                }
-            } catch (error) {
-                console.error(error);
-                alert('Terjadi kesalahan saat menghapus.');
-            }
+                const res = await fetch(`/api/ppob/transaction/${trxId}`, { method: 'DELETE' });
+                if(res.ok) { alert('Data berhasil dihapus!'); loadOrders(); } 
+                else { alert('Gagal menghapus data.'); }
+            } catch (error) { alert('Terjadi kesalahan.'); }
         }
     </script>
 </body>
