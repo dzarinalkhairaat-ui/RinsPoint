@@ -66,6 +66,8 @@
             
             <div class="menu-grid">
                 <a href="../admin/orders.html" class="menu-item" style="border-color: #f59e0b; background: rgba(245, 158, 11, 0.1);">
+                    <span id="orderBadge" class="notification-badge">0</span>
+                    
                     <i class="fa-solid fa-file-invoice-dollar" style="color: #f59e0b;"></i>
                     <span style="color: #f59e0b;">Order Masuk</span>
                 </a>
@@ -115,19 +117,38 @@
         const pinModal = document.getElementById('pinModal');
         const pinInput = document.getElementById('pinInput');
 
-        // FUNGSI LOAD STATISTIK
+        // --- FUNGSI LOAD STATISTIK & BADGE ORDER ---
         async function loadStats() {
             try {
-                // Placeholder logic statistik
-                // const res = await fetch('/api/ppob/all-transactions'); 
-                // const data = await res.json();
-                // document.getElementById('statPpob').innerText = data.length || 0;
+                // Fetch Semua Transaksi
+                const res = await fetch('/api/ppob/all-transactions'); 
+                const data = await res.json();
+                
+                if (Array.isArray(data)) {
+                    // 1. Hitung Total Transaksi (Untuk kartu PPOB)
+                    document.getElementById('statPpob').innerText = data.length;
+
+                    // 2. Hitung Order PENDING (Untuk Badge Merah)
+                    const pendingCount = data.filter(trx => trx.status === 'pending').length;
+                    const badge = document.getElementById('orderBadge');
+                    
+                    if (pendingCount > 0) {
+                        badge.innerText = pendingCount > 99 ? '99+' : pendingCount;
+                        badge.classList.add('show', 'pulse'); // Munculkan badge dengan animasi
+                    } else {
+                        badge.classList.remove('show', 'pulse'); // Sembunyikan badge
+                    }
+                }
             } catch (error) {
-                console.error("Gagal load statistik");
+                console.error("Gagal load statistik:", error);
             }
         }
         
+        // Panggil fungsi saat halaman dibuka
         loadStats();
+
+        // Auto Refresh Badge setiap 30 detik (Opsional, biar realtime)
+        setInterval(loadStats, 30000);
 
         function openPinModal() { 
             pinModal.classList.add('show'); 

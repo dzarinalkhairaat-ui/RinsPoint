@@ -30,7 +30,7 @@ const getPriceList = async (req, res) => {
 
 // --- 2. BUAT TRANSAKSI (CREATE) ---
 const createTransaction = async (req, res) => {
-    // Kita ambil userPlayerId (Token Firebase) dari Frontend
+    // Kita ambil userPlayerId (Token Firebase User) dari Frontend
     const { productCode, productName, customerPhone, price, userPlayerId } = req.body;
     const proofImage = req.file ? req.file.path : null; 
 
@@ -49,17 +49,27 @@ const createTransaction = async (req, res) => {
             providerResponse: { productName }
         });
 
-        // --- 2. NOTIFIKASI KE ADMIN (VIA FIREBASE) ---
-        // Nanti kita simpan Token HP Admin di .env dengan nama FIREBASE_ADMIN_TOKEN
-        const adminToken = process.env.FIREBASE_ADMIN_TOKEN;
+        // --- 2. NOTIFIKASI KE ADMIN (VIA FIREBASE - SUPPORT MULTI ADMIN) ---
+        // Mengambil token dari Environment Variable (Format: token1,token2)
+        const rawAdminTokens = process.env.FIREBASE_ADMIN_TOKEN;
         
-        if (adminToken) {
+        if (rawAdminTokens) {
+            // Pecah string menjadi array berdasarkan tanda koma
+            const adminTokens = rawAdminTokens.split(',');
+
             const priceFmt = parseInt(price).toLocaleString('id-ID');
             const statusBukti = proofImage ? "📸 Ada Bukti" : "⏳ Tanpa Bukti";
             const msgBody = `${productName}\nNo: ${customerPhone}\nRp ${priceFmt}\n${statusBukti}`;
             
-            // Kirim notifikasi "Fire & Forget" (gak perlu await biar order cepat)
-            sendFCM(adminToken, "💰 Order Baru Masuk!", msgBody);
+            // Loop untuk mengirim ke setiap Admin yang terdaftar
+            adminTokens.forEach(token => {
+                const cleanToken = token.trim(); // Hapus spasi jika ada
+                if (cleanToken) {
+                    // Kirim notifikasi "Fire & Forget"
+                    sendFCM(cleanToken, "💰 Order Baru Masuk!", msgBody);
+                }
+            });
+            console.log(`🔔 Notifikasi dikirim ke ${adminTokens.length} Admin.`);
         }
         // ---------------------------------------------
 
