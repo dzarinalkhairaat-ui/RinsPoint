@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="../css/admin/dashboard.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0F172A">
-    <link rel="apple-touch-icon" href="/assets/images/icon.png">
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
@@ -39,23 +38,13 @@
             </div>
 
             <div class="stats-grid-abstract">
-                <div class="abs-card card-product">
+                <div class="abs-card card-ppob" style="width: 100%;">
                     <div class="blob-anim blob-1"></div>
                     <div class="blob-anim blob-2"></div>
-                    <i class="fa-solid fa-arrow-pointer watermark-icon"></i>
-                    <div class="abs-content">
-                        <div class="abs-number" id="statClick">0</div>
-                        <div class="abs-label">Klik Produk</div>
-                    </div>
-                </div>
-
-                <div class="abs-card card-ppob">
-                    <div class="blob-anim blob-1"></div>
-                    <div class="blob-anim blob-2"></div>
-                    <i class="fa-solid fa-receipt watermark-icon"></i>
+                    <i class="fa-solid fa-bell watermark-icon"></i>
                     <div class="abs-content">
                         <div class="abs-number" id="statPpob">0</div>
-                        <div class="abs-label">Transaksi PPOB</div>
+                        <div class="abs-label">Total Transaksi</div>
                     </div>
                 </div>
             </div>
@@ -68,30 +57,14 @@
                     <i class="fa-solid fa-file-invoice-dollar" style="color: #f59e0b;"></i>
                     <span style="color: #f59e0b;">Order Masuk</span>
                 </a>
-                <a href="products.html" class="menu-item">
-                    <i class="fa-solid fa-box-open"></i>
-                    <span>Kelola Produk</span>
-                </a>
-                <a href="categories.html" class="menu-item">
-                    <i class="fa-solid fa-tags"></i>
-                    <span>Kelola Kategori</span>
-                </a>
-                <a href="manage-ppob.html" class="menu-item">
-                    <i class="fa-solid fa-server"></i>
-                    <span>Setting PPOB</span>
-                </a>
-                <a href="ppobpayment.html" class="menu-item">
-                    <i class="fa-solid fa-wallet"></i>
-                    <span>Metode Bayar</span>
-                </a>
-                <a href="settings.html" class="menu-item">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>Pengaturan</span>
-                </a>
+                <a href="products.html" class="menu-item"><i class="fa-solid fa-box-open"></i><span>Produk</span></a>
+                <a href="categories.html" class="menu-item"><i class="fa-solid fa-tags"></i><span>Kategori</span></a>
+                <a href="manage-ppob.html" class="menu-item"><i class="fa-solid fa-server"></i><span>PPOB</span></a>
                 <a href="firebase-settings.html" class="menu-item" style="border-color: #3b82f6; background: rgba(59, 130, 246, 0.1);">
                      <i class="fa-solid fa-mobile-screen-button" style="color: #3b82f6;"></i>
                  <span style="color: #3b82f6;">Perangkat Admin</span>
                 </a>
+                <a href="settings.html" class="menu-item"><i class="fa-solid fa-gear"></i><span>Pengaturan</span></a>
             </div>
         </main>
 
@@ -105,12 +78,10 @@
 
     <div class="pin-modal-overlay" id="pinModal">
         <div class="pin-box">
-            <i class="fa-solid fa-shield-halved"></i>
-            <h3>Keamanan</h3>
-            <p>Masukkan PIN untuk melihat saldo.</p>
-            <input type="password" id="pinInput" maxlength="6" placeholder="******" inputmode="numeric">
-            <button class="btn-submit" onclick="submitPin()">BUKA DOMPET</button>
-            <div style="margin-top: 15px; color: #EF4444; font-size: 0.8rem; cursor: pointer;" onclick="closePinModal()">Batal</div>
+            <i class="fa-solid fa-shield-halved"></i><h3>Keamanan</h3><p>Masukkan PIN.</p>
+            <input type="password" id="pinInput" maxlength="6" inputmode="numeric">
+            <button class="btn-submit" onclick="submitPin()">BUKA</button>
+            <div style="margin-top:15px;color:#EF4444;font-size:0.8rem;" onclick="closePinModal()">Batal</div>
         </div>
     </div>
 
@@ -128,48 +99,35 @@
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
 
-        // AUDIO MANUAL (Backup jika sistem silent)
-        const alertAudio = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU");
-
-        // 1. HANDLER FOREGROUND (LANGSUNG BUNYI)
+        // 1. FOREGROUND HANDLER (Saat Aplikasi Dibuka)
         messaging.onMessage((payload) => {
-            console.log('🔔 Order Masuk (Foreground):', payload);
-            loadStats(); 
-            
-            // PAKSA AUDIO
-            try { alertAudio.play().catch(e => console.log("Audio play prevented by browser")); } catch(e){}
-
-            // PAKSA NOTIFIKASI
-            const title = payload.notification.title;
-            const options = {
-                body: payload.notification.body,
-                icon: '/assets/images/icon.png',
-                vibrate: [200, 100, 200]
-            };
-
+            console.log('🔔 Foreground Notif:', payload);
+            loadStats();
+            // Audio Ping
+            new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU").play().catch(e=>{});
+            // Notifikasi Sistem
             if (Notification.permission === 'granted') {
-                new Notification(title, options);
-            } else {
-                // Fallback Kasar: Alert
-                alert(`🔔 ${title}\n${options.body}`);
+                new Notification(payload.notification.title, {
+                    body: payload.notification.body,
+                    icon: '/assets/images/icon.png'
+                });
             }
         });
 
-        // 2. REGISTER SW
+        // 2. REGISTER SERVICE WORKER (WAJIB UNTUK BACKGROUND!)
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/firebase-messaging-sw.js')
-                .then(reg => console.log("✅ SW Admin Ready"))
-                .catch(err => console.log("❌ SW Admin Fail", err));
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+            .then(function(registration) {
+                console.log('✅ Service Worker Registered with scope:', registration.scope);
+            }).catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
             });
         }
         
-        // 3. AUTO PERMISSION
-        if (Notification.permission !== "granted") {
-            Notification.requestPermission();
-        }
+        // 3. Request Permission
+        if (Notification.permission !== "granted") Notification.requestPermission();
 
-        // --- LOGIC LAINNYA ---
+        // Logic Lain
         const pinModal = document.getElementById('pinModal');
         const pinInput = document.getElementById('pinInput');
 
@@ -188,14 +146,14 @@
                         badge.classList.remove('show', 'pulse');
                     }
                 }
-            } catch (error) { console.error("Gagal load statistik:", error); }
+            } catch (error) {}
         }
-        loadStats();
-        setInterval(loadStats, 15000); // Cek tiap 15 detik
+        loadStats(); setInterval(loadStats, 15000); 
 
         function openPinModal() { pinModal.classList.add('show'); pinInput.value = ''; pinInput.focus(); }
         function closePinModal() { pinModal.classList.remove('show'); }
         async function submitPin() {
+            // Logic PIN sama seperti sebelumnya...
             const pin = pinInput.value;
             if (pin.length < 4) return alert('PIN Pendek!');
             try {
@@ -209,13 +167,7 @@
                 else { alert('PIN Salah!'); pinInput.value = ''; }
             } catch (error) { alert('Error server.'); }
         }
-
-        function logout() {
-            if(confirm('Keluar?')) {
-                localStorage.removeItem('adminToken');
-                window.location.href = '/login.html';
-            }
-        }
+        function logout() { if(confirm('Keluar?')) { localStorage.removeItem('adminToken'); window.location.href = '/login.html'; } }
     </script>
 </body>
 </html>

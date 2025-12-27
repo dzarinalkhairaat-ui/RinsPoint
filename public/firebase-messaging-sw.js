@@ -14,20 +14,46 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
-// HANDLER BACKGROUND (Saat Layar Mati / Aplikasi Tutup)
+// 1. EVENT SAAT HP MATI / APLIKASI TERTUTUP (BACKGROUND)
 messaging.onBackgroundMessage((payload) => {
-    console.log('[SW] Order Masuk (Background):', payload);
+    console.log('[SW] Notifikasi Background Masuk:', payload);
 
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
-        icon: '/assets/images/icon.png',
-        badge: '/assets/images/icon.png',
-        // Getar Agresif: Panjang-Pendek-Panjang
-        vibrate: [500, 200, 500], 
-        tag: 'order-notification',
-        renotify: true // Pastikan bunyi lagi walau notif lama belum dihapus
+        icon: '/assets/images/icon-512.png', // Pastikan icon ini ada!
+        badge: '/assets/images/icon-512.png', // Icon kecil di status bar
+        vibrate: [500, 200, 500, 200, 500], // Getar Panjang & Agresif
+        tag: 'order-masuk', // Tag unik
+        renotify: true, // WAJIB TRUE: Agar kalau ada notif baru, dia bunyi lagi!
+        priority: 'high', // Prioritas Tinggi
+        data: {
+            url: '/admin/dashboard.html' // Link tujuan saat diklik
+        }
     };
 
-    self.registration.showNotification(notificationTitle, notificationOptions);
+    return self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+// 2. EVENT SAAT NOTIFIKASI DIKLIK
+self.addEventListener('notificationclick', function(event) {
+    console.log('[SW] Notifikasi Diklik');
+    event.notification.close(); // Tutup notifikasi
+
+    // Buka Halaman Dashboard Admin
+    event.waitUntil(
+        clients.matchAll({type: 'window'}).then(windowClients => {
+            // Cek kalau admin sudah terbuka, fokuskan ke sana
+            for (var i = 0; i < windowClients.length; i++) {
+                var client = windowClients[i];
+                if (client.url.includes('/admin/dashboard.html') && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            // Kalau belum terbuka, buka baru
+            if (clients.openWindow) {
+                return clients.openWindow('/admin/dashboard.html');
+            }
+        })
+    );
 });

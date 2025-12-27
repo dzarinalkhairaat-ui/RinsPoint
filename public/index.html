@@ -32,33 +32,26 @@
             <div class="hero-section">
                 <img src="assets/images/banner.jpg" alt="Promo RinsPoint" class="static-banner">
             </div>
-
             <div class="categories-section">
-                <div class="category-scroll-wrapper" id="categoryContainer">
-                    <p style="padding:1rem; color:#94a3b8;">Loading...</p>
-                </div>
+                <div class="category-scroll-wrapper" id="categoryContainer"><p style="padding:1rem; color:#94a3b8;">Loading...</p></div>
             </div>
-
             <div class="latest-products-section">
                 <div class="section-header">
-                    <h3>Terbaru</h3>
-                    <a href="products.html" class="see-all">Lihat Semua</a>
+                    <h3>Terbaru</h3><a href="products.html" class="see-all">Lihat Semua</a>
                 </div>
-                <div class="products-grid" id="productsContainer">
-                    <p style="color:#64748b; padding:1rem;">Memuat produk...</p>
-                </div>
+                <div class="products-grid" id="productsContainer"><p style="color:#64748b; padding:1rem;">Memuat produk...</p></div>
             </div>
         </main>
 
         <footer class="main-footer">
             <div class="footer-logo"><span style="color:#4ade80;">Rins</span>Point</div>
             <div class="social-links">
-                <a href="https://www.instagram.com/rinssstore_?igsh=M254MG90azFxdm5x"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://www.facebook.com/muhammad.darin.56"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="https://www.tiktok.com/@abudzaarr?_r=1&_t=ZS-920MOJzN50y"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#"><i class="fa-brands fa-tiktok"></i></a>
             </div>
-            <div class="footer-menu"><a href="about.html">Tentang Kami</a><a href="how-to.html">Cara Belanja</a></div>
-            <div class="copyright">&copy; 2025 RinsPoint. All rights reserved.</div>
+            <div class="footer-menu"><a href="about.html">Tentang</a><a href="how-to.html">Cara Belanja</a></div>
+            <div class="copyright">&copy; 2025 RinsPoint.</div>
         </footer>
 
         <nav class="bottom-nav">
@@ -76,7 +69,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const homeInput = document.getElementById('homeSearchInput');
             const homeIcon = document.getElementById('homeSearchIcon');
-            const goToSearchPage = () => { const k = homeInput.value.trim(); if(k) window.location.href=`search.html?keyword=${encodeURIComponent(k)}`; else homeInput.focus(); };
+            const goToSearchPage = () => { const k = homeInput.value.trim(); if(k) window.location.href=`search.html?keyword=${encodeURIComponent(k)}`; };
             if(homeInput) homeInput.addEventListener('keypress', (e)=>{if(e.key==='Enter')goToSearchPage()});
             if(homeIcon) homeIcon.addEventListener('click', goToSearchPage);
             const cart = JSON.parse(localStorage.getItem('rinsCart'))||[]; 
@@ -100,6 +93,11 @@
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
 
+        // Register SW di User juga agar valid PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        }
+
         async function requestPermission() {
             try {
                 const permission = await Notification.requestPermission();
@@ -107,21 +105,14 @@
                     const token = await messaging.getToken({ vapidKey: vapidKey });
                     if (token) localStorage.setItem('fcm_token', token);
                 }
-            } catch (err) { console.log('⚠️ Error Token:', err); }
+            } catch (err) {}
         }
         requestPermission();
 
-        // LOGIKA STANDARD: TERIMA PESAN LANGSUNG (TANPA MUTE)
         messaging.onMessage((payload) => {
-            console.log('🔔 Pesan Masuk:', payload);
+            console.log('🔔 User Foreground:', payload);
             alert(`${payload.notification.title}\n${payload.notification.body}`);
         });
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/firebase-messaging-sw.js');
-            });
-        }
     </script>
 </body>
 </html>
