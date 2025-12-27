@@ -12,6 +12,9 @@
     <meta name="theme-color" content="#0F172A">
     <link rel="apple-touch-icon" href="/assets/images/icon.png">
     
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
+
     <script src="/js/pwa-register.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -67,7 +70,6 @@
             <div class="menu-grid">
                 <a href="../admin/orders.html" class="menu-item" style="border-color: #f59e0b; background: rgba(245, 158, 11, 0.1);">
                     <span id="orderBadge" class="notification-badge">0</span>
-                    
                     <i class="fa-solid fa-file-invoice-dollar" style="color: #f59e0b;"></i>
                     <span style="color: #f59e0b;">Order Masuk</span>
                 </a>
@@ -114,29 +116,69 @@
     </div>
 
     <script>
+        // --- 1. FIREBASE SETUP & NOTIFIKASI ADMIN ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsV9fJKzYQHLuSBC4LIf740OyNjgL36VE",
+            authDomain: "rinspoint-2e239.firebaseapp.com",
+            projectId: "rinspoint-2e239",
+            storageBucket: "rinspoint-2e239.firebasestorage.app",
+            messagingSenderId: "680165358672",
+            appId: "1:680165358672:web:5bdf28d0b55c9b71a06555",
+            measurementId: "G-S0EYYE6EDL"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
+
+        // Handler saat Admin sedang membuka Aplikasi (Foreground)
+        messaging.onMessage((payload) => {
+            console.log('🔔 Order Masuk (Foreground):', payload);
+            
+            // UPDATE: Ganti Alert dengan System Notification
+            // Ini akan memunculkan notif di status bar walau aplikasi sedang dibuka
+            const title = payload.notification.title;
+            const options = {
+                body: payload.notification.body,
+                icon: '/assets/images/icon.png',
+                vibrate: [200, 100, 200]
+            };
+
+            if (Notification.permission === 'granted') {
+                new Notification(title, options);
+            }
+            
+            // Refresh badge & statistik secara otomatis saat notif masuk
+            loadStats(); 
+        });
+
+        // Daftarkan Service Worker (Untuk Background / Layar Mati)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then(reg => console.log('✅ SW Admin Ready:', reg.scope))
+                .catch(err => console.log('❌ SW Admin Fail:', err));
+            });
+        }
+        // ---------------------------------------------
+
         const pinModal = document.getElementById('pinModal');
         const pinInput = document.getElementById('pinInput');
 
-        // --- FUNGSI LOAD STATISTIK & BADGE ORDER ---
         async function loadStats() {
             try {
-                // Fetch Semua Transaksi
                 const res = await fetch('/api/ppob/all-transactions'); 
                 const data = await res.json();
                 
                 if (Array.isArray(data)) {
-                    // 1. Hitung Total Transaksi (Untuk kartu PPOB)
                     document.getElementById('statPpob').innerText = data.length;
-
-                    // 2. Hitung Order PENDING (Untuk Badge Merah)
                     const pendingCount = data.filter(trx => trx.status === 'pending').length;
                     const badge = document.getElementById('orderBadge');
                     
                     if (pendingCount > 0) {
                         badge.innerText = pendingCount > 99 ? '99+' : pendingCount;
-                        badge.classList.add('show', 'pulse'); // Munculkan badge dengan animasi
+                        badge.classList.add('show', 'pulse');
                     } else {
-                        badge.classList.remove('show', 'pulse'); // Sembunyikan badge
+                        badge.classList.remove('show', 'pulse');
                     }
                 }
             } catch (error) {
@@ -144,11 +186,8 @@
             }
         }
         
-        // Panggil fungsi saat halaman dibuka
         loadStats();
-
-        // Auto Refresh Badge setiap 30 detik (Opsional, biar realtime)
-        setInterval(loadStats, 30000);
+        setInterval(loadStats, 30000); // Auto refresh tiap 30 detik
 
         function openPinModal() { 
             pinModal.classList.add('show'); 
