@@ -135,19 +135,19 @@
         const messaging = firebase.messaging();
 
         // ===============================================
-        // 🔇 STARTUP MUTE LOGIC (PEREDAM SUARA 10 DETIK)
+        // 🔇 STARTUP MUTE LOGIC (PEREDAM SUARA 5 DETIK)
         // ===============================================
         let isAppReady = false;
         
-        // Timer: Tunggu 10 detik baru boleh bunyi
+        // Timer: Setelah 5 detik, baru boleh bunyi
         setTimeout(() => { 
             isAppReady = true; 
-            console.log("🔊 SISTEM SIAP: Notifikasi real-time aktif (Mute selesai).");
-        }, 10000);
+            console.log("🔊 System Ready: Notifikasi akan berbunyi sekarang.");
+        }, 5000);
 
         // 1. HANDLER FOREGROUND (Saat Aplikasi Dibuka)
         messaging.onMessage((payload) => {
-            console.log('🔔 Pesan Masuk:', payload);
+            console.log('🔔 Order Masuk:', payload);
             
             // SELALU UPDATE STATISTIK (Biar badge tetap real-time)
             loadStats();
@@ -158,7 +158,7 @@
                 return; // STOP DI SINI (JANGAN BUNYI)
             }
             
-            // Kalau sudah > 10 detik, baru bunyikan:
+            // Kalau sudah > 5 detik, baru bunyikan:
             const title = payload.notification.title;
             const options = {
                 body: payload.notification.body,
