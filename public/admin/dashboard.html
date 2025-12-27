@@ -95,8 +95,8 @@
                     <span>Pengaturan</span>
                 </a>
                 <a href="firebase-settings.html" class="menu-item" style="border-color: #3b82f6; background: rgba(59, 130, 246, 0.1);">
-                     <i class="fa-solid fa-bell" style="color: #3b82f6;"></i>
-                 <span style="color: #3b82f6;">Setting Notif</span>
+                     <i class="fa-solid fa-mobile-screen-button" style="color: #3b82f6;"></i>
+                 <span style="color: #3b82f6;">Perangkat Admin</span>
                 </a>
             </div>
         </main>
@@ -134,11 +134,31 @@
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
 
+        // ===============================================
+        // 🔇 STARTUP MUTE LOGIC (PEREDAM SUARA 5 DETIK)
+        // ===============================================
+        let isAppReady = false;
+        
+        // Timer: Setelah 5 detik, baru boleh bunyi
+        setTimeout(() => { 
+            isAppReady = true; 
+            console.log("🔊 System Ready: Notifikasi akan berbunyi sekarang.");
+        }, 5000);
+
         // 1. HANDLER FOREGROUND (Saat Aplikasi Dibuka)
-        // Kita paksa pakai Notifikasi Sistem biar muncul di status bar atas
         messaging.onMessage((payload) => {
-            console.log('🔔 Order Masuk (Foreground):', payload);
+            console.log('🔔 Order Masuk:', payload);
             
+            // SELALU UPDATE STATISTIK (Biar badge tetap real-time)
+            loadStats();
+
+            // CEK: Apakah masih dalam masa "Startup Mute"?
+            if (!isAppReady) {
+                console.log('🔇 Muted: Mengabaikan bunyi notifikasi startup.');
+                return; // STOP DI SINI (JANGAN BUNYI)
+            }
+            
+            // Kalau sudah > 5 detik, baru bunyikan:
             const title = payload.notification.title;
             const options = {
                 body: payload.notification.body,
@@ -146,27 +166,19 @@
                 vibrate: [200, 100, 200]
             };
 
-            // Cek Izin & Tampilkan
+            // Paksa muncul notifikasi sistem agar bunyi
             if (Notification.permission === 'granted') {
                 new Notification(title, options);
-            } else {
-                // Fallback kalau izin belum ada
-                alert(`${title}\n${options.body}`);
             }
-            
-            loadStats(); // Refresh angka order
         });
 
-        // 2. REGISTER SW (Wajib untuk Background)
+        // 2. REGISTER SW
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/firebase-messaging-sw.js')
-                .then(reg => console.log('✅ SW Admin Terdaftar:', reg.scope))
-                .catch(err => console.log('❌ SW Admin Gagal:', err));
+                navigator.serviceWorker.register('/firebase-messaging-sw.js');
             });
         }
         
-        // Minta Izin Notifikasi saat halaman dimuat
         if (Notification.permission !== "granted") {
             Notification.requestPermission();
         }

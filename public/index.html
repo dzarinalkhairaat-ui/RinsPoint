@@ -101,10 +101,8 @@
             measurementId: "G-S0EYYE6EDL"
         };
 
-        // 2. VAPID Key
         const vapidKey = "BNlfGzcvNuXeJ6j4EnCquoNAHmyiWQLZrJHpvY-JJb4RN0AX1X3Okv0WVXLX-uErG2VL8_4NKDRrsZyoKiWVIMY";
 
-        // 3. Inisialisasi
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
 
@@ -113,14 +111,10 @@
             try {
                 const permission = await Notification.requestPermission();
                 if (permission === 'granted') {
-                    console.log('🔔 Izin notifikasi diberikan');
                     const token = await messaging.getToken({ vapidKey: vapidKey });
                     if (token) {
-                        console.log('✅ TOKEN FIREBASE:', token);
-                        localStorage.setItem('fcm_token', token); // Simpan agar bisa diambil saat bayar
+                        localStorage.setItem('fcm_token', token);
                     }
-                } else {
-                    console.log('❌ Izin notifikasi ditolak');
                 }
             } catch (err) {
                 console.log('⚠️ Error Token:', err);
@@ -129,18 +123,27 @@
         
         requestPermission();
 
+        // ===============================================
+        // 🔇 STARTUP MUTE LOGIC (USER)
+        // ===============================================
+        let isAppReady = false;
+        setTimeout(() => { isAppReady = true; }, 5000); // 5 Detik
+
         // 5. Pesan saat aplikasi dibuka (Foreground)
         messaging.onMessage((payload) => {
             console.log('🔔 Pesan Masuk:', payload);
+            
+            // Kalau masih startup, jangan munculkan alert
+            if (!isAppReady) return;
+
+            // Kalau sudah siap, baru munculkan
             alert(`${payload.notification.title}\n${payload.notification.body}`);
         });
 
         // 6. Daftarkan Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/firebase-messaging-sw.js')
-                .then(reg => console.log('✅ SW Firebase OK:', reg.scope))
-                .catch(err => console.log('❌ SW Firebase Gagal:', err));
+                navigator.serviceWorker.register('/firebase-messaging-sw.js');
             });
         }
     </script>
