@@ -9,105 +9,76 @@
 }
 
 .setting-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-    color: #fff;
-    font-size: 1.1rem;
-    border-bottom: 1px dashed #334155;
-    padding-bottom: 10px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 15px; color: #fff; font-size: 1.1rem;
+    border-bottom: 1px dashed #334155; padding-bottom: 10px;
 }
+
+/* FORM STYLES */
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; color: #94a3b8; margin-bottom: 5px; font-size: 0.9rem; }
+.form-input {
+    width: 100%; padding: 12px; background: #0f172a;
+    border: 1px solid #334155; border-radius: 10px; color: white; outline: none;
+}
+.form-input:focus { border-color: #3b82f6; }
 
 .token-box {
-    background: #0f172a;
-    padding: 15px;
-    border-radius: 10px;
-    color: #4ade80;
-    font-family: monospace;
-    font-size: 0.8rem;
-    word-break: break-all;
-    margin-bottom: 15px;
-    border: 1px solid #334155;
-    max-height: 100px;
-    overflow-y: auto;
-}
-
-/* Custom Scrollbar untuk Token Box */
-.token-box::-webkit-scrollbar {
-    width: 6px;
-}
-.token-box::-webkit-scrollbar-track {
-    background: #1e293b;
-}
-.token-box::-webkit-scrollbar-thumb {
-    background: #334155;
-    border-radius: 10px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    color: #94a3b8;
-    margin-bottom: 5px;
-    font-size: 0.9rem;
-}
-
-.form-input {
-    width: 100%;
-    padding: 12px;
-    background: #0f172a;
-    border: 1px solid #334155;
-    border-radius: 10px;
-    color: white;
-    outline: none;
-    transition: 0.2s;
-}
-
-.form-input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    background: #0f172a; padding: 15px; border-radius: 10px;
+    color: #4ade80; font-family: monospace; font-size: 0.8rem;
+    word-break: break-all; margin-bottom: 15px; border: 1px solid #334155;
+    max-height: 80px; overflow-y: auto;
 }
 
 .btn-save {
-    width: 100%;
-    padding: 14px;
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: 0.2s;
+    width: 100%; padding: 14px; background: #3b82f6; color: white;
+    border: none; border-radius: 12px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-save:hover { background: #2563eb; }
+
+/* LIST PERANGKAT STYLES (NEW) */
+.device-list {
+    display: flex; flex-direction: column; gap: 10px;
 }
 
-.btn-save:hover {
-    background: #2563eb;
+.device-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #0f172a; padding: 12px; border-radius: 12px;
+    border: 1px solid #334155; transition: 0.2s;
 }
 
-.btn-save:active {
-    transform: scale(0.98);
+/* Highlight jika ini HP saya */
+.device-item.active-device {
+    border-color: #4ade80;
+    background: rgba(74, 222, 128, 0.05);
 }
 
-.btn-save:disabled {
-    background: #64748b;
-    cursor: not-allowed;
-    opacity: 0.7;
+.dev-icon {
+    width: 40px; height: 40px; background: #1e293b;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: #cbd5e1; margin-right: 12px;
+}
+.active-device .dev-icon { color: #4ade80; }
+
+.dev-info { flex: 1; overflow: hidden; }
+.dev-name {
+    color: #fff; font-size: 0.9rem; font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.badge-me {
+    font-size: 0.7rem; color: #4ade80; margin-left: 5px; font-weight: normal;
+}
+.dev-date {
+    color: #64748b; font-size: 0.75rem; margin-top: 2px;
 }
 
-.btn-test {
-    background: #f59e0b;
-    color: #000;
-    margin-top: 10px;
+.btn-delete-token {
+    background: rgba(239, 68, 68, 0.1); color: #ef4444;
+    border: none; width: 32px; height: 32px; border-radius: 8px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: 0.2s; margin-left: 10px;
 }
-
-.btn-test:hover {
-    background: #d97706;
+.btn-delete-token:hover {
+    background: #ef4444; color: white;
 }
