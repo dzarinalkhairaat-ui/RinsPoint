@@ -55,15 +55,17 @@
 
             <div class="setting-card">
                 <div class="setting-header">
-                    <i class="fa-solid fa-bell" style="color: #f59e0b;"></i>
-                    <span>Tes Notifikasi</span>
+                    <i class="fa-solid fa-clock" style="color: #f59e0b;"></i>
+                    <span>Tes Nada Dering Asli</span>
                 </div>
                 <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:15px;">
-                    Tombol ini akan memunculkan Notifikasi Sistem sesuai pengaturan HP kamu.<br>
-                    Jika bunyi lagunya sesuai pilihanmu, berarti <strong>AMAN</strong>.
+                    Karena Android mematikan suara saat layar menyala (Mode Hening Otomatis), gunakan tes ini:<br><br>
+                    1. Klik Tombol di bawah.<br>
+                    2. Segera <strong>MATIKAN LAYAR HP</strong> / Kunci HP.<br>
+                    3. Tunggu 5 detik, notifikasi akan masuk dengan Nada Dering Aslimu.
                 </p>
-                <button class="btn-save btn-test" onclick="testSound()">
-                    <i class="fa-solid fa-play"></i> TES BUNYI SEKARANG
+                <button class="btn-save btn-test" onclick="testSoundDelayed()">
+                    <i class="fa-solid fa-stopwatch"></i> MULAI TES (TUNGGU 5 DETIK)
                 </button>
             </div>
 
@@ -71,7 +73,6 @@
     </div>
 
     <script>
-        // 1. CONFIG FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyCsV9fJKzYQHLuSBC4LIf740OyNjgL36VE",
             authDomain: "rinspoint-2e239.firebaseapp.com",
@@ -87,13 +88,11 @@
         const messaging = firebase.messaging();
         let currentToken = null;
 
-        // 2. AMBIL TOKEN SAAT LOAD
         document.addEventListener('DOMContentLoaded', async () => {
             try {
                 const permission = await Notification.requestPermission();
                 if(permission !== 'granted') {
-                    document.getElementById('tokenDisplay').innerText = "⚠️ Izin Notifikasi Ditolak! Cek Pengaturan Site Chrome.";
-                    document.getElementById('tokenDisplay').style.color = "#ef4444";
+                    document.getElementById('tokenDisplay').innerText = "⚠️ Izin Notifikasi Ditolak!";
                     return;
                 }
                 currentToken = await messaging.getToken({ vapidKey: vapidKey });
@@ -103,20 +102,18 @@
                     document.getElementById('tokenDisplay').innerText = "Gagal mendapatkan token.";
                 }
             } catch (error) {
-                console.error(error);
                 document.getElementById('tokenDisplay').innerText = "Error: " + error.message;
             }
         });
 
-        // 3. FUNGSI SIMPAN KE DATABASE
         async function saveToDatabase() {
             const devName = document.getElementById('deviceName').value;
-            if(!currentToken) return alert('Token belum siap. Tunggu sebentar atau refresh.');
-            if(!devName) return alert('Harap isi Nama Perangkat dulu!');
+            if(!currentToken) return alert('Token belum siap.');
+            if(!devName) return alert('Isi Nama Perangkat dulu!');
 
             const btn = document.querySelector('.btn-save');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Menyimpan...';
+            btn.innerHTML = 'Menyimpan...';
             btn.disabled = true;
 
             try {
@@ -126,33 +123,42 @@
                     body: JSON.stringify({ token: currentToken, deviceName: devName })
                 });
                 const data = await res.json();
-                if(data.success) {
-                    alert('✅ BERHASIL! Token HP ini sudah tersimpan aman di Database.');
-                } else {
-                    alert('Gagal: ' + data.message);
-                }
+                if(data.success) alert('✅ Sukses! Token Tersimpan.');
+                else alert('Gagal: ' + data.message);
             } catch (error) {
-                alert('Terjadi kesalahan koneksi.');
+                alert('Koneksi Error.');
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         }
 
-        // 4. FUNGSI TEST BUNYI (VERSI MURNI - TANPA ERROR)
-        function testSound() {
-            // Kita HAPUS kode audio.play() yang bikin error.
-            // Kita MURNI pakai Notifikasi Sistem.
+        // --- FITUR TES DENGAN JEDA (Solusi Mode Hening Android) ---
+        function testSoundDelayed() {
+            if (Notification.permission !== 'granted') return alert("Izinkan notifikasi dulu!");
+
+            // Beri Feedback Getar
+            if(navigator.vibrate) navigator.vibrate(50);
             
-            if (Notification.permission === 'granted') {
-                new Notification("🔔 TES SUARA ASLI", {
-                    body: "Notifikasi ini menggunakan nada dering dari Pengaturan HP kamu.",
+            const btn = document.querySelector('.btn-test');
+            btn.innerHTML = "⏳ MATIKAN LAYAR SEKARANG!";
+            btn.style.background = "#ef4444"; // Merah biar panik dikit hehe
+
+            // Hitung mundur 5 detik
+            setTimeout(() => {
+                // Tembak Notifikasi
+                new Notification("🔔 TES NADA DERING ASLI", {
+                    body: "Jika kamu mendengar ini saat layar mati, berarti settinganmu SUKSES!",
                     icon: "/assets/images/icon.png",
-                    vibrate: [200, 100, 200] // Getar dikit
+                    tag: "test-sound-" + Date.now(), // Tag unik biar selalu bunyi
+                    renotify: true, // Wajib bunyi ulang
+                    vibrate: [500, 200, 500] // Getar panjang
                 });
-            } else {
-                alert("Izin Notifikasi belum diberikan! Cek gembok di URL bar.");
-            }
+
+                // Reset Tombol
+                btn.innerHTML = '<i class="fa-solid fa-stopwatch"></i> MULAI TES (TUNGGU 5 DETIK)';
+                btn.style.background = "#f59e0b";
+            }, 5000); // 5000ms = 5 Detik
         }
     </script>
 </body>
