@@ -131,50 +131,44 @@
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
 
-        // AUDIO PAKSA BUNYI (Backup jika notifikasi sistem silent)
-        const alertSound = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU");
-
-        // SMART MUTE: Hanya diam 3 detik awal untuk menahan cache
-        let isAppReady = false; 
-        setTimeout(() => { isAppReady = true; }, 3000); 
-
-        // HANDLER PESAN MASUK (SAAT APLIKASI DIBUKA)
+        // 1. HANDLER PESAN MASUK (FOREGROUND - Saat aplikasi dibuka)
         messaging.onMessage((payload) => {
             console.log('🔔 Order Masuk:', payload);
-            loadStats(); 
+            loadStats(); // Update badge
             
-            // JANGAN BUNYI jika pesan masuk saat loading awal (< 3 detik)
-            if (!isAppReady) return;
-
-            // Jika > 3 detik, GAS BUNYI!
+            // TAMPILKAN NOTIFIKASI
             const title = payload.notification.title;
-            const body = payload.notification.body;
-            
-            // 1. Coba Bunyikan Audio Paksa
-            try { alertSound.play(); } catch(e) {}
+            const options = {
+                body: payload.notification.body,
+                icon: '/assets/images/icon.png',
+                vibrate: [200, 100, 200]
+            };
 
-            // 2. Tampilkan Notifikasi Sistem
             if (Notification.permission === 'granted') {
-                new Notification(title, {
-                    body: body,
-                    icon: '/assets/images/icon.png',
-                    vibrate: [200, 100, 200, 100, 200]
-                });
+                new Notification(title, options);
             } else {
-                // Fallback jika izin notif belum ada, pakai Alert
-                alert(`🔔 ${title}\n${body}`);
+                // Backup kalau izin belum ada, pakai Alert biasa
+                alert("🔔 " + title + "\n" + options.body);
             }
         });
 
+        // 2. REGISTER SERVICE WORKER (WAJIB UTK BACKGROUND)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/firebase-messaging-sw.js');
+                navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then(reg => console.log("✅ SW Admin Ready", reg))
+                .catch(err => console.log("❌ SW Admin Error", err));
             });
         }
         
-        if (Notification.permission !== "granted") Notification.requestPermission();
+        // 3. REQUEST PERMISSION OTOMATIS
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission().then(permission => {
+                if(permission === 'granted') console.log("Izin Notifikasi Diberikan");
+            });
+        }
 
-        // LOGIKA LAIN
+        // --- LOGIC HALAMAN (PIN, STATS) ---
         const pinModal = document.getElementById('pinModal');
         const pinInput = document.getElementById('pinInput');
 

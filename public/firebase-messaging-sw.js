@@ -1,4 +1,3 @@
-// public/firebase-messaging-sw.js
 importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js');
 
@@ -15,16 +14,16 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
+// Handler untuk pesan saat aplikasi di Background (Layar Mati/Tutup)
 messaging.onBackgroundMessage((payload) => {
-    console.log('[firebase-messaging-sw.js] Received background message ', payload);
-    
+    console.log('[SW] Pesan Background:', payload);
+
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
         icon: '/assets/images/icon.png',
-        // Suara default sistem
-        sound: 'default',
-        vibrate: [200, 100, 200] 
+        badge: '/assets/images/icon.png',
+        vibrate: [200, 100, 200]
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
