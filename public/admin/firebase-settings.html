@@ -60,9 +60,9 @@
                 </div>
                 <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:15px;">
                     <strong>PENTING:</strong> <br>
-                    1. Pastikan Volume <strong>Media</strong> (Musik) HP Full.<br>
-                    2. Klik tombol di bawah.<br>
-                    3. Jika bunyi "Ting" tapi tidak ada notif di atas, berarti Browser kamu memblokir notifikasi pop-up.
+                    Jika sudah diklik tapi tidak ada suara:<br>
+                    1. Pastikan Volume Media HP Full.<br>
+                    2. Cek Izin "Suara/Sound" di pengaturan situs Chrome.
                 </p>
                 <button class="btn-save btn-test" onclick="testSound()">
                     <i class="fa-solid fa-play"></i> TES BUNYI SEKARANG
@@ -88,11 +88,6 @@
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
         let currentToken = null;
-
-        // DATA AUDIO MP3 (Suara Notifikasi "Ting" Pendek)
-        // Ini adalah file audio asli yang di-encode, bukan header kosong
-        const audioData = "data:audio/mp3;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7cQBCNJxhDBnlD//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA";
-        const audioBeep = new Audio(audioData);
 
         // 2. AMBIL TOKEN SAAT LOAD
         document.addEventListener('DOMContentLoaded', async () => {
@@ -146,36 +141,31 @@
             }
         }
 
-        // 4. FUNGSI TEST BUNYI (VERSI FINAL)
+        // 4. FUNGSI TEST BUNYI (ANTI-BLOCK BROWSER)
         function testSound() {
-            // STEP A: Bunyikan Suara Browser (Pake Volume Media/Musik)
-            try {
-                audioBeep.volume = 1.0;
-                audioBeep.currentTime = 0;
-                const playPromise = audioBeep.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.then(_ => {
-                        console.log("Audio diputar.");
-                    })
-                    .catch(error => {
-                        console.log("Playback dicegah browser:", error);
-                        alert("Browser memblokir suara otomatis. Coba klik lagi!");
-                    });
-                }
-            } catch(e) { 
-                alert("Gagal memutar audio: " + e.message); 
-            }
+            // STEP A: Buat Objek Audio BARU setiap kali diklik (Agar dianggap interaksi user)
+            // Ini suara "Glass Ping" yang bersih
+            const sound = new Audio("data:audio/mp3;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7cQBCNJxhDBnlD//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA");
+            
+            // Paksa Putar
+            sound.volume = 1.0;
+            sound.play()
+            .then(() => {
+                console.log("Audio berhasil diputar!");
+            })
+            .catch(error => {
+                // Jika masih diblokir, tampilkan alert agar user tau
+                alert("Browser memblokir suara. Cek Izin Situs > Suara (Sound) > Izinkan.");
+                console.error(error);
+            });
 
-            // STEP B: Munculkan Notifikasi Sistem (Pake Volume Notifikasi)
+            // STEP B: Notifikasi Sistem
             if (Notification.permission === 'granted') {
-                new Notification("🔔 TES BERHASIL!", {
-                    body: "Suara 'Ting' berasal dari Media. Notifikasi ini dari Sistem.",
+                new Notification("🔔 TES SUKSES!", {
+                    body: "Sistem notifikasi berjalan normal.",
                     icon: "/assets/images/icon.png",
                     vibrate: [200, 100, 200]
                 });
-            } else {
-                alert("Izin Notifikasi belum diberikan!");
             }
         }
     </script>
