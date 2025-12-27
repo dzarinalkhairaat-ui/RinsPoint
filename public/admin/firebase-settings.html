@@ -59,10 +59,8 @@
                     <span>Tes Notifikasi</span>
                 </div>
                 <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:15px;">
-                    <strong>PENTING:</strong> <br>
-                    Jika sudah diklik tapi tidak ada suara:<br>
-                    1. Pastikan Volume Media HP Full.<br>
-                    2. Cek Izin "Suara/Sound" di pengaturan situs Chrome.
+                    Tombol ini akan memunculkan Notifikasi Sistem sesuai pengaturan HP kamu.<br>
+                    Jika bunyi lagunya sesuai pilihanmu, berarti <strong>AMAN</strong>.
                 </p>
                 <button class="btn-save btn-test" onclick="testSound()">
                     <i class="fa-solid fa-play"></i> TES BUNYI SEKARANG
@@ -141,31 +139,19 @@
             }
         }
 
-        // 4. FUNGSI TEST BUNYI (ANTI-BLOCK BROWSER)
+        // 4. FUNGSI TEST BUNYI (VERSI MURNI - TANPA ERROR)
         function testSound() {
-            // STEP A: Buat Objek Audio BARU setiap kali diklik (Agar dianggap interaksi user)
-            // Ini suara "Glass Ping" yang bersih
-            const sound = new Audio("data:audio/mp3;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7cQBCNJxhDBnlD//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA");
+            // Kita HAPUS kode audio.play() yang bikin error.
+            // Kita MURNI pakai Notifikasi Sistem.
             
-            // Paksa Putar
-            sound.volume = 1.0;
-            sound.play()
-            .then(() => {
-                console.log("Audio berhasil diputar!");
-            })
-            .catch(error => {
-                // Jika masih diblokir, tampilkan alert agar user tau
-                alert("Browser memblokir suara. Cek Izin Situs > Suara (Sound) > Izinkan.");
-                console.error(error);
-            });
-
-            // STEP B: Notifikasi Sistem
             if (Notification.permission === 'granted') {
-                new Notification("🔔 TES SUKSES!", {
-                    body: "Sistem notifikasi berjalan normal.",
+                new Notification("🔔 TES SUARA ASLI", {
+                    body: "Notifikasi ini menggunakan nada dering dari Pengaturan HP kamu.",
                     icon: "/assets/images/icon.png",
-                    vibrate: [200, 100, 200]
+                    vibrate: [200, 100, 200] // Getar dikit
                 });
+            } else {
+                alert("Izin Notifikasi belum diberikan! Cek gembok di URL bar.");
             }
         }
     </script>
