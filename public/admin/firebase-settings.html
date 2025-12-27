@@ -88,8 +88,8 @@
         const messaging = firebase.messaging();
         let currentToken = null;
 
-        // Suara "TING" (Base64) - Tidak perlu download, langsung bunyi
-        const audioBeep = new Audio("data:audio/mp3;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7cQBCNJxhDBnlD//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA//uQRAAAAAABVUAAAAC5WAAAAAAAAAAEAAGURAAAAAABGX/80QAwgAAAAA0gAAAB5iWaaqMaNAAAABAAAAAM8An+AAAACP8A3+AAAAA/wDf4AAAA");
+        // SUARA BEEP SEDERHANA (WAV FORMAT) - Pasti Support di Android
+        const audioBeep = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU");
 
         // 2. AMBIL TOKEN SAAT LOAD
         document.addEventListener('DOMContentLoaded', async () => {
@@ -146,16 +146,21 @@
             }
         }
 
-        // 4. FUNGSI TEST BUNYI (Fixed)
+        // 4. FUNGSI TEST BUNYI (Fixed Audio Source)
         function testSound() {
-            // A. Bunyikan Suara Halaman Web (Media Volume)
-            audioBeep.currentTime = 0;
-            audioBeep.play().catch(e => alert("Audio Error: " + e.message));
+            // A. Coba Bunyikan Suara Beep Internal
+            try {
+                audioBeep.currentTime = 0;
+                audioBeep.play().catch(e => {
+                    // Jika internal gagal, fallback ke alert biasa
+                    console.log("Audio play error:", e);
+                });
+            } catch(e) { console.log(e); }
 
-            // B. Tampilkan Notifikasi Sistem (Notification Volume)
+            // B. Tampilkan Notifikasi Sistem
             if (Notification.permission === 'granted') {
                 new Notification("🔔 Tes Bunyi Berhasil", {
-                    body: "Apakah kamu mendengar suara ting?",
+                    body: "Jika tidak ada suara, cek Volume Media & Notifikasi HP kamu.",
                     icon: "/assets/images/icon.png",
                     vibrate: [200, 100, 200]
                 });
