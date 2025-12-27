@@ -119,7 +119,7 @@ function checkForm() {
     else btn.disabled = true; 
 }
 
-// --- BAGIAN INI SUDAH DIBERSIHKAN DARI ONESIGNAL ---
+// --- LOGIKA UTAMA TRANSAKSI + TOKEN FIREBASE ---
 async function processPayment() {
     const btn = document.getElementById('btnConfirm');
     const originalText = btn.innerHTML;
@@ -141,7 +141,15 @@ async function processPayment() {
             formData.append('paymentProof', fileInput.files[0]);
         }
 
-        // TIDAK ADA LAGI LOGIC AMBIL ID NOTIFIKASI DI SINI
+        // --- TAMBAHAN BARU: SISIPKAN TOKEN FIREBASE ---
+        const fcmToken = localStorage.getItem('fcm_token');
+        if (fcmToken) {
+            formData.append('userPlayerId', fcmToken);
+            console.log("✅ Mengirim Token FCM ke Server:", fcmToken);
+        } else {
+            console.warn("⚠️ Token FCM Tidak Ditemukan di HP ini.");
+        }
+        // ----------------------------------------------
 
         // Kirim ke Backend
         const response = await fetch('/api/ppob/transaction', {
